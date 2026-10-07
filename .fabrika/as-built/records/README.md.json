@@ -1,0 +1,20 @@
+{
+ "blob": "8877dd49a61fd24469e7f256fa2db7dea146b3b6",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Overview of Fabrika, a software factory where model agents read repositories, write specs, build code, test it, repair it, and assemble a review packet with structured evidence for human review.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

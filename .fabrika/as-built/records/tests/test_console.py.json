@@ -1,0 +1,1161 @@
+{
+ "blob": "6eb1e09eee60c42d0ebeff2c668858d495dba8f8",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_a_proposal_shows_what_changed_and_not_what_it_restated",
+   "test_the_checks_page_is_organised_by_the_two_things_a_build_must_prove",
+   "test_the_console_calls_nothing_it_does_not_define",
+   "test_a_page_does_not_rebuild_itself_for_work_on_another_project",
+   "test_what_a_reader_opened_survives_a_rebuild",
+   "test_a_project_opens_on_its_overview_and_checks_and_tests_are_tabs",
+   "test_a_suggestion_hands_over_a_prompt_rather_than_a_pipeline_run",
+   "test_the_whole_list_at_once_is_not_offered_as_one_build",
+   "test_accepting_the_checks_does_not_take_the_checks_away",
+   "test_reading_modes_button_cannot_push_the_page_sideways",
+   "test_a_dead_reading_is_recoverable_and_a_live_one_is_left_alone",
+   "test_the_panel_on_the_way_out_can_send_the_loop_back_round",
+   "test_a_reopened_loop_still_stops_at_every_ceiling",
+   "test_a_unit_with_no_container_gets_no_session_in_one",
+   "test_a_credential_never_reaches_the_command_line",
+   "test_the_criteria_list_is_read_with_titles_not_statements",
+   "test_one_agent_owns_the_user_surface_and_it_is_not_the_integrator",
+   "test_a_demonstration_is_not_re_run_after_the_round_that_wrote_it",
+   "test_the_console_has_a_state_for_a_probe_that_reported_nothing",
+   "test_the_console_opens_a_probe_onto_its_own_source",
+   "test_no_screen_or_document_calls_a_restatement_an_independent_finding",
+   "test_the_repairs_screen_is_a_list_of_rounds",
+   "test_a_round_that_recorded_no_units_still_says_what_it_closed",
+   "test_naming_a_recording_for_a_criterion_is_not_a_claim_about_the_frames",
+   "test_the_recordings_band_says_what_it_cannot_do",
+   "test_a_proposal_card_a_reader_cannot_see_is_never_offered",
+   "test_the_console_does_not_keep_a_screen_for_the_merged_away_security_agent",
+   "test_the_phase_list_reads_in_the_order_the_phases_run",
+   "test_the_feature_log_carries_step_records_in_full",
+   "test_a_station_that_bought_no_model_call_can_still_be_opened",
+   "test_the_run_is_drawn_as_every_turn_with_its_branches_and_rounds",
+   "test_the_console_files_a_finding_that_no_longer_holds_with_the_settled_ones",
+   "test_the_route_box_does_not_say_accept_while_calls_are_open",
+   "test_the_call_tree_shows_one_run_and_names_the_others",
+   "test_what_a_run_did_not_run_itself_is_drawn_as_the_earlier_run_s",
+   "test_the_project_page_says_when_each_check_runs_and_what_runs_each_level",
+   "test_both_survey_actions_ask_first_and_say_what_they_change",
+   "test_a_colour_is_named_before_it_is_used",
+   "test_the_tests_read_the_stylesheet_the_browser_loads",
+   "test_a_token_used_without_a_fallback_is_declared_somewhere",
+   "test_a_proposed_guide_is_one_line_until_opened_and_reviewed_in_the_editor",
+   "test_what_a_reader_typed_survives_the_page_rebuilding",
+   "test_a_poll_asks_for_nothing_the_page_already_has",
+   "test_a_stage_and_a_verdict_are_named_in_one_place"
+  ],
+  "domain_terms": [
+   "console screen",
+   "agent role",
+   "criterion verdict",
+   "packet review",
+   "finding decision",
+   "gates",
+   "survey",
+   "proposal",
+   "project",
+   "harness",
+   "role prompt",
+   "feature and run",
+   "phase and repair round",
+   "finding and probe",
+   "criterion and recording",
+   "suggestion and proposal",
+   "proposal card, cleanup fix",
+   "console screen, tab",
+   "check, test, survey",
+   "guide, criterion",
+   "as-built architecture, subsystem",
+   "guide proposal",
+   "guide review",
+   "polling",
+   "vocabulary"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "SurveyDiff",
+   "ScaffoldFile",
+   "GateResult",
+   "ProjectError",
+   "AsBuilt",
+   "Subsystem",
+   "Capability",
+   "PROPOSAL_PARTS",
+   "STATE_VERSION"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 9,
+    "name": "test_the_key_is_never_returned_to_a_client"
+   },
+   {
+    "calls": [],
+    "line": 24,
+    "name": "test_the_key_is_stored_outside_the_config_file"
+   },
+   {
+    "calls": [],
+    "line": 41,
+    "name": "test_testing_with_no_key_says_so_rather_than_blaming_the_key"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "test_the_editor_url_is_saved_and_read_back"
+   },
+   {
+    "calls": [],
+    "line": 72,
+    "name": "test_the_editor_url_persists_to_the_config_file"
+   },
+   {
+    "calls": [],
+    "line": 85,
+    "name": "test_an_empty_editor_url_is_saved_rather_than_refused"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 95,
+    "name": "test_the_proposal_shows_every_command_a_rule_carries"
+   },
+   {
+    "calls": [],
+    "line": 106,
+    "name": "test_the_resurvey_is_told_not_to_cite_a_bare_criterion_id"
+   },
+   {
+    "calls": [],
+    "line": 111,
+    "name": "test_the_surveyor_is_asked_for_a_way_to_show_a_human_what_happened"
+   },
+   {
+    "calls": [],
+    "line": 137,
+    "name": "test_the_surveyor_is_asked_for_what_the_new_machinery_needs"
+   },
+   {
+    "calls": [
+     "_one_file_many_criteria"
+    ],
+    "line": 160,
+    "name": "test_one_failing_test_fails_one_criterion_not_its_whole_file"
+   },
+   {
+    "calls": [
+     "_one_file_many_criteria"
+    ],
+    "line": 172,
+    "name": "test_without_a_report_every_verdict_is_what_it_was"
+   },
+   {
+    "calls": [
+     "_one_file_many_criteria"
+    ],
+    "line": 180,
+    "name": "test_a_tag_the_runner_never_reported_is_a_bookkeeping_fault"
+   },
+   {
+    "calls": [
+     "_one_file_many_criteria"
+    ],
+    "line": 190,
+    "name": "test_a_suite_qualified_run_attributes_its_criteria"
+   },
+   {
+    "calls": [
+     "app_js",
+     "load_config",
+     "_pipeline_roles",
+     "_project_roles"
+    ],
+    "line": 201,
+    "name": "test_the_roster_bands_every_pipeline_agent_and_says_what_it_does"
+   },
+   {
+    "calls": [],
+    "line": 239,
+    "name": "test_a_resurvey_is_told_what_the_project_already_has"
+   },
+   {
+    "calls": [],
+    "line": 259,
+    "name": "test_a_server_running_older_code_than_the_disk_says_so"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 333,
+    "name": "test_the_console_will_not_offer_approval_it_knows_will_be_refused"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 385,
+    "name": "test_closing_a_gap_is_two_presses_not_five"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 428,
+    "name": "test_every_proposal_a_resurvey_can_make_can_be_accepted"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 471,
+    "name": "test_a_testing_proposal_says_what_it_changes_not_only_the_verdicts"
+   },
+   {
+    "calls": [
+     "_feature_record_kinds",
+     "_js_object_keys"
+    ],
+    "line": 488,
+    "name": "test_the_ledger_has_a_word_for_every_record_kind"
+   },
+   {
+    "calls": [
+     "_js_object_keys",
+     "app_js"
+    ],
+    "line": 495,
+    "name": "test_every_agent_record_is_attributed_to_a_phase"
+   },
+   {
+    "calls": [
+     "app_js",
+     "_pipeline_roles"
+    ],
+    "line": 518,
+    "name": "test_the_diagram_draws_every_agent_the_orchestrator_calls"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 530,
+    "name": "test_a_proposal_that_is_not_a_gate_change_is_still_shown_and_acceptable"
+   },
+   {
+    "calls": [],
+    "line": 560,
+    "name": "test_the_oracle_is_told_what_to_do_at_each_level_rather_than_left_to_guess"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 579,
+    "name": "test_the_console_refuses_the_same_approvals_the_server_does"
+   },
+   {
+    "calls": [
+     "_prose"
+    ],
+    "line": 591,
+    "name": "test_the_evidence_rule_is_a_step_not_a_maxim"
+   },
+   {
+    "calls": [
+     "_prose"
+    ],
+    "line": 604,
+    "name": "test_the_surveyor_is_told_which_compose_service_to_name"
+   },
+   {
+    "calls": [
+     "_prose"
+    ],
+    "line": 611,
+    "name": "test_the_surveyor_is_told_to_make_a_red_check_ratchetable"
+   },
+   {
+    "calls": [
+     "_prose"
+    ],
+    "line": 634,
+    "name": "test_the_surveyor_is_told_that_working_directory_is_part_of_the_command"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 640,
+    "name": "test_both_ways_of_reading_a_packet_name_each_outcome_the_same"
+   },
+   {
+    "calls": [
+     "factory_files"
+    ],
+    "line": 677,
+    "name": "test_no_git_call_can_hang_a_run"
+   },
+   {
+    "calls": [
+     "stylesheet",
+     "_css_rules"
+    ],
+    "line": 694,
+    "name": "test_a_narrow_screen_rule_is_not_cancelled_by_a_plain_rule_after_it"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 718,
+    "name": "test_verifying_again_asks_in_a_dialog_that_says_what_happens"
+   },
+   {
+    "calls": [
+     "app_js",
+     "stylesheet"
+    ],
+    "line": 736,
+    "name": "test_a_packet_is_never_drawn_as_current_while_a_run_is_measuring_again"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 761,
+    "name": "test_a_packet_opens_on_the_work_waiting_and_the_full_packet_is_a_step_away"
+   },
+   {
+    "calls": [],
+    "line": 812,
+    "name": "test_the_strongest_objection_survives_the_screen_it_was_written_on"
+   },
+   {
+    "calls": [],
+    "line": 831,
+    "name": "test_the_review_says_how_much_of_it_is_left"
+   },
+   {
+    "calls": [],
+    "line": 860,
+    "name": "test_a_clustered_finding_is_clustered_by_a_join_and_not_by_a_judgement"
+   },
+   {
+    "calls": [],
+    "line": 886,
+    "name": "test_deleting_a_screen_never_orphans_what_it_held"
+   },
+   {
+    "calls": [],
+    "line": 937,
+    "name": "test_a_figure_put_away_takes_its_caveat_with_it"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 980,
+    "name": "test_the_review_screens_say_what_ran_and_what_it_cost"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1029,
+    "name": "test_the_packet_groups_its_findings_by_what_became_of_them"
+   },
+   {
+    "calls": [
+     "app_js",
+     "stylesheet"
+    ],
+    "line": 1051,
+    "name": "test_discarding_a_feature_is_reachable_and_asks_twice"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1087,
+    "name": "test_a_ready_project_can_still_see_and_re_run_its_own_gates"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1116,
+    "name": "test_the_drift_the_detector_finds_is_actually_drawn"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1133,
+    "name": "test_the_slow_project_actions_say_they_are_working"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1167,
+    "name": "test_a_proposal_lands_where_the_question_was_asked"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1188,
+    "name": "test_every_proposed_part_carries_its_own_verbs"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1205,
+    "name": "test_the_drift_card_and_the_proposal_are_never_both_on_screen"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1231,
+    "name": "test_a_ruled_proposal_stops_asking"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1252,
+    "name": "test_gate_zero_offers_one_reading_not_two"
+   },
+   {
+    "calls": [
+     "app_js",
+     "stylesheet"
+    ],
+    "line": 1310,
+    "name": "test_a_project_level_run_is_visible_until_it_ends"
+   },
+   {
+    "calls": [],
+    "line": 1338,
+    "name": "test_the_recheck_prompt_distinguishes_the_two_kinds_of_absence"
+   },
+   {
+    "calls": [],
+    "line": 1345,
+    "name": "test_the_oracle_is_told_to_bring_its_own_fixtures"
+   },
+   {
+    "calls": [],
+    "line": 1355,
+    "name": "test_the_oracle_is_told_files_are_its_job_and_the_environment_is_not"
+   },
+   {
+    "calls": [],
+    "line": 1387,
+    "name": "test_the_harness_prompt_does_not_promise_a_capability_the_harness_may_not_have"
+   },
+   {
+    "calls": [],
+    "line": 1425,
+    "name": "test_the_harness_prompt_answers_the_question_it_names"
+   },
+   {
+    "calls": [],
+    "line": 1441,
+    "name": "test_the_harness_prompt_does_not_contradict_the_executor_it_runs_under"
+   },
+   {
+    "calls": [],
+    "line": 1456,
+    "name": "test_the_architect_cuts_by_behaviour_and_may_return_one_unit"
+   },
+   {
+    "calls": [],
+    "line": 1481,
+    "name": "test_the_harness_prompt_asks_for_the_environment_to_be_used"
+   },
+   {
+    "calls": [],
+    "line": 1496,
+    "name": "test_both_builder_prompts_ask_for_unit_tests_and_deny_them_authority"
+   },
+   {
+    "calls": [],
+    "line": 1531,
+    "name": "test_the_architect_gives_a_unit_somewhere_to_put_its_tests"
+   },
+   {
+    "calls": [
+     "_driver",
+     "_tiny_repo"
+    ],
+    "line": 1552,
+    "name": "test_a_harness_that_commits_its_work_has_still_done_the_work"
+   },
+   {
+    "calls": [
+     "_driver",
+     "_tiny_repo"
+    ],
+    "line": 1580,
+    "name": "test_the_driver_does_not_count_an_empty_file_as_work"
+   },
+   {
+    "calls": [
+     "_driver",
+     "_tiny_repo"
+    ],
+    "line": 1597,
+    "name": "test_the_driver_ignores_the_task_file_and_the_harness_bookkeeping"
+   },
+   {
+    "calls": [],
+    "line": 1608,
+    "name": "test_the_driver_refuses_a_turn_that_wrote_nothing"
+   },
+   {
+    "calls": [
+     "_project_with_suggestions"
+    ],
+    "line": 1622,
+    "name": "test_adopting_a_suggestion_makes_a_complete_check_and_installs_its_tool"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 1637,
+    "name": "test_the_console_offers_to_hold_a_check_on_new_code"
+   },
+   {
+    "calls": [
+     "_project_with_suggestions"
+    ],
+    "line": 1644,
+    "name": "test_holding_new_lines_to_coverage_is_a_floor_a_person_types"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1662,
+    "name": "test_the_packet_has_a_dependencies_tab_that_every_route_reaches"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 1683,
+    "name": "test_the_project_shows_what_it_depends_on_and_the_policy_it_holds_features_to"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1696,
+    "name": "test_a_waiting_re_survey_is_said_on_the_checks_it_would_change"
+   },
+   {
+    "calls": [
+     "_project_with_proposal"
+    ],
+    "line": 1707,
+    "name": "test_each_proposed_check_is_ruled_on_by_itself"
+   },
+   {
+    "calls": [
+     "_project_with_proposal"
+    ],
+    "line": 1717,
+    "name": "test_an_accepted_change_can_be_undone_and_waits_again"
+   },
+   {
+    "calls": [
+     "_project_with_proposal"
+    ],
+    "line": 1727,
+    "name": "test_the_reading_is_current_only_once_every_check_is_ruled_on"
+   },
+   {
+    "calls": [
+     "_project_with_proposal",
+     "app_js"
+    ],
+    "line": 1738,
+    "name": "test_the_survey_tab_s_ruling_leaves_the_checks_waiting"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1754,
+    "name": "test_a_check_with_no_result_is_not_told_to_get_its_command_to_pass"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1763,
+    "name": "test_the_family_shows_the_rules_another_check_runs_for_it"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1775,
+    "name": "test_no_console_script_declares_the_same_top_level_name_twice"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 1794,
+    "name": "test_the_checks_screen_is_drawn_by_family_with_a_way_to_hold_and_to_go_without"
+   },
+   {
+    "calls": [],
+    "line": 1805,
+    "name": "test_the_oracle_is_told_what_it_may_import"
+   },
+   {
+    "calls": [],
+    "line": 1823,
+    "name": "test_the_generic_role_prompts_do_not_name_one_project_s_technology"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "app_js"
+    ],
+    "line": 1856,
+    "name": "test_the_crew_screen_is_served_what_it_draws"
+   },
+   {
+    "calls": [],
+    "line": 1875,
+    "name": "test_the_oracle_is_told_the_files_are_the_delivery"
+   },
+   {
+    "calls": [],
+    "line": 1891,
+    "name": "test_the_oracle_is_told_its_directory_is_empty"
+   },
+   {
+    "calls": [],
+    "line": 1900,
+    "name": "test_the_breaker_is_told_edits_to_the_code_are_discarded"
+   },
+   {
+    "calls": [],
+    "line": 1911,
+    "name": "test_a_rerun_that_changes_nothing_keeps_the_project_approved"
+   },
+   {
+    "calls": [],
+    "line": 1926,
+    "name": "test_approval_is_never_revoked_under_a_live_feature"
+   },
+   {
+    "calls": [],
+    "line": 1941,
+    "name": "test_the_resurvey_asks_for_the_load_command"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1958,
+    "name": "test_the_console_reads_every_call_cost_through_the_billed_check"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1983,
+    "name": "test_the_model_picker_names_the_route_on_every_option"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1994,
+    "name": "test_the_crew_table_can_say_turns_instead_of_dollars"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 2001,
+    "name": "test_the_picker_offers_the_route_s_own_default"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 2007,
+    "name": "test_a_check_is_not_expired_on_a_clock"
+   },
+   {
+    "calls": [
+     "suite_source"
+    ],
+    "line": 2016,
+    "name": "test_no_test_writes_into_the_running_console_s_route_store"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 2029,
+    "name": "test_the_console_explains_a_budget_that_measured_nothing"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 2035,
+    "name": "test_the_console_shows_the_window_a_run_shares_with_its_human"
+   },
+   {
+    "calls": [
+     "suite_source"
+    ],
+    "line": 2043,
+    "name": "test_a_test_that_stubs_the_harness_clears_the_routes_that_would_override_it"
+   },
+   {
+    "calls": [
+     "app_js",
+     "stylesheet"
+    ],
+    "line": 2062,
+    "name": "test_a_failure_the_console_reports_is_distinguishable_and_stays"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 2115,
+    "name": "test_a_call_running_on_one_project_does_not_dim_another"
+   },
+   {
+    "calls": [],
+    "line": 2644,
+    "name": "split"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3200,
+    "name": "test_a_proposal_card_shows_the_thing_it_proposes"
+   },
+   {
+    "calls": [
+     "app_js",
+     "stylesheet"
+    ],
+    "line": 3216,
+    "name": "test_a_proposal_says_why_in_one_sentence_a_person_can_read"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3243,
+    "name": "test_one_proposal_is_said_once_and_in_plain_words"
+   },
+   {
+    "calls": [],
+    "line": 3268,
+    "name": "test_a_recording_says_what_it_was_supposed_to_show_in_words"
+   },
+   {
+    "calls": [],
+    "line": 3297,
+    "name": "test_the_player_does_not_head_itself_with_a_path_to_a_file"
+   },
+   {
+    "calls": [],
+    "line": 3326,
+    "name": "test_criteria_on_a_recording_are_ordered_the_way_they_are_numbered"
+   },
+   {
+    "calls": [
+     "factory_files",
+     "app_js"
+    ],
+    "line": 3342,
+    "name": "test_screenshots_are_gone_and_nothing_still_expects_them"
+   },
+   {
+    "calls": [
+     "factory_files"
+    ],
+    "line": 3372,
+    "name": "test_no_module_binds_the_same_top_level_name_twice"
+   },
+   {
+    "calls": [
+     "stylesheet"
+    ],
+    "line": 3403,
+    "name": "test_the_walkthrough_fits_in_the_window_whatever_size_the_frames_are"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3428,
+    "name": "test_the_way_out_can_be_proved_from_the_crew_page"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3463,
+    "name": "test_a_proposed_reading_shows_each_tiers_cleanup_without_opening_it"
+   },
+   {
+    "calls": [
+     "onboarding_module"
+    ],
+    "line": 3482,
+    "name": "test_the_resurvey_is_told_its_change_list_covers_tooling_only"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3491,
+    "name": "test_a_tier_that_needs_a_fix_is_one_choice_with_its_parts_inside"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3519,
+    "name": "test_a_proposed_file_card_has_a_title_and_a_plain_sentence"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3539,
+    "name": "test_the_console_says_what_is_not_tested_wherever_it_matters"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3565,
+    "name": "test_help_is_a_page_and_a_drawer_over_one_set_of_articles"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "app_js"
+    ],
+    "line": 3596,
+    "name": "test_every_setup_a_feature_gets_runs_the_warm_ups_the_baseline_found"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "app_js"
+    ],
+    "line": 3613,
+    "name": "test_a_first_survey_s_fix_can_be_picked_on_the_project_page"
+   },
+   {
+    "calls": [],
+    "line": 3637,
+    "name": "test_the_overview_counts_calls_exactly_as_the_review_screen_does"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3669,
+    "name": "test_the_cost_tile_says_how_the_work_was_paid_for_not_a_dollar_figure"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3686,
+    "name": "test_settings_live_on_the_tabs_they_describe_and_the_dockerfile_is_read_only"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3720,
+    "name": "test_history_is_a_tab_and_the_ledger_leaves_the_top_navigation"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3730,
+    "name": "test_the_survey_suggests_the_projects_own_test_stage_and_prefers_it"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3739,
+    "name": "test_the_resurvey_dialog_warns_about_uncommitted_work_only_when_there_is_some"
+   },
+   {
+    "calls": [
+     "factory_files"
+    ],
+    "line": 3747,
+    "name": "test_nothing_else_fabrika_starts_publishes_a_port"
+   },
+   {
+    "calls": [],
+    "line": 3765,
+    "name": "test_review_offers_the_app_where_the_checking_is"
+   },
+   {
+    "calls": [
+     "app_js",
+     "pipeline_projects_module"
+    ],
+    "line": 3785,
+    "name": "test_a_reading_behind_with_a_proposal_waiting_says_rule_not_resurvey"
+   },
+   {
+    "calls": [
+     "app_js",
+     "stylesheet"
+    ],
+    "line": 3802,
+    "name": "test_the_preview_proposal_is_said_as_a_sentence_about_the_button"
+   },
+   {
+    "calls": [
+     "_ab_repo",
+     "_ab_read"
+    ],
+    "line": 3817,
+    "name": "test_as_built_draws_only_what_code_confirmed"
+   },
+   {
+    "calls": [],
+    "line": 3844,
+    "name": "test_a_subsystem_nothing_a_person_does_reaches_is_support_and_numbered_last"
+   },
+   {
+    "calls": [],
+    "line": 3877,
+    "name": "test_every_subsystem_and_capability_has_three_letters_of_its_own"
+   },
+   {
+    "calls": [],
+    "line": 3903,
+    "name": "test_a_derived_code_never_takes_the_code_the_model_gave_another_group"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3937,
+    "name": "test_the_checks_tab_opens_on_a_list_that_has_not_been_run"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3944,
+    "name": "test_a_reading_s_parts_wait_on_the_tab_they_would_change"
+   },
+   {
+    "calls": [
+     "_floor_gate",
+     "_project_with_suggestions",
+     "app_js"
+    ],
+    "line": 3964,
+    "name": "test_nothing_offers_to_hold_a_check_under_its_own_floor"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3979,
+    "name": "test_the_red_card_leads_with_the_kind_then_the_cause_then_the_fixes"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 3990,
+    "name": "test_a_press_that_runs_the_checks_after_it_is_told_it_succeeded"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4001,
+    "name": "test_coverage_is_its_own_figure_coloured_against_the_projects_floor"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4010,
+    "name": "test_coverage_is_said_to_be_on_or_off_at_the_top_of_the_tests_family"
+   },
+   {
+    "calls": [],
+    "line": 4022,
+    "name": "test_the_architecture_map_draws_tooling_in_the_band_and_nothing_to_it"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4060,
+    "name": "test_the_as_built_has_help_for_every_page_it_links_to"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4071,
+    "name": "test_every_help_topic_the_console_names_has_an_article_and_every_article_is_listed"
+   },
+   {
+    "calls": [],
+    "line": 4119,
+    "name": "test_the_scout_reports_what_the_guides_leave_out_and_where_the_code_disagrees"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4133,
+    "name": "test_every_project_tab_draws_its_own_heading_or_none"
+   },
+   {
+    "calls": [
+     "class_source"
+    ],
+    "line": 4144,
+    "name": "test_the_packet_says_which_guides_the_feature_was_held_to"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 4160,
+    "name": "test_the_guides_tab_shows_the_repository_layer_by_layer"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4179,
+    "name": "test_a_proposed_guide_is_one_line_until_opened_and_reviewed_in_the_editor"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4200,
+    "name": "test_what_a_reader_typed_survives_the_page_rebuilding"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 4206,
+    "name": "test_a_poll_asks_for_nothing_the_page_already_has"
+   },
+   {
+    "calls": [],
+    "line": 4235,
+    "name": "test_a_stage_and_a_verdict_are_named_in_one_place"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py",
+   "tests/conftest.py",
+   "factory/routes.py",
+   "factory/projects.py",
+   "factory/schemas.py",
+   "tests/support.py",
+   "factory/egress.py",
+   "factory/config.py",
+   "factory/overview.py",
+   "factory/asbuilt_graph.py",
+   "factory/pipeline/__init__.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "Node.js",
+   "pytest",
+   "FastAPI",
+   "git",
+   "browser console and stylesheet rendering",
+   "filesystem and source code inspection",
+   "Docker",
+   "subprocess (system invocation)",
+   "the file system",
+   "node.js"
+  ],
+  "purpose": "Tests the console's API endpoints, JavaScript functionality, configuration handling, role instructions, and UI/CSS correctness to ensure the console properly displays orchestrator state and accepts user actions.",
+  "routes_called": [
+   {
+    "method": "PUT",
+    "path": "/api/provider"
+   },
+   {
+    "method": "GET",
+    "path": "/api/provider"
+   },
+   {
+    "method": "GET",
+    "path": "/api/roles"
+   },
+   {
+    "method": "GET",
+    "path": "/api/config"
+   },
+   {
+    "method": "POST",
+    "path": "/api/provider/test"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/editor"
+   },
+   {
+    "method": "GET",
+    "path": "/api/version"
+   }
+  ],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,239 @@
+{
+ "blob": "89209d291612d9c1b46aab243cb1325ffb44d95d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "driftNote",
+   "intakeRunningScreen",
+   "digestNote",
+   "planningScreen",
+   "workedBlock",
+   "irreversibleChanges",
+   "specLinks",
+   "promiseCounts",
+   "changeMap",
+   "changeCols",
+   "criteriaByArea",
+   "docTabs",
+   "docSection",
+   "docList",
+   "cutReviewScreen",
+   "ruleOnCut",
+   "specScreen",
+   "icon",
+   "glyph",
+   "opClass",
+   "fit",
+   "curve",
+   "box",
+   "AREA_ORDER",
+   "REV_WORDS",
+   "OP_GLYPH",
+   "QUALIFIED",
+   "CUT_WORDS"
+  ],
+  "domain_terms": [
+   "feature spec",
+   "acceptance criteria",
+   "build cut",
+   "endpoints and data changes",
+   "plan review"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state"
+  ],
+  "entities_written": [
+   "state"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 8,
+    "name": "driftNote"
+   },
+   {
+    "calls": [],
+    "line": 37,
+    "name": "intakeRunningScreen"
+   },
+   {
+    "calls": [],
+    "line": 87,
+    "name": "digestNote"
+   },
+   {
+    "calls": [],
+    "line": 116,
+    "name": "planningScreen"
+   },
+   {
+    "calls": [],
+    "line": 154,
+    "name": "workedBlock"
+   },
+   {
+    "calls": [],
+    "line": 189,
+    "name": "irreversibleChanges"
+   },
+   {
+    "calls": [],
+    "line": 207,
+    "name": "specLinks"
+   },
+   {
+    "calls": [],
+    "line": 237,
+    "name": "promiseCounts"
+   },
+   {
+    "calls": [
+     "specLinks",
+     "promiseCounts",
+     "glyph",
+     "opClass",
+     "curve",
+     "box",
+     "fit"
+    ],
+    "line": 247,
+    "name": "changeMap"
+   },
+   {
+    "calls": [],
+    "line": 151,
+    "name": "icon"
+   },
+   {
+    "calls": [],
+    "line": 183,
+    "name": "glyph"
+   },
+   {
+    "calls": [],
+    "line": 184,
+    "name": "opClass"
+   },
+   {
+    "calls": [],
+    "line": 321,
+    "name": "fit"
+   },
+   {
+    "calls": [],
+    "line": 325,
+    "name": "curve"
+   },
+   {
+    "calls": [],
+    "line": 333,
+    "name": "box"
+   },
+   {
+    "calls": [
+     "changeMap",
+     "docTabs",
+     "glyph",
+     "opClass"
+    ],
+    "line": 399,
+    "name": "changeCols"
+   },
+   {
+    "calls": [
+     "icon"
+    ],
+    "line": 456,
+    "name": "criteriaByArea"
+   },
+   {
+    "calls": [],
+    "line": 511,
+    "name": "docTabs"
+   },
+   {
+    "calls": [
+     "icon"
+    ],
+    "line": 526,
+    "name": "docSection"
+   },
+   {
+    "calls": [],
+    "line": 536,
+    "name": "docList"
+   },
+   {
+    "calls": [],
+    "line": 548,
+    "name": "cutReviewScreen"
+   },
+   {
+    "calls": [],
+    "line": 644,
+    "name": "ruleOnCut"
+   },
+   {
+    "calls": [
+     "workedBlock",
+     "changeCols",
+     "criteriaByArea",
+     "irreversibleChanges",
+     "docTabs",
+     "docSection",
+     "icon"
+    ],
+    "line": 661,
+    "name": "specScreen"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the DOM",
+   "HTTP API"
+  ],
+  "purpose": "Renders the intake phase UI screens: reading progress, planning, spec review, cut review, and the handler to record ruling decisions on the build cut.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/cut-ruling"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "intakeRunningScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "intake running screen"
+   },
+   {
+    "handler": "planningScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "planning screen"
+   },
+   {
+    "handler": "cutReviewScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "cut review screen"
+   },
+   {
+    "handler": "specScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "spec screen"
+   },
+   {
+    "handler": "ruleOnCut",
+    "kind": "event",
+    "method": "",
+    "name": "cut ruling"
+   }
+  ]
+ }
+}

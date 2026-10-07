@@ -1,0 +1,90 @@
+{
+ "blob": "59066432885690b1fda81001615e4b14c374312e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "resolve_config",
+   "create_app",
+   "app"
+  ],
+  "domain_terms": [
+   "project",
+   "feature",
+   "gate",
+   "console"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 63,
+    "name": "resolve_config"
+   },
+   {
+    "calls": [],
+    "line": 77,
+    "name": "_log_to_stderr"
+   },
+   {
+    "calls": [
+     "_log_to_stderr",
+     "ProgressHub",
+     "ProjectRegistry",
+     "Previews",
+     "LLM",
+     "RouteMonitor",
+     "Context"
+    ],
+    "line": 94,
+    "name": "create_app"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/llm.py",
+   "factory/preview.py",
+   "factory/projects.py",
+   "factory/routes.py",
+   "factory/server/as_built.py",
+   "factory/server/features.py",
+   "factory/server/gate0.py",
+   "factory/server/lifecycle.py",
+   "factory/server/logs.py",
+   "factory/server/preview.py",
+   "factory/server/projects.py",
+   "factory/server/proposal.py",
+   "factory/server/readings.py",
+   "factory/server/review.py",
+   "factory/server/settings.py",
+   "factory/server/setup.py",
+   "factory/server/static.py",
+   "factory/server/summary.py",
+   "factory/server/traces.py",
+   "factory/server/version.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py",
+   "factory/server/guides_view.py",
+   "factory/server/hub.py",
+   "factory/server/lifespan.py",
+   "factory/server/readouts.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Creates the FastAPI application, sets up the shared context for all routes, and registers each route group in dependency order.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "create_app",
+    "kind": "export",
+    "method": "",
+    "name": "app"
+   }
+  ]
+ }
+}

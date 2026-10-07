@@ -1,0 +1,36 @@
+<p class="lead">Every agent names a route: where its call actually goes. A route is an account, which serves the
+  model and bills for it, and a harness, the program that carries the call.</p>
+
+<h4>Two kinds of route</h4>
+<ul>
+  <li><b>An API key</b> to any OpenAI-compatible provider, billed per token. Agents that write files can run in a
+    coding harness: the default route builds OpenHands into an image and runs it in the unit's sealed container.
+    See <a data-help="the-provider-key">The provider key</a>.</li>
+  <li><b>A subscription</b> to a coding assistant, through its command-line tool. It charges by the month, reports
+    turns rather than dollars, and limits use by windows of time. Each call runs in a sealed container of its
+    own.</li>
+</ul>
+<p>Routes are defined in <span class="mono">factory.yaml</span>; one switched off there isn't shown.</p>
+
+<h4>Accounts</h4>
+<p>One card per account: whether a key is stored or someone is signed in; for a plan, how much of each usage window
+  is used and when it resets, and any credit balance the tool reports; and the last time it refused a call.
+  <i>refusing calls</i> means the tool has turned calls away; <b>Ask now</b> tries again. The key's card has
+  <b>Change key</b>.</p>
+
+<h4>Harnesses</h4>
+<p>One card per program: installed or not, signed in or not, working or not, which agents use it, and the models
+  it offers. A command-line tool signs in through its own browser handshake, which can't happen here, so the card
+  gives you the exact line to run (<b>How to connect</b>) and <b>Check</b> looks again.</p>
+
+<h4>Plan meters</h4>
+<p>The bars move when you use the same plan yourself, not only when Fabrika does. Opening the crew page brings them
+  up to date, and a note under them says how old the reading is. Before a build starts, Fabrika asks whether the
+  plans it needs have room: see <a data-help="waiting-for-a-plan-window">Builds that wait for a plan window</a>.
+  A reading of the as-built pauses itself before a window fills.</p>
+
+<h4>Choosing a model</h4>
+<p>In an agent's sheet, every model option names its route, because one model on a subscription and on a key are
+  not the same thing. A route that lets its tool choose offers <i>its own default model</i>; what actually ran is
+  read back afterwards. When a route won't carry a call, see <a data-help="fallbacks-and-independence">Fallbacks and
+  the independence rule</a>.</p>

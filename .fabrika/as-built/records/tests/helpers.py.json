@@ -1,0 +1,1100 @@
+{
+ "blob": "5cd4aaef086d5547e9a751cb228fb54894c9bf41",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ROOT",
+   "PACKAGE",
+   "CODEX_RATE_LIMITS",
+   "SURVEYOR",
+   "strip_prose",
+   "code_without_prose",
+   "_global_harness",
+   "_worker",
+   "_repo_with_one_commit",
+   "_env_record",
+   "_headroom",
+   "_sched_cfg",
+   "_seed_gauge",
+   "_ledger_with",
+   "_codex_route",
+   "_stub_config",
+   "_response",
+   "_demo_project",
+   "bare_app",
+   "gate_two_factory",
+   "editable_config",
+   "_docker_config",
+   "provider_app",
+   "_repo_of",
+   "_survey_of_a_compose_project",
+   "_finding",
+   "_reported",
+   "_one_file_many_criteria",
+   "_RecordingRunner",
+   "_reading",
+   "_js_list",
+   "_js_object_keys",
+   "_record_kinds",
+   "_feature_record_kinds",
+   "_pipeline_roles",
+   "_project_roles",
+   "_prompt_files",
+   "_result",
+   "_SessionRunner",
+   "_rule",
+   "_service",
+   "_surface",
+   "_PlacementRunner",
+   "_placement",
+   "_gate",
+   "_tier",
+   "_tier_surface",
+   "_ReportingRunner",
+   "_reporting_state",
+   "_git_repo",
+   "_commit",
+   "_project_with_gates",
+   "_prose",
+   "_config_command_strings",
+   "_harness_repo",
+   "_css_rules",
+   "_long_pytest_output",
+   "_pl",
+   "_unit_output",
+   "_plan",
+   "_harness_for",
+   "_migration_repo",
+   "_driver",
+   "_tiny_repo",
+   "_branch",
+   "_checks_with_settings",
+   "GAUGE_LINE",
+   "FAKE_CLI",
+   "FAKE_JSONL_CLI",
+   "ENVELOPE",
+   "DF_HEADER",
+   "_FLAT",
+   "_DRAWN",
+   "_LEDGER",
+   "_PYPROJECT",
+   "_OWN_DOCKERFILE",
+   "_AB_FILES",
+   "_AB_RECORDS",
+   "_project_with_suggestions",
+   "_sarif",
+   "_StubLookup",
+   "_project_with_proposal",
+   "_project_with_parts",
+   "_spec12",
+   "_proved_placement",
+   "_approved_project",
+   "_authored",
+   "_blank_repo",
+   "_session_stream",
+   "_streamed_session_route",
+   "_cli_route",
+   "_routed",
+   "_jsonl_route",
+   "_route_cfg",
+   "_metered_route",
+   "_reopen",
+   "_container_route",
+   "_Prepared",
+   "_executor",
+   "_shipped_container_routes",
+   "_ProbeRunner",
+   "_probe",
+   "_promote",
+   "_probe_round",
+   "_ledger_of_agents",
+   "_trace_run",
+   "_jpeg_of",
+   "_recording_of",
+   "_turn",
+   "_work",
+   "_check",
+   "_resumed_sandbox",
+   "_helper_error",
+   "_in_container_route",
+   "_integration",
+   "_seam",
+   "_run_console_js",
+   "_carry_once",
+   "_dns_query",
+   "_polluted_sort",
+   "_leaky_run",
+   "onboarding_module",
+   "_levels_surface",
+   "_State",
+   "_LazyFetchRunner",
+   "_warm_project",
+   "_dockerfile_project",
+   "_ledger",
+   "_own_dockerfile_project",
+   "containers_module",
+   "_web_service",
+   "_previewable",
+   "_stand_in_docker",
+   "_ab_repo",
+   "_ab_commit",
+   "_AbStub",
+   "_ab_read",
+   "_floor_gate",
+   "_session",
+   "_diagnosed_project",
+   "_guide_repo",
+   "_git_status"
+  ],
+  "domain_terms": [
+   "feature",
+   "project",
+   "gate",
+   "finding",
+   "worker",
+   "acceptance criterion",
+   "environment",
+   "test suite",
+   "sandbox",
+   "diagnosed project",
+   "guide repository",
+   "git status",
+   "test fixtures"
+  ],
+  "entities_defined": [
+   "_RecordingRunner",
+   "_SessionRunner",
+   "_PlacementRunner",
+   "_ReportingRunner"
+  ],
+  "entities_read": [
+   "ProjectRegistry",
+   "Diagnosis",
+   "DiagnosisFix",
+   "GateReport",
+   "GateResult"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 35,
+    "name": "_global_harness"
+   },
+   {
+    "calls": [],
+    "line": 97,
+    "name": "strip_prose"
+   },
+   {
+    "calls": [
+     "strip_prose"
+    ],
+    "line": 110,
+    "name": "code_without_prose"
+   },
+   {
+    "calls": [],
+    "line": 125,
+    "name": "_worker"
+   },
+   {
+    "calls": [],
+    "line": 150,
+    "name": "_repo_with_one_commit"
+   },
+   {
+    "calls": [],
+    "line": 178,
+    "name": "_env_record"
+   },
+   {
+    "calls": [],
+    "line": 206,
+    "name": "_headroom"
+   },
+   {
+    "calls": [],
+    "line": 211,
+    "name": "_sched_cfg"
+   },
+   {
+    "calls": [],
+    "line": 223,
+    "name": "_seed_gauge"
+   },
+   {
+    "calls": [],
+    "line": 242,
+    "name": "_ledger_with"
+   },
+   {
+    "calls": [],
+    "line": 262,
+    "name": "_codex_route"
+   },
+   {
+    "calls": [],
+    "line": 276,
+    "name": "_stub_config"
+   },
+   {
+    "calls": [],
+    "line": 280,
+    "name": "_response"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ProjectRegistry"
+    ],
+    "line": 294,
+    "name": "_demo_project"
+   },
+   {
+    "calls": [
+     "_demo_project",
+     "create_app"
+    ],
+    "line": 322,
+    "name": "bare_app"
+   },
+   {
+    "calls": [
+     "_demo_project",
+     "LLM",
+     "Factory"
+    ],
+    "line": 334,
+    "name": "gate_two_factory"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 358,
+    "name": "editable_config"
+   },
+   {
+    "calls": [],
+    "line": 371,
+    "name": "_docker_config"
+   },
+   {
+    "calls": [
+     "load_config",
+     "create_app"
+    ],
+    "line": 382,
+    "name": "provider_app"
+   },
+   {
+    "calls": [],
+    "line": 400,
+    "name": "_repo_of"
+   },
+   {
+    "calls": [
+     "ProjectRegistry",
+     "ProjectOnboarding"
+    ],
+    "line": 409,
+    "name": "_survey_of_a_compose_project"
+   },
+   {
+    "calls": [],
+    "line": 454,
+    "name": "_finding"
+   },
+   {
+    "calls": [],
+    "line": 463,
+    "name": "_reported"
+   },
+   {
+    "calls": [
+     "compute_qa"
+    ],
+    "line": 483,
+    "name": "_one_file_many_criteria"
+   },
+   {
+    "calls": [],
+    "line": 508,
+    "name": "_RecordingRunner"
+   },
+   {
+    "calls": [],
+    "line": 526,
+    "name": "_reading"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 549,
+    "name": "_js_list"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 557,
+    "name": "_js_object_keys"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 566,
+    "name": "_record_kinds"
+   },
+   {
+    "calls": [
+     "_record_kinds"
+    ],
+    "line": 592,
+    "name": "_feature_record_kinds"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 596,
+    "name": "_pipeline_roles"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 604,
+    "name": "_project_roles"
+   },
+   {
+    "calls": [],
+    "line": 634,
+    "name": "_prompt_files"
+   },
+   {
+    "calls": [],
+    "line": 654,
+    "name": "_result"
+   },
+   {
+    "calls": [],
+    "line": 658,
+    "name": "_SessionRunner"
+   },
+   {
+    "calls": [],
+    "line": 707,
+    "name": "_rule"
+   },
+   {
+    "calls": [],
+    "line": 712,
+    "name": "_service"
+   },
+   {
+    "calls": [],
+    "line": 718,
+    "name": "_surface"
+   },
+   {
+    "calls": [],
+    "line": 731,
+    "name": "_PlacementRunner"
+   },
+   {
+    "calls": [],
+    "line": 763,
+    "name": "_placement"
+   },
+   {
+    "calls": [],
+    "line": 771,
+    "name": "_gate"
+   },
+   {
+    "calls": [],
+    "line": 776,
+    "name": "_tier"
+   },
+   {
+    "calls": [],
+    "line": 782,
+    "name": "_tier_surface"
+   },
+   {
+    "calls": [],
+    "line": 789,
+    "name": "_ReportingRunner"
+   },
+   {
+    "calls": [
+     "_rule",
+     "_placement"
+    ],
+    "line": 822,
+    "name": "_reporting_state"
+   },
+   {
+    "calls": [],
+    "line": 849,
+    "name": "_git_repo"
+   },
+   {
+    "calls": [],
+    "line": 862,
+    "name": "_commit"
+   },
+   {
+    "calls": [
+     "ProjectRegistry"
+    ],
+    "line": 882,
+    "name": "_project_with_gates"
+   },
+   {
+    "calls": [],
+    "line": 911,
+    "name": "_prose"
+   },
+   {
+    "calls": [
+     "is_command_key"
+    ],
+    "line": 920,
+    "name": "_config_command_strings"
+   },
+   {
+    "calls": [],
+    "line": 940,
+    "name": "_harness_repo"
+   },
+   {
+    "calls": [],
+    "line": 954,
+    "name": "_css_rules"
+   },
+   {
+    "calls": [],
+    "line": 987,
+    "name": "_long_pytest_output"
+   },
+   {
+    "calls": [],
+    "line": 1015,
+    "name": "_pl"
+   },
+   {
+    "calls": [],
+    "line": 1034,
+    "name": "_unit_output"
+   },
+   {
+    "calls": [],
+    "line": 1044,
+    "name": "_plan"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM"
+    ],
+    "line": 1063,
+    "name": "_harness_for"
+   },
+   {
+    "calls": [],
+    "line": 1075,
+    "name": "_migration_repo"
+   },
+   {
+    "calls": [],
+    "line": 1099,
+    "name": "_driver"
+   },
+   {
+    "calls": [],
+    "line": 1106,
+    "name": "_tiny_repo"
+   },
+   {
+    "calls": [
+     "Sandbox"
+    ],
+    "line": 1135,
+    "name": "_branch"
+   },
+   {
+    "calls": [],
+    "line": 1164,
+    "name": "_checks_with_settings"
+   },
+   {
+    "calls": [
+     "ProjectRegistry"
+    ],
+    "line": 1179,
+    "name": "_project_with_suggestions"
+   },
+   {
+    "calls": [],
+    "line": 1209,
+    "name": "_sarif"
+   },
+   {
+    "calls": [],
+    "line": 1217,
+    "name": "_StubLookup"
+   },
+   {
+    "calls": [],
+    "line": 1220,
+    "name": "_StubLookup.__init__"
+   },
+   {
+    "calls": [
+     "Facts"
+    ],
+    "line": 1224,
+    "name": "_StubLookup.facts"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "ProjectRegistry"
+    ],
+    "line": 1233,
+    "name": "_project_with_proposal"
+   },
+   {
+    "calls": [
+     "_project_with_proposal"
+    ],
+    "line": 1259,
+    "name": "_project_with_parts"
+   },
+   {
+    "calls": [],
+    "line": 1286,
+    "name": "_spec12"
+   },
+   {
+    "calls": [],
+    "line": 1303,
+    "name": "_proved_placement"
+   },
+   {
+    "calls": [
+     "_proved_placement",
+     "ProjectRegistry"
+    ],
+    "line": 1321,
+    "name": "_approved_project"
+   },
+   {
+    "calls": [],
+    "line": 1348,
+    "name": "_authored"
+   },
+   {
+    "calls": [],
+    "line": 1358,
+    "name": "_blank_repo"
+   },
+   {
+    "calls": [],
+    "line": 1393,
+    "name": "_session_stream"
+   },
+   {
+    "calls": [
+     "RouteConfig"
+    ],
+    "line": 1413,
+    "name": "_streamed_session_route"
+   },
+   {
+    "calls": [
+     "RouteConfig"
+    ],
+    "line": 1462,
+    "name": "_cli_route"
+   },
+   {
+    "calls": [
+     "LLM",
+     "Config",
+     "RoleConfig",
+     "_cli_route"
+    ],
+    "line": 1481,
+    "name": "_routed"
+   },
+   {
+    "calls": [
+     "RouteConfig"
+    ],
+    "line": 1515,
+    "name": "_jsonl_route"
+   },
+   {
+    "calls": [
+     "Config",
+     "RoleConfig",
+     "RouteConfig"
+    ],
+    "line": 1540,
+    "name": "_route_cfg"
+   },
+   {
+    "calls": [
+     "RouteConfig"
+    ],
+    "line": 1586,
+    "name": "_metered_route"
+   },
+   {
+    "calls": [
+     "pipeline.reopen_after_panel"
+    ],
+    "line": 1599,
+    "name": "_reopen"
+   },
+   {
+    "calls": [
+     "RouteConfig"
+    ],
+    "line": 1619,
+    "name": "_container_route"
+   },
+   {
+    "calls": [],
+    "line": 1632,
+    "name": "_Prepared"
+   },
+   {
+    "calls": [],
+    "line": 1633,
+    "name": "_Prepared.__init__"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor"
+    ],
+    "line": 1640,
+    "name": "_executor"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1647,
+    "name": "_shipped_container_routes"
+   },
+   {
+    "calls": [],
+    "line": 1660,
+    "name": "_ProbeRunner"
+   },
+   {
+    "calls": [],
+    "line": 1669,
+    "name": "_ProbeRunner.__init__"
+   },
+   {
+    "calls": [
+     "gates.Execution"
+    ],
+    "line": 1674,
+    "name": "_ProbeRunner.execute"
+   },
+   {
+    "calls": [
+     "BreakerTest"
+    ],
+    "line": 1684,
+    "name": "_probe"
+   },
+   {
+    "calls": [
+     "load_config",
+     "_ProbeRunner",
+     "pipeline.Factory._promote_probes",
+     "_rule"
+    ],
+    "line": 1690,
+    "name": "_promote"
+   },
+   {
+    "calls": [
+     "BreakerReport",
+     "BreakerSuite",
+     "pipeline.probe_finding_id",
+     "pipeline.breaker_findings"
+    ],
+    "line": 1702,
+    "name": "_probe_round"
+   },
+   {
+    "calls": [
+     "Finding",
+     "pipeline.FindingLedger"
+    ],
+    "line": 1717,
+    "name": "_ledger_of_agents"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1727,
+    "name": "_trace_run"
+   },
+   {
+    "calls": [],
+    "line": 1771,
+    "name": "_jpeg_of"
+   },
+   {
+    "calls": [
+     "_jpeg_of"
+    ],
+    "line": 1786,
+    "name": "_recording_of"
+   },
+   {
+    "calls": [],
+    "line": 1817,
+    "name": "_turn"
+   },
+   {
+    "calls": [],
+    "line": 1823,
+    "name": "_work"
+   },
+   {
+    "calls": [],
+    "line": 1828,
+    "name": "_check"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "Sandbox"
+    ],
+    "line": 1832,
+    "name": "_resumed_sandbox"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 1847,
+    "name": "_helper_error"
+   },
+   {
+    "calls": [
+     "RouteConfig"
+    ],
+    "line": 1853,
+    "name": "_in_container_route"
+   },
+   {
+    "calls": [
+     "IntegrationReport"
+    ],
+    "line": 1859,
+    "name": "_integration"
+   },
+   {
+    "calls": [
+     "FileWrite"
+    ],
+    "line": 1868,
+    "name": "_seam"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 1874,
+    "name": "_run_console_js"
+   },
+   {
+    "calls": [],
+    "line": 1918,
+    "name": "_carry_once"
+   },
+   {
+    "calls": [],
+    "line": 1936,
+    "name": "_dns_query"
+   },
+   {
+    "calls": [
+     "gates.Execution",
+     "Factory._sort_failures"
+    ],
+    "line": 1942,
+    "name": "_polluted_sort"
+   },
+   {
+    "calls": [
+     "TestFileCommand",
+     "gates.Execution",
+     "gates.run_per_file"
+    ],
+    "line": 1980,
+    "name": "_leaky_run"
+   },
+   {
+    "calls": [],
+    "line": 2009,
+    "name": "onboarding_module"
+   },
+   {
+    "calls": [
+     "TestingSurface",
+     "TestingTier"
+    ],
+    "line": 2019,
+    "name": "_levels_surface"
+   },
+   {
+    "calls": [],
+    "line": 2033,
+    "name": "_State"
+   },
+   {
+    "calls": [],
+    "line": 2034,
+    "name": "_State.__init__"
+   },
+   {
+    "calls": [],
+    "line": 2041,
+    "name": "_LazyFetchRunner"
+   },
+   {
+    "calls": [],
+    "line": 2048,
+    "name": "_LazyFetchRunner.__init__"
+   },
+   {
+    "calls": [],
+    "line": 2056,
+    "name": "_LazyFetchRunner.open_session"
+   },
+   {
+    "calls": [],
+    "line": 2059,
+    "name": "_LazyFetchRunner.close_session"
+   },
+   {
+    "calls": [],
+    "line": 2062,
+    "name": "_LazyFetchRunner.discard_session"
+   },
+   {
+    "calls": [],
+    "line": 2065,
+    "name": "_LazyFetchRunner.reset_stack"
+   },
+   {
+    "calls": [
+     "gates.Execution"
+    ],
+    "line": 2069,
+    "name": "_LazyFetchRunner.execute"
+   },
+   {
+    "calls": [
+     "Config",
+     "PathsConfig",
+     "RoleConfig",
+     "ProjectRegistry",
+     "ProjectOnboarding"
+    ],
+    "line": 2087,
+    "name": "_warm_project"
+   },
+   {
+    "calls": [
+     "_git_repo",
+     "ProjectRegistry"
+    ],
+    "line": 2117,
+    "name": "_dockerfile_project"
+   },
+   {
+    "calls": [],
+    "line": 2138,
+    "name": "_ledger"
+   },
+   {
+    "calls": [
+     "_dockerfile_project"
+    ],
+    "line": 2156,
+    "name": "_own_dockerfile_project"
+   },
+   {
+    "calls": [],
+    "line": 2174,
+    "name": "containers_module"
+   },
+   {
+    "calls": [],
+    "line": 2189,
+    "name": "_web_service"
+   },
+   {
+    "calls": [
+     "_demo_project",
+     "ProjectRegistry",
+     "_web_service"
+    ],
+    "line": 2201,
+    "name": "_previewable"
+   },
+   {
+    "calls": [],
+    "line": 2213,
+    "name": "_stand_in_docker"
+   },
+   {
+    "calls": [],
+    "line": 2252,
+    "name": "_ab_repo"
+   },
+   {
+    "calls": [],
+    "line": 2263,
+    "name": "_ab_commit"
+   },
+   {
+    "calls": [],
+    "line": 2300,
+    "name": "_AbStub"
+   },
+   {
+    "calls": [],
+    "line": 2303,
+    "name": "_AbStub.__init__"
+   },
+   {
+    "calls": [
+     "RateLimited",
+     "FileRecord",
+     "FileRecordBatch",
+     "BatchedFileRecord"
+    ],
+    "line": 2309,
+    "name": "_AbStub.ask"
+   },
+   {
+    "calls": [
+     "load_config",
+     "asbuilt.AsBuiltReader"
+    ],
+    "line": 2348,
+    "name": "_ab_read"
+   },
+   {
+    "calls": [
+     "Gate"
+    ],
+    "line": 2359,
+    "name": "_floor_gate"
+   },
+   {
+    "calls": [],
+    "line": 2366,
+    "name": "_session"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "_floor_gate"
+    ],
+    "line": 2376,
+    "name": "_diagnosed_project"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit"
+    ],
+    "line": 2405,
+    "name": "_guide_repo"
+   },
+   {
+    "calls": [],
+    "line": 2426,
+    "name": "_git_status"
+   }
+  ],
+  "imports": [
+   "factory/executors.py",
+   "factory/gates.py",
+   "factory/llm.py",
+   "factory/onboarding.py",
+   "factory/pipeline/__init__.py",
+   "factory/schemas.py",
+   "factory/server/__init__.py",
+   "factory/store.py",
+   "factory/unitenv.py",
+   "factory/workspace.py",
+   "factory/projects.py",
+   "factory/config.py",
+   "factory/agentbox.py",
+   "factory/routes.py",
+   "tests/support.py",
+   "factory/asbuilt.py",
+   "factory/asbuilt_graph.py",
+   "factory/asbuilt_pages.py",
+   "factory/dependencies.py",
+   "factory/sandbox.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "git",
+   "subprocess",
+   "node"
+  ],
+  "purpose": "Shared test fixtures, builders, and helper functions for the test suite \u2014 provides builders for test data (projects, features, gates, findings), mock runners, and utility functions for introspecting the codebase.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "bare_app",
+    "kind": "export",
+    "method": "",
+    "name": "bare_app"
+   },
+   {
+    "handler": "gate_two_factory",
+    "kind": "export",
+    "method": "",
+    "name": "gate_two_factory"
+   },
+   {
+    "handler": "editable_config",
+    "kind": "export",
+    "method": "",
+    "name": "editable_config"
+   },
+   {
+    "handler": "provider_app",
+    "kind": "export",
+    "method": "",
+    "name": "provider_app"
+   }
+  ]
+ }
+}

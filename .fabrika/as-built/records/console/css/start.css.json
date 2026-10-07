@@ -1,0 +1,41 @@
+{
+ "blob": "12827363386ec273064b46e3af7ad898ef776a6d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "compose",
+   "field",
+   "ghost",
+   "hint",
+   "drift",
+   "feat-row",
+   "run-band",
+   "rb-row",
+   "fg",
+   "fg-head",
+   "pf-discard",
+   "running-strip",
+   "spin"
+  ],
+  "domain_terms": [
+   "feature",
+   "run band",
+   "packet",
+   "findings",
+   "discard",
+   "composition"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the feature start screen (the one place for writing rather than ruling), run band showing analysis metrics, packet sections for findings grouped by outcome, and the discard control.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

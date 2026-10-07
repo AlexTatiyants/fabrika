@@ -1,0 +1,28 @@
+<p class="lead">Most builds never stop here. Plan review happens only when the plan checker disputes how the
+  architect cut the work, or code measures a problem with the cut. You rule, and your ruling starts the
+  build.</p>
+
+<h4>Why there's a cut</h4>
+<p>The architect cuts the approved spec into units that workers build side by side. Before any worker starts, the
+  plan checker takes each builder's seat and objects wherever one of them would have to guess. The architect
+  answers. Whatever they still disagree about comes to you, and the feature shows <i>awaiting plan
+  review</i>.</p>
+
+<h4>What you see</h4>
+<ul>
+  <li><b>Where they disagree</b>: each objection, with the architect's answer beside the plan checker's.</li>
+  <li><b>What code measured</b>: facts about the cut, not opinions. You can still keep the cut; the problem goes
+    into the packet as a risk you accepted.</li>
+  <li>The cut itself, folded: its units, the criteria each one covers, and the seams between them.</li>
+</ul>
+
+<h4>Your ruling</h4>
+<ul>
+  <li><b>Agree with architect</b>: build the cut as it stands. What the checker objected to goes into the packet as
+    a risk you accepted.</li>
+  <li><b>Agree with checker</b>, or <b>Re-cut to fix it</b> when only code objected: the architect re-cuts once. If
+    code still measures a problem, you're asked again.</li>
+  <li><b>Propose alternative</b>: write how you would cut it, and the architect re-cuts that way.</li>
+</ul>
+<p>No worker runs until you rule. After that the build carries on without you. See
+  <a data-help="watching-the-build">Watching the build</a>.</p>

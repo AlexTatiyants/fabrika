@@ -1,0 +1,390 @@
+{
+ "blob": "18ef6e281978d7ed603fe85b6817f91b84247293",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "BASELINE_ID",
+   "ProgressCallback",
+   "TIER_PROSE",
+   "DOCKER_MISSING",
+   "tier_shape",
+   "_propose_reports",
+   "_unasked_cleanup",
+   "_declined_suggestions",
+   "_check_settings",
+   "_current_suggestions",
+   "_declined_checks",
+   "_capability_requests",
+   "_same_gate",
+   "strip_unchanged",
+   "own_image_files",
+   "reading_cost",
+   "ProjectOnboarding",
+   "_warm_candidates",
+   "_merge_warmed",
+   "run_resurvey",
+   "approve",
+   "accept"
+  ],
+  "domain_terms": [
+   "baseline \u2014 initial gate run on untouched code",
+   "gates (checks) \u2014 quality checks declared and run",
+   "environment \u2014 container setup to run the checks",
+   "project \u2014 repository being registered",
+   "survey \u2014 LLM analysis proposing gates and environment",
+   "feature \u2014 code changes building against the approved baseline",
+   "gate",
+   "diagnosis",
+   "baseline",
+   "warm-up",
+   "resurvey",
+   "tooling drift"
+  ],
+  "entities_defined": [
+   "ProjectOnboarding",
+   "ProgressCallback"
+  ],
+  "entities_read": [
+   "Project",
+   "Config",
+   "ProjectRegistry",
+   "GateReport",
+   "Gate",
+   "CapabilityRequest"
+  ],
+  "entities_written": [
+   "Project",
+   "project.store"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 69,
+    "name": "_now"
+   },
+   {
+    "calls": [],
+    "line": 80,
+    "name": "tier_shape"
+   },
+   {
+    "calls": [],
+    "line": 106,
+    "name": "_propose_reports"
+   },
+   {
+    "calls": [],
+    "line": 135,
+    "name": "_unasked_cleanup"
+   },
+   {
+    "calls": [],
+    "line": 159,
+    "name": "_declined_suggestions"
+   },
+   {
+    "calls": [
+     "check_settings",
+     "settings_section",
+     "safe_join"
+    ],
+    "line": 184,
+    "name": "_check_settings"
+   },
+   {
+    "calls": [
+     "live_recommendations"
+    ],
+    "line": 230,
+    "name": "_current_suggestions"
+   },
+   {
+    "calls": [],
+    "line": 245,
+    "name": "_declined_checks"
+   },
+   {
+    "calls": [
+     "unmet_capabilities"
+    ],
+    "line": 277,
+    "name": "_capability_requests"
+   },
+   {
+    "calls": [],
+    "line": 316,
+    "name": "_same_gate"
+   },
+   {
+    "calls": [
+     "cleanup_option_problems"
+    ],
+    "line": 331,
+    "name": "strip_unchanged"
+   },
+   {
+    "calls": [
+     "tooling_paths",
+     "read_paths"
+    ],
+    "line": 446,
+    "name": "own_image_files"
+   },
+   {
+    "calls": [],
+    "line": 470,
+    "name": "reading_cost"
+   },
+   {
+    "calls": [
+     "LLM",
+     "Lookup"
+    ],
+    "line": 490,
+    "name": "ProjectOnboarding.__init__"
+   },
+   {
+    "calls": [],
+    "line": 507,
+    "name": "ProjectOnboarding._emit"
+   },
+   {
+    "calls": [
+     "repo_digest",
+     "ask",
+     "record_survey",
+     "record_baseline",
+     "_emit",
+     "_awaiting_scaffold",
+     "save",
+     "_baseline",
+     "_set_aside_what_needs_docker",
+     "refresh_inventory",
+     "record_failure"
+    ],
+    "line": 520,
+    "name": "ProjectOnboarding.run_survey"
+   },
+   {
+    "calls": [],
+    "line": 576,
+    "name": "ProjectOnboarding._awaiting_scaffold"
+   },
+   {
+    "calls": [
+     "environment_problems",
+     "record_failure",
+     "approved_fingerprint",
+     "live_feature_ids",
+     "_baseline",
+     "_set_aside_what_needs_docker",
+     "record_baseline",
+     "refresh_inventory",
+     "raise_guide_checks",
+     "approval_fingerprint",
+     "save",
+     "_emit"
+    ],
+    "line": 587,
+    "name": "ProjectOnboarding.run_baseline"
+   },
+   {
+    "calls": [
+     "_tracked_like",
+     "decline_gate",
+     "raise_recommendation"
+    ],
+    "line": 662,
+    "name": "ProjectOnboarding._set_aside_what_needs_docker"
+   },
+   {
+    "calls": [
+     "launched_scripts"
+    ],
+    "line": 704,
+    "name": "ProjectOnboarding._tracked_like"
+   },
+   {
+    "calls": [
+     "run_gate",
+     "parse_package_lines",
+     "installable_names"
+    ],
+    "line": 710,
+    "name": "ProjectOnboarding._probe_packages"
+   },
+   {
+    "calls": [
+     "probe_placement"
+    ],
+    "line": 733,
+    "name": "ProjectOnboarding._probe_placements"
+   },
+   {
+    "calls": [
+     "tracked_changes",
+     "restore_tracked",
+     "run_gate"
+    ],
+    "line": 751,
+    "name": "ProjectOnboarding._find_fixers"
+   },
+   {
+    "calls": [
+     "environment_problems",
+     "low_disk",
+     "runner_for",
+     "create",
+     "run_setup",
+     "_probe_packages",
+     "_probe_versions",
+     "probe_empty_selection",
+     "test_session",
+     "_find_fixers",
+     "_probe_placements",
+     "probe_testing",
+     "measure_preview",
+     "reader",
+     "classify",
+     "_diagnose"
+    ],
+    "line": 786,
+    "name": "ProjectOnboarding._baseline"
+   },
+   {
+    "calls": [
+     "guides",
+     "select",
+     "render"
+    ],
+    "line": 984,
+    "name": "ProjectOnboarding._guide_text"
+   },
+   {
+    "calls": [
+     "feature_ids",
+     "feature_store",
+     "ScoutReport",
+     "tracked",
+     "read_at",
+     "ask",
+     "role_prompt",
+     "append",
+     "DraftRule",
+     "GuideDraft",
+     "GuideDraftAnswer"
+    ],
+    "line": 1000,
+    "name": "ProjectOnboarding._offer_guide_draft"
+   },
+   {
+    "calls": [
+     "execute"
+    ],
+    "line": 1067,
+    "name": "ProjectOnboarding._probe_versions"
+   },
+   {
+    "calls": [],
+    "line": 1121,
+    "name": "_warm_candidates"
+   },
+   {
+    "calls": [],
+    "line": 1129,
+    "name": "_merge_warmed"
+   },
+   {
+    "calls": [
+     "tooling_drift",
+     "ask",
+     "search",
+     "unmet_capabilities",
+     "strip_unchanged",
+     "record_reading",
+     "raise_guide_checks",
+     "_offer_guide_draft",
+     "reading_cost",
+     "_emit",
+     "read_paths",
+     "testing_paths",
+     "_unasked_cleanup",
+     "_check_settings",
+     "_guide_text",
+     "_declined_checks",
+     "_declined_suggestions",
+     "_current_suggestions",
+     "_capability_requests",
+     "own_image_files",
+     "_propose_reports"
+    ],
+    "line": 1157,
+    "name": "run_resurvey"
+   },
+   {
+    "calls": [
+     "approve",
+     "_emit"
+    ],
+    "line": 1335,
+    "name": "approve"
+   },
+   {
+    "calls": [
+     "approve",
+     "move_dockerfile_on_acceptance"
+    ],
+    "line": 1342,
+    "name": "accept"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/containers.py",
+   "factory/dependencies.py",
+   "factory/diagnosis.py",
+   "factory/reporting.py",
+   "factory/gates.py",
+   "factory/workspace.py",
+   "factory/llm.py",
+   "factory/projects.py",
+   "factory/preview.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/guides.py",
+   "factory/pipeline/__init__.py",
+   "factory/pipeline/repairs.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "an LLM provider",
+   "the repository filesystem",
+   "LLM"
+  ],
+  "purpose": "Gate 0 project onboarding: reads repositories using an LLM, proposes quality gates and environments, builds and proves the environment by running baseline checks on an untouched checkout, and records results for human approval.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "ProjectOnboarding",
+    "kind": "export",
+    "method": "",
+    "name": "ProjectOnboarding"
+   },
+   {
+    "handler": "run_survey",
+    "kind": "export",
+    "method": "",
+    "name": "ProjectOnboarding.run_survey"
+   },
+   {
+    "handler": "run_baseline",
+    "kind": "export",
+    "method": "",
+    "name": "ProjectOnboarding.run_baseline"
+   }
+  ]
+ }
+}

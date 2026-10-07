@@ -1,0 +1,199 @@
+/* Agent configuration: the sides, the levels, the board of who sits where,
+   and what a write would change. Every colour is a token, so the night scheme
+   needs nothing of its own here. */
+
+.ac-crumb {
+  display: inline-block; margin: 1.5rem 0 .6rem;
+  font-family: var(--mono); font-size: .75rem; color: var(--ink-3); text-decoration: none;
+}
+.ac-crumb:hover { color: var(--ink); }
+.ac-grow { flex: 1; }
+.ac-sl {
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+
+/* -- the way in, on the crew page */
+.ac-entry {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: .8rem 1rem; background: var(--surface);
+  border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 2px;
+}
+.ac-entry > div { flex: 1; min-width: 240px; display: flex; gap: .7rem; align-items: baseline; flex-wrap: wrap; }
+.ac-entry b { font-family: var(--display); font-size: 1rem; font-weight: 600; }
+.ac-entry span { color: var(--ink-3); font-size: .875rem; }
+.rr-level {
+  font-size: .625rem; color: var(--ink-3); border: 1px solid var(--line);
+  border-radius: 999px; padding: 0 .4rem;
+}
+
+/* -- 1. sides */
+.ac-sides { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9rem; }
+.ac-side {
+  background: var(--surface); border: 1px solid var(--line);
+  border-top: 3px solid var(--line-strong); border-radius: 2px; padding: .85rem 1rem;
+}
+.ac-side.build { border-top-color: var(--team-build); }
+.ac-side.check { border-top-color: var(--team-check); }
+.ac-side h3 {
+  margin: 0; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap;
+  font-family: var(--display); font-size: 1.05rem; font-weight: 600;
+}
+.ac-who { margin: .2rem 0 .75rem; color: var(--ink-3); font-size: .8125rem; min-height: 2.6em; }
+.ac-provs { display: flex; flex-direction: column; gap: .35rem; }
+.ac-prov {
+  display: flex; align-items: center; gap: .6rem; width: 100%; text-align: left;
+  padding: .45rem .6rem; background: var(--surface-lift); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 2px; cursor: pointer; font: inherit;
+}
+.ac-prov:hover:not(:disabled) { border-color: var(--line-strong); }
+.ac-prov:disabled { cursor: not-allowed; opacity: .55; }
+.ac-prov[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.ac-side.build .ac-prov[aria-pressed="true"] { border-color: var(--team-build); box-shadow: inset 0 0 0 1px var(--team-build); }
+.ac-side.check .ac-prov[aria-pressed="true"] { border-color: var(--team-check); box-shadow: inset 0 0 0 1px var(--team-check); }
+.ac-radio { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--line-strong); flex: none; }
+.ac-prov[aria-pressed="true"] .ac-radio { border: 4px solid var(--ink); }
+.ac-side.build .ac-prov[aria-pressed="true"] .ac-radio { border-color: var(--team-build); }
+.ac-side.check .ac-prov[aria-pressed="true"] .ac-radio { border-color: var(--team-check); }
+.ac-pn { font-family: var(--display); font-weight: 600; font-size: .9375rem; display: block; }
+.ac-pv { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); display: block; }
+.ac-pstate { margin-left: auto; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+
+.ac-checks {
+  list-style: none; margin: .9rem 0 0; padding: .6rem .9rem; display: flex; flex-direction: column; gap: .35rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 2px; font-size: .875rem;
+}
+.ac-checks li { display: flex; gap: .6rem; align-items: baseline; }
+/* A small mark rather than the board's lamp: these are facts about a draft,
+   not the state of the line. */
+.ac-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--line-strong); transform: translateY(-1px); }
+.ac-dot.lit { background: var(--green); }
+.ac-dot.warn { background: var(--accent); }
+.ac-dot.bad { background: var(--red); }
+
+/* -- 2. levels */
+.ac-scroll { overflow-x: auto; }
+.ac-levels { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); }
+.ac-levels th, .ac-levels td { padding: .55rem .75rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.ac-levels thead th { background: var(--surface-sunk); font-family: var(--display); font-size: .9375rem; font-weight: 600; }
+.ac-levels tbody th { width: 190px; font-weight: 400; }
+.ac-ln { font-family: var(--display); font-size: 1rem; font-weight: 600; display: block; }
+.ac-ld { font-size: .75rem; color: var(--ink-3); display: block; }
+.ac-tag { font-family: var(--mono); font-size: .625rem; margin-left: .35rem; border: 1px solid currentColor; border-radius: 999px; padding: 0 .35rem; }
+.ac-tag.build { color: var(--team-build); }
+.ac-tag.check { color: var(--team-check); }
+.ac-lv { display: flex; gap: .35rem; align-items: center; flex-wrap: wrap; }
+.ac-lv select, .ac-selbar select {
+  font-family: var(--mono); font-size: .75rem; padding: .2rem .35rem; max-width: 100%;
+  background: var(--surface-lift); color: var(--ink); border: 1px solid var(--line-strong); border-radius: 2px;
+}
+.ac-reset { border: 0; background: none; padding: 0; cursor: pointer; font-family: var(--mono); font-size: .6875rem; color: var(--accent-ink); text-decoration: underline; }
+.ac-count { display: block; margin-top: .25rem; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+.ac-unused { opacity: .55; }
+
+/* -- 3. the board */
+.ac-toolbar { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin-bottom: .6rem; }
+.ac-seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 2px; overflow: hidden; }
+.ac-seg button {
+  border: 0; border-left: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  padding: .3rem .65rem; cursor: pointer; font-family: var(--display); font-size: .75rem; font-weight: 600; letter-spacing: .05em;
+}
+.ac-seg button:first-child { border-left: 0; }
+.ac-seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.ac-seg button:disabled { cursor: not-allowed; opacity: .45; }
+
+.ac-board {
+  display: grid; grid-template-columns: 150px repeat(3, minmax(0, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line-strong);
+}
+.ac-corner, .ac-colh, .ac-rowh { background: var(--surface-sunk); }
+.ac-colh { padding: .55rem .75rem; border-top: 3px solid var(--line-strong); }
+.ac-colh.build { border-top-color: var(--team-build); }
+.ac-colh.check { border-top-color: var(--team-check); }
+.ac-ct { display: block; font-family: var(--display); font-size: 1rem; font-weight: 600; }
+.ac-cs { display: block; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+.ac-rowh { padding: .7rem .75rem; }
+.ac-cell { background: var(--surface); padding: .5rem .6rem .75rem; min-height: 112px; }
+.ac-cell.over { background: var(--accent-wash); }
+.ac-cell.nope { background: var(--red-wash); }
+.ac-res {
+  font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+  padding: 0 0 .35rem .5rem; margin-bottom: .45rem; border-bottom: 1px dashed var(--line);
+  border-left: 3px solid var(--line-strong);
+}
+.ac-res.build { border-left-color: var(--team-build); }
+.ac-res.check { border-left-color: var(--team-check); }
+.ac-res b { color: var(--ink); font-weight: 500; }
+.ac-chips { display: flex; flex-wrap: wrap; gap: .35rem; align-items: flex-start; }
+.ac-chip {
+  display: inline-flex; flex-direction: column; align-items: flex-start;
+  padding: .2rem .5rem .2rem .45rem; cursor: grab; user-select: none;
+  font-family: var(--mono); font-size: .75rem; color: var(--ink);
+  background: var(--surface-lift); border: 1px solid var(--line-strong); border-left-width: 3px; border-radius: 2px;
+}
+.ac-chip.build { border-left-color: var(--team-build); }
+.ac-chip.check { border-left-color: var(--team-check); }
+.ac-chip.neither { border-left-style: dashed; }
+.ac-chip.off { opacity: .55; }
+.ac-chip:hover { border-color: var(--ink-3); }
+.ac-chip.build:hover { border-left-color: var(--team-build); }
+.ac-chip.check:hover { border-left-color: var(--team-check); }
+.ac-chip.sel { outline: 2px solid var(--accent); outline-offset: 1px; background: var(--accent-wash); }
+.ac-pin { font-size: .625rem; color: var(--accent-ink); }
+/* Runs differently once written. The selection is an outline, so this is a
+   fill and a dashed edge: the two can be true of one chip at once. */
+.ac-chip.changed { background: var(--accent-wash); border-top-style: dashed; border-right-style: dashed; border-bottom-style: dashed;
+  border-top-color: var(--accent); border-right-color: var(--accent); border-bottom-color: var(--accent); }
+.ac-was { font-family: var(--mono); font-size: .625rem; color: var(--accent-ink); }
+.ac-res .ac-was { display: block; }
+.ac-res.changed { background: var(--accent-wash); }
+.ac-levels td.ac-changed { background: var(--accent-wash); }
+.ac-k-changed { background: var(--accent-wash); border: 1px dashed var(--accent); }
+.ac-note { text-transform: none; letter-spacing: .02em; }
+.ac-moved { font-size: .625rem; color: var(--ink-3); }
+.ac-empty { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); font-style: italic; }
+.ac-key { margin-top: .5rem; }
+.ac-key .k-agent { border-style: dashed; }
+
+/* The selection's controls ride the bottom of the window while there is one,
+   because the board is taller than a screen and the agents picked are often
+   at its top. */
+.ac-selbar {
+  position: sticky; bottom: .75rem; z-index: 5; margin-top: .75rem;
+  display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; padding: .6rem .85rem;
+  background: var(--panel); color: var(--board-ink); border-radius: 2px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .25);
+}
+.ac-selbar .ac-sl { color: var(--board-ink-3); }
+.ac-count-sel { font-family: var(--display); font-weight: 600; }
+.ac-selbar .ac-seg { border-color: var(--board-rule); }
+.ac-selbar .ac-seg button { background: var(--panel-2); color: var(--board-ink); border-left-color: var(--board-rule); }
+.ac-selbar .ac-seg button:hover:not(:disabled) { background: var(--panel-3); }
+.ac-selbar .btn { background: transparent; color: var(--board-ink); border-color: var(--board-rule); }
+.ac-selbar select { background: var(--panel-2); color: var(--board-ink); border-color: var(--board-rule); }
+
+/* -- 4. what changes */
+.ac-changes { background: var(--surface); border: 1px solid var(--line); border-radius: 2px; }
+.ac-changes-head {
+  display: flex; gap: .7rem; align-items: center; flex-wrap: wrap;
+  padding: .7rem .9rem; border-bottom: 1px solid var(--line);
+}
+.ac-diff { list-style: none; margin: 0; padding: .35rem 0; max-height: 300px; overflow: auto; }
+.ac-diff li { display: grid; grid-template-columns: 130px 1fr; gap: .6rem; padding: .2rem .9rem; font-family: var(--mono); font-size: .75rem; }
+.ac-from { color: var(--ink-3); text-decoration: line-through; }
+.ac-arrow { color: var(--ink-3); margin: 0 .35rem; }
+.ac-why { color: var(--ink-3); margin-left: .5rem; font-size: .6875rem; }
+.ac-foot { margin: 0; padding: .6rem .9rem; }
+
+@media (max-width: 860px) {
+  .ac-sides { grid-template-columns: 1fr; }
+  .ac-board { grid-template-columns: 1fr; }
+  .ac-corner, .ac-colh { display: none; }
+  .ac-rowh { border-top: 2px solid var(--line-strong); }
+  .ac-cell::before {
+    content: attr(data-label); display: block; margin-bottom: .3rem;
+    font-family: var(--mono); font-size: .625rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .ac-levels tbody th { width: auto; }
+  .ac-diff li { grid-template-columns: 1fr; gap: 0; }
+}

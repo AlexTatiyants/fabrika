@@ -1,0 +1,38 @@
+<p class="lead">A project is a repository, the checks that say whether it's healthy, and the environment those
+  checks run in. You add one from the yard, and nothing is built in it until you accept its checks.</p>
+
+<h4>Adding it</h4>
+<p>On the yard, type the <b>Repository path</b> of a git repository on this machine, a name if you want one, and
+  press <b>Survey it</b>. Nothing in your repository is modified: the surveyor reads it, and the checks run on an
+  untouched checkout.</p>
+<div class="hp-flow">
+  <div class="hp-step"><b>Survey</b>a model reads how the project builds, checks and tests itself</div><span class="hp-arrow">→</span>
+  <div class="hp-step"><b>Checks run</b>every one, on untouched code, in the proposed environment</div><span class="hp-arrow">→</span>
+  <div class="hp-step you"><b>Accept checks</b>repo ready: you approve the list</div>
+</div>
+
+<h4>What accepting needs</h4>
+<p>What you approve is that the checks work, not that the code is clean. <b>Accept checks</b> stays disabled,
+  and the Checks tab says why, until:</p>
+<ul>
+  <li>every check on the list has run since the list last changed;</li>
+  <li>none of them failed to run at all, such as a tool missing from the environment;</li>
+  <li>at least one passes, so something judges each feature;</li>
+  <li>Fabrika has proved a place in the repository where a blind test, written by an agent that never saw the
+    code, can live and run.</li>
+</ul>
+<p>A check that runs and fails doesn't block: fix it, hold it at today's number, or decline it with a reason. See
+  <a data-help="checks">Checks</a>. If the checks run on a Dockerfile the survey wrote, accepting also commits it to
+  your repository as <span class="mono">.fabrika/Dockerfile</span>.</p>
+
+<h4>On the yard</h4>
+<p>Each project's lamp is lit by its checks: green when they pass on an untouched checkout, amber when they ran and
+  not all were green, red when they could not run, dark when they haven't been measured. The pill beside it says
+  whether you're needed, such as <i>awaiting you</i>.</p>
+
+<h4>When the survey fails</h4>
+<p>If the reading failed, <b>Survey from scratch</b>. If the reading survived and only the checks after it failed,
+  fix the environment and <b>Try the checks again</b>: surveying again would pay a model to say the same thing.</p>
+
+<p>Once the checks are accepted, the project's main button is <b>Start a feature</b>. See
+  <a data-help="writing-the-intent">Starting a feature</a> and <a data-help="your-project">The project page</a>.</p>

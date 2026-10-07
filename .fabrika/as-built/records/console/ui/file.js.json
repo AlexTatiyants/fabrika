@@ -1,0 +1,96 @@
+{
+ "blob": "f2dfa33da9b1670931d19fbebc0225403f91bee2",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "FileView"
+  ],
+  "domain_terms": [
+   "file",
+   "diff",
+   "criterion",
+   "finding",
+   "decision",
+   "materiality",
+   "worker",
+   "disclosure"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "split"
+    ],
+    "line": 24,
+    "name": "firstChangedLine"
+   },
+   {
+    "calls": [
+     "split",
+     "match"
+    ],
+    "line": 36,
+    "name": "Diff"
+   },
+   {
+    "calls": [],
+    "line": 69,
+    "name": "Card"
+   },
+   {
+    "calls": [
+     "useState",
+     "useEffect",
+     "useMemo",
+     "packetOf",
+     "request",
+     "base",
+     "findingsWithRecords",
+     "isRestatement",
+     "outcomeOf",
+     "Card",
+     "Diff",
+     "Composer",
+     "FlagsHere",
+     "Pill",
+     "fileIc",
+     "critIc",
+     "Row",
+     "filter",
+     "find",
+     "map",
+     "includes",
+     "indexOf",
+     "replace"
+    ],
+    "line": 83,
+    "name": "FileView"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js",
+   "console/ui/marks.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Screen for reviewing a single changed file with its diff, criteria it implements, findings against it, decisions made in it, and worker disclosure.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "{base}/diff?path={path}"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "FileView",
+    "kind": "screen",
+    "method": "",
+    "name": "/file/{path}"
+   }
+  ]
+ }
+}

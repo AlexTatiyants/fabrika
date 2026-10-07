@@ -1,0 +1,38 @@
+<p class="lead">Every check and every agent runs in a container built for your project, sealed off
+  from this machine and from every other feature.</p>
+
+<h4>What it is</h4>
+<p>One of four kinds: your own Docker Compose stack, with the checks run in one of its services; your
+  existing image, as it is; an image built on top of yours, adding what the checks need; or an image built
+  for the project from the stack the survey detected. The survey proposes it. <b>Edit</b>, on this tab, changes its kind, the Compose
+  file and service, and the commands run before the checks; saving measures the checks again.</p>
+<p>The Dockerfile belongs in your repository, at <span class="mono">.fabrika/Dockerfile</span>. Fabrika reads
+  it from the branch features start from each time it builds, so you edit it like any file and commit it.
+  What's uncommitted isn't used, the same as for your code. Agents can't change it: a feature never
+  carries an edit to it, and a repair can't touch it.</p>
+<p>For a new project, the survey proposes it and <b>Accept checks</b> commits it to your
+  repository, since accepting the checks is accepting what they run in. A project surveyed before that
+  keeps the survey's copy on Fabrika's own record until you press <b>Move it into your repository</b> on
+  this tab. Either way, once it's committed, your repository's copy is the one used. If it changes after
+  the checks last ran, this tab says so.</p>
+
+<h4>Your own Dockerfile instead</h4>
+<p>Fabrika's Dockerfile exists because your project's own image can't run all its checks: usually it's a
+  production image, with no test tools in it. When that's so, the survey also suggests the fix to yours: a
+  stage in your own Dockerfile that runs every check, which your CI and your developers could use too.
+  It arrives as a suggestion you take or turn down; Fabrika works the same either way. Once that stage is
+  committed, the next reading builds from it, and this tab offers to remove <span class="mono">.fabrika/Dockerfile</span>.</p>
+
+<h4>Setup</h4>
+<p>Before any check runs, the environment's setup commands install what the checks need: dependencies,
+  a database schema, test fixtures. Setup can reach the internet; the checks themselves can't. See
+  <a data-help="network-proxy">The network proxy</a>.</p>
+
+<h4>Why sealed</h4>
+<p>A feature's tests must run against the feature, not against something else that happens to be
+  running. Each feature gets its own stack, on its own network, with nothing reachable on this machine,
+  so two features built at once can't see each other, and neither can reach your own dev servers.</p>
+
+<h4>When something's wrong</h4>
+<p>Problems with the environment are listed on this tab and on the overview. A change to the environment
+  makes the next run measure the checks again from scratch.</p>

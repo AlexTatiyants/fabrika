@@ -1,0 +1,88 @@
+{
+ "blob": "af3d1bb1303d9a6697b4a8f8e94e70f6e29012f2",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "CommitMixin"
+  ],
+  "domain_terms": [
+   "spec",
+   "packet",
+   "commit",
+   "as-built",
+   "feature",
+   "verdict"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state",
+   "spec"
+  ],
+  "entities_written": [
+   "spec_file",
+   "system_change",
+   "as_built_skipped",
+   "packet_file"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 20,
+    "name": "CommitMixin"
+   },
+   {
+    "calls": [
+     "current_payload",
+     "spec_markdown",
+     "_now"
+    ],
+    "line": 21,
+    "name": "_commit_spec"
+   },
+   {
+    "calls": [
+     "ProjectAsBuilt",
+     "asyncio.create_task"
+    ],
+    "line": 81,
+    "name": "_as_built_begin"
+   },
+   {
+    "calls": [
+     "_as_built_begin",
+     "asyncio.wait",
+     "feature_reading",
+     "system_change"
+    ],
+    "line": 104,
+    "name": "_as_built_change"
+   },
+   {
+    "calls": [
+     "packet_markdown",
+     "_now"
+    ],
+    "line": 125,
+    "name": "_commit_packet"
+   }
+  ],
+  "imports": [
+   "factory/asbuilt.py",
+   "factory/config.py",
+   "factory/asbuilt_graph.py",
+   "factory/packet_doc.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/records.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Commits the frozen spec and review packet to the branch when work is accepted, and reads the as-built system change comparing base to head.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

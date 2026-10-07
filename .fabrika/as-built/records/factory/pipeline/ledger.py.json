@@ -1,0 +1,238 @@
+{
+ "blob": "f49eb33d09169f5681c1ebf94475a5a747ff3042",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "FindingLedger",
+   "restore_dispositions",
+   "SUSPECT_TEST",
+   "suspect_tests_to_a_person"
+  ],
+  "domain_terms": [
+   "finding",
+   "ledger",
+   "disposition",
+   "round",
+   "verdict"
+  ],
+  "entities_defined": [
+   "FindingLedger"
+  ],
+  "entities_read": [
+   "ArbiterReport",
+   "Finding",
+   "FindingDisposition",
+   "RepairVerdict"
+  ],
+  "entities_written": [
+   "Finding",
+   "FindingRecord"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 15,
+    "name": "restore_dispositions"
+   },
+   {
+    "calls": [],
+    "line": 72,
+    "name": "FindingLedger"
+   },
+   {
+    "calls": [],
+    "line": 84,
+    "name": "__init__"
+   },
+   {
+    "calls": [
+     "_title_key",
+     "_severity_rank"
+    ],
+    "line": 92,
+    "name": "add"
+   },
+   {
+    "calls": [
+     "restate"
+    ],
+    "line": 136,
+    "name": "note"
+   },
+   {
+    "calls": [
+     "_title_key"
+    ],
+    "line": 167,
+    "name": "id_of"
+   },
+   {
+    "calls": [
+     "add",
+     "_title_key"
+    ],
+    "line": 183,
+    "name": "restate"
+   },
+   {
+    "calls": [
+     "_mark_duplicate"
+    ],
+    "line": 275,
+    "name": "dispose"
+   },
+   {
+    "calls": [
+     "_root_of",
+     "_severity_rank"
+    ],
+    "line": 310,
+    "name": "_mark_duplicate"
+   },
+   {
+    "calls": [],
+    "line": 369,
+    "name": "_root_of"
+   },
+   {
+    "calls": [
+     "_root_of"
+    ],
+    "line": 387,
+    "name": "settle_duplicates"
+   },
+   {
+    "calls": [],
+    "line": 410,
+    "name": "repairable"
+   },
+   {
+    "calls": [],
+    "line": 426,
+    "name": "human_first"
+   },
+   {
+    "calls": [],
+    "line": 461,
+    "name": "for_oracle"
+   },
+   {
+    "calls": [],
+    "line": 475,
+    "name": "simplifiable"
+   },
+   {
+    "calls": [],
+    "line": 489,
+    "name": "attempted"
+   },
+   {
+    "calls": [],
+    "line": 495,
+    "name": "not_attempted"
+   },
+   {
+    "calls": [],
+    "line": 512,
+    "name": "route_to_person"
+   },
+   {
+    "calls": [],
+    "line": 529,
+    "name": "apply_verdicts"
+   },
+   {
+    "calls": [],
+    "line": 550,
+    "name": "revert_round"
+   },
+   {
+    "calls": [],
+    "line": 568,
+    "name": "exhaust_attempts"
+   },
+   {
+    "calls": [
+     "_root_of",
+     "settle_duplicates"
+    ],
+    "line": 577,
+    "name": "finalise"
+   },
+   {
+    "calls": [],
+    "line": 608,
+    "name": "all_findings"
+   },
+   {
+    "calls": [],
+    "line": 611,
+    "name": "all_records"
+   },
+   {
+    "calls": [],
+    "line": 618,
+    "name": "counts"
+   },
+   {
+    "calls": [],
+    "line": 624,
+    "name": "dump"
+   },
+   {
+    "calls": [
+     "_title_key"
+    ],
+    "line": 632,
+    "name": "load"
+   },
+   {
+    "calls": [],
+    "line": 649,
+    "name": "suspect_tests_to_a_person"
+   },
+   {
+    "calls": [],
+    "line": 674,
+    "name": "_agent_of"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/packet.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Tracks every finding raised in a build, its disposition (routing decision), and final outcome through repair rounds. Prevents findings from disappearing between rounds and maintains the authoritative record of what happened to each problem.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "FindingLedger",
+    "kind": "export",
+    "method": "",
+    "name": "FindingLedger"
+   },
+   {
+    "handler": "restore_dispositions",
+    "kind": "export",
+    "method": "",
+    "name": "restore_dispositions"
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "SUSPECT_TEST"
+   },
+   {
+    "handler": "suspect_tests_to_a_person",
+    "kind": "export",
+    "method": "",
+    "name": "suspect_tests_to_a_person"
+   }
+  ]
+ }
+}

@@ -1,0 +1,562 @@
+/* The ground the first layer stood on: the wordmark, the reset, and the chrome
+   every screen shares -- rail, masthead, buttons, pills, stage strip, timeline,
+   icons. Later files re-skin much of it, so it has to load before them. */
+
+/* The wordmark, which is a picture of lettering and not lettering. `day` gets
+   a second file with the same frame and the same four screws, its letters set
+   in that scheme's board ink. `night` keeps the original: the rail is still
+   enamel there, and white on enamel is what the original is. */
+:root[data-theme="day"] .wordmark img { content: url(/static/fabrika-logo-day.png); }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding-left: var(--panel-w);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.011em; }
+h1 { font-size: 1.5rem; margin: 0 0 .3rem; line-height: 1.25; }
+h2 { font-size: 1.0625rem; margin: 0 0 .5rem; }
+h3 { font-size: .9375rem; margin: 0 0 .35rem; }
+p  { margin: 0 0 .75rem; }
+a  { color: inherit; }
+
+code, .mono, kbd { font-family: var(--mono); font-size: .875em; }
+.mono, code { font-variant-ligatures: none; }
+
+button, input, textarea, select { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 20;
+  background: var(--ink); color: var(--paper); padding: .5rem .75rem;
+}
+.skip:focus { left: 8px; top: 8px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* -------------------------------------------------------------- left rail
+
+   A status surface, not a navigation bar. It answers one question -- what is in
+   flight, and where -- and it is graphite until something needs you.
+   ------------------------------------------------------------------------- */
+
+.panel {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 12;
+  width: var(--panel-w);
+  display: flex; flex-direction: column;
+  background: var(--surface-sunk);
+  border-right: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.panel > .wordmark {
+  flex: none;
+  padding: 13px var(--gutter);
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-body { flex: 1 1 auto; overflow-y: auto; padding: .5rem 0 2rem; }
+
+/* A hairline instead of a gap. At a dozen projects a gap makes the rail mostly
+   the air between them; the rule separates them in a fraction of the room and makes the
+   list read as one column rather than a stack of loose blocks. Drawn on top of
+   every group and taken off whichever one a filter leaves first, so the colour
+   changes but the 1px never does and nothing shifts when the list narrows. */
+.panel-group { border-top: 1px solid var(--line); }
+.panel-group.pg-first { border-top-color: transparent; }
+.panel-group.open .panel-group-body { padding-bottom: .2rem; }
+
+/* The whole project row is the drag handle -- see app/rail.js. No extra furniture
+   in a 264px rail, at the cost of a cursor being the only thing that advertises
+   it, which is why the row also carries a title. */
+.panel-project-row { cursor: grab; }
+.panel-group.dragging { opacity: .55; }
+.panel-group.dragging .panel-project-row { cursor: grabbing; }
+/* While a row is in flight every other row is a target, so nothing in the rail
+   should look clickable and hover states would only flicker past. */
+body.rail-dragging { user-select: none; }
+body.rail-dragging .panel-project-row,
+body.rail-dragging .panel-project { cursor: grabbing; }
+body.rail-dragging .panel-feature:hover { background: none; }
+
+/* A project is one row -- the toggle and the link to it -- until something in
+   it is worth the extra room. `.panel-group-body` is everything that room
+   would hold: the features, and the quiet lines when there are none. */
+.panel-project-row { display: flex; align-items: center; padding-left: calc(var(--gutter) - 28px); }
+.pg-toggle {
+  flex: none; width: 26px; height: 22px; display: flex; align-items: center; justify-content: center;
+  padding: 0; background: none; border: 0; border-radius: var(--radius); cursor: pointer;
+  color: var(--ink-3);
+}
+.pg-toggle:hover { color: var(--ink); }
+.pg-chev {
+  display: inline-block; font-family: var(--mono); font-size: .8125rem; line-height: 1;
+  transition: transform .12s ease;
+}
+.panel-group.open .pg-chev { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) { .pg-chev { transition: none; } }
+
+.panel-group-body { display: none; }
+.panel-group.open .panel-group-body { display: block; }
+
+.panel-project {
+  display: flex; align-items: baseline; justify-content: space-between; gap: .5rem;
+  flex: 1; min-width: 0;
+  padding: .3rem calc(var(--gutter) - 4px) .3rem 2px;
+  text-decoration: none; color: var(--ink-2);
+}
+.panel-project:hover { color: var(--ink); }
+.panel-project .pname {
+  font-family: var(--display); font-size: .8125rem; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.panel-project .pmeta { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); flex: none; }
+.panel-project.current .pname { color: var(--accent-ink); }
+.panel-project.needs .pmeta { color: var(--accent-ink); }
+
+.panel-feature {
+  /* title · log · discard. The third column is for the rail's button; without
+     declaring it the button lands on an implicit second row. */
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center; gap: .25rem;
+  padding: .35rem calc(var(--gutter) - 6px) .35rem calc(var(--gutter) + 9px);
+  border-left: 3px solid transparent;
+}
+.pf-main { display: block; min-width: 0; text-decoration: none; color: inherit; }
+.pf-log {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; flex: none; border-radius: var(--radius);
+  color: var(--ink-3); opacity: .55;
+}
+.pf-log svg { width: 12px; height: 12px; fill: currentColor; }
+.pf-log:hover { opacity: 1; color: var(--ink); background: var(--surface-sunk); }
+.panel-feature:hover .pf-log { opacity: .9; }
+.panel-feature.log-open .pf-log { opacity: 1; color: var(--accent-ink); background: var(--accent-wash); }
+.panel-feature:hover { background: var(--paper); }
+.panel-feature.current { background: var(--paper); border-left-color: var(--ink-2); }
+.panel-feature.needs { border-left-color: var(--accent); }
+.panel-feature.current.needs { border-left-color: var(--accent); }
+
+.panel-feature .ftitle {
+  display: block; font-size: .875rem; line-height: 1.3; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.panel-feature .fstage {
+  display: flex; align-items: center; gap: .3rem;
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .04em;
+  color: var(--ink-3); margin-top: .12rem;
+}
+.panel-feature .fband {
+  font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--ink-2);
+}
+.panel-feature.needs .fband { color: var(--accent-ink); }
+.panel-feature.failed .fband { color: var(--red); }
+.panel-feature .fsep { color: var(--line-strong); }
+/* The detail is the one part of the line that varies in length, so it is the
+   part that gives: one line, cut with an ellipsis, the whole of it on hover.
+   As a bare text node it would be an anonymous flex item that wraps instead,
+   and a long gate name would stand each row three lines tall. */
+.panel-feature .fdetail {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.panel-feature .fband, .panel-feature .fsep, .panel-feature .fdot { flex: none; }
+.panel-feature.needs .fstage { color: var(--accent-ink); }
+.panel-feature .fdot { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.panel-feature.needs .fdot { background: var(--accent); }
+.panel-feature.building .fdot { background: var(--ink-2); animation: pulse 1.4s ease-in-out infinite; }
+.panel-feature.failed .fdot { background: var(--red); }
+.panel-feature.failed .fstage { color: var(--red); }
+
+.panel-quiet {
+  display: block; padding: .2rem var(--gutter) .4rem calc(var(--gutter) + 12px);
+  font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+  text-decoration: none;
+}
+.panel-quiet:hover { color: var(--ink-2); }
+.panel-empty { padding: 1.5rem var(--gutter); font-size: .875rem; color: var(--ink-3); }
+
+.panel-toggle {
+  display: inline-flex; align-items: center; gap: .4rem; flex: none;
+  margin-left: calc(-1 * .45rem);
+  padding: .3rem .45rem; background: transparent;
+  border: 1px solid transparent; border-radius: var(--radius); cursor: pointer;
+}
+.panel-toggle:hover { border-color: var(--line-strong); }
+.pt-chev {
+  font-family: var(--mono); font-size: .8125rem; line-height: 1;
+  color: var(--ink-3);
+}
+.panel-toggle:hover .pt-chev { color: var(--ink); }
+
+/* Put the rail away and the content column simply recentres in the room it
+   leaves. Nothing reflows: the wrap keeps its width, the header still bleeds. */
+body { transition: padding-left .16s ease; }
+.panel { transition: transform .16s ease; }
+body[data-rail="off"] { padding-left: 0; }
+body[data-rail="off"] .panel { transform: translateX(-100%); }
+@media (prefers-reduced-motion: reduce) {
+  body, .panel { transition: none; }
+}
+
+.panel-scrim {
+  position: fixed; inset: 0; z-index: 11;
+  background: rgba(20, 24, 26, .32);
+}
+
+/* ---------------------------------------------------------------- masthead */
+
+.masthead {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: .6rem;
+  /* Exactly --mast-h, because the feature bar sticks to its underside. */
+  height: var(--mast-h);
+  padding: 0 var(--gutter);
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Where you are in the tool. The rail is a switcher; this is a location. */
+.crumbs {
+  /* The masthead is a fixed height, so the trail scrolls rather than wraps. */
+  display: flex; align-items: baseline; gap: .45rem; flex-wrap: nowrap;
+  min-width: 0; overflow-x: auto; scrollbar-width: none; white-space: nowrap;
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em;
+}
+.crumbs::-webkit-scrollbar { display: none; }
+.crumbs > * { flex: none; }
+.crumbs a { color: var(--ink-3); text-decoration: none; }
+.crumbs a:hover { color: var(--ink); text-decoration: underline; }
+.crumbs .here { color: var(--ink); }
+.crumbs .sep { color: var(--line-strong); }
+
+.mast-right { margin-left: auto; display: flex; align-items: center; gap: .8rem; flex: none; }
+#mast-nav { display: flex; gap: .8rem; }
+#mast-nav a {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em;
+  color: var(--ink-3); text-decoration: none;
+}
+#mast-nav a:hover { color: var(--ink); text-decoration: underline; }
+#mast-nav a.on { color: var(--ink); }
+
+.wordmark {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .06em;
+  color: var(--ink-3); text-decoration: none;
+}
+.wordmark:hover { color: var(--ink); }
+.wordmark-mark {
+  width: 12px; height: 12px; flex: none;
+  background: linear-gradient(90deg, var(--mat-conventional) 0 50%, var(--accent) 50% 100%);
+}
+
+
+/* -------------------------------------------------------------------- shell */
+
+main { display: block; padding: 0 var(--gutter) 140px; }
+
+/* The feature bar full-bleeds by cancelling a gutter it expects to be sitting
+   inside. Outside #main -- where it has to live, because #main is a mount
+   point the reconciler clears -- there is no gutter to cancel, so it would hang
+   a gutter past the window on each side and scroll the whole page sideways.
+   This host restores the padding the bar is written against. */
+#featurebar { padding: 0 var(--gutter); }
+#featurebar:empty { display: none; }
+.wrap { max-width: 1080px; margin: 0 auto; }
+/* Gate 1 is a working screen, not a reading one: eight questions in a 700px
+   column is mostly scrolling. */
+.wrap.wide { max-width: 1400px; }
+.narrow { max-width: 720px; }
+
+.eyebrow {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 .5rem;
+}
+
+.muted { color: var(--ink-2); }
+.dim   { color: var(--ink-3); }
+.small { font-size: .875rem; }
+
+.section { margin: 2.25rem 0; }
+.section > .eyebrow { margin-bottom: .75rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+}
+
+/* ------------------------------------------------------------------ buttons */
+
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .45rem .85rem;
+  font-family: var(--display); font-size: .875rem; white-space: nowrap;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) { background: var(--surface-lift); border-color: var(--ink-3); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+/* Ink, not accent. The accent in this palette is "you are required" -- it is
+   what the cord and a project's own needs-you mark are lit with -- so spending
+   it on every ordinary primary button would put the one colour that should
+   mean "a human is needed here" on Save, on Copy, and beside Not for this
+   project. The action a screen wants pressed is the darkest thing on it
+   instead, which is emphasis a page can spend freely. */
+.btn-primary {
+  background: var(--ink); border-color: var(--ink); color: var(--paper);
+}
+/* Mixed from the button's own two colours, not borrowed from a panel. `--panel-2`
+   is near-white in the day theme and near-black in the night one, so a hover
+   borrowing it would put the label on its own colour in both: white on white,
+   dark on dark. A
+   shade of the ink toward the paper keeps the label readable in every theme. */
+.btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 82%, var(--paper));
+  border-color: color-mix(in srgb, var(--ink) 82%, var(--paper));
+  color: var(--paper);
+}
+/* No border. A third bordered button beside two real choices reads as a third
+   choice; a quiet one reads as the way out, which is what it is. */
+.btn-quiet { background: transparent; border-color: transparent; color: var(--ink-3); }
+.btn-quiet:hover:not(:disabled) { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-sm { padding: .34rem .8rem; font-size: .8125rem; }
+/* A button holding a question rather than a label. Loud enough that nobody
+   presses it twice by reflex, and it disarms itself after a few seconds. */
+/* A packet that is being replaced. Legible, not hidden -- it is still the only
+   packet there is -- but never wearing the authority of a current reading. */
+.superseded-strip {
+  display: flex; gap: 1rem; align-items: center; justify-content: space-between;
+  margin: 1.25rem 0 0; padding: .7rem .9rem; border-radius: 6px;
+  background: var(--accent-wash); border: 1px solid var(--accent);
+  color: var(--ink-2); font-size: .8125rem; line-height: 1.5;
+}
+.superseded-strip b { color: var(--accent-ink); }
+.superseded-strip .btn { flex: none; }
+.is-superseded .verdict-strip, .is-superseded .stat-row { opacity: .62; }
+
+.btn-armed, .btn-armed:hover:not(:disabled) {
+  background: var(--accent-wash); border-color: var(--accent); color: var(--accent-ink);
+  font-weight: 500;
+}
+
+kbd {
+  padding: .05rem .3rem; border: 1px solid var(--line-strong);
+  border-bottom-width: 2px; border-radius: 3px; background: var(--surface);
+  color: var(--ink-2);
+}
+
+/* -------------------------------------------------------------------- pills */
+
+.pill {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .08rem .45rem;
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em;
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  color: var(--ink-2); background: var(--surface); white-space: nowrap;
+}
+.pill-accent { color: var(--accent-ink); background: var(--accent-wash); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+.pill-red    { color: var(--red);   background: var(--red-wash);   border-color: color-mix(in srgb, var(--red) 30%, transparent); }
+.pill-amber  { color: var(--amber); background: var(--amber-wash); border-color: color-mix(in srgb, var(--amber) 30%, transparent); }
+.pill-green  { color: var(--green); background: var(--green-wash); border-color: color-mix(in srgb, var(--green) 30%, transparent); }
+
+/* ------------------------------------------------------------- stage strip
+
+   Where a feature is, in the same words the diagram uses. A phase is which
+   agent is running; a band is where that sits in the run.
+   ------------------------------------------------------------------------- */
+
+.proc {
+  display: flex; align-items: baseline; gap: .25rem; flex-wrap: wrap;
+  margin: 0 0 .1rem;
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .08em;
+  text-transform: uppercase;
+}
+/* Steps, not phases: every one is a link the moment its artifact exists, so the
+   stage decides where you land and never what you may look at. */
+.proc .st {
+  color: var(--ink-2); padding: .1rem .35rem; border-radius: 999px;
+  text-decoration: none; border: 1px solid transparent;
+}
+.proc a.st:hover { color: var(--ink); background: var(--surface-sunk); }
+/* Nothing recorded for it yet: shown, so the shape of the process stays whole. */
+.proc .st.ahead { color: var(--ink-3); opacity: .55; }
+/* Where the feature is. */
+.proc .st.here { color: var(--ink); font-weight: 600; background: var(--surface-sunk); }
+/* Where the feature is, and it is waiting on you. */
+.proc .st.gate {
+  color: var(--accent-ink); background: var(--accent-wash);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+/* What you are reading, which is not always where the feature is. */
+.proc .st.at { box-shadow: inset 0 -2px 0 var(--ink); border-radius: 3px 3px 0 0; }
+.proc .st.at.gate { box-shadow: inset 0 -2px 0 var(--accent); }
+.proc .st.bad { color: var(--red); background: var(--red-wash); }
+.proc .arr { color: var(--line-strong); }
+
+.ftitle {
+  font-family: var(--display); font-size: 1.0625rem; font-weight: 600; line-height: 1.25;
+  margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.liveword {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--mono); font-size: .6875rem; color: var(--ink-2);
+}
+.dotpulse {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  animation: dotpulse 1.4s ease-in-out infinite;
+}
+@keyframes dotpulse { 0%, 100% { opacity: .25 } 50% { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { .dotpulse { animation: none } }
+
+@media (max-width: 780px) {
+  .proc .arr { display: none; }
+}
+
+/* ------------------------------------------------------- a labelled input row
+
+   `.answer-field` is what the yard's add-a-project row and the project form
+   are built from. The gate-1 questions it is named for are drawn by
+   ui/questions.js, not here. */
+
+.answer-field {
+  flex: 1 1 260px; min-width: 0; padding: .45rem .6rem;
+  background: var(--surface-lift); border: 1px solid var(--line-strong); border-radius: var(--radius);
+}
+
+/* .answer-field is sized for flex rows. Where one is a plain block child --
+   the spec screen's send-it-back box is the only place you write a paragraph --
+   the basis never applies and a textarea falls back to its intrinsic `cols`
+   width, about 180px. */
+.sendback .answer-field {
+  display: block; width: 100%; margin-top: .6rem;
+  font-family: var(--body); font-size: .9375rem; line-height: 1.5; resize: vertical;
+}
+
+.rail-item { padding: .55rem 0; border-top: 1px solid var(--line); font-size: .875rem; }
+.rail-item .q { color: var(--ink-3); font-size: .8125rem; }
+.rail-item .a { color: var(--ink); }
+
+/* an answered question collapses, so the page shrinks as you work through it */
+
+/* ---------------------------------------------------------- the timeline */
+
+.timeline { margin: 1.25rem 0 1.5rem; }
+.tl-rows { display: grid; gap: 2px; }
+.tl-row {
+  display: grid; grid-template-columns: 6.5rem 4rem minmax(0, 1fr) 3.5rem 3.8rem;
+  gap: .5rem; align-items: center;
+}
+.tl-name { font-family: var(--display); font-size: .8125rem; color: var(--ink-2); }
+.tl-name.live { color: var(--ink); font-weight: 600; }
+.tl-band {
+  font-size: .5625rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3);
+}
+.tl-track {
+  position: relative; height: 16px; border-radius: 2px;
+  background: var(--surface-sunk);
+}
+.tl-bar {
+  position: absolute; top: 3px; height: 10px; border-radius: 2px;
+  background: var(--ink-3); min-width: 2px;
+}
+.tl-bar.done { background: var(--ink-3); }
+.tl-bar.running { background: var(--accent); animation: pulse 1.4s ease-in-out infinite; }
+.tl-bar.failed { background: var(--red); }
+.tl-mark {
+  position: absolute; top: 50%; width: var(--size, 5px); height: var(--size, 5px);
+  margin-left: calc(var(--size, 5px) / -2); margin-top: calc(var(--size, 5px) / -2);
+  border-radius: 50%; background: var(--surface);
+  box-shadow: 0 0 0 1px var(--ink-2);
+}
+.tl-time { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); text-align: right; }
+.tl-cost { font-family: var(--mono); font-size: .6875rem; color: var(--ink-2); text-align: right; }
+.tl-legend {
+  /* Full width, not a 68ch measure. This sits under a chart that spans
+     the panel, and a short column of prose beneath a wide plot reads as
+     a stray paragraph rather than as the plot's caption. The space above
+     is what separates it from the last row's baseline. */
+  margin: 1.25rem 0 0;
+  max-width: none;
+}
+
+/* Removing the waits is a claim about what the axis means, so the control that
+   does it sits in the caption that states the duration, not off to one side. */
+.tl-toggle {
+  appearance: none; background: none; border: 0; padding: 0; margin-left: .6rem;
+  cursor: pointer; font: inherit; color: var(--ink-3);
+  border-bottom: 1px dashed var(--line-strong);
+}
+.tl-toggle:hover { color: var(--ink); }
+.tl-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The gap markers are one layer over every row: a gap is a fact about the whole
+   run, not about a lane. Same column template as a row, so the third cell lands
+   exactly on the track and the marker's percentage means what it says. */
+.tl-plot { position: relative; }
+/* Room for the figures, taken only when there are figures to put there: with
+   the waits shown the timeline sits exactly where it would without them. */
+.tl-plot.collapsed { padding-top: 15px; }
+.tl-waits {
+  position: absolute; inset: 0; display: grid;
+  grid-template-columns: 6.5rem 4rem minmax(0, 1fr) 3.5rem 3.8rem;
+  gap: .5rem; pointer-events: none;
+}
+.tl-w-track { position: relative; }
+.tl-wait {
+  position: absolute; top: 0; bottom: 0; width: 0;
+  border-left: 1px dashed var(--line); pointer-events: auto;
+}
+/* The waits that were yours are the ones worth finding again. The rest are the
+   machine between phases and stay faint. */
+.tl-wait.human { border-left-color: var(--line-strong); }
+.tl-wait svg {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 12px; display: block;
+  fill: none; stroke: var(--ink-2); stroke-width: 1.3;
+  stroke-linecap: round; background: var(--surface);
+}
+
+@media (max-width: 640px) {
+  .tl-waits { grid-template-columns: 5.5rem minmax(0, 1fr) 3rem 3.6rem; }
+  .tl-band, .tl-w-band { display: none; }
+}
+
+/* ------------------------------------------------------------------- icons
+
+   Ten symbols in one sprite in index.html, stroked in currentColor so an icon
+   is whatever colour the thing it sits in already is. Only one of them ever
+   takes the accent -- the padlock, on work that cannot be taken back. */
+
+.sprite { display: none; }
+.ic {
+  width: 15px; height: 15px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.4;
+  stroke-linecap: round; stroke-linejoin: round;
+  color: var(--ink-3);
+}
+.ic-sm { width: 13px; height: 13px; }
+.ic-xs { width: 11px; height: 11px; }
+

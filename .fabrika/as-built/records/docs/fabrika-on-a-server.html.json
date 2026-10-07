@@ -1,0 +1,27 @@
+{
+ "blob": "3d5946e991d39a40620f8f83a9921d1459561ed1",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "feature intent",
+   "spec review and packet review",
+   "interrogator",
+   "scout",
+   "route and route pool",
+   "ledger"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Design document explaining what changes when running Fabrika (a software factory) on a shared server for a team instead of one person's laptop, identifying current assumptions that break, security boundaries, and a proposed implementation sequence.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

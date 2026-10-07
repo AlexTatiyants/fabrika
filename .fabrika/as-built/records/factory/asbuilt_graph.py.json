@@ -1,0 +1,425 @@
+{
+ "blob": "9b9ae7b3f218000ca286a5b8e4a88287f56a2b84",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "AS_BUILT_DIR",
+   "AS_BUILT_VERSION",
+   "PART_MIN_LINES",
+   "PART_MIN_FUNCTIONS",
+   "HUB_SHARE",
+   "HUB_MIN_IMPORTERS",
+   "CONCENTRATION_MIN_LINES",
+   "EdgeKind",
+   "Edge",
+   "FunctionNode",
+   "Part",
+   "PartLink",
+   "FileNode",
+   "Subsystem",
+   "WayInNode",
+   "ReachItem",
+   "Capability",
+   "Finding",
+   "Coverage",
+   "Runtime",
+   "ActorNode",
+   "OutsideSystem",
+   "RuntimeLink",
+   "Architecture",
+   "AsBuilt",
+   "Source",
+   "resolve_link",
+   "link_is_evident",
+   "norm_route",
+   "match_route",
+   "confirm_functions",
+   "louvain",
+   "way_in_id",
+   "build",
+   "reach",
+   "source_notes",
+   "carry_names",
+   "apply_names",
+   "apply_account",
+   "carry_capabilities",
+   "apply_capabilities",
+   "derive_code",
+   "assign_codes",
+   "labelled",
+   "classify_subsystems",
+   "is_generated",
+   "mentions_of",
+   "uncalled_routes",
+   "architecture_prompt",
+   "carry_architecture",
+   "apply_architecture",
+   "findings",
+   "system_change",
+   "SystemChange"
+  ],
+  "domain_terms": [
+   "repository structure",
+   "call graph",
+   "subsystem",
+   "capability",
+   "way in (entry point)",
+   "reach (code execution scope)",
+   "way in",
+   "architecture",
+   "finding",
+   "system change"
+  ],
+  "entities_defined": [
+   "Edge",
+   "FunctionNode",
+   "Part",
+   "PartLink",
+   "FileNode",
+   "Subsystem",
+   "WayInNode",
+   "ReachItem",
+   "Capability",
+   "Finding",
+   "Coverage",
+   "Runtime",
+   "ActorNode",
+   "OutsideSystem",
+   "RuntimeLink",
+   "Architecture",
+   "AsBuilt",
+   "Source",
+   "SystemChange"
+  ],
+  "entities_read": [
+   "AsBuilt",
+   "GroupNaming",
+   "SystemAccount",
+   "CapabilityMap",
+   "FileRecord",
+   "Capability",
+   "Subsystem",
+   "Part",
+   "WayInNode",
+   "Runtime",
+   "OutsideSystem",
+   "ActorNode",
+   "RuntimeLink",
+   "Architecture",
+   "ArchitectureAccount",
+   "Finding"
+  ],
+  "entities_written": [
+   "AsBuilt",
+   "Finding",
+   "SystemChange"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 306,
+    "name": "_norm_path"
+   },
+   {
+    "calls": [],
+    "line": 315,
+    "name": "resolve_link"
+   },
+   {
+    "calls": [],
+    "line": 353,
+    "name": "link_is_evident"
+   },
+   {
+    "calls": [],
+    "line": 368,
+    "name": "norm_route"
+   },
+   {
+    "calls": [
+     "norm_route"
+    ],
+    "line": 378,
+    "name": "match_route"
+   },
+   {
+    "calls": [
+     "FunctionNode"
+    ],
+    "line": 404,
+    "name": "confirm_functions"
+   },
+   {
+    "calls": [],
+    "line": 448,
+    "name": "louvain"
+   },
+   {
+    "calls": [],
+    "line": 537,
+    "name": "_groups"
+   },
+   {
+    "calls": [],
+    "line": 549,
+    "name": "way_in_id"
+   },
+   {
+    "calls": [
+     "resolve_link",
+     "link_is_evident",
+     "way_in_id",
+     "norm_route",
+     "match_route",
+     "_uniq",
+     "is_generated",
+     "_call_index",
+     "_split",
+     "part_crossings",
+     "_tests_of_way",
+     "_imports_of",
+     "findings",
+     "carry_names"
+    ],
+    "line": 553,
+    "name": "build"
+   },
+   {
+    "calls": [],
+    "line": 769,
+    "name": "_uniq"
+   },
+   {
+    "calls": [],
+    "line": 778,
+    "name": "_imports_of"
+   },
+   {
+    "calls": [],
+    "line": 790,
+    "name": "_call_index"
+   },
+   {
+    "calls": [
+     "louvain",
+     "_groups",
+     "part_crossings"
+    ],
+    "line": 835,
+    "name": "_split"
+   },
+   {
+    "calls": [],
+    "line": 894,
+    "name": "part_crossings"
+   },
+   {
+    "calls": [],
+    "line": 914,
+    "name": "_unit"
+   },
+   {
+    "calls": [],
+    "line": 926,
+    "name": "_fn_lines"
+   },
+   {
+    "calls": [],
+    "line": 936,
+    "name": "_follow"
+   },
+   {
+    "calls": [
+     "_call_index",
+     "_unit",
+     "_fn_lines",
+     "_imports_of"
+    ],
+    "line": 953,
+    "name": "reach"
+   },
+   {
+    "calls": [
+     "norm_route"
+    ],
+    "line": 1003,
+    "name": "_tests_of_way"
+   },
+   {
+    "calls": [],
+    "line": 1027,
+    "name": "_link_line"
+   },
+   {
+    "calls": [],
+    "line": 1046,
+    "name": "_route_line"
+   },
+   {
+    "calls": [],
+    "line": 1066,
+    "name": "_span_end"
+   },
+   {
+    "calls": [
+     "_call_index",
+     "_follow",
+     "_span_end"
+    ],
+    "line": 1091,
+    "name": "source_notes"
+   },
+   {
+    "calls": [
+     "_overlap"
+    ],
+    "line": 1171,
+    "name": "carry_names"
+   },
+   {
+    "calls": [],
+    "line": 1193,
+    "name": "_overlap"
+   },
+   {
+    "calls": [],
+    "line": 1198,
+    "name": "apply_names"
+   },
+   {
+    "calls": [],
+    "line": 1222,
+    "name": "apply_account"
+   },
+   {
+    "calls": [],
+    "line": 1228,
+    "name": "carry_capabilities"
+   },
+   {
+    "calls": [
+     "_slug",
+     "reach",
+     "classify_subsystems",
+     "findings"
+    ],
+    "line": 1241,
+    "name": "apply_capabilities"
+   },
+   {
+    "calls": [],
+    "line": 1285,
+    "name": "derive_code"
+   },
+   {
+    "calls": [
+     "derive_code"
+    ],
+    "line": 1313,
+    "name": "assign_codes"
+   },
+   {
+    "calls": [],
+    "line": 1349,
+    "name": "labelled"
+   },
+   {
+    "calls": [],
+    "line": 1353,
+    "name": "_slug"
+   },
+   {
+    "calls": [],
+    "line": 1357,
+    "name": "classify_subsystems"
+   },
+   {
+    "calls": [],
+    "line": 1409,
+    "name": "_sets_up"
+   },
+   {
+    "calls": [],
+    "line": 1415,
+    "name": "_configures"
+   },
+   {
+    "calls": [],
+    "line": 1430,
+    "name": "is_generated"
+   },
+   {
+    "calls": [],
+    "line": 1446,
+    "name": "mentions_of"
+   },
+   {
+    "calls": [],
+    "line": 1456,
+    "name": "uncalled_routes"
+   },
+   {
+    "calls": [
+     "mentions_of",
+     "uncalled_routes"
+    ],
+    "line": 1462,
+    "name": "architecture_prompt"
+   },
+   {
+    "calls": [
+     "mentions_of",
+     "uncalled_routes"
+    ],
+    "line": 1483,
+    "name": "carry_architecture"
+   },
+   {
+    "calls": [
+     "_slug",
+     "mentions_of",
+     "uncalled_routes",
+     "_sets_up",
+     "_configures"
+    ],
+    "line": 1499,
+    "name": "apply_architecture"
+   },
+   {
+    "calls": [
+     "labelled",
+     "_count"
+    ],
+    "line": 1639,
+    "name": "findings"
+   },
+   {
+    "calls": [],
+    "line": 1754,
+    "name": "_count"
+   },
+   {
+    "calls": [],
+    "line": 1764,
+    "name": "SystemChange"
+   },
+   {
+    "calls": [
+     "labelled"
+    ],
+    "line": 1821,
+    "name": "system_change"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Validates and joins repository readings into a checked structural graph: confirms imports and function definitions against source code, clusters files into subsystems and parts, computes capabilities and their reach, and tracks how code is organized.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

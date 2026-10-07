@@ -1,0 +1,45 @@
+{
+ "blob": "0dd778cc742fd1687bf0337199f705b3b088aa6e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "panel",
+   "masthead",
+   "crumbs",
+   "wordmark",
+   "btn",
+   "pill",
+   "proc",
+   "card",
+   "answer-field",
+   "timeline",
+   "ic"
+  ],
+  "domain_terms": [
+   "rail",
+   "panel",
+   "feature",
+   "stage strip",
+   "timeline",
+   "gate"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 431,
+    "name": "dotpulse"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Provides foundational CSS styling for the console UI\u2014the wordmark, reset, and shared chrome (rail sidebar, masthead header, buttons, pills, stage strip, timeline, icons) that all screens use. Loads before theme-specific stylesheets so they can override it.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

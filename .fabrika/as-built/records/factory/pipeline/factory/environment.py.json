@@ -1,0 +1,107 @@
+{
+ "blob": "dc0907a3020f087c920bcf3ce6166f8911100e11",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "EnvironmentMixin"
+  ],
+  "domain_terms": [
+   "authoring environment",
+   "stack",
+   "compose project",
+   "harness",
+   "agent",
+   "digest"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "Sandbox",
+   "FeatureState",
+   "EvidenceStore"
+  ],
+  "entities_written": [
+   "unit_env"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "store.append"
+    ],
+    "line": 28,
+    "name": "env_recorder"
+   },
+   {
+    "calls": [
+     "BaseTree",
+     "repo_digest",
+     "assert_at_base"
+    ],
+    "line": 51,
+    "name": "_digest_before"
+   },
+   {
+    "calls": [
+     "unit_environment",
+     "_env_label"
+    ],
+    "line": 79,
+    "name": "unit_env"
+   },
+   {
+    "calls": [
+     "docker_available",
+     "low_disk"
+    ],
+    "line": 115,
+    "name": "require_authoring_environment"
+   },
+   {
+    "calls": [],
+    "line": 160,
+    "name": "_answered_by"
+   },
+   {
+    "calls": [],
+    "line": 173,
+    "name": "harness_authoring"
+   },
+   {
+    "calls": [
+     "executor.author"
+    ],
+    "line": 183,
+    "name": "_author_files"
+   },
+   {
+    "calls": [
+     "llm.ask"
+    ],
+    "line": 200,
+    "name": "_account_for"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/containers.py",
+   "factory/unitenv.py",
+   "factory/executors.py",
+   "factory/projects.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "the local git checkout",
+   "a model provider"
+  ],
+  "purpose": "Configures and manages isolated execution environments for authoring agents, including Docker/container setup, prerequisite checks, and accounting for files agents write to disk.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

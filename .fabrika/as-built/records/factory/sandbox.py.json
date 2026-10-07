@@ -1,0 +1,228 @@
+{
+ "blob": "ade7f1c67b043550362fd93c7257e6683654723b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "SandboxError",
+   "Sandbox",
+   "resolve_ref",
+   "working_tree_drift",
+   "parse_numstat"
+  ],
+  "domain_terms": [
+   "sandbox",
+   "worktree",
+   "feature",
+   "branch",
+   "commit"
+  ],
+  "entities_defined": [
+   "SandboxError",
+   "Sandbox"
+  ],
+  "entities_read": [
+   "SandboxState"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 38,
+    "name": "_git"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 44,
+    "name": "resolve_ref"
+   },
+   {
+    "calls": [],
+    "line": 57,
+    "name": "_read_lines"
+   },
+   {
+    "calls": [
+     "_read_lines"
+    ],
+    "line": 66,
+    "name": "_count_lines"
+   },
+   {
+    "calls": [],
+    "line": 70,
+    "name": "parse_numstat"
+   },
+   {
+    "calls": [
+     "has_commit",
+     "_git"
+    ],
+    "line": 93,
+    "name": "working_tree_drift"
+   },
+   {
+    "calls": [],
+    "line": 169,
+    "name": "Sandbox.__init__"
+   },
+   {
+    "calls": [
+     "has_commit",
+     "resolve_ref",
+     "_git"
+    ],
+    "line": 176,
+    "name": "Sandbox.create"
+   },
+   {
+    "calls": [],
+    "line": 225,
+    "name": "Sandbox.reopen"
+   },
+   {
+    "calls": [],
+    "line": 231,
+    "name": "Sandbox.path"
+   },
+   {
+    "calls": [],
+    "line": 235,
+    "name": "Sandbox.branch"
+   },
+   {
+    "calls": [],
+    "line": 238,
+    "name": "Sandbox.exists"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 243,
+    "name": "Sandbox.write"
+   },
+   {
+    "calls": [
+     "_git",
+     "is_runner_output"
+    ],
+    "line": 251,
+    "name": "Sandbox.commit"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 289,
+    "name": "Sandbox.commit_tracked"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "_git"
+    ],
+    "line": 313,
+    "name": "Sandbox.commit_file"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "_git"
+    ],
+    "line": 350,
+    "name": "Sandbox.commit_files"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 392,
+    "name": "Sandbox.head"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 398,
+    "name": "Sandbox.reset_to"
+   },
+   {
+    "calls": [],
+    "line": 421,
+    "name": "Sandbox.diff_command"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 428,
+    "name": "Sandbox.changed_files"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 440,
+    "name": "Sandbox.show"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "head",
+     "_git"
+    ],
+    "line": 454,
+    "name": "Sandbox.file_diff"
+   },
+   {
+    "calls": [
+     "_diffstat_by_reading",
+     "parse_numstat",
+     "_git"
+    ],
+    "line": 493,
+    "name": "Sandbox.diffstat"
+   },
+   {
+    "calls": [
+     "_read_lines",
+     "safe_join"
+    ],
+    "line": 540,
+    "name": "Sandbox._diffstat_by_reading"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 567,
+    "name": "Sandbox.release"
+   },
+   {
+    "calls": [
+     "has_commit",
+     "_git"
+    ],
+    "line": 582,
+    "name": "Sandbox.prune"
+   }
+  ],
+  "imports": [
+   "factory/git.py",
+   "factory/schemas.py",
+   "factory/workspace.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git",
+   "filesystem"
+  ],
+  "purpose": "Manages isolated git worktrees and directory copies where individual features are built. Each sandbox provides code isolation (via git worktree or copy) and tracks its branch, commits, and changes.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,164 @@
+{
+ "blob": "35f9bb829a63cb46a209f8782a287d9aad859658",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "check_verification_surface",
+   "check_settings",
+   "check_settings_files",
+   "settings_section",
+   "check_guides_changed",
+   "check_settings_changed",
+   "check_new_suppressions",
+   "check_hollow_tests",
+   "changed_lines",
+   "check_new_quality_findings",
+   "check_patch_coverage",
+   "check_destructive_writes",
+   "check_declared_changes"
+  ],
+  "domain_terms": [
+   "feature \u2014 a code change being tested",
+   "check or gate \u2014 a validation rule",
+   "spec \u2014 the specification of what the feature's build should produce",
+   "worker \u2014 an agent that modifies code"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "WorkerOutput",
+   "IntegrationReport",
+   "GateReport",
+   "Gate",
+   "Spec",
+   "FileWrite",
+   "Config"
+  ],
+  "entities_written": [
+   "Finding"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 37,
+    "name": "check_verification_surface"
+   },
+   {
+    "calls": [],
+    "line": 76,
+    "name": "check_settings"
+   },
+   {
+    "calls": [
+     "check_settings"
+    ],
+    "line": 94,
+    "name": "check_settings_files"
+   },
+   {
+    "calls": [],
+    "line": 105,
+    "name": "settings_section"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 138,
+    "name": "check_guides_changed"
+   },
+   {
+    "calls": [
+     "check_settings",
+     "safe_join",
+     "settings_section"
+    ],
+    "line": 180,
+    "name": "check_settings_changed"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "_slug"
+    ],
+    "line": 246,
+    "name": "check_new_suppressions"
+   },
+   {
+    "calls": [],
+    "line": 299,
+    "name": "_git_lines"
+   },
+   {
+    "calls": [
+     "hollow_tests",
+     "_slug"
+    ],
+    "line": 311,
+    "name": "check_hollow_tests"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 340,
+    "name": "changed_lines"
+   },
+   {
+    "calls": [
+     "changed_lines",
+     "_slug"
+    ],
+    "line": 381,
+    "name": "check_new_quality_findings"
+   },
+   {
+    "calls": [],
+    "line": 447,
+    "name": "_ranges"
+   },
+   {
+    "calls": [
+     "changed_lines",
+     "is_generated",
+     "safe_join",
+     "_slug"
+    ],
+    "line": 463,
+    "name": "check_patch_coverage"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 563,
+    "name": "check_destructive_writes"
+   },
+   {
+    "calls": [],
+    "line": 668,
+    "name": "check_declared_changes"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/asbuilt_graph.py",
+   "factory/testquality.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/records.py",
+   "factory/guides.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git",
+   "the file system"
+  ],
+  "purpose": "Validates what a code feature changed in the repository: whether it touched test configuration, check settings, suppressions, or made destructive deletions; whether its new code is tested; and whether it did what the specification declared.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

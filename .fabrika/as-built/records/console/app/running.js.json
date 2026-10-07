@@ -1,0 +1,331 @@
+{
+ "blob": "eeeaf911b7d44c8c26fbf9c3fe52605508b5a2d7",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "runningScreen",
+   "runGraph",
+   "timeline",
+   "idleGaps",
+   "phaseModels",
+   "shortModel",
+   "runModel",
+   "runsOf",
+   "runShown",
+   "attemptStart",
+   "attemptAt",
+   "attemptScope",
+   "runName",
+   "clockDay",
+   "runLinks",
+   "phaseUsage",
+   "plainReason",
+   "foldCalls",
+   "routeTrouble",
+   "callRow",
+   "readoutBlock",
+   "stepOpener",
+   "stepRuns",
+   "callsIn",
+   "turnFacts",
+   "stepLane",
+   "graphRows",
+   "graphEdges",
+   "graphCell",
+   "KIND_PHASE",
+   "ROLE_PHASE",
+   "PHASE_LANE",
+   "STEP_FANOUT",
+   "STEP_WHO",
+   "CARRIED_STATIONS",
+   "REUSED_WORDS",
+   "STATION_RECORD",
+   "RUN_STARTS",
+   "WAIT_MIN_MS",
+   "HUMAN_ICON"
+  ],
+  "domain_terms": [
+   "feature",
+   "run",
+   "phase",
+   "agent call",
+   "ledger",
+   "repair round"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "ledger records (scout, interrogator, spec_writer, step, call, usage, human, rebuild, revalidate, dispatch)",
+   "phases",
+   "features"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 49,
+    "name": "idleGaps"
+   },
+   {
+    "calls": [],
+    "line": 97,
+    "name": "phaseModels"
+   },
+   {
+    "calls": [],
+    "line": 110,
+    "name": "shortModel"
+   },
+   {
+    "calls": [],
+    "line": 117,
+    "name": "runModel"
+   },
+   {
+    "calls": [],
+    "line": 144,
+    "name": "runsOf"
+   },
+   {
+    "calls": [
+     "runsOf"
+    ],
+    "line": 161,
+    "name": "runShown"
+   },
+   {
+    "calls": [
+     "runShown"
+    ],
+    "line": 167,
+    "name": "attemptStart"
+   },
+   {
+    "calls": [
+     "runShown"
+    ],
+    "line": 172,
+    "name": "attemptAt"
+   },
+   {
+    "calls": [
+     "runShown"
+    ],
+    "line": 180,
+    "name": "attemptScope"
+   },
+   {
+    "calls": [
+     "clockDay"
+    ],
+    "line": 186,
+    "name": "runName"
+   },
+   {
+    "calls": [],
+    "line": 190,
+    "name": "clockDay"
+   },
+   {
+    "calls": [
+     "runsOf",
+     "runShown",
+     "runName",
+     "esc"
+    ],
+    "line": 202,
+    "name": "runLinks"
+   },
+   {
+    "calls": [
+     "attemptStart",
+     "recordCost"
+    ],
+    "line": 219,
+    "name": "phaseUsage"
+   },
+   {
+    "calls": [
+     "attemptScope",
+     "runShown",
+     "attemptAt",
+     "idleGaps",
+     "stepWord",
+     "dur",
+     "esc",
+     "shortModel",
+     "phaseUsage",
+     "phaseModels",
+     "runModel",
+     "bytes",
+     "usd",
+     "usd2",
+     "clock",
+     "pct",
+     "BAND_OF_PHASE",
+     "logCost"
+    ],
+    "line": 264,
+    "name": "timeline"
+   },
+   {
+    "calls": [],
+    "line": 454,
+    "name": "plainReason"
+   },
+   {
+    "calls": [],
+    "line": 465,
+    "name": "foldCalls"
+   },
+   {
+    "calls": [
+     "shortModel",
+     "plainReason",
+     "clock",
+     "esc"
+    ],
+    "line": 485,
+    "name": "routeTrouble"
+   },
+   {
+    "calls": [
+     "clock",
+     "shortModel",
+     "dur",
+     "bytes",
+     "usd",
+     "callSpend",
+     "esc"
+    ],
+    "line": 510,
+    "name": "callRow"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 550,
+    "name": "readoutBlock"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 572,
+    "name": "stepOpener"
+   },
+   {
+    "calls": [
+     "runShown",
+     "runsOf",
+     "runName",
+     "fromOf"
+    ],
+    "line": 612,
+    "name": "stepRuns"
+   },
+   {
+    "calls": [],
+    "line": 687,
+    "name": "callsIn"
+   },
+   {
+    "calls": [
+     "shortModel",
+     "callSpend"
+    ],
+    "line": 694,
+    "name": "turnFacts"
+   },
+   {
+    "calls": [],
+    "line": 711,
+    "name": "stepLane"
+   },
+   {
+    "calls": [
+     "callsIn",
+     "turnFacts",
+     "STEP_FANOUT",
+     "stepLane",
+     "STEP_WHO"
+    ],
+    "line": 718,
+    "name": "graphRows"
+   },
+   {
+    "calls": [],
+    "line": 774,
+    "name": "graphEdges"
+   },
+   {
+    "calls": [
+     "GX"
+    ],
+    "line": 818,
+    "name": "graphCell"
+   },
+   {
+    "calls": [
+     "stepRuns",
+     "graphRows",
+     "graphEdges",
+     "logHref",
+     "foldCalls",
+     "callRow",
+     "readoutBlock",
+     "stepOpener",
+     "usd",
+     "dur",
+     "clock",
+     "esc"
+    ],
+    "line": 854,
+    "name": "runGraph"
+   },
+   {
+    "calls": [
+     "livePass",
+     "featureBar",
+     "liveWord",
+     "featureHref",
+     "usd2",
+     "runLinks",
+     "timeline",
+     "dur",
+     "bytes",
+     "logHref",
+     "routeTrouble",
+     "runGraph",
+     "pendingWord",
+     "esc",
+     "logCost",
+     "callSpend",
+     "attemptScope",
+     "featureBar"
+    ],
+    "line": 937,
+    "name": "runningScreen"
+   }
+  ],
+  "imports": [
+   "console/app/util.js",
+   "console/app/vocab.js",
+   "console/app/state.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the screen showing a build in progress (or completed history): a timeline of execution across phases, all model calls grouped by step with their outcomes, and the run as a branching graph showing parallel work and repair rounds.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "runningScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "/running"
+   }
+  ]
+ }
+}

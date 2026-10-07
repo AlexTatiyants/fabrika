@@ -1,0 +1,29 @@
+{
+ "blob": "323d0043b0435e752b4a1066a1a17b3e94430d9d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "feature",
+   "stage",
+   "intent",
+   "spec",
+   "build",
+   "review",
+   "packet",
+   "rail"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation describing the ten feature stages from intake through acceptance or rejection, and the feature steps (intent, scout, questions, spec, build, review, runs).",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

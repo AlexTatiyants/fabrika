@@ -1,0 +1,62 @@
+<p class="lead">Agent configuration sets every agent's model from two choices instead of one per agent: which
+  provider serves each team, and how hard each agent has to think. Change either and every agent it covers moves
+  with it.</p>
+
+<p>You reach it from the crew page, from <b>Agent configuration</b> above the agent rows. It doesn't replace the
+  crew page: an agent still opens on its own there, with its prompt and every setting.</p>
+
+<h4>Sides</h4>
+<p>Every agent is on one of three sides, decided by what it does. The <b>blue team</b> builds: it writes the spec,
+  the plan, the code and the repairs. The <b>red team</b> checks: it gives a verdict on work someone else made, and
+  every review agent you add is on it. The rest are on <b>neither</b>: they read the repository, ask the questions,
+  route findings and write the packet.</p>
+<p>Pick one provider for the blue team and one for the red. They should be different vendors: a checker from the
+  same family as the author shares its blind spots, and its agreement stops meaning anything. The agents on neither
+  side follow the blue team unless you say otherwise; they can follow the red team or have a provider of their own.
+  A provider that's switched off can't be picked.</p>
+
+<h4>Levels</h4>
+<p>There are three levels of thinking. <b>Deep</b> is for judgment: specs, plans and verdicts. <b>Standard</b> is
+  for making things: code, repairs and routing. <b>Light</b> is for reading: scans and lookups.</p>
+<p>Each provider says what each level means on it, as a model and a reasoning effort. They come filled in from the
+  presets Fabrika ships, and you can change any of them; a level changed from its preset shows a <b>preset</b> link
+  that puts it back. Only the providers your sides use are shown, and the rest are one press away.</p>
+
+<h4>Who sits where</h4>
+<p>The board puts every agent in its side's column and its level's row, with the model that cell runs at the top.
+  Drag an agent up or down to change its level. To move several at once, click each one, then use the bar that
+  appears at the bottom of the window: set their level, move them to a side, pin them, or unpin them. Escape clears
+  the selection.</p>
+<p>A builder stays on the blue team and a checker on the red: moving one would put the author on the checkers'
+  provider. Only agents on neither side can be moved onto a team, and they say <i>moved here</i> once they are.</p>
+<p><b>Start from</b> gives four places to begin:</p>
+<ul>
+  <li><b>Current</b> is what <span class="mono">factory.yaml</span> says now. It's selected whenever you have
+    nothing unsaved.</li>
+  <li><b>Sensible defaults</b> puts every agent on the level Fabrika suggests for it, with the preset levels.</li>
+  <li><b>Lean</b> moves every agent down a level from the sensible defaults, except the spec writer, the architect, the
+    oracle and the reviewer, whose work everything after them is measured against.</li>
+  <li><b>Everything deep</b> puts every agent on the deep level.</li>
+</ul>
+<p>The last three replace levels, pins and moved agents. Your sides stay as you set them. <b>All up a level</b> and
+  <b>All down a level</b> shift every agent at once.</p>
+
+<h4>Pinning an agent</h4>
+<p>A pinned agent keeps a model of its own whatever its level says, and shows it on its chip. Select it and choose a
+  model from <b>pin to</b>, or select it and press <b>Unpin</b> to put it back on its level. Picking a different model
+  for an agent on the crew page pins it the same way; saving it there for its temperature or its prompt doesn't.</p>
+<p>The first time you open this screen, nothing has been chosen yet, so it starts from exactly what each agent runs
+  now: each level takes the model most of its agents already use, and an agent that no level matches is pinned to
+  what it runs. Opening the screen changes nothing.</p>
+
+<h4>What changes, and writing it</h4>
+<p>An agent that would run a different model or effort once written is tinted, with what it runs now under its
+  name; a level that means something new is tinted the same way. <b>What changes</b> lists every such agent, before
+  and after. <b>Write to factory.yaml</b> is only available when something has changed, and not while an agent has
+  no model to run or sits on a provider that's switched off. <b>Discard</b> goes back to what's written.</p>
+<p>Above the board, the screen says whether blue and red share a vendor, and whether any agent shares a family with
+  one it exists to disagree with. See <a data-help="fallbacks-and-independence">Fallbacks and the independence
+  rule</a>.</p>
+<p>Writing records three things in <span class="mono">factory.yaml</span>, with its comments kept: which provider
+  serves each side, what each level means on each provider, and each agent's level. An agent that follows its level
+  no longer names a model there; a pinned one does. Every run after that uses them.</p>

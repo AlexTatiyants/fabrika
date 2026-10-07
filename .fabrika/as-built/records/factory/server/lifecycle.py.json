@@ -1,0 +1,231 @@
+{
+ "blob": "a5dc1dcdca6e8659426b9cc5a9cce928bcba613b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "features",
+   "specs",
+   "plans",
+   "builds",
+   "runs"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 23,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for"
+    ],
+    "line": 32,
+    "name": "intake_plan"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "background"
+    ],
+    "line": 37,
+    "name": "rerun_intake"
+   },
+   {
+    "calls": [
+     "factory_for"
+    ],
+    "line": 41,
+    "name": "again"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "background"
+    ],
+    "line": 51,
+    "name": "correct_interrogation"
+   },
+   {
+    "calls": [
+     "factory_for"
+    ],
+    "line": 57,
+    "name": "again"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "close_preview",
+     "factory_for"
+    ],
+    "line": 67,
+    "name": "delete_feature"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for",
+     "background"
+    ],
+    "line": 80,
+    "name": "post_answers"
+   },
+   {
+    "calls": [
+     "factory_for"
+    ],
+    "line": 92,
+    "name": "plan"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for",
+     "background",
+     "start_run"
+    ],
+    "line": 102,
+    "name": "approve_spec"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for",
+     "start_run",
+     "background"
+    ],
+    "line": 130,
+    "name": "rule_on_cut"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for"
+    ],
+    "line": 153,
+    "name": "plan_check"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for"
+    ],
+    "line": 165,
+    "name": "cancel_wait"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "is_orphaned",
+     "FeatureState",
+     "start_run",
+     "background"
+    ],
+    "line": 171,
+    "name": "retry_build"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for",
+     "FeatureState",
+     "start_run",
+     "close_preview",
+     "background"
+    ],
+    "line": 189,
+    "name": "revalidate"
+   }
+  ],
+  "imports": [
+   "factory/pipeline/__init__.py",
+   "factory/projects.py",
+   "factory/schemas.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "REST endpoints managing a feature's lifecycle: intake questions, spec answers, plan review and approval, run start/resume/retry, and revalidation.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "intake_plan",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/intake-plan"
+   },
+   {
+    "handler": "rerun_intake",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/reintake"
+   },
+   {
+    "handler": "correct_interrogation",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/correct"
+   },
+   {
+    "handler": "delete_feature",
+    "kind": "route",
+    "method": "DELETE",
+    "name": "/api/projects/{project_id}/features/{feature_id}"
+   },
+   {
+    "handler": "post_answers",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/answers"
+   },
+   {
+    "handler": "approve_spec",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/approve-spec"
+   },
+   {
+    "handler": "rule_on_cut",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/cut-ruling"
+   },
+   {
+    "handler": "plan_check",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/plan-check"
+   },
+   {
+    "handler": "cancel_wait",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/cancel-wait"
+   },
+   {
+    "handler": "retry_build",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/retry-build"
+   },
+   {
+    "handler": "revalidate",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/revalidate"
+   }
+  ]
+ }
+}

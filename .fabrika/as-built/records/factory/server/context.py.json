@@ -1,0 +1,108 @@
+{
+ "blob": "ecaa0daa4566c4910799ea2cb857805401a354ad",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ROOT",
+   "CONSOLE_DIR",
+   "Context"
+  ],
+  "domain_terms": [
+   "project",
+   "feature",
+   "run",
+   "factory",
+   "baseline"
+  ],
+  "entities_defined": [
+   "Context"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "asyncio",
+     "factory_for",
+     "approve_spec",
+     "rebaseline_if_moved",
+     "run_build"
+    ],
+    "line": 53,
+    "name": "start_when_ready"
+   },
+   {
+    "calls": [
+     "registry"
+    ],
+    "line": 79,
+    "name": "project_or_404"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "head_sha",
+     "onboarding"
+    ],
+    "line": 85,
+    "name": "rebaseline_if_moved"
+   },
+   {
+    "calls": [
+     "Factory",
+     "project_or_404"
+    ],
+    "line": 103,
+    "name": "factory_for"
+   },
+   {
+    "calls": [
+     "ProjectOnboarding"
+    ],
+    "line": 108,
+    "name": "onboarding"
+   },
+   {
+    "calls": [
+     "rebaseline_if_moved",
+     "factory_for"
+    ],
+    "line": 111,
+    "name": "start_run"
+   },
+   {
+    "calls": [
+     "project_or_404"
+    ],
+    "line": 134,
+    "name": "store_or_404"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "previews"
+    ],
+    "line": 140,
+    "name": "close_preview"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/git.py",
+   "factory/llm.py",
+   "factory/onboarding.py",
+   "factory/pipeline/__init__.py",
+   "factory/preview.py",
+   "factory/projects.py",
+   "factory/routes.py",
+   "factory/server/hub.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines the Context dataclass holding the configuration, long-lived services, and shared helper methods that all route groups use.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

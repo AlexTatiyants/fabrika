@@ -1,0 +1,33 @@
+{
+ "blob": "aff881b6d8ed8a8ab4b0ff5e847caefe6e5041a4",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "console",
+   "agents",
+   "tests"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "config",
+  "launches": [],
+  "outside": [
+   "GitHub Actions"
+  ],
+  "purpose": "GitHub Actions CI workflow that lints Python code with ruff, validates JavaScript syntax for console scripts, and runs the test suite across Python 3.11, 3.12, and 3.13. Requires no Docker, provider keys, or network access.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "CI"
+   }
+  ]
+ }
+}

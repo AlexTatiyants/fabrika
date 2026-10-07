@@ -1,0 +1,27 @@
+<p class="lead">Some fixes Fabrika applies itself, with your OK. Others need a change to your code, and for
+  those Fabrika gives you a prompt to hand to your coding agent.</p>
+
+<h4>What Fabrika can apply</h4>
+<ul>
+  <li><b>A setting</b>: how a check is run, where a test file goes, what runs before the checks.</li>
+  <li><b>A support file</b>: a setup file your test runner already loads, or a helper new tests can import.
+    Fabrika writes it into your repository and commits it. It never writes a test itself: a test Fabrika wrote
+    and then passed would prove nothing.</li>
+  <li><b>An environment step</b>: a command that puts data back before the checks run.</li>
+</ul>
+<p>You pick one fix per test level, on that level's card on the Tests tab (press <b>Apply</b>) or in a
+  re-survey's proposal, and Fabrika applies it whole, in the order its parts need.</p>
+
+<h4>What needs your coding agent</h4>
+<p>Some fixes need real code: an endpoint that lets a test create or delete its own data, or a way to open the
+  app on a workspace of the test's choosing. Fabrika won't build these as features. Its own runs need the
+  testing to work before they can check anything, so building the testing through one of them goes in a
+  circle.</p>
+<p>Instead, the fix comes with a prompt. <b>Copy the prompt</b>, give it to your coding agent, review and commit
+  the change, then press <b>Resurvey</b> on the project page. The survey reads your last commit, so commit
+  first.</p>
+
+<h4>If you'd rather not</h4>
+<p>For a level with no cleanup, choose <b>Don't check criteria at this level</b>; the choice is recorded and the
+  page stops asking. Fabrika keeps building features; criteria at a level it can't test cleanly are handed to you
+  instead. See <a data-help="unchecked-levels">When a level isn't checked</a>.</p>

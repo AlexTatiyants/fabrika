@@ -1,0 +1,103 @@
+{
+ "blob": "05b3c4519eb433618aadf551fc25576dba773cfa",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "AGENTS_NETWORK",
+   "WORKDIR",
+   "BOX_PATH",
+   "Box",
+   "collect_sidecars",
+   "completion_box"
+  ],
+  "domain_terms": [
+   "sealed container",
+   "CLI completion",
+   "credentials",
+   "harness",
+   "agents network"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "kill"
+    ],
+    "line": 56,
+    "name": "_docker"
+   },
+   {
+    "calls": [],
+    "line": 71,
+    "name": "Box"
+   },
+   {
+    "calls": [
+     "_docker"
+    ],
+    "line": 79,
+    "name": "put"
+   },
+   {
+    "calls": [],
+    "line": 87,
+    "name": "exec_argv"
+   },
+   {
+    "calls": [],
+    "line": 97,
+    "name": "_env_file"
+   },
+   {
+    "calls": [
+     "sidecar_dir",
+     "use_mirror",
+     "mirror_home",
+     "_docker",
+     "prune_mirror"
+    ],
+    "line": 112,
+    "name": "collect_sidecars"
+   },
+   {
+    "calls": [
+     "create_sealed",
+     "open_egress",
+     "harness_home",
+     "harness_image",
+     "hardening_argv",
+     "resolver_argv",
+     "subnet_of",
+     "_env_file",
+     "prepare",
+     "install",
+     "Box",
+     "collect_sidecars",
+     "_docker"
+    ],
+    "line": 140,
+    "name": "completion_box"
+   }
+  ],
+  "imports": [
+   "factory/procs.py",
+   "factory/sessioncreds.py",
+   "factory/config.py",
+   "factory/containers.py",
+   "factory/egress.py",
+   "factory/isolation.py",
+   "factory/meters.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker"
+  ],
+  "purpose": "Runs CLI completions in sealed containers with isolated network access, ensuring they can reach their provider and nothing private, with credentials copied in and the container removed when done.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

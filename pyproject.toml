@@ -1,0 +1,78 @@
+[project]
+name = "fabrika"
+version = "0.1.0"
+description = "A software factory: you define a feature and rule on the result; model agents do everything between, and hand back the code with an argument that it works."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Alex Tatiyants" }]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic>=2.6",
+    "httpx>=0.26",
+    "PyYAML>=6.0",
+    "ruamel.yaml>=0.18",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+# Fabrika runs from a checkout: the server serves console/ from beside the
+# package, and the roles and harness files are read from inside it. Install it
+# editable (`pip install -e ".[dev]"`); a wheel on its own is not a working copy.
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["factory*"]
+
+[tool.setuptools.package-data]
+factory = ["roles/*.md", "harnesses/*"]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The tests are functions. Without this, pytest tries to collect the schema
+# models whose names start with "Test" (TestFile, TestFileCommand, ...) and warns
+# on every run that it cannot.
+python_classes = []
+filterwarnings = [
+    # Starlette's TestClient warning about its own transport, on every import.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 110
+
+[tool.ruff.lint]
+# Pyflakes only: names used but never defined, imports and variables never used,
+# repeated dictionary keys. Each of those has hidden a real bug here; style
+# rules would be a rewrite of the codebase's prose, and are not asked for.
+select = ["F"]
+
+[tool.ruff.lint.per-file-ignores]
+# Every test file takes the shared helpers with `from helpers import *`.
+"tests/test_*.py" = ["F403", "F405"]
+# The pipeline package's front door: it imports every name the single module
+# used to define, for the code and tests that still take them from there.
+"factory/pipeline/__init__.py" = ["F401"]

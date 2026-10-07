@@ -1,0 +1,78 @@
+{
+ "blob": "5bcafc1fd484d5cb91b997280ba8bf9fdc81091a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "oracle_problems",
+   "plan_repairs",
+   "reopen_after_panel"
+  ],
+  "domain_terms": [
+   "findings",
+   "repair units",
+   "oracle files",
+   "gate results",
+   "repair loop"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "GateReport",
+   "GateResult",
+   "OracleSuite",
+   "RepairPlan",
+   "RepairUnit",
+   "FindingLedger"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "oracle_files"
+    ],
+    "line": 15,
+    "name": "oracle_problems"
+   },
+   {
+    "calls": [],
+    "line": 53,
+    "name": "plan_repairs"
+   },
+   {
+    "calls": [],
+    "line": 169,
+    "name": "reopen_after_panel"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/ledger.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Cuts a round's findings into repair units and decides whether the repair loop should run again. Performs arithmetic calculations on finding clusters and determines which findings can be acted on.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "oracle_problems",
+    "kind": "export",
+    "method": "",
+    "name": "oracle_problems"
+   },
+   {
+    "handler": "plan_repairs",
+    "kind": "export",
+    "method": "",
+    "name": "plan_repairs"
+   },
+   {
+    "handler": "reopen_after_panel",
+    "kind": "export",
+    "method": "",
+    "name": "reopen_after_panel"
+   }
+  ]
+ }
+}

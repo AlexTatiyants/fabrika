@@ -1,0 +1,132 @@
+{
+ "blob": "e25b4ab2d008f3a7ab94346de21ae4733fdf59c0",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "tabsFor",
+   "Verdict",
+   "Tabs",
+   "VERDICT",
+   "standingBlocker"
+  ],
+  "domain_terms": [
+   "verdict",
+   "packet",
+   "tabs",
+   "findings",
+   "checks",
+   "criteria",
+   "blind spots",
+   "repair round"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "findingsWithRecords",
+     "isRestatement",
+     "blindSpots",
+     "packetOf",
+     "callsFor",
+     "settledBy",
+     "manualChecksFor",
+     "manualRulings"
+    ],
+    "line": 40,
+    "name": "tabsFor"
+   },
+   {
+    "calls": [
+     "isSettled"
+    ],
+    "line": 31,
+    "name": "standingBlocker"
+   },
+   {
+    "calls": [
+     "SETTLED",
+     "outcomeOf"
+    ],
+    "line": 34,
+    "name": "isSettled"
+   },
+   {
+    "calls": [],
+    "line": 109,
+    "name": "Fig"
+   },
+   {
+    "calls": [],
+    "line": 135,
+    "name": "Panel"
+   },
+   {
+    "calls": [
+     "Fig",
+     "Panel",
+     "MARKED",
+     "usd"
+    ],
+    "line": 172,
+    "name": "Stats"
+   },
+   {
+    "calls": [
+     "packetOf",
+     "discountsFor",
+     "blindSpots",
+     "PreviewButton",
+     "FocusTools",
+     "VERDICT",
+     "Stats"
+    ],
+    "line": 244,
+    "name": "Verdict"
+   },
+   {
+    "calls": [],
+    "line": 273,
+    "name": "Tabs"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js",
+   "console/ui/preview.js",
+   "console/ui/dependencies.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Gate 2 review control\u2014a six-tab interface for reading a feature packet: calls, work map, evidence, dependencies, objections, repair rounds, and blind spots, with a shared verdict band above.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "tabsFor",
+    "kind": "export",
+    "method": "",
+    "name": "tabsFor"
+   },
+   {
+    "handler": "Verdict",
+    "kind": "export",
+    "method": "",
+    "name": "Verdict"
+   },
+   {
+    "handler": "Tabs",
+    "kind": "export",
+    "method": "",
+    "name": "Tabs"
+   },
+   {
+    "handler": "standingBlocker",
+    "kind": "export",
+    "method": "",
+    "name": "standingBlocker"
+   }
+  ]
+ }
+}

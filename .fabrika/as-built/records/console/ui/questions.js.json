@@ -1,0 +1,80 @@
+{
+ "blob": "61c03b543cdfdd8865f468d11688dcb7970c4939",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "SEVERITY",
+   "Question",
+   "Restatement",
+   "Questions"
+  ],
+  "domain_terms": [
+   "question",
+   "answer",
+   "intent",
+   "gate",
+   "spec"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "interrogation",
+   "state",
+   "answers",
+   "corrections"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "Pill"
+    ],
+    "line": 37,
+    "name": "Question"
+   },
+   {
+    "calls": [],
+    "line": 108,
+    "name": "Restatement"
+   },
+   {
+    "calls": [
+     "send",
+     "base",
+     "useBarAction"
+    ],
+    "line": 178,
+    "name": "Questions"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Gate 1 interface for answering interrogator questions about intent, with options to correct interpretation or re-read the codebase.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/answers"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/correct"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/reintake"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "Questions",
+    "kind": "export",
+    "method": "",
+    "name": "Questions"
+   }
+  ]
+ }
+}

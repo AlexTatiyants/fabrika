@@ -1,0 +1,99 @@
+{
+ "blob": "605e0c8a07b9a2ccb76980c63328f4ad59af2159",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "INLINE_LOG_KINDS",
+   "register"
+  ],
+  "domain_terms": [
+   "ledgers",
+   "records",
+   "logs",
+   "exchanges",
+   "billing"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 26,
+    "name": "_billing_known"
+   },
+   {
+    "calls": [],
+    "line": 58,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "project_or_404"
+    ],
+    "line": 65,
+    "name": "project_log"
+   },
+   {
+    "calls": [
+     "project_or_404"
+    ],
+    "line": 89,
+    "name": "project_log_record"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "readouts_for"
+    ],
+    "line": 97,
+    "name": "feature_log"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "cfg"
+    ],
+    "line": 131,
+    "name": "feature_log_record"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/server/context.py",
+   "factory/server/readouts.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "REST endpoints for reading transaction ledgers: project-level records of surveys and approvals, and feature-level records with billing data, prompts, and role system prompts.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "project_log",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/log"
+   },
+   {
+    "handler": "project_log_record",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/log/{seq}"
+   },
+   {
+    "handler": "feature_log",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/log"
+   },
+   {
+    "handler": "feature_log_record",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/log/{seq}"
+   }
+  ]
+ }
+}

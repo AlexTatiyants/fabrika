@@ -1,0 +1,27 @@
+{
+ "blob": "cadc867363aa2592e82e8f3d3ca255b9b1e7df8f",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "project page",
+   "test levels",
+   "help drawer",
+   "manual checklist",
+   "overview dashboard",
+   "project history"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the project page: the help drawer, manual checklist for untested levels, overview dashboard with tiles, test level cards with fixes, inline editing forms, and project history ledger.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

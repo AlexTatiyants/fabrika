@@ -1,0 +1,552 @@
+{
+ "blob": "29ae606ab88c545efe8edd1edaa017be168cc644",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_re_adding_an_agent_does_not_destroy_its_prompt",
+   "test_an_environment_variable_wins_and_locks_the_field",
+   "test_a_screen_is_served_only_from_its_own_feature",
+   "test_a_survey_retires_a_proposal_nobody_ruled_on",
+   "test_the_testability_check_runs_where_a_human_can_still_act_on_it",
+   "test_the_console_and_the_baseline_check_the_same_things",
+   "test_the_revalidate_route_is_reachable_and_guarded",
+   "test_a_second_press_does_not_start_a_second_run_in_the_same_worktree",
+   "test_an_event_published_from_a_worker_thread_reaches_the_console_at_once",
+   "test_every_request_body_the_server_declares_can_actually_be_received",
+   "test_a_proposal_says_which_parts_wait",
+   "test_the_ledger_answers_whether_an_old_call_was_money",
+   "test_the_console_can_reach_the_routes_api",
+   "test_a_role_cannot_be_saved_onto_a_route_that_does_not_exist",
+   "test_a_probe_that_goes_green_closes_its_own_finding",
+   "test_a_probe_run_that_did_not_happen_closes_nothing",
+   "test_a_recording_says_what_stopped_it_and_keeps_its_name_without_frames",
+   "test_only_this_pass_s_recordings_are_offered",
+   "test_the_walkthrough_and_the_whole_recording_are_both_reachable",
+   "test_the_feature_log_carries_call_records_in_full",
+   "test_a_readout_belongs_to_the_turn_that_produced_it",
+   "test_a_readout_carries_the_names_of_files_and_never_their_contents",
+   "test_a_readout_is_a_convenience_and_never_takes_the_log_down",
+   "test_a_build_baselines_the_base_branch_again_when_it_has_moved",
+   "test_the_crew_page_shows_the_way_out_plainly_first",
+   "test_a_cleanup_fix_that_was_applied_counts_at_once",
+   "test_a_feature_s_spend_is_its_own_calls_not_the_console_s_running_total",
+   "test_history_folds_re_readings_in_a_row_and_keeps_what_they_cost",
+   "test_a_re_run_at_a_features_start_names_the_feature",
+   "test_a_page_that_does_not_answer_says_whether_the_door_stopped",
+   "test_the_reading_measures_the_preview_the_way_a_person_will_open_it",
+   "test_a_preview_opens_at_review_is_recorded_and_closes_before_the_feature_moves",
+   "test_the_moves_away_from_review_close_the_preview_first",
+   "test_a_preview_nobody_looks_at_or_that_review_has_moved_past_is_closed",
+   "test_the_as_built_routes_say_what_is_committed_and_refuse_to_overwrite",
+   "test_the_crew_screen_counts_the_as_built_s_agents_and_sees_them_work",
+   "test_the_project_view_carries_each_red_check_s_diagnosis",
+   "test_a_build_promised_for_later_is_re_armed_when_the_server_restarts",
+   "test_looking_at_the_settings_does_not_write_a_config",
+   "test_the_agent_configuration_screen_writes_the_crew_in_one_request"
+  ],
+  "domain_terms": [
+   "agent",
+   "route",
+   "proposal",
+   "feature",
+   "project",
+   "preview",
+   "recording"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "Config",
+   "ProjectRegistry",
+   "Project",
+   "Factory",
+   "ProjectOnboarding",
+   "ProjectAsBuilt",
+   "Previews",
+   "FindingLedger",
+   "Context"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "shutil",
+     "TestClient",
+     "load_config",
+     "create_app"
+    ],
+    "line": 9,
+    "name": "test_re_adding_an_agent_does_not_destroy_its_prompt"
+   },
+   {
+    "calls": [
+     "shutil",
+     "api_key_source",
+     "load_config",
+     "TestClient",
+     "create_app"
+    ],
+    "line": 41,
+    "name": "test_an_environment_variable_wins_and_locks_the_field"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "load_config",
+     "server",
+     "create_app"
+    ],
+    "line": 62,
+    "name": "test_a_screen_is_served_only_from_its_own_feature"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "Config",
+     "ProjectRegistry",
+     "create_app"
+    ],
+    "line": 75,
+    "name": "test_a_survey_retires_a_proposal_nobody_ruled_on"
+   },
+   {
+    "calls": [
+     "inspect",
+     "pipeline",
+     "factory_source"
+    ],
+    "line": 112,
+    "name": "test_the_testability_check_runs_where_a_human_can_still_act_on_it"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 124,
+    "name": "test_the_console_and_the_baseline_check_the_same_things"
+   },
+   {
+    "calls": [],
+    "line": 135,
+    "name": "test_the_revalidate_route_is_reachable_and_guarded"
+   },
+   {
+    "calls": [
+     "threading",
+     "TestClient",
+     "LLM",
+     "ProjectOnboarding",
+     "Factory",
+     "create_app",
+     "_demo_project",
+     "this_process"
+    ],
+    "line": 153,
+    "name": "test_a_second_press_does_not_start_a_second_run_in_the_same_worktree"
+   },
+   {
+    "calls": [
+     "threading",
+     "ProgressHub"
+    ],
+    "line": 212,
+    "name": "test_an_event_published_from_a_worker_thread_reaches_the_console_at_once"
+   },
+   {
+    "calls": [],
+    "line": 238,
+    "name": "test_every_request_body_the_server_declares_can_actually_be_received"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 272,
+    "name": "test_a_proposal_says_which_parts_wait"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "create_app",
+     "_demo_project"
+    ],
+    "line": 277,
+    "name": "test_the_ledger_answers_whether_an_old_call_was_money"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "create_app"
+    ],
+    "line": 315,
+    "name": "test_the_console_can_reach_the_routes_api"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "create_app"
+    ],
+    "line": 327,
+    "name": "test_a_role_cannot_be_saved_onto_a_route_that_does_not_exist"
+   },
+   {
+    "calls": [
+     "pipeline",
+     "_probe",
+     "_probe_round"
+    ],
+    "line": 338,
+    "name": "test_a_probe_that_goes_green_closes_its_own_finding"
+   },
+   {
+    "calls": [
+     "_probe",
+     "pipeline",
+     "_probe_round"
+    ],
+    "line": 361,
+    "name": "test_a_probe_run_that_did_not_happen_closes_nothing"
+   },
+   {
+    "calls": [
+     "zipfile",
+     "pipeline",
+     "factory_source"
+    ],
+    "line": 375,
+    "name": "test_a_recording_says_what_stopped_it_and_keeps_its_name_without_frames"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 409,
+    "name": "test_only_this_pass_s_recordings_are_offered"
+   },
+   {
+    "calls": [
+     "create_app",
+     "TestClient",
+     "pytest"
+    ],
+    "line": 430,
+    "name": "test_the_walkthrough_and_the_whole_recording_are_both_reachable"
+   },
+   {
+    "calls": [
+     "server",
+     "factory_source",
+     "app_js"
+    ],
+    "line": 475,
+    "name": "test_the_feature_log_carries_call_records_in_full"
+   },
+   {
+    "calls": [
+     "server",
+     "_work",
+     "_turn",
+     "_check"
+    ],
+    "line": 489,
+    "name": "test_a_readout_belongs_to_the_turn_that_produced_it"
+   },
+   {
+    "calls": [
+     "server",
+     "_work",
+     "_turn"
+    ],
+    "line": 511,
+    "name": "test_a_readout_carries_the_names_of_files_and_never_their_contents"
+   },
+   {
+    "calls": [
+     "server",
+     "_work",
+     "_turn"
+    ],
+    "line": 532,
+    "name": "test_a_readout_is_a_convenience_and_never_takes_the_log_down"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "inspect",
+     "onboarding"
+    ],
+    "line": 543,
+    "name": "test_a_build_baselines_the_base_branch_again_when_it_has_moved"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 572,
+    "name": "test_the_crew_page_shows_the_way_out_plainly_first"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 592,
+    "name": "test_a_cleanup_fix_that_was_applied_counts_at_once"
+   },
+   {
+    "calls": [
+     "overview",
+     "factory_source"
+    ],
+    "line": 600,
+    "name": "test_a_feature_s_spend_is_its_own_calls_not_the_console_s_running_total"
+   },
+   {
+    "calls": [
+     "history",
+     "_ledger"
+    ],
+    "line": 633,
+    "name": "test_history_folds_re_readings_in_a_row_and_keeps_what_they_cost"
+   },
+   {
+    "calls": [
+     "history",
+     "_ledger",
+     "class_source",
+     "inspect",
+     "pipeline"
+    ],
+    "line": 654,
+    "name": "test_a_re_run_at_a_features_start_names_the_feature"
+   },
+   {
+    "calls": [
+     "containers",
+     "gates",
+     "inspect",
+     "preview"
+    ],
+    "line": 677,
+    "name": "test_a_page_that_does_not_answer_says_whether_the_door_stopped"
+   },
+   {
+    "calls": [
+     "preview",
+     "gates",
+     "_previewable",
+     "onboarding"
+    ],
+    "line": 702,
+    "name": "test_the_reading_measures_the_preview_the_way_a_person_will_open_it"
+   },
+   {
+    "calls": [
+     "urllib",
+     "TestClient",
+     "LLM",
+     "Factory",
+     "create_app",
+     "_previewable"
+    ],
+    "line": 727,
+    "name": "test_a_preview_opens_at_review_is_recorded_and_closes_before_the_feature_moves"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 784,
+    "name": "test_the_moves_away_from_review_close_the_preview_first"
+   },
+   {
+    "calls": [
+     "preview",
+     "asyncio"
+    ],
+    "line": 804,
+    "name": "test_a_preview_nobody_looks_at_or_that_review_has_moved_past_is_closed"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "create_app",
+     "asbuilt",
+     "_demo_project"
+    ],
+    "line": 831,
+    "name": "test_the_as_built_routes_say_what_is_committed_and_refuse_to_overwrite"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "create_app",
+     "asbuilt",
+     "app_js"
+    ],
+    "line": 864,
+    "name": "test_the_crew_screen_counts_the_as_built_s_agents_and_sees_them_work"
+   },
+   {
+    "calls": [
+     "_diagnosed_project",
+     "factory_source"
+    ],
+    "line": 900,
+    "name": "test_the_project_view_carries_each_red_check_s_diagnosis"
+   },
+   {
+    "calls": [
+     "TestClient",
+     "LLM",
+     "Factory",
+     "create_app",
+     "_demo_project"
+    ],
+    "line": 907,
+    "name": "test_a_build_promised_for_later_is_re_armed_when_the_server_restarts"
+   },
+   {
+    "calls": [
+     "shutil",
+     "TestClient",
+     "load_config",
+     "writable_config_path",
+     "create_app"
+    ],
+    "line": 939,
+    "name": "test_looking_at_the_settings_does_not_write_a_config"
+   },
+   {
+    "calls": [
+     "shutil",
+     "TestClient",
+     "load_config",
+     "create_app"
+    ],
+    "line": 965,
+    "name": "test_the_agent_configuration_screen_writes_the_crew_in_one_request"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "FastAPI",
+   "asyncio",
+   "threading",
+   "pytest",
+   "Docker"
+  ],
+  "purpose": "Tests server routes, their responses, and guard conditions. Verifies that routes accept valid requests, refuse invalid ones, and enforce invariants about how the server should behave under various states and concurrent operations.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/roles"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/roles/{role}/prompt"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/roles/{role}"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/provider"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/proposal"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/revalidate"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/features/{feature_id}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/proposal/apply"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/features/{feature_id}/log"
+   },
+   {
+    "method": "GET",
+    "path": "/api/routes"
+   },
+   {
+    "method": "POST",
+    "path": "/api/routes/{route}/check"
+   },
+   {
+    "method": "PATCH",
+    "path": "/api/roles/{role}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/as-built"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/as-built/graph"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/as-built/source"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/as-built/refresh"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/retry-build"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/preview"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/features/{feature_id}/preview"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/verdict"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/features/{feature_id}/traces"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/features/{feature_id}/traces/{name}/player"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/features/{feature_id}/traces/{name}/frames/{frame}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project_id}/features/{feature_id}/traces/{name}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/staffing"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/staffing"
+   }
+  ],
+  "ways_in": []
+ }
+}

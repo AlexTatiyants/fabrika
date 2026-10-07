@@ -1,0 +1,46 @@
+{
+ "blob": "96300822b8b032d1ce0638c70a936d7a55a1294e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "g1",
+   "restate",
+   "restate-open",
+   "restate-box",
+   "strip",
+   "qrow",
+   "qmeta",
+   "qid",
+   "qbody",
+   "qtitle",
+   "qwhy",
+   "opts",
+   "opt",
+   "ans",
+   "ans-mark",
+   "ans-text",
+   "ans-change",
+   "qfree",
+   "settled"
+  ],
+  "domain_terms": [
+   "gate",
+   "question",
+   "answer",
+   "option",
+   "interrogation"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles Gate 1's full-width interface where questions and answers are displayed in rows, with reasoning across rather than down.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

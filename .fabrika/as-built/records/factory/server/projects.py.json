@@ -1,0 +1,194 @@
+{
+ "blob": "d7378107c5dfac6e40b1e5a5fa923d30b91e5b6a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "project",
+   "repository",
+   "scaffolding",
+   "Dockerfile",
+   "gate",
+   "environment",
+   "drift"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 25,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "registry"
+    ],
+    "line": 38,
+    "name": "list_projects"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "Factory",
+     "registry",
+     "dependencies",
+     "unchecked_levels",
+     "guide_view",
+     "guide_contradictions",
+     "guide_offers"
+    ],
+    "line": 48,
+    "name": "get_project"
+   },
+   {
+    "calls": [
+     "registry",
+     "onboarding"
+    ],
+    "line": 141,
+    "name": "create_project"
+   },
+   {
+    "calls": [
+     "onboarding"
+    ],
+    "line": 147,
+    "name": "survey"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 157,
+    "name": "delete_project"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 167,
+    "name": "move_dockerfile"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 177,
+    "name": "retire_dockerfile"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry",
+     "safe_join"
+    ],
+    "line": 187,
+    "name": "apply_scaffolding"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry",
+     "onboarding"
+    ],
+    "line": 198,
+    "name": "scaffold_and_read"
+   },
+   {
+    "calls": [
+     "onboarding"
+    ],
+    "line": 234,
+    "name": "read_again"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "safe_join",
+     "proposed_scaffolding"
+    ],
+    "line": 244,
+    "name": "scaffold_diff"
+   }
+  ],
+  "imports": [
+   "factory/dependencies.py",
+   "factory/pipeline/factory/base.py",
+   "factory/projects.py",
+   "factory/schemas.py",
+   "factory/workspace.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py",
+   "factory/server/guides_view.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Registers a repository as a project, serves project state and history, and writes scaffolding and configuration changes to the repository.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "list_projects",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects"
+   },
+   {
+    "handler": "get_project",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}"
+   },
+   {
+    "handler": "create_project",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects"
+   },
+   {
+    "handler": "delete_project",
+    "kind": "route",
+    "method": "DELETE",
+    "name": "/api/projects/{project_id}"
+   },
+   {
+    "handler": "move_dockerfile",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/dockerfile/move"
+   },
+   {
+    "handler": "retire_dockerfile",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/dockerfile/retire"
+   },
+   {
+    "handler": "apply_scaffolding",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/scaffold"
+   },
+   {
+    "handler": "scaffold_and_read",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/scaffold-and-read"
+   },
+   {
+    "handler": "scaffold_diff",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/scaffold-diff"
+   }
+  ]
+ }
+}

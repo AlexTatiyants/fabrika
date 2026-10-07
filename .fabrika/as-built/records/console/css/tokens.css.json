@@ -1,0 +1,26 @@
+{
+ "blob": "133d1062d088e643afafbd0d11b5c64bd864a68b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "andon board",
+   "lamp",
+   "station",
+   "lane",
+   "scheme"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines CSS design tokens (colors, typography, spacing, and sizes) shared across the console's stylesheets. Supports three color schemes reflecting the andon-board metaphor: a dark default scheme with painted-concrete floor and enameled-steel board, a light day scheme, and a darker night scheme.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

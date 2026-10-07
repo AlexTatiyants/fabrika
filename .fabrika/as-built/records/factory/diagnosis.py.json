@@ -1,0 +1,160 @@
+{
+ "blob": "36721744bb81a96a7dded9c8fe5d7298fd6b71de",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "own_floor_value",
+   "red_kind",
+   "classify",
+   "settings_text",
+   "fingerprint",
+   "brief",
+   "usable_fixes",
+   "try_fix",
+   "diagnose_check",
+   "worth_diagnosing",
+   "latest_by_check",
+   "read_files",
+   "reader",
+   "Read",
+   "Ask",
+   "FILE_CHARS",
+   "HEAD_CHARS",
+   "KIND_WORDS"
+  ],
+  "domain_terms": [
+   "check",
+   "gate",
+   "diagnosis",
+   "fix",
+   "report"
+  ],
+  "entities_defined": [
+   "Read",
+   "Ask"
+  ],
+  "entities_read": [
+   "Gate",
+   "GateResult",
+   "GateReport",
+   "Diagnosis",
+   "DiagnosisAnswer",
+   "DiagnosisFix",
+   "EnvironmentSpec",
+   "FixTry",
+   "RedKind",
+   "DiagnosisConfig",
+   "Runner"
+  ],
+  "entities_written": [
+   "Diagnosis",
+   "GateResult"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "settings_section"
+    ],
+    "line": 62,
+    "name": "own_floor_value"
+   },
+   {
+    "calls": [
+     "is_green",
+     "gate_outcome"
+    ],
+    "line": 86,
+    "name": "red_kind"
+   },
+   {
+    "calls": [
+     "own_floor_value",
+     "red_kind"
+    ],
+    "line": 110,
+    "name": "classify"
+   },
+   {
+    "calls": [
+     "check_settings",
+     "settings_section"
+    ],
+    "line": 124,
+    "name": "settings_text"
+   },
+   {
+    "calls": [],
+    "line": 144,
+    "name": "fingerprint"
+   },
+   {
+    "calls": [],
+    "line": 171,
+    "name": "brief"
+   },
+   {
+    "calls": [],
+    "line": 206,
+    "name": "usable_fixes"
+   },
+   {
+    "calls": [
+     "run_gate",
+     "run_setup",
+     "safe_join",
+     "restore_tracked"
+    ],
+    "line": 235,
+    "name": "try_fix"
+   },
+   {
+    "calls": [
+     "run_gate",
+     "is_green",
+     "safe_join",
+     "usable_fixes"
+    ],
+    "line": 271,
+    "name": "diagnose_check"
+   },
+   {
+    "calls": [],
+    "line": 340,
+    "name": "worth_diagnosing"
+   },
+   {
+    "calls": [],
+    "line": 352,
+    "name": "latest_by_check"
+   },
+   {
+    "calls": [
+     "settings_section"
+    ],
+    "line": 366,
+    "name": "read_files"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 383,
+    "name": "reader"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/gates.py",
+   "factory/pipeline/__init__.py",
+   "factory/schemas.py",
+   "factory/workspace.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Diagnoses why a check is red on untouched code by classifying the failure type (timed out, did not run, no report, under project's own bound, over bound, found problems, or failed), then asks a model to explain the cause and propose up to three fixes to be tried in a throwaway checkout.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

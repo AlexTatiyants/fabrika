@@ -1,0 +1,1072 @@
+{
+ "blob": "5a845d63b579931f4e57b565016ab16f05980508",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_v1_verify_context_takes_a_spec_and_three_descriptions_of_the_world",
+   "test_v1_nothing_but_a_package_name_survives_the_second_parameter",
+   "test_v1_the_runtime_contract_is_configuration_and_says_nothing_when_empty",
+   "test_v1_an_oracle_is_told_about_its_own_project_and_no_other",
+   "test_v1_no_implementation_reaches_the_verify_lane",
+   "test_v1_the_lane_is_called_with_the_spec_alone",
+   "test_v2_store_exposes_no_way_to_change_the_past",
+   "test_v2_both_records_survive_with_increasing_seq",
+   "test_v2_reading_one_kind_says_what_reading_the_whole_ledger_says",
+   "test_v3_a_criterion_nothing_implements_is_an_orphan",
+   "test_v3_implemented_without_a_blind_test_is_untested",
+   "test_v3_a_model_claimed_trace_is_discarded",
+   "test_v3_a_file_no_criterion_claims_is_unclaimed",
+   "test_v3_unclaimed_needs_a_criterion_not_merely_a_decision",
+   "test_v3_a_model_claimed_unclaimed_list_is_discarded",
+   "test_a_comment_added_to_a_long_file_is_not_reported_as_a_long_change",
+   "test_the_rapporteurs_line_counts_are_overwritten_by_the_branchs",
+   "test_lines_written_is_the_diff_not_the_sum_of_the_files",
+   "test_without_a_branch_to_ask_a_file_counts_as_wholly_new",
+   "test_a_unit_that_ran_without_an_environment_becomes_a_blocker",
+   "test_a_run_where_every_unit_had_its_stack_raises_nothing",
+   "test_an_environment_that_came_up_on_a_retry_is_not_reported_blind",
+   "test_a_failed_environment_tells_the_agent_what_it_printed",
+   "test_every_authoring_session_reports_whether_it_had_an_environment",
+   "test_a_plan_that_was_nearly_out_at_the_start_reaches_the_packet",
+   "test_a_plan_nobody_could_read_is_said_too",
+   "test_a_route_with_no_window_is_not_an_unknown",
+   "test_a_plan_without_room_schedules_the_run_instead_of_refusing_it",
+   "test_a_plan_with_room_is_not_held_up",
+   "test_one_observation_is_an_anecdote_and_holds_nothing_back",
+   "test_a_reset_too_far_off_is_a_warning_not_a_schedule",
+   "test_a_scheduled_run_survives_the_process_that_scheduled_it",
+   "test_a_reading_is_dated_by_its_own_record_not_the_file",
+   "test_a_current_gauge_is_never_worth_a_turn",
+   "test_a_self_reading_tool_whose_log_went_stale_is_still_worth_a_turn",
+   "test_a_probe_that_cannot_make_the_reading_current_is_not_repeated",
+   "test_a_sealed_tool_s_session_log_is_copied_out_and_read",
+   "test_a_reading_lifted_off_disk_is_dated_when_the_tool_wrote_it",
+   "test_a_blind_test_a_reviewer_calls_wrong_goes_to_a_person",
+   "test_a_simplify_finding_is_never_also_a_repair_target",
+   "test_the_simplify_pass_runs_once_and_before_the_panel_that_reads_it",
+   "test_a_restated_finding_is_routed_once_and_not_repaired_twice",
+   "test_a_restatement_takes_the_outcome_of_what_it_restates",
+   "test_nothing_is_deleted_by_being_called_a_duplicate",
+   "test_the_harsher_reading_survives_the_merge",
+   "test_a_chain_of_restatements_resolves_to_the_one_that_carries_the_fix",
+   "test_two_findings_pointing_at_each_other_do_not_hang_the_loop",
+   "test_every_rerun_the_server_offers_has_a_way_to_reach_it",
+   "test_the_control_that_replaces_code_stops_and_asks",
+   "test_a_panel_that_all_died_is_a_blocker_not_a_clean_bill",
+   "test_losing_one_review_agent_is_not_a_blocker",
+   "test_a_dead_arbiter_and_a_dead_scout_reach_the_packet",
+   "test_every_failure_record_the_pipeline_writes_is_read_back",
+   "test_a_breaker_suite_that_failed_without_naming_a_probe_is_not_zero",
+   "test_the_stats_do_not_report_zero_over_a_failed_suite",
+   "test_a_criterion_nothing_implements_is_never_counted_verified",
+   "test_a_window_reported_as_a_percentage_reads_as_a_fraction",
+   "test_a_countdown_is_turned_into_an_instant",
+   "test_a_gauge_that_never_reaches_stdout_is_read_from_the_tools_own_log",
+   "test_a_route_with_no_gauge_still_reports_none",
+   "test_the_first_shape_still_reads_as_it_did",
+   "test_a_window_is_named_by_its_length_not_by_its_index",
+   "test_credits_are_read_and_kept_beside_the_windows",
+   "test_an_empty_balance_does_not_move_the_gauge",
+   "test_a_window_that_has_reset_is_shown_as_unknown_not_dropped",
+   "test_the_shipped_codex_route_can_read_its_own_gauge",
+   "test_the_route_is_computed_from_the_dispositions",
+   "test_a_legacy_spec_flag_no_longer_forces_gate_one",
+   "test_a_repair_the_oracle_owns_rides_the_repair_route_not_a_third_one",
+   "test_retagging_is_a_new_record_not_an_edit",
+   "test_a_human_flag_enters_the_ledger_already_routed",
+   "test_the_arbiter_may_move_a_human_repair_to_the_oracle_and_nothing_else",
+   "test_a_human_finding_is_not_marked_a_duplicate_of_something_else",
+   "test_priority_orders_the_round_and_never_empties_it",
+   "test_ordering_targets_is_stable_and_survives_an_unknown_finding",
+   "test_a_ruling_with_no_note_does_not_put_the_machine_s_words_in_your_mouth",
+   "test_a_flag_filed_before_the_fix_is_read_for_what_it_is",
+   "test_a_flag_with_no_note_and_no_finding_to_borrow_from_is_still_named",
+   "test_the_arbiter_cannot_re_route_what_a_human_raised",
+   "test_a_retag_moves_an_open_flag_but_not_a_settled_one",
+   "test_out_of_spec_flags_leave_rather_than_forcing_anything",
+   "test_v4_dropped_decisions_findings_and_files_are_restored",
+   "test_v5_schema_failure_is_retried_then_succeeds",
+   "test_v5_three_failures_raise_loudly",
+   "test_v5_fences_and_surrounding_prose_are_stripped",
+   "test_the_example_config_ships_the_routes_it_documents",
+   "test_every_config_section_is_actually_read_from_the_file",
+   "test_the_example_documents_the_scheduling_knobs",
+   "test_a_half_declared_gauge_is_not_a_gauge",
+   "test_v6_no_model_names_outside_the_config",
+   "test_v6_a_missing_role_raises_rather_than_falling_back",
+   "test_v7_every_role_the_pipeline_uses_has_a_prompt_file",
+   "test_v7_no_prompt_text_is_inlined_in_the_pipeline",
+   "test_a_port_already_served_here_does_not_take_the_door_down"
+  ],
+  "domain_terms": [
+   "oracle",
+   "acceptance criterion",
+   "evidence ledger",
+   "finding",
+   "repair",
+   "findings, ledger, disposition",
+   "human flags, repair routing",
+   "rate limit windows, gauges",
+   "configuration, roles, prompts",
+   "agent failures, probe results"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "EvidenceStore",
+   "FindingLedger",
+   "Finding",
+   "HumanFlag",
+   "FindingDisposition",
+   "BreakerReport",
+   "BreakerSuite",
+   "QAReport",
+   "GateReport",
+   "Spec",
+   "AcceptanceCriterion",
+   "TraceRow",
+   "CriterionResult",
+   "Decision",
+   "FileWrite",
+   "Packet",
+   "ScoutReport",
+   "Config",
+   "RouteConfig",
+   "WindowReading"
+  ],
+  "entities_written": [
+   "EvidenceStore"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "verify_context"
+    ],
+    "line": 18,
+    "name": "test_v1_verify_context_takes_a_spec_and_three_descriptions_of_the_world"
+   },
+   {
+    "calls": [
+     "Spec",
+     "installable_names",
+     "verify_context"
+    ],
+    "line": 70,
+    "name": "test_v1_nothing_but_a_package_name_survives_the_second_parameter"
+   },
+   {
+    "calls": [
+     "ProjectState",
+     "verify_context",
+     "Spec"
+    ],
+    "line": 102,
+    "name": "test_v1_the_runtime_contract_is_configuration_and_says_nothing_when_empty"
+   },
+   {
+    "calls": [
+     "ProjectState",
+     "EnvironmentSpec",
+     "Service",
+     "TestFileCommand",
+     "ReworkConfig",
+     "ConfigError",
+     "load_config"
+    ],
+    "line": 143,
+    "name": "test_v1_an_oracle_is_told_about_its_own_project_and_no_other"
+   },
+   {
+    "calls": [
+     "code_without_prose",
+     "verify_context",
+     "spec_text",
+     "_verify_lane"
+    ],
+    "line": 200,
+    "name": "test_v1_no_implementation_reaches_the_verify_lane"
+   },
+   {
+    "calls": [
+     "code_without_prose",
+     "is_package_list",
+     "is_runtime_contract",
+     "is_testing_context",
+     "is_oracle_guides",
+     "is_verify_context"
+    ],
+    "line": 218,
+    "name": "test_v1_the_lane_is_called_with_the_spec_alone"
+   },
+   {
+    "calls": [],
+    "line": 251,
+    "name": "is_package_list"
+   },
+   {
+    "calls": [],
+    "line": 266,
+    "name": "is_runtime_contract"
+   },
+   {
+    "calls": [],
+    "line": 289,
+    "name": "is_testing_context"
+   },
+   {
+    "calls": [],
+    "line": 309,
+    "name": "is_oracle_guides"
+   },
+   {
+    "calls": [
+     "is_package_list",
+     "is_runtime_contract",
+     "is_testing_context",
+     "is_oracle_guides"
+    ],
+    "line": 321,
+    "name": "is_verify_context"
+   },
+   {
+    "calls": [
+     "EvidenceStore"
+    ],
+    "line": 370,
+    "name": "test_v2_store_exposes_no_way_to_change_the_past"
+   },
+   {
+    "calls": [
+     "EvidenceStore"
+    ],
+    "line": 380,
+    "name": "test_v2_both_records_survive_with_increasing_seq"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "current_record",
+     "agrees"
+    ],
+    "line": 398,
+    "name": "test_v2_reading_one_kind_says_what_reading_the_whole_ledger_says"
+   },
+   {
+    "calls": [
+     "current_record"
+    ],
+    "line": 405,
+    "name": "agrees"
+   },
+   {
+    "calls": [
+     "Spec",
+     "AcceptanceCriterion",
+     "_worker",
+     "OracleSuite",
+     "OracleTestFile",
+     "compute_trace"
+    ],
+    "line": 456,
+    "name": "test_v3_a_criterion_nothing_implements_is_an_orphan"
+   },
+   {
+    "calls": [
+     "Spec",
+     "AcceptanceCriterion",
+     "_worker",
+     "OracleSuite",
+     "compute_trace"
+    ],
+    "line": 472,
+    "name": "test_v3_implemented_without_a_blind_test_is_untested"
+   },
+   {
+    "calls": [
+     "Spec",
+     "AcceptanceCriterion",
+     "compute_trace",
+     "Packet",
+     "TraceRow",
+     "restore_packet"
+    ],
+    "line": 489,
+    "name": "test_v3_a_model_claimed_trace_is_discarded"
+   },
+   {
+    "calls": [
+     "_worker",
+     "FileWrite",
+     "SelfDisclosure",
+     "compute_unclaimed"
+    ],
+    "line": 503,
+    "name": "test_v3_a_file_no_criterion_claims_is_unclaimed"
+   },
+   {
+    "calls": [
+     "WorkerOutput",
+     "FileWrite",
+     "Decision",
+     "compute_unclaimed"
+    ],
+    "line": 519,
+    "name": "test_v3_unclaimed_needs_a_criterion_not_merely_a_decision"
+   },
+   {
+    "calls": [
+     "WorkerOutput",
+     "FileWrite",
+     "SelfDisclosure",
+     "compute_unclaimed",
+     "Packet",
+     "restore_packet"
+    ],
+    "line": 538,
+    "name": "test_v3_a_model_claimed_unclaimed_list_is_discarded"
+   },
+   {
+    "calls": [
+     "create",
+     "FileWrite",
+     "WorkerOutput",
+     "compute_unclaimed"
+    ],
+    "line": 552,
+    "name": "test_a_comment_added_to_a_long_file_is_not_reported_as_a_long_change"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "create",
+     "FileWrite",
+     "Packet",
+     "restore_packet"
+    ],
+    "line": 577,
+    "name": "test_the_rapporteurs_line_counts_are_overwritten_by_the_branchs"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "create",
+     "FileWrite",
+     "Spec",
+     "compute_stats",
+     "QAReport",
+     "GateReport"
+    ],
+    "line": 606,
+    "name": "test_lines_written_is_the_diff_not_the_sum_of_the_files"
+   },
+   {
+    "calls": [
+     "change_size"
+    ],
+    "line": 629,
+    "name": "test_without_a_branch_to_ask_a_file_counts_as_wholly_new"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "_env_record",
+     "check_unit_environments"
+    ],
+    "line": 643,
+    "name": "test_a_unit_that_ran_without_an_environment_becomes_a_blocker"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "_env_record",
+     "check_unit_environments"
+    ],
+    "line": 666,
+    "name": "test_a_run_where_every_unit_had_its_stack_raises_nothing"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "_env_record",
+     "check_unit_environments"
+    ],
+    "line": 676,
+    "name": "test_an_environment_that_came_up_on_a_retry_is_not_reported_blind"
+   },
+   {
+    "calls": [
+     "_note"
+    ],
+    "line": 696,
+    "name": "test_a_failed_environment_tells_the_agent_what_it_printed"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 707,
+    "name": "test_every_authoring_session_reports_whether_it_had_an_environment"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "_headroom",
+     "check_headroom"
+    ],
+    "line": 722,
+    "name": "test_a_plan_that_was_nearly_out_at_the_start_reaches_the_packet"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "_headroom",
+     "check_headroom"
+    ],
+    "line": 745,
+    "name": "test_a_plan_nobody_could_read_is_said_too"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "_headroom",
+     "check_headroom"
+    ],
+    "line": 760,
+    "name": "test_a_route_with_no_window_is_not_an_unknown"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "_sched_cfg",
+     "_seed_gauge",
+     "plan_verdict"
+    ],
+    "line": 771,
+    "name": "test_a_plan_without_room_schedules_the_run_instead_of_refusing_it"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "_sched_cfg",
+     "_seed_gauge",
+     "plan_verdict"
+    ],
+    "line": 790,
+    "name": "test_a_plan_with_room_is_not_held_up"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "_sched_cfg",
+     "_seed_gauge",
+     "plan_verdict"
+    ],
+    "line": 803,
+    "name": "test_one_observation_is_an_anecdote_and_holds_nothing_back"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "_sched_cfg",
+     "_seed_gauge",
+     "plan_verdict"
+    ],
+    "line": 818,
+    "name": "test_a_reset_too_far_off_is_a_warning_not_a_schedule"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "FeatureState"
+    ],
+    "line": 834,
+    "name": "test_a_scheduled_run_survives_the_process_that_scheduled_it"
+   },
+   {
+    "calls": [
+     "RouteConfig",
+     "read_from_disk"
+    ],
+    "line": 844,
+    "name": "test_a_reading_is_dated_by_its_own_record_not_the_file"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "_sched_cfg",
+     "WindowReading",
+     "gauge_live"
+    ],
+    "line": 880,
+    "name": "test_a_current_gauge_is_never_worth_a_turn"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "_sched_cfg",
+     "RouteConfig",
+     "WindowReading",
+     "gauge_live"
+    ],
+    "line": 899,
+    "name": "test_a_self_reading_tool_whose_log_went_stale_is_still_worth_a_turn"
+   },
+   {
+    "calls": [],
+    "line": 926,
+    "name": "fake_refresh"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "_sched_cfg",
+     "RouteConfig",
+     "WindowReading",
+     "gauge_live"
+    ],
+    "line": 935,
+    "name": "test_a_probe_that_cannot_make_the_reading_current_is_not_repeated"
+   },
+   {
+    "calls": [
+     "WindowReading"
+    ],
+    "line": 958,
+    "name": "fake_refresh"
+   },
+   {
+    "calls": [
+     "_codex_route",
+     "sidecar_dir",
+     "collect_sidecars",
+     "read_windows",
+     "read_from_disk",
+     "prune_mirror"
+    ],
+    "line": 977,
+    "name": "test_a_sealed_tool_s_session_log_is_copied_out_and_read"
+   },
+   {
+    "calls": [],
+    "line": 994,
+    "name": "fake_docker"
+   },
+   {
+    "calls": [
+     "RouteConfig",
+     "read_windows"
+    ],
+    "line": 1031,
+    "name": "test_a_reading_lifted_off_disk_is_dated_when_the_tool_wrote_it"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "Finding",
+     "suspect_tests_to_a_person",
+     "FindingDisposition"
+    ],
+    "line": 1059,
+    "name": "test_a_blind_test_a_reviewer_calls_wrong_goes_to_a_person"
+   },
+   {
+    "calls": [
+     "_ledger_with",
+     "FindingDisposition",
+     "simplifiable",
+     "repairable"
+    ],
+    "line": 1112,
+    "name": "test_a_simplify_finding_is_never_also_a_repair_target"
+   },
+   {
+    "calls": [
+     "_converge"
+    ],
+    "line": 1134,
+    "name": "test_the_simplify_pass_runs_once_and_before_the_panel_that_reads_it"
+   },
+   {
+    "calls": [
+     "_ledger_with",
+     "FindingDisposition",
+     "repairable"
+    ],
+    "line": 1163,
+    "name": "test_a_restated_finding_is_routed_once_and_not_repaired_twice"
+   },
+   {
+    "calls": [
+     "_ledger_with",
+     "FindingDisposition",
+     "apply_verdicts",
+     "RepairVerdict",
+     "settle_duplicates"
+    ],
+    "line": 1178,
+    "name": "test_a_restatement_takes_the_outcome_of_what_it_restates"
+   },
+   {
+    "calls": [
+     "_ledger_with",
+     "FindingDisposition"
+    ],
+    "line": 1198,
+    "name": "test_nothing_is_deleted_by_being_called_a_duplicate"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "Finding",
+     "FindingDisposition"
+    ],
+    "line": 1211,
+    "name": "test_the_harsher_reading_survives_the_merge"
+   },
+   {
+    "calls": [
+     "_ledger_with",
+     "FindingDisposition"
+    ],
+    "line": 1225,
+    "name": "test_a_chain_of_restatements_resolves_to_the_one_that_carries_the_fix"
+   },
+   {
+    "calls": [
+     "_ledger_with"
+    ],
+    "line": 1240,
+    "name": "test_two_findings_pointing_at_each_other_do_not_hang_the_loop"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "app_js"
+    ],
+    "line": 1250,
+    "name": "test_every_rerun_the_server_offers_has_a_way_to_reach_it"
+   },
+   {
+    "calls": [
+     "app_js",
+     "stylesheet"
+    ],
+    "line": 1267,
+    "name": "test_the_control_that_replaces_code_stops_and_asks"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "check_agent_failures"
+    ],
+    "line": 1291,
+    "name": "test_a_panel_that_all_died_is_a_blocker_not_a_clean_bill"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "check_agent_failures"
+    ],
+    "line": 1313,
+    "name": "test_losing_one_review_agent_is_not_a_blocker"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "check_agent_failures"
+    ],
+    "line": 1324,
+    "name": "test_a_dead_arbiter_and_a_dead_scout_reach_the_packet"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 1335,
+    "name": "test_every_failure_record_the_pipeline_writes_is_read_back"
+   },
+   {
+    "calls": [
+     "breaker_findings",
+     "BreakerReport",
+     "BreakerSuite"
+    ],
+    "line": 1348,
+    "name": "test_a_breaker_suite_that_failed_without_naming_a_probe_is_not_zero"
+   },
+   {
+    "calls": [
+     "compute_stats",
+     "BreakerReport",
+     "GateReport",
+     "QAReport",
+     "Spec"
+    ],
+    "line": 1374,
+    "name": "test_the_stats_do_not_report_zero_over_a_failed_suite"
+   },
+   {
+    "calls": [
+     "compute_stats",
+     "Spec",
+     "AcceptanceCriterion",
+     "TraceRow",
+     "QAReport",
+     "CriterionResult",
+     "GateReport"
+    ],
+    "line": 1387,
+    "name": "test_a_criterion_nothing_implements_is_never_counted_verified"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "_codex_route"
+    ],
+    "line": 1426,
+    "name": "test_a_window_reported_as_a_percentage_reads_as_a_fraction"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "_codex_route"
+    ],
+    "line": 1444,
+    "name": "test_a_countdown_is_turned_into_an_instant"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "_codex_route"
+    ],
+    "line": 1458,
+    "name": "test_a_gauge_that_never_reaches_stdout_is_read_from_the_tools_own_log"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "RouteConfig"
+    ],
+    "line": 1486,
+    "name": "test_a_route_with_no_gauge_still_reports_none"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "RouteConfig"
+    ],
+    "line": 1495,
+    "name": "test_the_first_shape_still_reads_as_it_did"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "_codex_route",
+     "WindowReading"
+    ],
+    "line": 1515,
+    "name": "test_a_window_is_named_by_its_length_not_by_its_index"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "_codex_route",
+     "read_credits",
+     "MeterStore"
+    ],
+    "line": 1536,
+    "name": "test_credits_are_read_and_kept_beside_the_windows"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "_codex_route",
+     "MeterStore"
+    ],
+    "line": 1562,
+    "name": "test_an_empty_balance_does_not_move_the_gauge"
+   },
+   {
+    "calls": [
+     "MeterStore",
+     "WindowReading"
+    ],
+    "line": 1579,
+    "name": "test_a_window_that_has_reset_is_shown_as_unknown_not_dropped"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1618,
+    "name": "test_the_shipped_codex_route_can_read_its_own_gauge"
+   },
+   {
+    "calls": [
+     "compute_rework",
+     "HumanFlag"
+    ],
+    "line": 1637,
+    "name": "test_the_route_is_computed_from_the_dispositions"
+   },
+   {
+    "calls": [
+     "compute_rework",
+     "HumanFlag"
+    ],
+    "line": 1651,
+    "name": "test_a_legacy_spec_flag_no_longer_forces_gate_one"
+   },
+   {
+    "calls": [
+     "compute_rework",
+     "HumanFlag"
+    ],
+    "line": 1673,
+    "name": "test_a_repair_the_oracle_owns_rides_the_repair_route_not_a_third_one"
+   },
+   {
+    "calls": [
+     "human_flags",
+     "HumanFlag"
+    ],
+    "line": 1697,
+    "name": "test_retagging_is_a_new_record_not_an_edit"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "seed_flags",
+     "HumanFlag",
+     "Finding"
+    ],
+    "line": 1714,
+    "name": "test_a_human_flag_enters_the_ledger_already_routed"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "seed_flags",
+     "HumanFlag",
+     "FindingDisposition"
+    ],
+    "line": 1733,
+    "name": "test_the_arbiter_may_move_a_human_repair_to_the_oracle_and_nothing_else"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "seed_flags",
+     "HumanFlag",
+     "FindingDisposition"
+    ],
+    "line": 1774,
+    "name": "test_a_human_finding_is_not_marked_a_duplicate_of_something_else"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "Finding",
+     "seed_flags",
+     "HumanFlag",
+     "FindingDisposition"
+    ],
+    "line": 1791,
+    "name": "test_priority_orders_the_round_and_never_empties_it"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "Finding",
+     "FindingDisposition"
+    ],
+    "line": 1825,
+    "name": "test_ordering_targets_is_stable_and_survives_an_unknown_finding"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "Finding",
+     "seed_flags",
+     "HumanFlag"
+    ],
+    "line": 1841,
+    "name": "test_a_ruling_with_no_note_does_not_put_the_machine_s_words_in_your_mouth"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "Finding",
+     "seed_flags",
+     "HumanFlag"
+    ],
+    "line": 1897,
+    "name": "test_a_flag_filed_before_the_fix_is_read_for_what_it_is"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "seed_flags",
+     "HumanFlag"
+    ],
+    "line": 1934,
+    "name": "test_a_flag_with_no_note_and_no_finding_to_borrow_from_is_still_named"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "seed_flags",
+     "HumanFlag",
+     "Finding",
+     "FindingDisposition"
+    ],
+    "line": 1947,
+    "name": "test_the_arbiter_cannot_re_route_what_a_human_raised"
+   },
+   {
+    "calls": [
+     "FindingLedger",
+     "seed_flags",
+     "HumanFlag"
+    ],
+    "line": 1970,
+    "name": "test_a_retag_moves_an_open_flag_but_not_a_settled_one"
+   },
+   {
+    "calls": [
+     "compute_rework",
+     "HumanFlag"
+    ],
+    "line": 1986,
+    "name": "test_out_of_spec_flags_leave_rather_than_forcing_anything"
+   },
+   {
+    "calls": [
+     "Decision",
+     "Finding",
+     "FileWrite",
+     "Packet",
+     "restore_packet"
+    ],
+    "line": 2004,
+    "name": "test_v4_dropped_decisions_findings_and_files_are_restored"
+   },
+   {
+    "calls": [
+     "LLM",
+     "_stub_config",
+     "ScoutReport"
+    ],
+    "line": 2054,
+    "name": "test_v5_schema_failure_is_retried_then_succeeds"
+   },
+   {
+    "calls": [
+     "LLM",
+     "_stub_config",
+     "ScoutReport"
+    ],
+    "line": 2082,
+    "name": "test_v5_three_failures_raise_loudly"
+   },
+   {
+    "calls": [],
+    "line": 2100,
+    "name": "test_v5_fences_and_surrounding_prose_are_stripped"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 2110,
+    "name": "test_the_example_config_ships_the_routes_it_documents"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "Config"
+    ],
+    "line": 2125,
+    "name": "test_every_config_section_is_actually_read_from_the_file"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 2148,
+    "name": "test_the_example_documents_the_scheduling_knobs"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 2164,
+    "name": "test_a_half_declared_gauge_is_not_a_gauge"
+   },
+   {
+    "calls": [],
+    "line": 2179,
+    "name": "test_v6_no_model_names_outside_the_config"
+   },
+   {
+    "calls": [
+     "_stub_config"
+    ],
+    "line": 2202,
+    "name": "test_v6_a_missing_role_raises_rather_than_falling_back"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "load_config",
+     "prompt_path"
+    ],
+    "line": 2215,
+    "name": "test_v7_every_role_the_pipeline_uses_has_a_prompt_file"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 2260,
+    "name": "test_v7_no_prompt_text_is_inlined_in_the_pipeline"
+   },
+   {
+    "calls": [
+     "doorway.serve"
+    ],
+    "line": 2266,
+    "name": "test_a_port_already_served_here_does_not_take_the_door_down"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py",
+   "factory/schemas.py",
+   "factory/sandbox.py",
+   "factory/config.py",
+   "factory/meters.py",
+   "factory/routes.py",
+   "factory/unitenv.py",
+   "factory/agentbox.py",
+   "factory/pipeline/__init__.py",
+   "factory/llm.py",
+   "factory/doorway.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "file system",
+   "pytest",
+   "asyncio",
+   "json",
+   "time",
+   "socket",
+   "yaml",
+   "pathlib"
+  ],
+  "purpose": "Tests invariants that define core system design properties rather than individual features. Each test asserts a design constraint that must hold for the system to function correctly, from the verify lane's isolation from implementation details to append-only evidence recording to traceability mechanisms.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

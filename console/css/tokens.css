@@ -1,0 +1,395 @@
+/* The argument for the palette, then the values: the default scheme and the
+   two it can fold into. First, because every file after it reads these names
+   and none of them may say a colour of its own. */
+
+/* --------------------------------------------------------------------------
+   Фабрика. An andon board over a production line.
+
+   An andon board hangs over a line so that trouble at any station is visible
+   from anywhere on the floor, and any worker may pull the cord to stop the line
+   rather than pass a defect downstream. That is jidoka, and it is already what
+   this product does: the gates are stations, a failing gate stops the line, and
+   you are the one who decides it restarts.
+
+   THE LAMP RULE, which is the whole system. A lamp is lit only by the line's
+   own state, never by design:
+     green    this station passed its work downstream
+     amber    it called for help; the loop is on it and you are not needed yet
+     red      it stopped the line
+     dark     not reached -- the line never got here, so it has no opinion
+     skipped  reached, and there was nothing for it to do
+
+   TWO REGISTERS, KEPT APART. The lamps say where the RUN is. The step strip
+   says where YOU are. Collapsing those two into one colour is the mistake this
+   design exists to prevent.
+
+   Counted numbers -- plan, actual, defect -- are the only ones set large.
+   Nothing is styled to look important; it is important because of what it
+   counts. The cord is the operator's right to stop the line, and the only
+   control drawn as an object.
+   -------------------------------------------------------------------------- */
+
+:root {
+  --paper:        #dcdfdb;   /* the shop floor, painted concrete */
+  --surface:      #f4f5f2;   /* shop paperwork                   */
+  --surface-sunk: #e9ebe7;
+  --surface-lift: #ffffff;   /* paper lifted off the paperwork: a field, a hover */
+  --ink:          #171a17;
+  --ink-2:        #4a504a;
+  --ink-3:        #5c645c;   /* 4.5:1 on the floor, where #798288 manages only 3.4. */
+  --line:         #c2c6c1;
+  --line-strong:  #a2a89f;
+
+  /* The board itself: enamelled steel. */
+  --panel:        #171a17;
+  --panel-2:      #21251f;
+  --panel-3:      #2d322b;
+  --rail:         #69736a;
+
+  /* THE BOARD'S INK. The floor has three inks and a rule. The board could
+     easily carry fifteen greys -- .93 .89 .87 .80 .74 .70 .65 .62 .61 .58 .54
+     .50 .47 .44 .41 in lightness -- and half of those differences are not a
+     distinction anybody can use. So it gets what the review's type scale gets,
+     for the same reason: six steps, and nothing between them.
+
+       hi    the brightest. where you are, a title, a hovered link
+       ink   lettering
+       2     prose, and a caption under it
+       3     quiet: a nav at rest, a count in a gutter
+       4     the quietest thing still being read -- including the label on a
+             control you cannot press. You have to be able to tell what the
+             button you cannot press would do
+       faint not reached, ahead, switched off -- and a button's edge
+       rule  a separator between words
+
+     A grey between steps takes the nearest one, and a tie goes to the
+     LIGHTER one: all of this is lettering on a dark ground, and every contrast
+     failure on the board is on that side. */
+  --board-ink-hi: #ffffff;
+  --board-ink:    #e7eae6;
+  --board-ink-2:  #a7afa5;
+  --board-ink-3:  #8b938a;
+  --board-ink-4:  #767e75;
+  --board-faint:  #5d655c;
+  --board-rule:   #454c45;
+  /* A rule drawn inside the plate, and the hard edge of the plate itself. */
+  --board-edge:   #262b25;
+  --board-seam:   #0d100d;
+  /* A lamp's hue, used as LETTERING on the enamel rather than as a lamp.
+     The distinction only shows itself when the enamel turns light: amber at
+     #f0a500 is a fine lamp on any ground and 2.3:1 as a word on a painted
+     plate. So the word gets its own name, and the lamp keeps its own. */
+  --board-red:    #ff8078;
+  --board-amber:  #f0a500;
+  --board-green:  #6fd49a;
+
+  /* Lamps. These are lit by the line, and are the only saturated colour here. */
+  --lamp-green:   #2fa360;
+  --lamp-amber:   #f0a500;
+  --lamp-red:     #e03127;
+  --lamp-off:     #3a403a;
+  /* The white lamp -- the station at work NOW -- and a green one carried over
+     from a previous round. Both are states the line lights, so both are lamps
+     and belong here rather than written as literals. The floor shows unlit
+     bulbs too, and needs its own value for one. */
+  --lamp-white:       #e7eae6;
+  --lamp-green-prior: #3d5a46;
+  --lamp-off-paper:   #c6cbc4;
+
+  /* "You are required" as ink rather than lamp, for text on the floor. */
+  --accent:       #9a6300;
+  --accent-ink:   #7d5100;
+  --accent-wash:  #fdf3dd;
+  /* The one warning that is not advice: the code answering you is not the code
+     on disk, and the actions it names cost money. */
+  --lamp-red-wash: #fdecea;
+
+  --red:          #c2231b;
+  --red-wash:     #fae7e5;
+  /* The two sides of the crew diagram: blue builds, red checks. Red is the
+     console's own red, so the check side reads as the side that says no. */
+  --team-build:   #2a5ea8;
+  --team-check:   var(--red);
+  --amber:        #9a6300;
+  --amber-wash:   #fdf3dd;
+  --green:        #1d6b46;
+  --green-wash:   #e4efe8;
+
+  /* Lettering reversed out of a filled shape. White on a red or green lamp;
+     near-black on amber, because amber is the one lamp light enough to need
+     it. Neither moves in any scheme -- a lamp does not change. */
+  --ink-reversed: #ffffff;
+  --ink-on-amber: #241800;
+
+  /* What the editor paints behind selected text. */
+  --sel:          #d5dcd3;
+  --sel-focus:    #cbd6ca;
+
+  /* Floor semantics, each with a value of its own rather than a literal at
+     every use. Not folded into --red, --green and --amber: that would change
+     how the console looks, which naming a colour should never do. */
+  --red-deep:        #a81d16;   /* a danger button, pressed            */
+  --red-ink:         #8e2b24;   /* a removed line, a refusal           */
+  --red-ink-deep:    #5f1512;   /* the one warning that is not advice  */
+  --red-edge:        #e6b8b4;
+  --red-flag:        #b3261e;
+  --green-ink:       #12482f;   /* an added line                       */
+  --green-ok:        #2e7d32;
+  --green-edge:      #a8c9b8;
+  --amber-edge:      #e2cd9a;
+  --amber-wash-deep: #fbeccd;
+  --amber-line:      #b8860b;
+  /* The verdict band: one solid ground per answer, and a rule above it in a
+     lighter shade of the same colour. White carries everything on it. */
+  --v-band-ship:          #17693f;
+  --v-band-ship-rule:     #2fa360;
+  --v-band-rulings:       #b9d27f;
+  --v-band-rulings-rule:  #d6e8a8;
+  --v-band-rulings-ink:   #1f2a10;
+  --v-band-stop:          #a3211a;
+  --v-band-stop-rule:     #e0463c;
+  --v-band-ink:           #ffffff;
+
+  /* THE FOUR LANES. Not a state -- a place on the line -- so each keeps one
+     hue wherever it appears: the timeline, the station list and the rail all
+     say `plan` in the same colour. Two sets, because the console has two
+     grounds: `--lane-*` reads on the floor, `--lane-*-lit` on the panel. */
+  --lane-plan:        #2f6ea3;
+  --lane-build:       #2a7d4f;
+  --lane-verify:      #a8820c;
+  --lane-review:      #c1560f;
+  /* The same four, dark enough to be read as 10px uppercase on the floor. The
+     bar can carry the brighter hue -- it is a shape, not a word. */
+  --lane-plan-ink:    #28618f;
+  --lane-build-ink:   #236c44;
+  --lane-verify-ink:  #6f5508;
+  --lane-review-ink:  #8f400b;
+
+  --lane-plan-lit:    #6aa9dd;
+  --lane-build-lit:   #4cb87c;
+  --lane-verify-lit:  #e3c04a;
+  --lane-review-lit:  #ef8b45;
+
+  --mat-generated:    #cdd1cc;
+  --mat-mechanical:   #a9b0a8;
+  --mat-conventional: #6d756c;
+  --mat-novel:        var(--red);
+
+  --display: "Saira Condensed", "Helvetica Neue", Arial, sans-serif;
+  --cond:    "Saira Condensed", "Helvetica Neue", Arial, sans-serif;
+  /* Saira Condensed still letters every label, button, station and count. The
+     paragraphs are Plex: same engineered register, but open apertures and
+     round bowls where Saira flattens them, which is the difference between a
+     face that works on a two-word button and one that works over six lines. */
+  --body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:    "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Roboto Mono letters the counts, the paths and the line numbers, and is
+     right for all of them: a UI face, seen a word at a time. A role prompt is
+     six hundred lines of prose that happens to be markdown, and asking a
+     toolbar face to carry it is the same mistake as setting a paragraph in
+     Saira. Plex Mono is the Sans already here, monospaced -- same skeleton,
+     same engineered register, drawn with the apertures long text needs. */
+  --mono-prose: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --gutter: 24px;
+  --radius: 2px;
+
+  /* THE REVIEW'S TYPE SCALE. Six steps and nothing between them.
+
+     A size per component -- .875, .8125, .78125, .75, .6875, .625 -- makes
+     half of those differences half a pixel, which reads as carelessness
+     rather than as hierarchy. A reason set at 12.5px beside a
+     note set at 12px is not a distinction anybody can use.
+
+     label  uppercase micro: pills, eyebrows, chips
+     meta   mono asides: counts, paths in a gutter, line numbers
+     small  secondary prose: a file's reason, a footnote, a caption
+     body   the text you are here to read: row titles, paragraphs
+     head   a block's heading inside a section
+     sec    a section heading */
+  --t-label: .625rem;
+  --t-meta:  .6875rem;
+  --t-small: .75rem;
+  --t-body:  .8125rem;
+  --t-head:  .9375rem;
+  --t-sec:   1.0625rem;
+  --panel-w: 264px;
+  --sheet-gap: 22px;   /* how much board is left showing around the role sheet */
+  --mast-h: 38px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TWO MORE SCHEMES
+
+   The console is not one ground, it is two: the board is enamelled steel and
+   the floor is painted concrete. So a second scheme is not an inversion of
+   the console -- it folds ONE ground onto the other and leaves the other
+   where it is.
+
+     day    the board joins the floor. Painted steel instead of enamelled,
+            one light room. The plate is now LIGHTER than the floor rather
+            than darker, because that is the only way "the board hangs in
+            front of the floor" survives the move.
+     night  the floor joins the board. The paperwork goes dark, and the board
+            goes darker still so it stays the board. A card is lighter than
+            the floor here, because on a dark ground raised means lighter.
+
+   WHAT MAY NOT MOVE. The lamp rule. Green, amber, red and dark are lit by the
+   line's state and by nothing else, so a scheme may change a lamp's lightness
+   to keep it legible against its new ground, and may never change its hue,
+   its meaning, or which state gets which.
+
+   Each scheme is a list of values and nothing else. That is what the tokens
+   buy, and one thing in the console cannot be bought that way: the
+   wordmark is a raster, its lettering is white on transparency, and no token
+   re-colours a letterform that has already been drawn. So there is exactly
+   one rule below, at the foot of this block, and it swaps a file.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="day"] {
+  /* The floor, with the roof lights on: white, and nothing tinted. Every
+     neutral in this scheme is GitHub's cool grey rather than the green-grey
+     of painted concrete -- under daylight, a tint in the ground reads as a
+     cast over everything laid on it. */
+  --paper:        #ffffff;
+  /* The paperwork is one step of grey off the floor. White on white leaves
+     every card, tile and pane nothing but its border to stand on; night lifts
+     them lighter, and on a white floor the only way to lift is down a step. */
+  --surface:      #f6f8fa;
+  --surface-sunk: #eef1f4;
+  --surface-lift: #ffffff;
+  --ink:          #1f2328;
+  --ink-2:        #3d444d;
+  --ink-3:        #59636e;
+  --line:         #d1d9e0;
+  --line-strong:  #afb8c1;
+  --sel:          #e6eaef;
+  --sel-focus:    #dae0e7;
+
+  /* The board: painted steel, as white as the floor and set off from it by
+     its edge. The rail is the one grey ground in the room. */
+  --panel:        #ffffff;
+  --panel-2:      #f6f8fa;
+  --panel-3:      #e3e8ee;
+  --rail:         #818b98;
+
+  /* Its ink ramp, reversed with its ground: the brightest lettering becomes
+     the darkest, and `faint` -- which is the least contrast, not the least
+     light -- passes `4` on the way. Each step holds 4.5:1 on the rail's
+     grey, which is the darker of the two grounds it is lettered on. */
+  --board-ink-hi: #1f2328;
+  --board-ink:    #1f2328;
+  --board-ink-2:  #3d444d;
+  --board-ink-3:  #4b535d;
+  --board-ink-4:  #59636e;
+  --board-faint:  #656d76;
+  --board-rule:   #d1d9e0;
+  --board-edge:   #eaeef2;
+  --board-seam:   #d1d9e0;   /* a seam is a seam: still darker than its plate */
+  --board-red:    #801217;
+  --board-green:  #14633c;
+
+  /* Lamps. Pulled down in lightness only where a lit lamp would otherwise
+     disappear into a pale plate. Hue is the line's, not the scheme's. */
+  --lamp-green:       #1f8b52;
+  --lamp-amber:       #d18f00;
+  --lamp-red:         #cd291f;
+  --lamp-off:         #d1d9e0;
+  --lamp-off-paper:   #d1d9e0;
+  --lamp-white:       #1f2328;   /* at work now: the darkest lamp on a light plate */
+  --lamp-green-prior: #9dbba6;
+  --board-amber:      #8a5800;   /* the word, not the lamp: 5.9:1, where the lamp's hue is 2.3:1 */
+
+  --accent:       #8a5800;
+  --accent-ink:   #6f4800;
+  --red:          #b81f18;
+  --team-build:   #24539a;
+  --amber:        #8a5800;
+  --green:        #1a6342;
+
+  /* On white the grounds can be brighter, and the rule goes darker. */
+  --v-band-ship:          #1b7a47;
+  --v-band-ship-rule:     #10532f;
+  --v-band-rulings:       #d3e6a4;
+  --v-band-rulings-rule:  #7f9f45;
+  --v-band-stop:          #c62a20;
+  --v-band-stop-rule:     #8f1a13;
+
+  /* Two sets of lane colours exist because there are two grounds. In this
+     scheme there is one, so `-lit` is the same ink as everywhere else. One lane,
+     one colour, one room. */
+  --lane-plan-lit:    #28618f;
+  --lane-build-lit:   #236c44;
+  --lane-verify-lit:  #6f5508;
+  --lane-review-lit:  #8f400b;
+
+  --mat-generated:    #e3e8ee;
+  --mat-mechanical:   #afb8c1;
+  --mat-conventional: #6e7781;
+}
+
+:root[data-theme="night"] {
+  /* The floor, under work lights. */
+  --paper:        #1b1f1a;
+  --surface:      #24281f;
+  --surface-sunk: #15180f;
+  --surface-lift: #2e342c;   /* on a dark ground, raised means lighter */
+  --ink:          #e7eae6;
+  --ink-2:        #aeb6ac;
+  --ink-3:        #8d958b;   /* 4.5:1 on the floor, same as its twin */
+  --line:         #343a32;
+  --line-strong:  #4e564d;
+  --sel:          #3d423c;
+  --sel-focus:    #40483f;
+
+  /* The board, and it is the only thing darker than the floor. Its ink does
+     not move: it is drawn for enamel, and here the whole console is enamel. */
+  --panel:        #0c0f0b;
+  --panel-2:      #14170f;
+  --panel-3:      #242920;
+
+  --lamp-off:       #333a32;
+  --lamp-off-paper: #494d47;
+
+  /* "You are required", as ink. On a dark floor that cannot be a brown. */
+  --accent:        #e3ad44;
+  --accent-ink:    #f0c368;
+  --accent-wash:   #2c2410;
+  --lamp-red-wash: #33191a;
+
+  --red:             #f0736a;
+  --red-wash:        #331c1b;
+  --team-build:      #7ea8ec;
+  --red-deep:        #f67566;
+  --red-ink:         #ef8b7e;
+  --red-ink-deep:    #ffb0a6;
+  --red-edge:        #674441;
+  --red-flag:        #ef6d5e;
+  --amber:           #e3ad44;
+  --amber-wash:      #2c2410;
+  --amber-edge:      #56461a;
+  --amber-wash-deep: #3d321b;
+  --amber-line:      #c79a34;
+  --green:           #52b681;
+  --green-wash:      #17291f;
+  --green-ink:       #9ccdb1;
+  --green-ok:        #63a963;
+  --green-edge:      #3e594c;
+
+  /* Every lane is on the dark ground in this scheme, so `-lit` -- the set
+     drawn for the board -- becomes the lane's one colour. */
+  --lane-plan:        #6aa9dd;
+  --lane-build:       #4cb87c;
+  --lane-verify:      #e3c04a;
+  --lane-review:      #ef8b45;
+  --lane-plan-ink:    #6aa9dd;
+  --lane-build-ink:   #4cb87c;
+  --lane-verify-ink:  #e3c04a;
+  --lane-review-ink:  #ef8b45;
+
+  --mat-generated:    #2f352e;
+  --mat-mechanical:   #4e564d;
+  --mat-conventional: #949c92;
+}
+

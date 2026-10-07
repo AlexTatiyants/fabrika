@@ -1,0 +1,222 @@
+{
+ "blob": "1222b8fbaaaa680e950bf3060c3d718f0c316b7a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ConvergeMixin"
+  ],
+  "domain_terms": [
+   "finding",
+   "repair round",
+   "convergence",
+   "ledger",
+   "oracle",
+   "breaker",
+   "rework",
+   "review panel",
+   "breaking test"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState",
+   "FindingLedger",
+   "GateReport",
+   "QAReport",
+   "finding",
+   "check result"
+  ],
+  "entities_written": [
+   "EvidenceStore records",
+   "rework orchestration records"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 92,
+    "name": "ConvergeMixin"
+   },
+   {
+    "calls": [
+     "merge_reviews",
+     "one_reviewer"
+    ],
+    "line": 93,
+    "name": "_review_panel"
+   },
+   {
+    "calls": [
+     "merge_reviews"
+    ],
+    "line": 111,
+    "name": "one_reviewer"
+   },
+   {
+    "calls": [
+     "tree_section",
+     "one"
+    ],
+    "line": 146,
+    "name": "_recheck"
+   },
+   {
+    "calls": [
+     "tree_section"
+    ],
+    "line": 167,
+    "name": "one"
+   },
+   {
+    "calls": [
+     "spec_text",
+     "gate_status_line",
+     "_json",
+     "unruled",
+     "restore_dispositions",
+     "suspect_tests_to_a_person"
+    ],
+    "line": 224,
+    "name": "_arbitrate"
+   },
+   {
+    "calls": [
+     "repo_digest",
+     "plan_repairs",
+     "is_protected",
+     "cleanup_context",
+     "_dedupe_writes",
+     "one"
+    ],
+    "line": 391,
+    "name": "_repair_round"
+   },
+   {
+    "calls": [],
+    "line": 444,
+    "name": "one"
+   },
+   {
+    "calls": [
+     "_dedupe_writes",
+     "is_protected"
+    ],
+    "line": 579,
+    "name": "_simplify_round"
+   },
+   {
+    "calls": [
+     "dependencies",
+     "oracle_files",
+     "protected_paths",
+     "project_files_in",
+     "FindingLedger",
+     "resume_round",
+     "seed_flags",
+     "human_flags",
+     "compute_trace",
+     "compute_qa",
+     "gate_status_line",
+     "_json",
+     "spec_text",
+     "HarnessBlocked",
+     "probes_proven_passing",
+     "check_write_collisions",
+     "check_unit_delivery",
+     "check_unit_independence",
+     "check_cut",
+     "check_testing_conventions",
+     "check_attribution_wiring",
+     "check_harness_delivery",
+     "check_hollow_tests",
+     "check_blind_tags",
+     "check_oracle_discards",
+     "check_blind_suite_missing",
+     "check_oracle_requirements",
+     "check_declared_changes",
+     "check_environment_overrides",
+     "check_route_fallbacks",
+     "check_destructive_writes",
+     "check_verification_surface",
+     "check_settings_changed",
+     "check_guides_changed",
+     "check_new_suppressions",
+     "check_budget_coverage",
+     "check_independence",
+     "check_setup",
+     "check_recording_coverage",
+     "check_trace_coverage",
+     "browser_ran",
+     "current_recordings",
+     "check_test_execution",
+     "this_dispatch",
+     "spent",
+     "affordable",
+     "out_of_time"
+    ],
+    "line": 705,
+    "name": "_converge"
+   },
+   {
+    "calls": [],
+    "line": 734,
+    "name": "this_dispatch"
+   },
+   {
+    "calls": [
+     "this_dispatch"
+    ],
+    "line": 742,
+    "name": "spent"
+   },
+   {
+    "calls": [
+     "spent"
+    ],
+    "line": 752,
+    "name": "affordable"
+   },
+   {
+    "calls": [],
+    "line": 758,
+    "name": "out_of_time"
+   }
+  ],
+  "imports": [
+   "factory/llm.py",
+   "factory/dependencies.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/trace.py",
+   "factory/pipeline/flags.py",
+   "factory/pipeline/records.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/protection.py",
+   "factory/pipeline/ledger.py",
+   "factory/pipeline/probes.py",
+   "factory/pipeline/repairs.py",
+   "factory/pipeline/ownership.py",
+   "factory/pipeline/checks/gate_results.py",
+   "factory/pipeline/checks/agents.py",
+   "factory/pipeline/checks/repo.py",
+   "factory/pipeline/checks/cut.py",
+   "factory/pipeline/checks/blind.py",
+   "factory/pipeline/packet.py",
+   "factory/pipeline/helpers.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "LLM service",
+   "sandbox/executor",
+   "evidence store",
+   "LLM provider",
+   "git repository"
+  ],
+  "purpose": "Orchestrates the convergence loop: coordinates review agents, re-checking, arbiter routing, repair rounds, and simplification passes that iteratively find and fix defects until closure.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

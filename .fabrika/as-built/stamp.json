@@ -1,0 +1,43 @@
+{
+ "commit": "4b8570d19ee181e22473e55e2e68fd4bb4a3e38b",
+ "built_at": "2026-10-07T00:25:39.594411+00:00",
+ "version": 1,
+ "files": 271,
+ "subsystems": 7,
+ "capabilities": 13,
+ "cost": {
+  "calls": 191,
+  "unbilled_calls": 190,
+  "cost_usd": 0.0,
+  "notional_usd": 20.369411,
+  "prompt_tokens": 10795114,
+  "completion_tokens": 1594986,
+  "total_tokens": 12390100,
+  "by_role": {
+   "cartographer": {
+    "calls": 13,
+    "unbilled_calls": 13,
+    "cost_usd": 0.0,
+    "notional_usd": 1.609101,
+    "prompt_tokens": 450914,
+    "completion_tokens": 87840,
+    "total_tokens": 538754
+   },
+   "reader": {
+    "calls": 178,
+    "unbilled_calls": 177,
+    "cost_usd": 0.0,
+    "notional_usd": 18.76031,
+    "prompt_tokens": 10344200,
+    "completion_tokens": 1507146,
+    "total_tokens": 11851346
+   }
+  }
+ },
+ "coverage": {
+  "files_listed": 277,
+  "files_read": 271,
+  "edges_confirmed": 770,
+  "edges_unconfirmed": 23
+ }
+}

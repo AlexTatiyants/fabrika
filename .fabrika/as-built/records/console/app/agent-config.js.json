@@ -1,0 +1,398 @@
+{
+ "blob": "165e48d5db34e3addaca894ff90d263396e2286d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "loadAgentConfig",
+   "agentConfigScreen",
+   "agentConfigClick",
+   "agentConfigChange",
+   "acDragStart",
+   "acDragOver",
+   "acDrop",
+   "acDragEnd",
+   "AC_HREF",
+   "AC_LEVELS",
+   "AC_SIDES",
+   "AC_EFFORTS",
+   "AC_KEEP_DEEP"
+  ],
+  "domain_terms": [
+   "agent",
+   "crew",
+   "provider/route",
+   "level",
+   "team/side",
+   "model"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "staffing configuration",
+   "routes",
+   "presets"
+  ],
+  "entities_written": [
+   "staffing configuration"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 31,
+    "name": "acRoute"
+   },
+   {
+    "calls": [
+     "acRoute"
+    ],
+    "line": 34,
+    "name": "acRouteLabel"
+   },
+   {
+    "calls": [
+     "acRoute"
+    ],
+    "line": 41,
+    "name": "acUsable"
+   },
+   {
+    "calls": [
+     "acRoute"
+    ],
+    "line": 46,
+    "name": "acFamily"
+   },
+   {
+    "calls": [],
+    "line": 52,
+    "name": "acRole"
+   },
+   {
+    "calls": [
+     "acRole"
+    ],
+    "line": 54,
+    "name": "acSideOf"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "acRouteOfSide"
+   },
+   {
+    "calls": [
+     "acRouteOfSide",
+     "acSideOf"
+    ],
+    "line": 69,
+    "name": "acResolve"
+   },
+   {
+    "calls": [],
+    "line": 82,
+    "name": "acCommonRoute"
+   },
+   {
+    "calls": [],
+    "line": 93,
+    "name": "acCommonChoice"
+   },
+   {
+    "calls": [
+     "acCommonRoute",
+     "acCommonChoice"
+    ],
+    "line": 110,
+    "name": "acDraftFrom"
+   },
+   {
+    "calls": [
+     "api"
+    ],
+    "line": 161,
+    "name": "loadAgentConfig"
+   },
+   {
+    "calls": [],
+    "line": 171,
+    "name": "acDirty"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 175,
+    "name": "acProvButton"
+   },
+   {
+    "calls": [
+     "acSideOf",
+     "acCommonRoute",
+     "acRouteLabel",
+     "esc"
+    ],
+    "line": 188,
+    "name": "acSides"
+   },
+   {
+    "calls": [
+     "acRole",
+     "acResolve",
+     "acFamily",
+     "acRouteLabel",
+     "acGaps",
+     "esc"
+    ],
+    "line": 216,
+    "name": "acChecks"
+   },
+   {
+    "calls": [
+     "acRole",
+     "acResolve",
+     "acRouteLabel",
+     "acUsable"
+    ],
+    "line": 263,
+    "name": "acGaps"
+   },
+   {
+    "calls": [
+     "acRouteOfSide",
+     "acSideOf"
+    ],
+    "line": 273,
+    "name": "acRoutesInUse"
+   },
+   {
+    "calls": [
+     "acRoute",
+     "acRouteLabel",
+     "acLevelWas",
+     "esc"
+    ],
+    "line": 278,
+    "name": "acLevelsTable"
+   },
+   {
+    "calls": [
+     "acRole",
+     "acResolve",
+     "acWas",
+     "esc"
+    ],
+    "line": 325,
+    "name": "acChip"
+   },
+   {
+    "calls": [
+     "acSideOf",
+     "acLevelWas",
+     "esc",
+     "acRouteOfSide"
+    ],
+    "line": 341,
+    "name": "acBoard"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 369,
+    "name": "acSelbar"
+   },
+   {
+    "calls": [
+     "acResolve",
+     "acRouteLabel",
+     "acGaps",
+     "acDirty",
+     "esc"
+    ],
+    "line": 395,
+    "name": "acChanges"
+   },
+   {
+    "calls": [
+     "acSides",
+     "acChecks",
+     "acLevelsTable",
+     "acBoard",
+     "acSelbar",
+     "acChanges",
+     "acDirty"
+    ],
+    "line": 429,
+    "name": "agentConfigScreen"
+   },
+   {
+    "calls": [
+     "acRole"
+    ],
+    "line": 485,
+    "name": "acMove"
+   },
+   {
+    "calls": [],
+    "line": 498,
+    "name": "acPreset"
+   },
+   {
+    "calls": [],
+    "line": 525,
+    "name": "acSaved"
+   },
+   {
+    "calls": [],
+    "line": 532,
+    "name": "acRun"
+   },
+   {
+    "calls": [
+     "acRole",
+     "acResolve",
+     "acRouteLabel",
+     "acRun"
+    ],
+    "line": 535,
+    "name": "acWas"
+   },
+   {
+    "calls": [
+     "acSaved",
+     "acRun"
+    ],
+    "line": 545,
+    "name": "acLevelWas"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "acRoutesInUse",
+     "api",
+     "acDraftFrom",
+     "render",
+     "toast"
+    ],
+    "line": 553,
+    "name": "saveAgentConfig"
+   },
+   {
+    "calls": [
+     "acPreset",
+     "acMove",
+     "acRole",
+     "render",
+     "saveAgentConfig"
+    ],
+    "line": 576,
+    "name": "agentConfigClick"
+   },
+   {
+    "calls": [
+     "acResolve",
+     "render"
+    ],
+    "line": 626,
+    "name": "agentConfigChange"
+   },
+   {
+    "calls": [
+     "acRole"
+    ],
+    "line": 653,
+    "name": "acAllowed"
+   },
+   {
+    "calls": [],
+    "line": 660,
+    "name": "acDragStart"
+   },
+   {
+    "calls": [],
+    "line": 669,
+    "name": "acDragOver"
+   },
+   {
+    "calls": [
+     "acAllowed",
+     "acMove",
+     "render"
+    ],
+    "line": 682,
+    "name": "acDrop"
+   },
+   {
+    "calls": [],
+    "line": 691,
+    "name": "acDragEnd"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "browser DOM",
+   "HTTP API"
+  ],
+  "purpose": "Provides the agent configuration screen where users manage which provider serves each team (build/check), set thinking levels (deep/standard/light) per provider, and assign agents to positions with live validation.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/api/staffing"
+   },
+   {
+    "method": "GET",
+    "path": "/api/routes"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/staffing"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "agentConfigScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "Agent configuration"
+   },
+   {
+    "handler": "agentConfigClick",
+    "kind": "event",
+    "method": "",
+    "name": "click on agent config elements"
+   },
+   {
+    "handler": "agentConfigChange",
+    "kind": "event",
+    "method": "",
+    "name": "input change on level/effort selects"
+   },
+   {
+    "handler": "acDragStart",
+    "kind": "event",
+    "method": "",
+    "name": "drag start agent chip"
+   },
+   {
+    "handler": "acDragOver",
+    "kind": "event",
+    "method": "",
+    "name": "drag over drop target"
+   },
+   {
+    "handler": "acDrop",
+    "kind": "event",
+    "method": "",
+    "name": "drop on level/side cell"
+   },
+   {
+    "handler": "acDragEnd",
+    "kind": "event",
+    "method": "",
+    "name": "drag end"
+   }
+  ]
+ }
+}

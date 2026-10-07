@@ -1,0 +1,86 @@
+{
+ "blob": "6b8b6edbc3049e178ea938f2c7add890da90b35e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "renderCrumbs",
+   "navLinks",
+   "SCHEMES",
+   "schemePicker",
+   "SCHEME_KEY",
+   "scheme",
+   "setScheme",
+   "boardHead",
+   "liveWord"
+  ],
+  "domain_terms": [
+   "navigation links",
+   "color scheme",
+   "masthead",
+   "feature bar"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "navLinks"
+    ],
+    "line": 17,
+    "name": "renderCrumbs"
+   },
+   {
+    "calls": [
+     "esc",
+     "schemePicker"
+    ],
+    "line": 30,
+    "name": "navLinks"
+   },
+   {
+    "calls": [
+     "scheme"
+    ],
+    "line": 82,
+    "name": "schemePicker"
+   },
+   {
+    "calls": [],
+    "line": 98,
+    "name": "scheme"
+   },
+   {
+    "calls": [],
+    "line": 105,
+    "name": "setScheme"
+   },
+   {
+    "calls": [
+     "navLinks"
+    ],
+    "line": 129,
+    "name": "boardHead"
+   },
+   {
+    "calls": [
+     "bandOf",
+     "esc"
+    ],
+    "line": 145,
+    "name": "liveWord"
+   }
+  ],
+  "imports": [
+   "console/app/state.js",
+   "console/app/util.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the masthead navigation, feature bar positioning, and color scheme picker for the console UI.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

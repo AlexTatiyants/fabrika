@@ -1,0 +1,42 @@
+{
+ "blob": "14aba8f0d431f31c84fe0d7021aa2d1ac842b1eb",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "rw-top",
+   "rw-cols",
+   "rw-error",
+   "rw-group",
+   "rw-flag",
+   "rw-tag",
+   "rw-composer",
+   "rw-route",
+   "rw-route-head",
+   "rw-route-title",
+   "rw-forced",
+   "rw-filed-row",
+   "rw-kept-h",
+   "rw-short",
+   "rw-route-foot"
+  ],
+  "domain_terms": [
+   "repair",
+   "rework",
+   "flag",
+   "routing",
+   "editorial decision"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the rework screen where users edit repairs and refine decisions while the page refreshes, built by a reconciler rather than static markup.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

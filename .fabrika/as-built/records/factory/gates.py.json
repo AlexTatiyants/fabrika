@@ -1,0 +1,401 @@
+{
+ "blob": "3a6b9ccadf917f69d2cf86a09546f3b047c78447",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Execution",
+   "Runner",
+   "LocalRunner",
+   "TestSummary",
+   "TestSession",
+   "EXIT_CODE_METRIC",
+   "TAIL_CHARS",
+   "HEAD_CHARS",
+   "DISK_FULL",
+   "NAME_UNRESOLVED",
+   "PORT_ATTEMPTS",
+   "run_gate",
+   "run_setup",
+   "run_gates",
+   "tracked_changes",
+   "restore_tracked",
+   "record_evidence",
+   "command_for",
+   "rule_for",
+   "free_port",
+   "with_env",
+   "test_session",
+   "read_junit",
+   "read_coverage",
+   "read_mutation",
+   "read_sarif",
+   "coverage_total",
+   "match_case",
+   "warm_name",
+   "sweep_reports",
+   "workdir_of",
+   "run_per_file",
+   "run_again",
+   "probe_empty_selection",
+   "probe_testing",
+   "probe_placement",
+   "GateOutcome",
+   "is_green",
+   "gate_outcome",
+   "unrunnable"
+  ],
+  "domain_terms": [
+   "gate",
+   "check",
+   "coverage report",
+   "test criterion",
+   "service",
+   "test gate",
+   "test runner",
+   "test canary",
+   "blind placement",
+   "test report"
+  ],
+  "entities_defined": [
+   "Execution",
+   "TestSummary",
+   "TestSession",
+   "GateOutcome"
+  ],
+  "entities_read": [
+   "Located",
+   "CaseOutcome",
+   "GateResult",
+   "BlindPlacement",
+   "TierResult",
+   "PlacementResult",
+   "TestFileCommand",
+   "Runner",
+   "Execution",
+   "GateConfig",
+   "GateReport",
+   "PathEscape"
+  ],
+  "entities_written": [
+   "Execution",
+   "GateResult",
+   "GateReport",
+   "TestSession"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 55,
+    "name": "Execution"
+   },
+   {
+    "calls": [],
+    "line": 62,
+    "name": "Runner"
+   },
+   {
+    "calls": [],
+    "line": 85,
+    "name": "LocalRunner"
+   },
+   {
+    "calls": [],
+    "line": 103,
+    "name": "__init__"
+   },
+   {
+    "calls": [
+     "with_env"
+    ],
+    "line": 111,
+    "name": "start_service"
+   },
+   {
+    "calls": [],
+    "line": 138,
+    "name": "stop_services"
+   },
+   {
+    "calls": [
+     "with_env"
+    ],
+    "line": 161,
+    "name": "execute"
+   },
+   {
+    "calls": [],
+    "line": 196,
+    "name": "_tail"
+   },
+   {
+    "calls": [],
+    "line": 215,
+    "name": "disk_full_problem"
+   },
+   {
+    "calls": [
+     "execute"
+    ],
+    "line": 231,
+    "name": "_free_space_mb"
+   },
+   {
+    "calls": [
+     "workdir_of",
+     "safe_join",
+     "read_sarif",
+     "read_mutation",
+     "read_coverage",
+     "record_evidence",
+     "_tail",
+     "_bound_description",
+     "_exit_still_counts",
+     "coverage_total",
+     "execute"
+    ],
+    "line": 260,
+    "name": "run_gate"
+   },
+   {
+    "calls": [],
+    "line": 415,
+    "name": "_exit_still_counts"
+   },
+   {
+    "calls": [],
+    "line": 428,
+    "name": "_relative"
+   },
+   {
+    "calls": [],
+    "line": 437,
+    "name": "read_coverage"
+   },
+   {
+    "calls": [],
+    "line": 494,
+    "name": "read_mutation"
+   },
+   {
+    "calls": [],
+    "line": 541,
+    "name": "coverage_total"
+   },
+   {
+    "calls": [],
+    "line": 548,
+    "name": "read_sarif"
+   },
+   {
+    "calls": [],
+    "line": 595,
+    "name": "warm_name"
+   },
+   {
+    "calls": [
+     "run_gate"
+    ],
+    "line": 601,
+    "name": "run_setup"
+   },
+   {
+    "calls": [
+     "out"
+    ],
+    "line": 678,
+    "name": "tracked_changes"
+   },
+   {
+    "calls": [
+     "run"
+    ],
+    "line": 685,
+    "name": "restore_tracked"
+   },
+   {
+    "calls": [
+     "run_gate"
+    ],
+    "line": 691,
+    "name": "run_gates"
+   },
+   {
+    "calls": [],
+    "line": 741,
+    "name": "record_evidence"
+   },
+   {
+    "calls": [
+     "rule_for"
+    ],
+    "line": 768,
+    "name": "command_for"
+   },
+   {
+    "calls": [],
+    "line": 784,
+    "name": "rule_for"
+   },
+   {
+    "calls": [],
+    "line": 803,
+    "name": "free_port"
+   },
+   {
+    "calls": [],
+    "line": 834,
+    "name": "with_env"
+   },
+   {
+    "calls": [
+     "execute",
+     "_tail"
+    ],
+    "line": 847,
+    "name": "_await_ready"
+   },
+   {
+    "calls": [],
+    "line": 867,
+    "name": "service_env"
+   },
+   {
+    "calls": [
+     "free_port",
+     "service_env",
+     "_free_space_mb",
+     "execute",
+     "disk_full_problem",
+     "_await_ready"
+    ],
+    "line": 906,
+    "name": "test_session"
+   },
+   {
+    "calls": [],
+    "line": 1110,
+    "name": "read_junit"
+   },
+   {
+    "calls": [],
+    "line": 1157,
+    "name": "_leaf"
+   },
+   {
+    "calls": [
+     "_leaf"
+    ],
+    "line": 1173,
+    "name": "match_case"
+   },
+   {
+    "calls": [
+     "subprocess.run"
+    ],
+    "line": 1187,
+    "name": "sweep_reports"
+   },
+   {
+    "calls": [
+     "getattr"
+    ],
+    "line": 1214,
+    "name": "workdir_of"
+   },
+   {
+    "calls": [
+     "LocalRunner",
+     "rule_for",
+     "workdir_of",
+     "read_junit",
+     "run_again",
+     "sweep_reports",
+     "record_evidence",
+     "_tail"
+    ],
+    "line": 1224,
+    "name": "run_per_file"
+   },
+   {
+    "calls": [
+     "_tail"
+    ],
+    "line": 1414,
+    "name": "run_again"
+   },
+   {
+    "calls": [
+     "LocalRunner",
+     "_tail"
+    ],
+    "line": 1457,
+    "name": "probe_empty_selection"
+   },
+   {
+    "calls": [
+     "LocalRunner",
+     "run_gates",
+     "_tail"
+    ],
+    "line": 1495,
+    "name": "probe_testing"
+   },
+   {
+    "calls": [
+     "LocalRunner",
+     "rule_for",
+     "safe_join",
+     "match_case",
+     "read_junit",
+     "workdir_of",
+     "sweep_reports",
+     "_tail"
+    ],
+    "line": 1656,
+    "name": "probe_placement"
+   },
+   {
+    "calls": [],
+    "line": 1925,
+    "name": "_bound_description"
+   },
+   {
+    "calls": [],
+    "line": 1936,
+    "name": "is_green"
+   },
+   {
+    "calls": [],
+    "line": 1953,
+    "name": "gate_outcome"
+   },
+   {
+    "calls": [
+     "gate_outcome"
+    ],
+    "line": 1980,
+    "name": "unrunnable"
+   }
+  ],
+  "imports": [
+   "factory/git.py",
+   "factory/config.py",
+   "factory/schemas.py",
+   "factory/workspace.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the operating system",
+   "Docker",
+   "the local filesystem",
+   "subprocess (shell execution)",
+   "git",
+   "local file system"
+  ],
+  "purpose": "Runs shell commands (gates) against repositories to verify they pass checks like tests, linting, and coverage, collecting results. No model invocation; gates are facts\u2014exit codes and parsed metrics from deterministic command execution.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

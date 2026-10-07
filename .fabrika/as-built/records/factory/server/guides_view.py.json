@@ -1,0 +1,84 @@
+{
+ "blob": "3cab22d981dbfa2339a49e390592f75daffc0bf6",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "_base_sha",
+   "_Recent",
+   "guide_view",
+   "guide_offers",
+   "guide_contradictions"
+  ],
+  "domain_terms": [
+   "guides",
+   "repository commits",
+   "skills directories",
+   "guide contradictions"
+  ],
+  "entities_defined": [
+   "_Recent",
+   "_VIEW_CACHE",
+   "_OFFER_CACHE"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "head_sha"
+    ],
+    "line": 13,
+    "name": "_base_sha"
+   },
+   {
+    "calls": [],
+    "line": 26,
+    "name": "_Recent.__init__"
+   },
+   {
+    "calls": [],
+    "line": 31,
+    "name": "_Recent.get"
+   },
+   {
+    "calls": [],
+    "line": 38,
+    "name": "_Recent.put"
+   },
+   {
+    "calls": [
+     "_base_sha",
+     "guides",
+     "Guide",
+     "_VIEW_CACHE"
+    ],
+    "line": 50,
+    "name": "guide_view"
+   },
+   {
+    "calls": [
+     "_base_sha",
+     "guides",
+     "_OFFER_CACHE"
+    ],
+    "line": 84,
+    "name": "guide_offers"
+   },
+   {
+    "calls": [],
+    "line": 115,
+    "name": "guide_contradictions"
+   }
+  ],
+  "imports": [
+   "factory/git.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Caches and serves the repository's guide files and Fabrika's proposals for new guides, keyed by the branch's base commit and configuration state.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

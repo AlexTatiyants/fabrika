@@ -1,0 +1,59 @@
+{
+ "blob": "1927b7f75e6d65ae7f55b300bcbd59fc170f6d90",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "CRIT_MARK",
+   "critIc",
+   "fileIc"
+  ],
+  "domain_terms": [
+   "criterion",
+   "test result",
+   "file materiality",
+   "mark"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 28,
+    "name": "critIc"
+   },
+   {
+    "calls": [],
+    "line": 37,
+    "name": "fileIc"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines visual marks for test results and file materiality classes, using distinct shapes so they're distinguishable by shape alone.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "CRIT_MARK"
+   },
+   {
+    "handler": "critIc",
+    "kind": "export",
+    "method": "",
+    "name": "critIc"
+   },
+   {
+    "handler": "fileIc",
+    "kind": "export",
+    "method": "",
+    "name": "fileIc"
+   }
+  ]
+ }
+}

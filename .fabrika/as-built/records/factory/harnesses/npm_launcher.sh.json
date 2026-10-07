@@ -1,0 +1,24 @@
+{
+ "blob": "0ed6571799c49ca455dfcdcc40972771afdb300a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "harness",
+   "npm package",
+   "launcher script"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Creates a launcher wrapper for npm-installed CLI tools, ensuring the harness's own Node.js and certificate bundle are used even if the project image differs.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

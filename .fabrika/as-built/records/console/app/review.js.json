@@ -1,0 +1,147 @@
+{
+ "blob": "bc878aad15305fe023819e0fb4afad438127ea2c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "statRow",
+   "materialityBand",
+   "traceList",
+   "decisionCard",
+   "runSummary",
+   "runBand",
+   "findingGroups",
+   "decisionGroups",
+   "findingsList",
+   "reviewScreen",
+   "failedScreen",
+   "OUTCOME",
+   "SETTLED_OUTCOMES",
+   "OUTCOME_ORDER",
+   "FINDING_BANDS"
+  ],
+  "domain_terms": [
+   "packet",
+   "finding",
+   "decision",
+   "ruling",
+   "criteria",
+   "gate",
+   "materiality"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "packet",
+   "state",
+   "phases",
+   "gate results",
+   "rulings",
+   "verdict",
+   "budget"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 8,
+    "name": "statRow"
+   },
+   {
+    "calls": [],
+    "line": 22,
+    "name": "materialityBand"
+   },
+   {
+    "calls": [],
+    "line": 80,
+    "name": "traceList"
+   },
+   {
+    "calls": [],
+    "line": 98,
+    "name": "decisionCard"
+   },
+   {
+    "calls": [],
+    "line": 184,
+    "name": "runSummary"
+   },
+   {
+    "calls": [
+     "dur",
+     "unbilledNote"
+    ],
+    "line": 226,
+    "name": "runBand"
+   },
+   {
+    "calls": [
+     "findingsList"
+    ],
+    "line": 301,
+    "name": "findingGroups"
+   },
+   {
+    "calls": [
+     "decisionCard"
+    ],
+    "line": 332,
+    "name": "decisionGroups"
+   },
+   {
+    "calls": [],
+    "line": 347,
+    "name": "findingsList"
+   },
+   {
+    "calls": [
+     "featureBar",
+     "featureHref",
+     "focusToggle",
+     "stopBar",
+     "runSummary",
+     "runBand",
+     "materialityBand",
+     "decisionGroups",
+     "findingGroups",
+     "traceList",
+     "gateResultRow",
+     "cordSection"
+    ],
+    "line": 386,
+    "name": "reviewScreen"
+   },
+   {
+    "calls": [
+     "featureBar",
+     "stepWord",
+     "logHref"
+    ],
+    "line": 514,
+    "name": "failedScreen"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders review packet screens showing findings grouped by outcome, decisions awaiting verdict, and gate results; also renders the screen for a failed build state.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "reviewScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "reviewScreen"
+   },
+   {
+    "handler": "failedScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "failedScreen"
+   }
+  ]
+ }
+}

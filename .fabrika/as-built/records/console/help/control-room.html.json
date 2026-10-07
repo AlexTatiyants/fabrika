@@ -1,0 +1,25 @@
+{
+ "blob": "510b45816b07ee2b6067372f651dbd3665a2c109",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "control room",
+   "editor settings",
+   "file opening",
+   "url template"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation for the control room settings page, explaining how to configure file opening in a user's editor.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

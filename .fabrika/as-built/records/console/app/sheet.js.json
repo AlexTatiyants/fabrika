@@ -1,0 +1,221 @@
+{
+ "blob": "fcaabbf48d212bf3a15e4667b87f3235b52deb45",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "closeSheet",
+   "mdLivePreview",
+   "mdHighlight",
+   "mountMarkdownEditor",
+   "mountPromptEditor",
+   "drawOutline",
+   "jumpToPromptLine",
+   "markCurrentSection",
+   "sheetIsDirty",
+   "markSheetDirty",
+   "syncPromptCount",
+   "syncChip",
+   "toggleFlag",
+   "afterSheetSave",
+   "syncSheet",
+   "positionSheet"
+  ],
+  "domain_terms": [
+   "sheet editor",
+   "markdown prompt",
+   "agent role configuration",
+   "outline navigation"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state.openRole",
+   "state.roles",
+   "state.view",
+   "state.roleDraft",
+   "state.openGuide"
+  ],
+  "entities_written": [
+   "state.openRole",
+   "state.roleDraft"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "render"
+    ],
+    "line": 25,
+    "name": "closeSheet"
+   },
+   {
+    "calls": [],
+    "line": 54,
+    "name": "mdLivePreview"
+   },
+   {
+    "calls": [],
+    "line": 124,
+    "name": "mdHighlight"
+   },
+   {
+    "calls": [
+     "mdHighlight",
+     "mdLivePreview",
+     "syncPromptCount",
+     "markSheetDirty",
+     "drawOutline",
+     "markCurrentSection"
+    ],
+    "line": 147,
+    "name": "mountMarkdownEditor"
+   },
+   {
+    "calls": [
+     "roleDraft",
+     "mountMarkdownEditor",
+     "esc"
+    ],
+    "line": 195,
+    "name": "mountPromptEditor"
+   },
+   {
+    "calls": [
+     "promptOutline",
+     "esc",
+     "markCurrentSection"
+    ],
+    "line": 214,
+    "name": "drawOutline"
+   },
+   {
+    "calls": [
+     "markCurrentSection"
+    ],
+    "line": 241,
+    "name": "jumpToPromptLine"
+   },
+   {
+    "calls": [],
+    "line": 259,
+    "name": "markCurrentSection"
+   },
+   {
+    "calls": [],
+    "line": 302,
+    "name": "sheetIsDirty"
+   },
+   {
+    "calls": [
+     "guideSheetEdited",
+     "sheetIsDirty"
+    ],
+    "line": 316,
+    "name": "markSheetDirty"
+   },
+   {
+    "calls": [],
+    "line": 332,
+    "name": "syncPromptCount"
+   },
+   {
+    "calls": [
+     "markSheetDirty"
+    ],
+    "line": 342,
+    "name": "syncChip"
+   },
+   {
+    "calls": [
+     "markSheetDirty"
+    ],
+    "line": 360,
+    "name": "toggleFlag"
+   },
+   {
+    "calls": [
+     "roleDraft",
+     "markSheetDirty"
+    ],
+    "line": 377,
+    "name": "afterSheetSave"
+   },
+   {
+    "calls": [
+     "syncGuideSheet",
+     "roleSheetHtml",
+     "mountPromptEditor",
+     "positionSheet",
+     "drawOutline",
+     "syncPromptCount",
+     "markSheetDirty"
+    ],
+    "line": 386,
+    "name": "syncSheet"
+   },
+   {
+    "calls": [],
+    "line": 423,
+    "name": "positionSheet"
+   }
+  ],
+  "imports": [
+   "console/app/render.js",
+   "console/app/state.js",
+   "console/app/util.js",
+   "console/app/actions.js",
+   "console/app/guides.js",
+   "console/app/interaction.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "CodeMirror"
+  ],
+  "purpose": "Implements the sheet editor for markdown content (agent prompts and guides) that persists state during edits, with outline navigation, live markdown styling, and configuration chip controls.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "closeSheet",
+    "kind": "export",
+    "method": "",
+    "name": "closeSheet"
+   },
+   {
+    "handler": "mountMarkdownEditor",
+    "kind": "export",
+    "method": "",
+    "name": "mountMarkdownEditor"
+   },
+   {
+    "handler": "syncSheet",
+    "kind": "export",
+    "method": "",
+    "name": "syncSheet"
+   },
+   {
+    "handler": "afterSheetSave",
+    "kind": "export",
+    "method": "",
+    "name": "afterSheetSave"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "click on sheet-scrim"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "input on role config fields"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "keydown (Escape/Mod-s)"
+   }
+  ]
+ }
+}

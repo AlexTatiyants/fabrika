@@ -1,0 +1,81 @@
+{
+ "blob": "7b90754589459959d57dd6e3f29a14aca048f29d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ContextMixin"
+  ],
+  "domain_terms": [
+   "evidence block",
+   "branch",
+   "worker report",
+   "gate result",
+   "finding"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "Spec",
+   "Plan",
+   "WorkerOutput",
+   "IntegrationReport",
+   "GateReport",
+   "QAReport",
+   "TraceRow",
+   "BreakerReport",
+   "FindingRecord",
+   "ReviewReport",
+   "ReworkSummary",
+   "FileWrite"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "safe_join",
+     "PathEscape"
+    ],
+    "line": 36,
+    "name": "_apply_writes"
+   },
+   {
+    "calls": [
+     "spec_text",
+     "_json",
+     "gate_status_line",
+     "files_section",
+     "tree_section",
+     "what_landed",
+     "is_protected"
+    ],
+    "line": 97,
+    "name": "_evidence_block"
+   },
+   {
+    "calls": [
+     "spec_text",
+     "change_size",
+     "_json",
+     "gate_status_line"
+    ],
+    "line": 162,
+    "name": "_rapporteur_block"
+   }
+  ],
+  "imports": [
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/trace.py",
+   "factory/pipeline/protection.py",
+   "factory/pipeline/packet.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Assembles evidence blocks shown to agents during review\u2014writes files to branches and constructs specifications, plans, worker reports, and other artifacts that agents and humans use for decision-making.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

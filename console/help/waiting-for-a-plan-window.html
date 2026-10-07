@@ -1,0 +1,21 @@
+<p class="lead">A build that runs out of a subscription's usage window stops wherever it happens to be. So
+  before you approve a spec, Fabrika checks whether the plans the run needs have room, and offers to wait for the
+  window to reset when they don't.</p>
+
+<h4>When it asks</h4>
+<p>Above the spec, a line names the route that is short: how much of its window is left, how much a run has drawn
+  from it before, and when the window resets. It's measured, not guessed: what the plan reports it has left,
+  against what earlier runs actually drew. By default it only speaks once it has seen at least two runs on that
+  route, and only offers to wait for a reset within six hours. When every plan has room, nothing is shown.</p>
+<p>If a plan's gauge couldn't be read, the line says so. That isn't a reason to wait: the build can start, and
+  whether it finishes isn't something the reading can say.</p>
+
+<h4>Your choice</h4>
+<ul>
+  <li><b>Freeze &amp; start</b> at the reset time: the spec is frozen now, and the build starts by itself when the
+    window resets. Until then the feature shows <i>waiting for the plan</i>. The promise is kept on disk, so it
+    survives Fabrika restarting.</li>
+  <li><b>Start anyway</b>: start now, on a plan that may not have enough left in this window to finish.</li>
+</ul>
+<p>A route billed per token has no window and never holds a build. See <a data-help="routes-and-plans">Routes,
+  models and plan limits</a>.</p>

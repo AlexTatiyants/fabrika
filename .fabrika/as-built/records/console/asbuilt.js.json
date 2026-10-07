@@ -1,0 +1,774 @@
+{
+ "blob": "007684b3d9fbe01af79d4bf276a258d57ea2fd14",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "AB",
+   "AB_QUIET",
+   "AB_FINDING_ICON",
+   "abState",
+   "abDerive",
+   "abNormalize",
+   "asBuiltLoad",
+   "asBuiltEvent",
+   "abPlural",
+   "abShort",
+   "abWhen",
+   "abGo",
+   "asBuiltSection",
+   "abStickyChrome",
+   "abHead",
+   "abBand",
+   "abStalePill",
+   "abWhere",
+   "abHref",
+   "abBody",
+   "abPager",
+   "abPlate",
+   "abMeter",
+   "abSegments",
+   "abSystem",
+   "abSubsList",
+   "abOverview",
+   "abCapOrder",
+   "abCapGrid",
+   "abCapabilities",
+   "abLayout",
+   "abEdgePath",
+   "abWrap",
+   "abMerge",
+   "abMapDense",
+   "abMap",
+   "abSubsystem",
+   "abLayoutRows",
+   "abEdgePathV",
+   "abFileMap",
+   "abEditorHref",
+   "abFileViews",
+   "abFile",
+   "abHiLine",
+   "abSource",
+   "abScrollSoon",
+   "abArchitecture",
+   "abRuntimeOf",
+   "abArchMap",
+   "abCallsInRuntimes",
+   "abOutsideSystems",
+   "abEndpoints",
+   "abEpFilterRows",
+   "AB_LANG",
+   "AB_KEYWORDS",
+   "abWhereItRuns",
+   "abFolderModel",
+   "abFolderState",
+   "abFit",
+   "abFolderLabel",
+   "abFolderNeighbours",
+   "abFolderSay",
+   "abFolderSvg",
+   "abFolderMap",
+   "abFolderRepaint",
+   "abFolderPress",
+   "abParts",
+   "abBreakable",
+   "abPath",
+   "abCapability",
+   "asBuiltRuns",
+   "asBuiltWorking",
+   "asBuiltRunLine",
+   "asBuiltNow",
+   "asBuiltBandNote",
+   "asBuiltCrewSoon",
+   "abFocusFile",
+   "abUnfocusFiles",
+   "abHelpHere",
+   "AB_FOLDERS_FROM",
+   "AB_FOLDER_MIN",
+   "AB_SHARED_BY",
+   "AB_OTHER",
+   "abCrewTimer",
+   "abLastWhere"
+  ],
+  "domain_terms": [
+   "subsystem",
+   "capability",
+   "as-built graph",
+   "codebase analysis",
+   "dependency links",
+   "file map",
+   "capabilities",
+   "endpoints",
+   "architecture diagram",
+   "source code view",
+   "file",
+   "folder grouping",
+   "agent role"
+  ],
+  "entities_defined": [
+   "AB_LANG",
+   "AB_KEYWORDS"
+  ],
+  "entities_read": [
+   "as-built status",
+   "graph",
+   "state.asBuilt",
+   "state.view",
+   "state.roles"
+  ],
+  "entities_written": [
+   "state.asBuilt",
+   "state.asBuilt.fm",
+   "state.asBuilt.showChanged",
+   "state.asBuilt.status",
+   "state.roles"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 17,
+    "name": "abState"
+   },
+   {
+    "calls": [],
+    "line": 31,
+    "name": "abDerive"
+   },
+   {
+    "calls": [
+     "abDerive"
+    ],
+    "line": 46,
+    "name": "abNormalize"
+   },
+   {
+    "calls": [
+     "abNormalize"
+    ],
+    "line": 70,
+    "name": "asBuiltLoad"
+   },
+   {
+    "calls": [],
+    "line": 84,
+    "name": "asBuiltEvent"
+   },
+   {
+    "calls": [
+     "abState",
+     "abHead",
+     "abBody",
+     "abWhere",
+     "abBand"
+    ],
+    "line": 102,
+    "name": "asBuiltSection"
+   },
+   {
+    "calls": [],
+    "line": 131,
+    "name": "abStickyChrome"
+   },
+   {
+    "calls": [
+     "abStickyChrome",
+     "abShort",
+     "abWhen",
+     "abPlural",
+     "abStalePill"
+    ],
+    "line": 144,
+    "name": "abHead"
+   },
+   {
+    "calls": [
+     "abPlural"
+    ],
+    "line": 189,
+    "name": "abBand"
+   },
+   {
+    "calls": [
+     "abPlural"
+    ],
+    "line": 234,
+    "name": "abStalePill"
+   },
+   {
+    "calls": [],
+    "line": 249,
+    "name": "abWhere"
+   },
+   {
+    "calls": [],
+    "line": 262,
+    "name": "abHref"
+   },
+   {
+    "calls": [
+     "abWhere",
+     "abPager",
+     "abCapOrder",
+     "abCapabilities",
+     "abSystem",
+     "abOverview",
+     "abPlural",
+     "abHref"
+    ],
+    "line": 270,
+    "name": "abBody"
+   },
+   {
+    "calls": [
+     "abHref"
+    ],
+    "line": 326,
+    "name": "abPager"
+   },
+   {
+    "calls": [
+     "abMeter"
+    ],
+    "line": 348,
+    "name": "abPlate"
+   },
+   {
+    "calls": [],
+    "line": 353,
+    "name": "abMeter"
+   },
+   {
+    "calls": [
+     "abMeter"
+    ],
+    "line": 358,
+    "name": "abSegments"
+   },
+   {
+    "calls": [
+     "abMap",
+     "abSubsList",
+     "abPlural",
+     "abHref"
+    ],
+    "line": 368,
+    "name": "abSystem"
+   },
+   {
+    "calls": [
+     "abHref",
+     "abPlural"
+    ],
+    "line": 385,
+    "name": "abSubsList"
+   },
+   {
+    "calls": [
+     "abPlural",
+     "abHref"
+    ],
+    "line": 408,
+    "name": "abOverview"
+   },
+   {
+    "calls": [],
+    "line": 492,
+    "name": "abCapOrder"
+   },
+   {
+    "calls": [
+     "abHref"
+    ],
+    "line": 508,
+    "name": "abCapGrid"
+   },
+   {
+    "calls": [
+     "abCapOrder",
+     "abPlural",
+     "abCapGrid",
+     "abHref"
+    ],
+    "line": 556,
+    "name": "abCapabilities"
+   },
+   {
+    "calls": [],
+    "line": 587,
+    "name": "abLayout"
+   },
+   {
+    "calls": [],
+    "line": 630,
+    "name": "abEdgePath"
+   },
+   {
+    "calls": [],
+    "line": 647,
+    "name": "abWrap"
+   },
+   {
+    "calls": [],
+    "line": 661,
+    "name": "abMerge"
+   },
+   {
+    "calls": [
+     "abLayout",
+     "abWrap",
+     "abPlural"
+    ],
+    "line": 676,
+    "name": "abMapDense"
+   },
+   {
+    "calls": [
+     "abMerge",
+     "abMapDense",
+     "abLayout",
+     "abEdgePath",
+     "abPlural"
+    ],
+    "line": 743,
+    "name": "abMap"
+   },
+   {
+    "calls": [
+     "abPlate",
+     "abMeter",
+     "abSegments",
+     "abPlural",
+     "abHref"
+    ],
+    "line": 824,
+    "name": "abSubsystem"
+   },
+   {
+    "calls": [],
+    "line": 940,
+    "name": "abLayoutRows"
+   },
+   {
+    "calls": [],
+    "line": 979,
+    "name": "abEdgePathV"
+   },
+   {
+    "calls": [
+     "abLayoutRows",
+     "abEdgePathV",
+     "abGo",
+     "abWrap",
+     "abPlural",
+     "abHref",
+     "esc",
+     "icon"
+    ],
+    "line": 991,
+    "name": "abFileMap"
+   },
+   {
+    "calls": [
+     "resolveEditorUrl"
+    ],
+    "line": 1062,
+    "name": "abEditorHref"
+   },
+   {
+    "calls": [
+     "abHref",
+     "abPlural",
+     "abEditorHref",
+     "esc",
+     "icon"
+    ],
+    "line": 1072,
+    "name": "abFileViews"
+   },
+   {
+    "calls": [
+     "abPlate",
+     "abMeter",
+     "abPlural",
+     "abHref",
+     "abParts",
+     "abGo",
+     "esc",
+     "abBreakable",
+     "abPath",
+     "abSource",
+     "abScrollSoon"
+    ],
+    "line": 1083,
+    "name": "abFile"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 1299,
+    "name": "abHiLine"
+   },
+   {
+    "calls": [
+     "api",
+     "render",
+     "abScrollSoon",
+     "abHiLine",
+     "abPath",
+     "abBreakable",
+     "abShort",
+     "esc",
+     "icon",
+     "abHref"
+    ],
+    "line": 1337,
+    "name": "abSource"
+   },
+   {
+    "calls": [],
+    "line": 1492,
+    "name": "abScrollSoon"
+   },
+   {
+    "calls": [
+     "abRuntimeOf",
+     "abArchMap",
+     "abOutsideSystems",
+     "abEndpoints",
+     "icon"
+    ],
+    "line": 1515,
+    "name": "abArchitecture"
+   },
+   {
+    "calls": [],
+    "line": 1535,
+    "name": "abRuntimeOf"
+   },
+   {
+    "calls": [
+     "abWrap",
+     "abCallsInRuntimes",
+     "abHref",
+     "esc",
+     "abPlural",
+     "abRuntimeOf"
+    ],
+    "line": 1543,
+    "name": "abArchMap"
+   },
+   {
+    "calls": [
+     "abRuntimeOf"
+    ],
+    "line": 1744,
+    "name": "abCallsInRuntimes"
+   },
+   {
+    "calls": [
+     "icon",
+     "abPlural",
+     "abHref",
+     "esc"
+    ],
+    "line": 1751,
+    "name": "abOutsideSystems"
+   },
+   {
+    "calls": [
+     "abCapOrder",
+     "abPath",
+     "abHref",
+     "abPlural",
+     "esc",
+     "abBreakable",
+     "abScrollSoon",
+     "icon"
+    ],
+    "line": 1782,
+    "name": "abEndpoints"
+   },
+   {
+    "calls": [],
+    "line": 1889,
+    "name": "abEpFilterRows"
+   },
+   {
+    "calls": [],
+    "line": 1258,
+    "name": "AB_LANG"
+   },
+   {
+    "calls": [
+     "icon",
+     "esc",
+     "abHref"
+    ],
+    "line": 1938,
+    "name": "abWhereItRuns"
+   },
+   {
+    "calls": [],
+    "line": 1971,
+    "name": "abFolderModel"
+   },
+   {
+    "calls": [],
+    "line": 2046,
+    "name": "abFolderState"
+   },
+   {
+    "calls": [],
+    "line": 2054,
+    "name": "abFit"
+   },
+   {
+    "calls": [],
+    "line": 2062,
+    "name": "abFolderLabel"
+   },
+   {
+    "calls": [],
+    "line": 2076,
+    "name": "abFolderNeighbours"
+   },
+   {
+    "calls": [
+     "abPlural",
+     "esc",
+     "abHref"
+    ],
+    "line": 2084,
+    "name": "abFolderSay"
+   },
+   {
+    "calls": [
+     "abFolderLabel",
+     "abFolderNeighbours",
+     "abFit",
+     "abPlural",
+     "esc",
+     "abGo"
+    ],
+    "line": 2097,
+    "name": "abFolderSvg"
+   },
+   {
+    "calls": [
+     "abFolderState",
+     "abFolderSvg",
+     "abFolderSay",
+     "esc"
+    ],
+    "line": 2265,
+    "name": "abFolderMap"
+   },
+   {
+    "calls": [
+     "abFolderModel",
+     "abFolderSvg",
+     "abFolderSay"
+    ],
+    "line": 2275,
+    "name": "abFolderRepaint"
+   },
+   {
+    "calls": [
+     "abFolderModel",
+     "abFolderState",
+     "abFolderNeighbours",
+     "render"
+    ],
+    "line": 2287,
+    "name": "abFolderPress"
+   },
+   {
+    "calls": [
+     "esc",
+     "abPlural"
+    ],
+    "line": 2341,
+    "name": "abParts"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 2387,
+    "name": "abBreakable"
+   },
+   {
+    "calls": [
+     "esc",
+     "abBreakable",
+     "abHref"
+    ],
+    "line": 2389,
+    "name": "abPath"
+   },
+   {
+    "calls": [
+     "abPlural",
+     "abSegments",
+     "abMeter",
+     "abPath",
+     "abFit",
+     "esc",
+     "abBreakable",
+     "icon",
+     "abPlate",
+     "abHref"
+    ],
+    "line": 2395,
+    "name": "abCapability"
+   },
+   {
+    "calls": [],
+    "line": 2575,
+    "name": "asBuiltRuns"
+   },
+   {
+    "calls": [
+     "asBuiltRuns"
+    ],
+    "line": 2579,
+    "name": "asBuiltWorking"
+   },
+   {
+    "calls": [],
+    "line": 2583,
+    "name": "asBuiltRunLine"
+   },
+   {
+    "calls": [
+     "asBuiltRuns",
+     "asBuiltRunLine",
+     "esc"
+    ],
+    "line": 2601,
+    "name": "asBuiltNow"
+   },
+   {
+    "calls": [
+     "esc",
+     "asBuiltRuns",
+     "asBuiltRunLine"
+    ],
+    "line": 2607,
+    "name": "asBuiltBandNote"
+   },
+   {
+    "calls": [
+     "api",
+     "render"
+    ],
+    "line": 2619,
+    "name": "asBuiltCrewSoon"
+   },
+   {
+    "calls": [],
+    "line": 2652,
+    "name": "abFocusFile"
+   },
+   {
+    "calls": [],
+    "line": 2665,
+    "name": "abUnfocusFiles"
+   },
+   {
+    "calls": [
+     "abWhere"
+    ],
+    "line": 2687,
+    "name": "abHelpHere"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the browser DOM",
+   "an HTTP API"
+  ],
+  "purpose": "Renders the As-built tab: the codebase structure as analyzed by Fabrika, showing the system map with subsystems, capabilities, files and their relationships, read from `.fabrika/as-built/` with the ability to refresh when files change.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/api/projects/{pid}/as-built"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{pid}/as-built/graph"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{project}/as-built/source"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{id}/as-built/refresh"
+   },
+   {
+    "method": "GET",
+    "path": "/api/roles"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "asBuiltSection",
+    "kind": "screen",
+    "method": "",
+    "name": "As-built section"
+   },
+   {
+    "handler": "asBuiltEvent",
+    "kind": "event",
+    "method": "",
+    "name": "as-built progress event"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "click"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "mouseover (folder)"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "mouseout (folder)"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "keydown"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "hashchange"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "focusin"
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "focusout"
+   }
+  ]
+ }
+}

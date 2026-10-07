@@ -1,0 +1,124 @@
+{
+ "blob": "7a202105c700e84ed99e6c5aa153869cdc958498",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "BUILD_PHASES",
+   "CONDITIONAL_PHASES",
+   "PHASE_GROUPS",
+   "STEPS",
+   "STEP_IDS",
+   "currentStep",
+   "stepHref",
+   "browsing",
+   "featureBar",
+   "STRIP_KEY",
+   "stripOpen",
+   "setStripOpen",
+   "stripToggle",
+   "livePass",
+   "lineRunning",
+   "pendingWord",
+   "stationStrip"
+  ],
+  "domain_terms": [
+   "feature",
+   "step",
+   "phase",
+   "station",
+   "stage"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 52,
+    "name": "currentStep"
+   },
+   {
+    "calls": [
+     "featureHref"
+    ],
+    "line": 54,
+    "name": "stepHref"
+   },
+   {
+    "calls": [
+     "currentStep"
+    ],
+    "line": 58,
+    "name": "browsing"
+   },
+   {
+    "calls": [
+     "bandOf",
+     "currentStep",
+     "stepHref",
+     "livePass",
+     "esc",
+     "boardHead",
+     "browsing",
+     "stripOpen",
+     "stationStrip",
+     "stripToggle"
+    ],
+    "line": 61,
+    "name": "featureBar"
+   },
+   {
+    "calls": [],
+    "line": 168,
+    "name": "stripOpen"
+   },
+   {
+    "calls": [],
+    "line": 175,
+    "name": "setStripOpen"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 180,
+    "name": "stripToggle"
+   },
+   {
+    "calls": [],
+    "line": 197,
+    "name": "livePass"
+   },
+   {
+    "calls": [],
+    "line": 238,
+    "name": "lineRunning"
+   },
+   {
+    "calls": [
+     "lineRunning"
+    ],
+    "line": 240,
+    "name": "pendingWord"
+   },
+   {
+    "calls": [
+     "livePass",
+     "esc",
+     "stepWord",
+     "pendingWord"
+    ],
+    "line": 242,
+    "name": "stationStrip"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders a feature's progress bar with navigable pipeline steps and a strip of phase-status lamps showing build progress.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,167 @@
+{
+ "blob": "031331611b8e553645bb10a08c296cd346abf923",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "feature",
+   "rebuild",
+   "gate 2",
+   "verdict",
+   "flag",
+   "rework",
+   "sandbox",
+   "decision"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for",
+     "FeatureState",
+     "is_orphaned",
+     "start_run",
+     "close_preview"
+    ],
+    "line": 29,
+    "name": "rebuild"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for"
+    ],
+    "line": 77,
+    "name": "post_ruling"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "FeatureState",
+     "factory_for"
+    ],
+    "line": 87,
+    "name": "get_file_diff"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for"
+    ],
+    "line": 125,
+    "name": "get_rework"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for"
+    ],
+    "line": 136,
+    "name": "post_flag"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for"
+    ],
+    "line": 150,
+    "name": "retag_flag"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "factory_for",
+     "start_run",
+     "close_preview"
+    ],
+    "line": 164,
+    "name": "dispatch"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "close_preview",
+     "factory_for"
+    ],
+    "line": 200,
+    "name": "post_verdict"
+   }
+  ],
+  "imports": [
+   "factory/pipeline/factory/base.py",
+   "factory/projects.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Gate 2: handles feature rebuilds, rulings on review decisions, file diffs, flag management, dispatch of rework, and final verdicts.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "rebuild",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/rebuild"
+   },
+   {
+    "handler": "post_ruling",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/rulings"
+   },
+   {
+    "handler": "get_file_diff",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/diff"
+   },
+   {
+    "handler": "get_rework",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/rework"
+   },
+   {
+    "handler": "post_flag",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/flags"
+   },
+   {
+    "handler": "retag_flag",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/flags/{flag_id}"
+   },
+   {
+    "handler": "dispatch",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/dispatch"
+   },
+   {
+    "handler": "post_verdict",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/verdict"
+   }
+  ]
+ }
+}

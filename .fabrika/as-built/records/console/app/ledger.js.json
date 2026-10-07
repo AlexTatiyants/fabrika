@@ -1,0 +1,96 @@
+{
+ "blob": "0a939396685221f1ffb4f5b362f7d7220d8a3106",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "KIND_WORDS",
+   "bytes",
+   "usd2",
+   "usd",
+   "unbilledNote",
+   "callSpend",
+   "recordCost",
+   "logCost",
+   "projectLogScreen",
+   "logScreen"
+  ],
+  "domain_terms": [
+   "ledger",
+   "feature run",
+   "agent",
+   "cost"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 124,
+    "name": "bytes"
+   },
+   {
+    "calls": [],
+    "line": 136,
+    "name": "usd2"
+   },
+   {
+    "calls": [],
+    "line": 141,
+    "name": "usd"
+   },
+   {
+    "calls": [],
+    "line": 159,
+    "name": "unbilledNote"
+   },
+   {
+    "calls": [],
+    "line": 182,
+    "name": "callSpend"
+   },
+   {
+    "calls": [],
+    "line": 188,
+    "name": "recordCost"
+   },
+   {
+    "calls": [
+     "recordCost"
+    ],
+    "line": 189,
+    "name": "logCost"
+   },
+   {
+    "calls": [
+     "projectBar",
+     "esc",
+     "bytes"
+    ],
+    "line": 194,
+    "name": "projectLogScreen"
+   },
+   {
+    "calls": [
+     "logCost",
+     "recordCost",
+     "esc",
+     "bytes",
+     "usd",
+     "featureHref",
+     "timeline"
+    ],
+    "line": 226,
+    "name": "logScreen"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders ledgers of execution records and costs for features and projects, showing activities with timing, tokens, models, and spending.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

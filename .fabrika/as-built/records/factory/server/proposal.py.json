@@ -1,0 +1,102 @@
+{
+ "blob": "90664de0fab9b8ebaa770dc47ad23f247d332a27",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "proposal",
+   "re-survey",
+   "gate changes",
+   "testing tier",
+   "cleanup fix"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "SurveyDiff"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 18,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 24,
+    "name": "latest_proposal"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 65,
+    "name": "rule_on_proposed_check"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 75,
+    "name": "undo_proposed_check"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "SurveyDiff",
+     "chosen_cleanup",
+     "cleanup_option_problems",
+     "registry"
+    ],
+    "line": 85,
+    "name": "apply_proposal"
+   }
+  ],
+  "imports": [
+   "factory/projects.py",
+   "factory/schemas.py",
+   "factory/workspace.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Serves and updates a re-survey's proposal for changes to checks and environment, handling rules one at a time or in bulk.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "latest_proposal",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/proposal"
+   },
+   {
+    "handler": "rule_on_proposed_check",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/proposal/check"
+   },
+   {
+    "handler": "undo_proposed_check",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/proposal/check/undo"
+   },
+   {
+    "handler": "apply_proposal",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/proposal/apply"
+   }
+  ]
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "blob": "c9ec9b2a3ad1cc4dabf6283690c895432727253d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "harness",
+   "unit",
+   "brief",
+   "environment",
+   "test",
+   "fixture"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Role definition for a coding harness agent that executes work in isolation, treating file changes as the only meaningful output and running tests without human feedback.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

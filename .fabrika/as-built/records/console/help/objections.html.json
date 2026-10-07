@@ -1,0 +1,28 @@
+{
+ "blob": "3221b25c81e3c2272b38564d9914f07f727936eb",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "objections",
+   "breaker",
+   "reviewer",
+   "arbiter",
+   "blind spots",
+   "findings",
+   "repair loop"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation for the objections and blind spots tab: findings from breaker, reviewer, and arbiter; finding categories and severity; blind spot computation.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

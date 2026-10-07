@@ -1,0 +1,20 @@
+<p class="lead">Every agent and every check runs in a container with no network of its own. Anything that
+  needs the internet goes through one proxy, which lets public addresses through and blocks this machine and
+  your local network.</p>
+
+<h4>Why</h4>
+<p>A test or an agent that could reach your machine could reach your own dev servers, and a feature's tests
+  would pass or fail against the wrong app. The proxy makes that impossible: agents can reach their model
+  provider and package registries, and nothing private.</p>
+
+<h4>Watching it</h4>
+<p>The <b>crew</b> page has a card for the proxy under the harnesses. It says whether it's running, what it let
+  through in the last day, and anything it blocked, with the container that tried and the reason. <b>Test it</b>
+  starts a throwaway container and checks it can look up an outside name, complete an HTTPS handshake and reach
+  GitHub over SSH. When the proxy is stopped, or its settings changed since it started, the card offers
+  <b>Start it</b> or <b>Restart it</b>; the next build starts it anyway.</p>
+
+<h4>When something is blocked</h4>
+<p>It's almost always a test or an agent reaching for <code>localhost</code> or a fixed port. The fix belongs in
+  the test: read the service's address from the variable Fabrika provides
+  (<code>FACTORY_URL_&lt;SERVICE&gt;</code>), not from a default port.</p>

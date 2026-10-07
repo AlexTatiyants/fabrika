@@ -1,0 +1,97 @@
+{
+ "blob": "e7b528364243e120359465f189c5a35ed3d041b2",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "BuildLaneMixin"
+  ],
+  "domain_terms": [
+   "build lane",
+   "workers",
+   "units",
+   "integrator",
+   "seams",
+   "worktree"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState",
+   "Spec",
+   "Plan",
+   "WorkUnit",
+   "WorkerOutput"
+  ],
+  "entities_written": [
+   "IntegrationReport"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "BuildLaneMixin"
+   },
+   {
+    "calls": [
+     "role_prompt",
+     "cleanup_context",
+     "Semaphore",
+     "monotonic",
+     "usage_report",
+     "executor",
+     "_unit_guidance",
+     "unit_env",
+     "env_recorder",
+     "_send_back_for",
+     "_guides_recorder",
+     "append",
+     "_phase",
+     "_dedupe_writes",
+     "_apply_writes",
+     "commit",
+     "_integrate",
+     "gather"
+    ],
+    "line": 24,
+    "name": "_build_lane"
+   },
+   {
+    "calls": [
+     "_phase",
+     "testing_context",
+     "WorkUnit",
+     "_unit_guidance",
+     "executor",
+     "role_prompt",
+     "unit_env",
+     "env_recorder",
+     "_guides_recorder",
+     "IntegrationReport",
+     "settle_integration",
+     "append",
+     "seam_checks",
+     "integration_detail",
+     "HarnessBlocked"
+    ],
+    "line": 108,
+    "name": "_integrate"
+   }
+  ],
+  "imports": [
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/ownership.py",
+   "factory/pipeline/checks/seams.py",
+   "factory/pipeline/helpers.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Runs workers in parallel to build units, then runs the integrator to close seams between them, merging their outputs onto the branch.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

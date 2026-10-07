@@ -1,0 +1,109 @@
+{
+ "blob": "5ccf4f9e4bb44332018f5076ee18cdc6d39a728c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ProgressCallback",
+   "FactoryBase"
+  ],
+  "domain_terms": [
+   "factory",
+   "phase",
+   "state",
+   "store",
+   "evidence"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "LLM",
+     "build_executor"
+    ],
+    "line": 31,
+    "name": "FactoryBase"
+   },
+   {
+    "calls": [
+     "LLM",
+     "build_executor"
+    ],
+    "line": 32,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 52,
+    "name": "_project_files"
+   },
+   {
+    "calls": [],
+    "line": 62,
+    "name": "store_for"
+   },
+   {
+    "calls": [],
+    "line": 72,
+    "name": "state_of"
+   },
+   {
+    "calls": [
+     "Sandbox.reopen"
+    ],
+    "line": 78,
+    "name": "open_sandbox"
+   },
+   {
+    "calls": [
+     "_now"
+    ],
+    "line": 87,
+    "name": "_save"
+   },
+   {
+    "calls": [
+     "_now"
+    ],
+    "line": 91,
+    "name": "_emit"
+   },
+   {
+    "calls": [],
+    "line": 106,
+    "name": "_phase_state"
+   },
+   {
+    "calls": [
+     "_phase_state",
+     "_now",
+     "_save",
+     "_emit",
+     "journal_calls",
+     "stop_journaling"
+    ],
+    "line": 115,
+    "name": "_phase"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/executors.py",
+   "factory/llm.py",
+   "factory/projects.py",
+   "factory/dependencies.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/pipeline/text.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Provides the orchestrator's shared core: construction with config and project, the evidence store and feature state management, event emission, and the phase context every mixin runs inside.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

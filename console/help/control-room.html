@@ -1,0 +1,17 @@
+<p class="lead">The control room holds what belongs to you on this machine, rather than to any project or agent.
+  Today that's one setting: how a file opens.</p>
+
+<h4>How a file opens</h4>
+<p>A review can open the real file in your own editor instead of showing it on the page. Pick your editor from the
+  list, or <b>Custom…</b>, and <b>Save</b>. The <b>url template</b> uses <span class="mono">{path}</span> for the
+  file's absolute path on this machine and <span class="mono">{line}</span> for the first line the change touched.
+  Leave it empty to hide the link.</p>
+<p>A file's page in a review then shows <b>Open in your editor →</b>, which opens the file at its first changed
+  line.</p>
+
+<h4>Only on this machine</h4>
+<p>The link is a URL your operating system resolves on the browser's own filesystem, so it's offered only when the
+  console and Fabrika run on the same machine. Reviewing from anywhere else, the file's page says why there is no
+  link.</p>
+<p>The setting is stored in <span class="mono">factory.yaml</span>: one value for the whole install. The colour
+  scheme, at the end of the top bar, is different: it's kept in this browser only.</p>

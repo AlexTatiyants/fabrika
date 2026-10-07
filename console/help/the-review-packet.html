@@ -1,0 +1,38 @@
+<p class="lead">When a build finishes you get a review packet: the code on its own branch, and an argument that it
+  does what the spec asked. You audit the argument and rule on what it leaves you, rather than reading every
+  line.</p>
+
+<h4>The verdict</h4>
+<p>Across the top is the verdict the rapporteur recommends, and a one-sentence headline saying why: <b>Ships</b>,
+  <b>Ships, with rulings</b>, <b>Do not ship</b> or <b>Reject</b>. It's advice; the ruling is yours. When some
+  criteria were left for you to check by hand, the verdict is never better than <b>Ships, with rulings</b>, and the
+  headline says how many are left.</p>
+<ul>
+  <li><b>Stats</b> opens the figures behind the verdict: blockers open, checks passing, criteria verified, probes
+    failing, findings raised, the minutes of your attention it budgets, what the repair loop cost, and which review
+    agents read it. A figure marked † is worth less than it looks; the dagger opens the blind spot that discounts
+    it.</li>
+  <li><b>Open the app</b> starts the feature's app from its branch, so you can look at it. See
+    <a data-help="running-the-app">Opening the app at review</a>.</li>
+</ul>
+
+<h4>The tabs</h4>
+<ul>
+  <li><b>Your calls</b>: the decisions this run left for you. Start here. See <a data-help="your-calls">Your
+    calls</a>.</li>
+  <li><b>Work map</b>: how each criterion connects to the files that changed, and the way into either. See
+    <a data-help="reading-the-work">The work map, a criterion, a file</a>.</li>
+  <li><b>Evidence</b> and <b>Dependencies</b>: what the run produced that you can check yourself, and the packages
+    the change brought in. See <a data-help="evidence">Evidence and dependencies</a>.</li>
+  <li><b>Objections</b> and <b>Blind spots</b>: everything the review raised, and where the figures are worth less
+    than they look. See <a data-help="objections">Objections and blind spots</a>.</li>
+  <li><b>Repairs</b>: what the repair loop changed in each round. See <a data-help="the-repair-loop">Repairs and the
+    repair loop</a>.</li>
+</ul>
+<p>A red dot on a tab means something in it is still standing; an amber dot means evidence is missing there. The
+  count on <b>Your calls</b> is the only one that goes down. <code>F</code> switches to reading mode.</p>
+
+<h4>Ruling</h4>
+<p>When you're done, <b>Rule on this packet</b>, in the bar, takes you to the ruling. <b>Verify again</b> and
+  <b>Build again</b> sit beside it. See <a data-help="ruling-on-a-packet">Ruling on the packet</a> and
+  <a data-help="running-again">Verify again, build again, resume, discard</a>.</p>

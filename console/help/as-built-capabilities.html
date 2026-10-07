@@ -1,0 +1,23 @@
+<p class="lead">Capabilities are what a person can do with the code, found by grouping its ways in:
+  routes, commands, jobs and screens.</p>
+
+<h4>Ways in</h4>
+<p>A way in is the point where something outside starts the code running. Fabrika finds them in the
+  source, groups related ones into a capability ("Pay for an order"), and gives each capability a name, an
+  area and a three-letter ID. Entries that are only plumbing aren't capabilities, and are listed under
+  <i>Not a capability</i>.</p>
+
+<h4>The grid</h4>
+<p>Rows are capabilities and columns are subsystems, using the same IDs as the system map. A cell means the
+  capability's handlers run code in that subsystem. Darker means more lines. Two depths are shown: code a way in
+  runs <b>directly</b>, and code it only <b>sets in motion</b> one call further on. Following every call to the
+  end would make everything reach everything, so a capability's page keeps the two apart.</p>
+
+<h4>Tested</h4>
+<p>"Tested" counts the ways in that some test reaches. It's a count of reach, not a pass rate: it says a
+  test calls or imports the code, not that the test is good.</p>
+
+<h4>Support subsystems</h4>
+<p>Subsystems no capability reaches are not drawn, and are listed under the grid. They're usually build and
+  configuration. If one looks like real code, it may be dead or unexplained, which is worth knowing before
+  building on it.</p>

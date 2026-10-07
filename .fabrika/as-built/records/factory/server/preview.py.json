@@ -1,0 +1,91 @@
+{
+ "blob": "76607d77dcee2921b6de56745e711b528b4c2a21",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "feature",
+   "preview",
+   "sandbox",
+   "stage"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 16,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "store_or_404",
+     "Sandbox",
+     "FeatureState",
+     "previews",
+     "PreviewError"
+    ],
+    "line": 27,
+    "name": "open_preview"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "store_or_404",
+     "FeatureState",
+     "previews"
+    ],
+    "line": 42,
+    "name": "preview_state"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "store_or_404",
+     "FeatureState",
+     "previews"
+    ],
+    "line": 49,
+    "name": "stop_preview"
+   }
+  ],
+  "imports": [
+   "factory/preview.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Registers routes for opening, reading, and stopping a feature's running app during review.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "open_preview",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features/{feature_id}/preview"
+   },
+   {
+    "handler": "preview_state",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/preview"
+   },
+   {
+    "handler": "stop_preview",
+    "kind": "route",
+    "method": "DELETE",
+    "name": "/api/projects/{project_id}/features/{feature_id}/preview"
+   }
+  ]
+ }
+}

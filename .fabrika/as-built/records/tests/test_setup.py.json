@@ -1,0 +1,330 @@
+{
+ "blob": "2a09eea56d6f4a4050aa3fa25924ffc96b3fb4af",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "open_client"
+  ],
+  "domain_terms": [
+   "setup stations",
+   "routes and API keys",
+   "harness configuration",
+   "agent crew",
+   "cost limits",
+   "provider accounts"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "create_app"
+    ],
+    "line": 14,
+    "name": "_client"
+   },
+   {
+    "calls": [
+     "_client"
+    ],
+    "line": 25,
+    "name": "open_client"
+   },
+   {
+    "calls": [
+     "_client"
+    ],
+    "line": 29,
+    "name": "make"
+   },
+   {
+    "calls": [],
+    "line": 40,
+    "name": "_settled"
+   },
+   {
+    "calls": [],
+    "line": 51,
+    "name": "_stub_machine"
+   },
+   {
+    "calls": [],
+    "line": 54,
+    "name": "measured"
+   },
+   {
+    "calls": [],
+    "line": 62,
+    "name": "absent"
+   },
+   {
+    "calls": [],
+    "line": 69,
+    "name": "_key_check"
+   },
+   {
+    "calls": [],
+    "line": 74,
+    "name": "Answer"
+   },
+   {
+    "calls": [],
+    "line": 81,
+    "name": "Client"
+   },
+   {
+    "calls": [
+     "sync_default_route"
+    ],
+    "line": 99,
+    "name": "_with_key"
+   },
+   {
+    "calls": [],
+    "line": 107,
+    "name": "_keyed_route"
+   },
+   {
+    "calls": [
+     "load_config",
+     "write_rework_limits"
+    ],
+    "line": 115,
+    "name": "test_the_limits_are_written_in_place_and_hold_from_the_next_feature"
+   },
+   {
+    "calls": [
+     "load_config",
+     "write_executor_kind"
+    ],
+    "line": 132,
+    "name": "test_real_harnesses_are_switched_on_without_a_restart"
+   },
+   {
+    "calls": [
+     "load_config",
+     "write_credential",
+     "write_route_enabled"
+    ],
+    "line": 144,
+    "name": "test_a_keyed_route_is_brought_over_from_the_example_when_the_file_predates_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "write_credential"
+    ],
+    "line": 171,
+    "name": "test_a_keyed_route_s_variable_wins_over_the_stored_key"
+   },
+   {
+    "calls": [
+     "crew_plan"
+    ],
+    "line": 182,
+    "name": "test_a_crew_from_two_choices_and_a_starting_point"
+   },
+   {
+    "calls": [
+     "connected_routes"
+    ],
+    "line": 200,
+    "name": "test_only_routes_that_can_carry_a_call_count_as_connected"
+   },
+   {
+    "calls": [
+     "_stub_machine",
+     "_with_key",
+     "open_client",
+     "_settled"
+    ],
+    "line": 214,
+    "name": "test_the_setup_read_lights_each_station_from_what_was_measured"
+   },
+   {
+    "calls": [
+     "_stub_machine",
+     "_key_check",
+     "open_client",
+     "read_credential"
+    ],
+    "line": 235,
+    "name": "test_a_key_that_fails_its_check_is_not_stored"
+   },
+   {
+    "calls": [
+     "_stub_machine",
+     "_key_check",
+     "open_client",
+     "load_config",
+     "read_credential"
+    ],
+    "line": 250,
+    "name": "test_a_key_that_passes_is_stored_and_switches_its_route_on"
+   },
+   {
+    "calls": [
+     "_stub_machine",
+     "open_client"
+    ],
+    "line": 270,
+    "name": "test_a_key_the_environment_would_override_is_refused"
+   },
+   {
+    "calls": [
+     "_stub_machine",
+     "open_client"
+    ],
+    "line": 280,
+    "name": "test_the_crew_the_limits_and_finishing_are_written_and_remembered"
+   },
+   {
+    "calls": [
+     "_stub_machine",
+     "_with_key",
+     "open_client",
+     "_settled"
+    ],
+    "line": 305,
+    "name": "test_building_the_harnesses_makes_them_the_way_agents_work"
+   },
+   {
+    "calls": [
+     "_stub_machine",
+     "open_client",
+     "_settled"
+    ],
+    "line": 326,
+    "name": "test_every_button_that_starts_a_job_starts_it"
+   },
+   {
+    "calls": [],
+    "line": 336,
+    "name": "done"
+   },
+   {
+    "calls": [],
+    "line": 339,
+    "name": "signed_in"
+   },
+   {
+    "calls": [
+     "install_route"
+    ],
+    "line": 356,
+    "name": "test_an_install_runs_only_the_command_the_route_names"
+   },
+   {
+    "calls": [],
+    "line": 364,
+    "name": "run"
+   },
+   {
+    "calls": [],
+    "line": 375,
+    "name": "test_setup_harness_layers_survive_the_boot_sweep"
+   },
+   {
+    "calls": [],
+    "line": 387,
+    "name": "_setup_screen"
+   },
+   {
+    "calls": [],
+    "line": 404,
+    "name": "_payload"
+   },
+   {
+    "calls": [
+     "_setup_screen",
+     "_payload"
+    ],
+    "line": 437,
+    "name": "test_the_board_lights_from_the_reading_not_from_presses"
+   },
+   {
+    "calls": [
+     "_setup_screen",
+     "_payload"
+    ],
+    "line": 454,
+    "name": "test_the_harness_station_explains_itself_behind_a_click"
+   },
+   {
+    "calls": [
+     "_setup_screen",
+     "_payload"
+    ],
+    "line": 461,
+    "name": "test_the_accounts_station_offers_a_key_field_to_a_route_that_takes_one"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py",
+   "factory/server/__init__.py",
+   "factory/commissioning.py",
+   "factory/server/setup.py",
+   "factory/config.py",
+   "factory/routes.py",
+   "factory/server/lifespan.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "pytest",
+   "FastAPI",
+   "httpx",
+   "Node.js"
+  ],
+  "purpose": "Tests the six setup stations that initialize a new machine: verifying infrastructure, connecting to providers, configuring harnesses, selecting the agent crew, setting cost limits, and finishing setup. Tests verify what the app writes to config, how the screen displays status, and HTTP endpoints without requiring Docker or network.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/api/setup"
+   },
+   {
+    "method": "GET",
+    "path": "/api/setup/brief"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/setup/routes/{name}/key"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/setup/crew"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/setup/limits"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/finish"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/harnesses"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/machine"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/docker/start"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/routes/{route}/install"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/routes/{route}/check"
+   }
+  ],
+  "ways_in": []
+ }
+}

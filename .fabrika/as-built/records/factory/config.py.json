@@ -1,0 +1,659 @@
+{
+ "blob": "0d489a8ac9edc6baceefdfe93b2fb5345dcb5793",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ConfigError",
+   "is_command_key",
+   "RoleConfig",
+   "ContainerCredential",
+   "RouteEffort",
+   "RouteConfig",
+   "ApiConfig",
+   "PathsConfig",
+   "ExecutorConfig",
+   "GateConfig",
+   "DockerConfig",
+   "PipelineConfig",
+   "GuidesConfig",
+   "DiagnosisConfig",
+   "ReworkConfig",
+   "SchedulingConfig",
+   "LevelChoice",
+   "StaffingConfig",
+   "FallbackLane",
+   "Config",
+   "team_of",
+   "install_default_route",
+   "sync_default_route",
+   "load_config",
+   "example_config_path",
+   "staffing_suggestions",
+   "config_target_path",
+   "writable_config_path",
+   "write_role",
+   "write_staffing",
+   "delete_role",
+   "prompt_path",
+   "write_role_prompt",
+   "credentials_path",
+   "LEVELS",
+   "LEVEL_FIELDS",
+   "BUILDS",
+   "CHECKS",
+   "EDITABLE_ROLE_KEYS",
+   "EFFORT_NAMES",
+   "REPOSITORY_FACTS",
+   "RETIRED_SETTINGS",
+   "DEFAULT_ROUTE",
+   "STAFFING_COMMENT",
+   "CREDENTIALS_FILE",
+   "harness_model",
+   "session_model",
+   "fallback_session_model",
+   "RENAMED_ROLES",
+   "INDEPENDENT_OF",
+   "model_family",
+   "landing_family",
+   "independence_problems",
+   "read_credential",
+   "write_credential",
+   "api_key_source",
+   "mask_key",
+   "write_api_settings",
+   "write_editor_url",
+   "write_rework_limits",
+   "write_executor_kind",
+   "write_route_enabled",
+   "session_fallback"
+  ],
+  "domain_terms": [
+   "LLM models",
+   "routes",
+   "roles",
+   "credentials",
+   "containers",
+   "agents",
+   "configuration",
+   "staffing",
+   "levels",
+   "agent",
+   "role",
+   "route",
+   "model",
+   "credential",
+   "harness"
+  ],
+  "entities_defined": [
+   "ConfigError",
+   "RoleConfig",
+   "ContainerCredential",
+   "RouteEffort",
+   "RouteConfig",
+   "ApiConfig",
+   "PathsConfig",
+   "ExecutorConfig",
+   "GateConfig",
+   "DockerConfig",
+   "PipelineConfig",
+   "GuidesConfig",
+   "DiagnosisConfig",
+   "ReworkConfig",
+   "SchedulingConfig",
+   "LevelChoice",
+   "StaffingConfig",
+   "FallbackLane",
+   "Config",
+   "RENAMED_ROLES",
+   "INDEPENDENT_OF"
+  ],
+  "entities_read": [
+   "ReworkConfig",
+   "SchedulingConfig",
+   "LevelChoice",
+   "StaffingConfig",
+   "FallbackLane",
+   "Config",
+   "RouteConfig"
+  ],
+  "entities_written": [
+   "ReworkConfig",
+   "SchedulingConfig",
+   "LevelChoice",
+   "StaffingConfig",
+   "FallbackLane",
+   "Config"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 29,
+    "name": "ConfigError"
+   },
+   {
+    "calls": [],
+    "line": 39,
+    "name": "is_command_key"
+   },
+   {
+    "calls": [
+     "is_command_key"
+    ],
+    "line": 44,
+    "name": "_expand"
+   },
+   {
+    "calls": [],
+    "line": 76,
+    "name": "RoleConfig"
+   },
+   {
+    "calls": [],
+    "line": 159,
+    "name": "ContainerCredential"
+   },
+   {
+    "calls": [],
+    "line": 194,
+    "name": "RouteEffort"
+   },
+   {
+    "calls": [],
+    "line": 202,
+    "name": "RouteConfig"
+   },
+   {
+    "calls": [],
+    "line": 431,
+    "name": "effort_for"
+   },
+   {
+    "calls": [],
+    "line": 521,
+    "name": "completes"
+   },
+   {
+    "calls": [],
+    "line": 524,
+    "name": "authors"
+   },
+   {
+    "calls": [],
+    "line": 527,
+    "name": "authors_in_container"
+   },
+   {
+    "calls": [],
+    "line": 532,
+    "name": "billed"
+   },
+   {
+    "calls": [],
+    "line": 537,
+    "name": "ApiConfig"
+   },
+   {
+    "calls": [],
+    "line": 546,
+    "name": "PathsConfig"
+   },
+   {
+    "calls": [],
+    "line": 559,
+    "name": "ExecutorConfig"
+   },
+   {
+    "calls": [],
+    "line": 661,
+    "name": "DockerConfig"
+   },
+   {
+    "calls": [],
+    "line": 737,
+    "name": "PipelineConfig"
+   },
+   {
+    "calls": [],
+    "line": 878,
+    "name": "GuidesConfig"
+   },
+   {
+    "calls": [],
+    "line": 892,
+    "name": "DiagnosisConfig"
+   },
+   {
+    "calls": [],
+    "line": 908,
+    "name": "ReworkConfig"
+   },
+   {
+    "calls": [],
+    "line": 1118,
+    "name": "SchedulingConfig"
+   },
+   {
+    "calls": [],
+    "line": 1181,
+    "name": "LevelChoice"
+   },
+   {
+    "calls": [],
+    "line": 1188,
+    "name": "StaffingConfig"
+   },
+   {
+    "calls": [],
+    "line": 1201,
+    "name": "route_for"
+   },
+   {
+    "calls": [],
+    "line": 1213,
+    "name": "FallbackLane"
+   },
+   {
+    "calls": [],
+    "line": 1228,
+    "name": "Config"
+   },
+   {
+    "calls": [],
+    "line": 1273,
+    "name": "review_roles"
+   },
+   {
+    "calls": [
+     "install_default_route"
+    ],
+    "line": 1277,
+    "name": "model_post_init"
+   },
+   {
+    "calls": [
+     "ConfigError"
+    ],
+    "line": 1287,
+    "name": "route"
+   },
+   {
+    "calls": [
+     "route"
+    ],
+    "line": 1304,
+    "name": "route_for"
+   },
+   {
+    "calls": [
+     "route_for",
+     "route_problem_for",
+     "ConfigError"
+    ],
+    "line": 1308,
+    "name": "route_problem"
+   },
+   {
+    "calls": [],
+    "line": 1323,
+    "name": "route_problem_for"
+   },
+   {
+    "calls": [
+     "ConfigError"
+    ],
+    "line": 1353,
+    "name": "role"
+   },
+   {
+    "calls": [],
+    "line": 1365,
+    "name": "evidence_path"
+   },
+   {
+    "calls": [],
+    "line": 1369,
+    "name": "sandbox_path"
+   },
+   {
+    "calls": [
+     "prompt_path",
+     "ConfigError"
+    ],
+    "line": 1373,
+    "name": "role_prompt"
+   },
+   {
+    "calls": [],
+    "line": 1387,
+    "name": "roles_path"
+   },
+   {
+    "calls": [],
+    "line": 1172,
+    "name": "team_of"
+   },
+   {
+    "calls": [
+     "RouteConfig"
+    ],
+    "line": 1394,
+    "name": "install_default_route"
+   },
+   {
+    "calls": [],
+    "line": 1446,
+    "name": "sync_default_route"
+   },
+   {
+    "calls": [
+     "_expand",
+     "_parse_levels",
+     "StaffingConfig",
+     "_side_of",
+     "_level_fields",
+     "ApiConfig",
+     "PathsConfig",
+     "ExecutorConfig",
+     "DockerConfig",
+     "PipelineConfig",
+     "ReworkConfig",
+     "DiagnosisConfig",
+     "GuidesConfig",
+     "SchedulingConfig",
+     "Config",
+     "install_default_route",
+     "read_credential",
+     "sync_default_route",
+     "ConfigError"
+    ],
+    "line": 1493,
+    "name": "load_config"
+   },
+   {
+    "calls": [
+     "ConfigError",
+     "LevelChoice"
+    ],
+    "line": 1640,
+    "name": "_parse_levels"
+   },
+   {
+    "calls": [
+     "team_of",
+     "ConfigError"
+    ],
+    "line": 1651,
+    "name": "_side_of"
+   },
+   {
+    "calls": [],
+    "line": 1665,
+    "name": "_level_fields"
+   },
+   {
+    "calls": [],
+    "line": 1681,
+    "name": "example_config_path"
+   },
+   {
+    "calls": [
+     "example_config_path",
+     "_parse_levels"
+    ],
+    "line": 1689,
+    "name": "staffing_suggestions"
+   },
+   {
+    "calls": [],
+    "line": 1726,
+    "name": "_trailing_comment"
+   },
+   {
+    "calls": [],
+    "line": 1741,
+    "name": "_carry_trailing_comment"
+   },
+   {
+    "calls": [],
+    "line": 1756,
+    "name": "_round_trip"
+   },
+   {
+    "calls": [],
+    "line": 1769,
+    "name": "config_target_path"
+   },
+   {
+    "calls": [
+     "config_target_path"
+    ],
+    "line": 1782,
+    "name": "writable_config_path"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1793,
+    "name": "_reload_into"
+   },
+   {
+    "calls": [
+     "writable_config_path",
+     "ConfigError",
+     "_round_trip",
+     "_trailing_comment",
+     "_carry_trailing_comment",
+     "_reload_into"
+    ],
+    "line": 1813,
+    "name": "write_role"
+   },
+   {
+    "calls": [],
+    "line": 1860,
+    "name": "_pop_keeping_comment"
+   },
+   {
+    "calls": [],
+    "line": 1889,
+    "name": "_set_before"
+   },
+   {
+    "calls": [],
+    "line": 1904,
+    "name": "_flow"
+   },
+   {
+    "calls": [
+     "writable_config_path",
+     "StaffingConfig",
+     "ConfigError",
+     "team_of",
+     "_side_of",
+     "_pop_keeping_comment",
+     "_set_before",
+     "_round_trip",
+     "_flow",
+     "_reload_into"
+    ],
+    "line": 1917,
+    "name": "write_staffing"
+   },
+   {
+    "calls": [
+     "writable_config_path",
+     "ConfigError",
+     "_round_trip",
+     "_trailing_comment",
+     "_carry_trailing_comment",
+     "_reload_into"
+    ],
+    "line": 2041,
+    "name": "delete_role"
+   },
+   {
+    "calls": [],
+    "line": 2067,
+    "name": "prompt_path"
+   },
+   {
+    "calls": [
+     "prompt_path"
+    ],
+    "line": 2081,
+    "name": "write_role_prompt"
+   },
+   {
+    "calls": [],
+    "line": 2102,
+    "name": "credentials_path"
+   },
+   {
+    "calls": [
+     "urlparse"
+    ],
+    "line": 2106,
+    "name": "harness_model"
+   },
+   {
+    "calls": [
+     "harness_model"
+    ],
+    "line": 2125,
+    "name": "session_model"
+   },
+   {
+    "calls": [
+     "urlparse"
+    ],
+    "line": 2146,
+    "name": "fallback_session_model"
+   },
+   {
+    "calls": [],
+    "line": 2197,
+    "name": "model_family"
+   },
+   {
+    "calls": [],
+    "line": 2218,
+    "name": "landing_family"
+   },
+   {
+    "calls": [
+     "model_family",
+     "landing_family"
+    ],
+    "line": 2243,
+    "name": "independence_problems"
+   },
+   {
+    "calls": [
+     "credentials_path"
+    ],
+    "line": 2309,
+    "name": "read_credential"
+   },
+   {
+    "calls": [
+     "credentials_path",
+     "write_atomic"
+    ],
+    "line": 2319,
+    "name": "write_credential"
+   },
+   {
+    "calls": [
+     "_api_key_env_name",
+     "read_credential"
+    ],
+    "line": 2336,
+    "name": "api_key_source"
+   },
+   {
+    "calls": [],
+    "line": 2347,
+    "name": "_api_key_env_name"
+   },
+   {
+    "calls": [],
+    "line": 2361,
+    "name": "mask_key"
+   },
+   {
+    "calls": [
+     "writable_config_path",
+     "_round_trip",
+     "load_config"
+    ],
+    "line": 2367,
+    "name": "write_api_settings"
+   },
+   {
+    "calls": [
+     "writable_config_path",
+     "_round_trip"
+    ],
+    "line": 2384,
+    "name": "write_editor_url"
+   },
+   {
+    "calls": [
+     "writable_config_path",
+     "_round_trip",
+     "load_config"
+    ],
+    "line": 2399,
+    "name": "_rewrite"
+   },
+   {
+    "calls": [
+     "_rewrite"
+    ],
+    "line": 2420,
+    "name": "write_rework_limits"
+   },
+   {
+    "calls": [
+     "_rewrite"
+    ],
+    "line": 2444,
+    "name": "write_executor_kind"
+   },
+   {
+    "calls": [
+     "example_config_path",
+     "_round_trip",
+     "load_config"
+    ],
+    "line": 2454,
+    "name": "write_route_enabled"
+   },
+   {
+    "calls": [],
+    "line": 2483,
+    "name": "session_fallback"
+   }
+  ],
+  "imports": [
+   "factory/files.py",
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "LLM providers",
+   "Docker",
+   "the filesystem",
+   "YAML",
+   "YAML serialization",
+   "filesystem",
+   "JSON storage"
+  ],
+  "purpose": "Defines Pydantic configuration models for the factory system, loaded from YAML. Handles routes, roles, provider credentials, and container environments with provider details entirely in configuration, no hardcoding.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

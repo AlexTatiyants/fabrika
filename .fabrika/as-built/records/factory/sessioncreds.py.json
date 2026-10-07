@@ -1,0 +1,139 @@
+{
+ "blob": "66f89e118e6abeea6e81e39bfbb5fcbb2e51f0c8",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "CredentialError",
+   "Bundle",
+   "prepare",
+   "install",
+   "uninstall"
+  ],
+  "domain_terms": [
+   "session credential",
+   "harness",
+   "container",
+   "sign-in",
+   "keychain"
+  ],
+  "entities_defined": [
+   "Bundle"
+  ],
+  "entities_read": [
+   "route configuration",
+   "environment variables",
+   "macOS keychain",
+   "credential files"
+  ],
+  "entities_written": [
+   "temporary credential files",
+   "container credential copies"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "RuntimeError"
+    ],
+    "line": 42,
+    "name": "CredentialError"
+   },
+   {
+    "calls": [],
+    "line": 50,
+    "name": "Bundle"
+   },
+   {
+    "calls": [
+     "CredentialError",
+     "shutil.which"
+    ],
+    "line": 63,
+    "name": "_keychain"
+   },
+   {
+    "calls": [
+     "CredentialError"
+    ],
+    "line": 94,
+    "name": "_env_value"
+   },
+   {
+    "calls": [
+     "CredentialError",
+     "_env_value",
+     "_keychain"
+    ],
+    "line": 110,
+    "name": "prepare"
+   },
+   {
+    "calls": [
+     "procs.kill"
+    ],
+    "line": 190,
+    "name": "_docker"
+   },
+   {
+    "calls": [
+     "CredentialError",
+     "_docker"
+    ],
+    "line": 203,
+    "name": "install"
+   },
+   {
+    "calls": [
+     "_docker"
+    ],
+    "line": 233,
+    "name": "uninstall"
+   }
+  ],
+  "imports": [
+   "factory/procs.py",
+   "factory/config.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "macOS keychain (security command)",
+   "file system"
+  ],
+  "purpose": "Securely prepares a harness's authentication credentials into a temporary directory, installs them into running containers via `docker cp`, and uninstalls them afterwards -- keeping them out of command lines, logs, and stored records.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "CredentialError"
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "Bundle"
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "prepare"
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "install"
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "uninstall"
+   }
+  ]
+ }
+}

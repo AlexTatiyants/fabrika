@@ -1,0 +1,45 @@
+{
+ "blob": "f7891587245eb40e04ebc2b0e428ec2e6624fed4",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "step-title",
+   "hz",
+   "hz-row",
+   "p",
+   "p-head",
+   "p-pick",
+   "p-field",
+   "p-verb",
+   "p-delta",
+   "p-open",
+   "p-why",
+   "p-diff",
+   "stale-strip",
+   "stale-note",
+   "busy-overlay",
+   "busy-card",
+   "rec-title"
+  ],
+  "domain_terms": [
+   "gate",
+   "step",
+   "proposal",
+   "verdict",
+   "check",
+   "remedy"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles Gate 0's four-step interface numbering what the repository has, what the factory needs, measurements of both, and resulting actions.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

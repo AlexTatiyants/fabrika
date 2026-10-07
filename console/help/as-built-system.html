@@ -1,0 +1,32 @@
+<p class="lead">The system map groups your files into subsystems by what depends on what, and shows how the
+  subsystems connect. Open one to see what's inside it, and a file to see what it does.</p>
+
+<h4>Reading the map</h4>
+<p>Each box is a subsystem, with a three-letter ID that stays the same across readings, and the same ID is
+  used on the Capabilities page. A line means files in one subsystem import files in the other, and the number
+  is how many. Dashed lines include links the reader reported and the code didn't confirm. Point at a subsystem
+  to bring its links forward; select it to open it.</p>
+<p>With many subsystems the map becomes a grid with one line for each pair, so it stays readable.</p>
+
+<h4>Product and support</h4>
+<p><b>Product</b> subsystems are the ones a capability reaches: code a person's action ends up running.
+  <b>Support</b> subsystems (build, configuration, environment) are reached by nothing a person does. They're
+  listed apart so they don't crowd the picture.</p>
+
+<h4>Shared files</h4>
+<p>A few files are imported by nearly everything. Drawing them would put a line from every box to one point,
+  so they're left off the map and listed underneath instead.</p>
+
+<h4>A subsystem's page</h4>
+<ul>
+  <li><b>How it connects</b>: what uses it, and what it uses.</li>
+  <li><b>Inside it</b>: a map of its files, grouped by folder.</li>
+  <li><b>Files</b>: what each is for, and whether any test reaches it.</li>
+  <li><b>Capabilities that pass through</b>: the ways in that run code here.</li>
+</ul>
+
+<h4>A file's page</h4>
+<p>What the file is for, what it connects to, the ways in it carries, the capabilities that reach it, the tests
+  that import or call it, its functions, the data it defines, reads and writes, and what it talks to outside
+  the repository. A function opens the source at its line. <i>No test imports or calls this file</i> means
+  exactly that, not that it's untested in every sense.</p>

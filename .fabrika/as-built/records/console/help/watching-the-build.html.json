@@ -1,0 +1,32 @@
+{
+ "blob": "1c041ad8cbe6df944ff74f9e434bdeb1387b20fe",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "build",
+   "verify",
+   "validate",
+   "review",
+   "architect",
+   "oracle",
+   "breaker",
+   "arbiter",
+   "simplifier",
+   "rapporteur",
+   "repair loop"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Describes the stages of the build process (Build, Verify, Validate, Review) and how to monitor their progress.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

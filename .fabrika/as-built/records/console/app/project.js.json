@@ -1,0 +1,351 @@
+{
+ "blob": "38b5ec16c4041f305c36435aea18fc6f29ac86de",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "PROJECT_STEPS",
+   "PROJECT_SECTIONS",
+   "SECTION_STEP",
+   "SECTION_TITLE",
+   "SECTION_LEDE",
+   "RULING_LAMP",
+   "PROJECT_STAGE_STEP",
+   "FAMILY_ASKS",
+   "COVERAGE_REPORTS",
+   "ENV_KIND_WORDS",
+   "openFolds",
+   "projectSection",
+   "undecidedLevels",
+   "sectionDot",
+   "projectBar",
+   "capabilityPlate",
+   "runsLine",
+   "gateLine",
+   "familyWord",
+   "proposedFor",
+   "checkFold",
+   "guardsText",
+   "readingWord",
+   "heldOnNewCode",
+   "factRow",
+   "tabHead",
+   "projectPanels",
+   "versionsFact",
+   "previewFact",
+   "dockerfileFact",
+   "movesDockerfile",
+   "retireDockerfile",
+   "moveDockerfile",
+   "firstClause",
+   "removeProject",
+   "driftFact",
+   "paintStaleBar",
+   "staleServerStrip",
+   "ticks",
+   "readingBehindStrip"
+  ],
+  "domain_terms": [
+   "project onboarding steps",
+   "checks and gates",
+   "baseline test results",
+   "environment configuration",
+   "repository survey"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "project",
+   "gate",
+   "baseline",
+   "result",
+   "environment",
+   "survey",
+   "testing",
+   "dockerfile"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 90,
+    "name": "projectSection"
+   },
+   {
+    "calls": [],
+    "line": 101,
+    "name": "undecidedLevels"
+   },
+   {
+    "calls": [
+     "undecidedLevels",
+     "partsWaiting",
+     "waitingChanges",
+     "guideProposals"
+    ],
+    "line": 110,
+    "name": "sectionDot"
+   },
+   {
+    "calls": [
+     "projectSection",
+     "boardHead",
+     "capabilityPlate",
+     "esc",
+     "browsing"
+    ],
+    "line": 148,
+    "name": "projectBar"
+   },
+   {
+    "calls": [
+     "isGreen",
+     "unrunnableGates",
+     "esc"
+    ],
+    "line": 220,
+    "name": "capabilityPlate"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 268,
+    "name": "runsLine"
+   },
+   {
+    "calls": [
+     "gateOutcome",
+     "icon",
+     "familyWord",
+     "dur",
+     "guardsText",
+     "esc",
+     "editHref",
+     "checkRuling"
+    ],
+    "line": 284,
+    "name": "gateLine"
+   },
+   {
+    "calls": [],
+    "line": 414,
+    "name": "familyWord"
+   },
+   {
+    "calls": [
+     "checkRuling",
+     "esc"
+    ],
+    "line": 417,
+    "name": "proposedFor"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 437,
+    "name": "checkFold"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 469,
+    "name": "guardsText"
+   },
+   {
+    "calls": [],
+    "line": 491,
+    "name": "readingWord"
+   },
+   {
+    "calls": [
+     "checkAnchor",
+     "esc"
+    ],
+    "line": 498,
+    "name": "heldOnNewCode"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 547,
+    "name": "factRow"
+   },
+   {
+    "calls": [
+     "surveyWaiting",
+     "waitingChanges",
+     "sectionHead",
+     "esc"
+    ],
+    "line": 563,
+    "name": "tabHead"
+   },
+   {
+    "calls": [
+     "factRow",
+     "esc",
+     "driftFact",
+     "dependencyInventory",
+     "removeProject",
+     "partsBlock",
+     "versionsFact",
+     "previewFact",
+     "dockerfileFact"
+    ],
+    "line": 587,
+    "name": "projectPanels"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 654,
+    "name": "versionsFact"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 668,
+    "name": "previewFact"
+   },
+   {
+    "calls": [
+     "esc",
+     "firstClause",
+     "movesDockerfile"
+    ],
+    "line": 694,
+    "name": "dockerfileFact"
+   },
+   {
+    "calls": [],
+    "line": 736,
+    "name": "movesDockerfile"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 742,
+    "name": "retireDockerfile"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 751,
+    "name": "moveDockerfile"
+   },
+   {
+    "calls": [],
+    "line": 762,
+    "name": "firstClause"
+   },
+   {
+    "calls": [],
+    "line": 769,
+    "name": "removeProject"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 786,
+    "name": "driftFact"
+   },
+   {
+    "calls": [
+     "paintOfflineBar",
+     "staleServerStrip"
+    ],
+    "line": 829,
+    "name": "paintStaleBar"
+   },
+   {
+    "calls": [
+     "icon",
+     "esc"
+    ],
+    "line": 838,
+    "name": "staleServerStrip"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 858,
+    "name": "ticks"
+   },
+   {
+    "calls": [
+     "surveyWaiting",
+     "icon",
+     "esc"
+    ],
+    "line": 872,
+    "name": "readingBehindStrip"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Document Object Model (DOM)"
+  ],
+  "purpose": "Generates the UI components for a project's onboarding and status screens: the project bar with navigation steps, capability status plate, check/gate rows with outcomes, environment and survey panels, and status indicators for testing decisions and configuration changes.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/dockerfile/retire"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/dockerfile/move"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "projectBar",
+    "kind": "export",
+    "method": "",
+    "name": "projectBar"
+   },
+   {
+    "handler": "projectPanels",
+    "kind": "export",
+    "method": "",
+    "name": "projectPanels"
+   },
+   {
+    "handler": "tabHead",
+    "kind": "export",
+    "method": "",
+    "name": "tabHead"
+   },
+   {
+    "handler": "paintStaleBar",
+    "kind": "export",
+    "method": "",
+    "name": "paintStaleBar"
+   },
+   {
+    "handler": "readingBehindStrip",
+    "kind": "export",
+    "method": "",
+    "name": "readingBehindStrip"
+   }
+  ]
+ }
+}

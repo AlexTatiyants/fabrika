@@ -1,0 +1,306 @@
+/* The yard and the two pages that are a place: intake, the ledger of projects,
+   the lamp, the empty yard, and the narrow steps measured against the column. */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE YARD, AND THE TWO PAGES THAT ARE A PLACE
+
+   Not a 46ch lede in a 1080px column, a registration form parked under the
+   list where twenty projects put it out of reach, and rows that all wear a
+   READY pill -- which spends the reader's attention on the projects that
+   need none.
+
+   It is a header of two lines, an intake that is one ruled row, and a ledger
+   whose rows carry a lamp. The lamp is lit by the project's own checks and by
+   nothing else; whether a *human* is required is said by a pill, in ink. That
+   is the rule the whole console is built on and this is the screen it is
+   easiest to break it on.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* A page's mark. The row icons are 15px at stroke 1.4; these are set at the
+   size of the heading they belong to, which is the only reason they exist as
+   a separate class. */
+.page-mark {
+  width: 2.1rem; height: 2.1rem; flex: none;
+  color: var(--ink-2);
+  fill: none; stroke: currentColor; stroke-width: 2.1;
+  stroke-linecap: round; stroke-linejoin: round;
+  /* Optically centred on the cap height, not on a line box whose descender
+     space these titles never use. */
+  transform: translateY(-1px);
+}
+
+.yard-hero { padding: 2.5rem 0 .2rem; }
+.yard-hero h1, .yard-first h1, .crew-title {
+  display: flex; align-items: center; gap: .7rem;
+  font-family: var(--display); font-weight: 600;
+  font-size: 2.25rem; line-height: 1.08; letter-spacing: -.02em;
+  text-transform: none;
+  margin: 0 0 .55rem;
+}
+/* One paragraph, across the whole measure, with nothing held back for a margin
+   that has no reason to be there. A long line is only a problem when there are
+   many of them: at this size these run to two, and the eye never has to find
+   its way back to a left edge it has lost. */
+.yard-hero .defn, .yard-first .defn, .crew-sub {
+  max-width: none; margin: 0;
+  font-size: 1rem; line-height: 1.6; color: var(--ink-2);
+}
+.yard-hero .defn b, .yard-first .defn b { color: var(--ink); font-weight: 500; }
+.crew-sub { margin-bottom: 1.6rem; }
+
+/* ------------------------------------------------------------------ intake
+
+   One ruled line of shop paperwork: what it is on the left, the boxes you
+   fill, and the one dark control on the page. The explanation of what a
+   surveyor does lives on the first-run screen, which is the only place you
+   have not seen one run. */
+
+/* The project intake form's own grid. Not `.intake`, which is also a
+   feature's first stage -- and the rail builds a row's classes from `f.stage`,
+   so every feature sitting in `intake` would pick up a four-column grid meant
+   for a form on another screen: `.pf-main` collapses to zero width, 14rem goes
+   to a track holding nothing, and the row shows its stage and not its name.
+
+   Easy to miss while `intake` lasts seconds, but the short lane holds a
+   feature there for the whole of its run. `planning`, `building` and `failed`
+   are each one component away from the same collision; the rule for all of
+   them is that a component does not take a bare word the data uses too.
+   `.panel-feature.intake` below is a stage and stays. */
+.intake-form {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 14rem auto;
+  gap: .5rem .7rem; align-items: center;
+  margin: 1.5rem 0 2rem;
+}
+.intake-label {
+  font-family: var(--mono); font-size: var(--t-label); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-3); white-space: nowrap;
+}
+.intake-field {
+  width: 100%; padding: .44rem .6rem;
+  font-family: var(--mono); font-size: var(--t-body);
+  background: var(--surface-lift); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+}
+.intake-field::placeholder { color: var(--ink-3); }
+.intake-field:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+/* -------------------------------------------------------------- the ledger
+
+   One grid, shared by the column heads and every row, so the facts line up
+   down the page. At twenty projects that alignment is the whole reason the
+   page is readable. */
+
+.yard-ledger { border-top: 1px solid var(--line-strong); }
+
+.yard-lh,
+.prow {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) 4.75rem 7rem 5.25rem 7.75rem;
+  gap: 0 1.15rem;
+  align-items: center;
+}
+
+.yard-lh {
+  padding: .5rem .45rem .45rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono); font-size: var(--t-label); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.yard-lh .lh-count { color: var(--ink); }
+
+.prow {
+  padding: .72rem .45rem;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none; color: inherit;
+  transition: background .12s ease-out;
+}
+.prow:hover { background: var(--surface); }
+.prow:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.prow:hover .prow-name { text-decoration: underline; text-underline-offset: 3px; }
+
+.prow-id { min-width: 0; }
+.prow-name {
+  display: block;
+  font-family: var(--display); font-weight: 600; font-size: 1rem;
+  letter-spacing: -.005em; line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.prow-path {
+  display: block; margin-top: .12rem;
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* The three machine facts. A wrapper that is `display: contents` on a wide
+   row, so each fact sits in its own column of the shared grid -- and becomes a
+   real flex box on a narrow one, where the columns cannot survive and the
+   facts have to run together under the name instead. */
+.prow-facts { display: contents; }
+.prow-fact {
+  font-family: var(--mono); font-size: var(--t-small); color: var(--ink-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prow-fact b { color: var(--ink); font-weight: 500; }
+/* The unit a column head carries on a wide row and nobody carries on a narrow
+   one. Printed only where the head is gone. */
+.prow-fact .u { display: none; }
+/* Never run is not zero. Not dimmer than the facts beside it, either: on this
+   ground there is nothing between --ink-3 and illegible, and "not measured" is
+   a word somebody has to read. The dash does the softening. */
+.prow-fact .none { color: var(--ink-3); }
+.prow-flag { justify-self: start; }
+
+/* A project that is waiting on a person is the only row allowed to raise its
+   voice, and it raises it by one wash and one pill -- not by a border. */
+.prow.needs { background: color-mix(in srgb, var(--accent-wash) 58%, transparent); }
+.prow.needs:hover { background: var(--accent-wash); }
+
+/* ---------------------------------------------------------------- the lamp
+
+   The board's lamp, scaled for a row, and lit by the same rule: green is a run
+   that came back green, amber is a run that did not, red is a project whose
+   checks could not run at all, dark is one nobody has measured. */
+
+.lamp-row {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--lamp-off-paper); border: 2px solid var(--board-edge);
+  position: relative; flex: none;
+}
+.lamp-row.lit::after {
+  content: ""; position: absolute; top: 2px; left: 2.5px;
+  width: 5px; height: 3px; border-radius: 50%; background: color-mix(in srgb, var(--ink-reversed) 50%, transparent);
+}
+.lamp-row.green { background: var(--lamp-green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-green) 18%, transparent); }
+.lamp-row.amber { background: var(--lamp-amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-amber) 20%, transparent); }
+.lamp-row.red   { background: var(--lamp-red);   box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-red) 20%, transparent); }
+/* Never measured. Dark, and hollow, so it cannot be mistaken for a lamp that
+   is merely off in a row of lit ones. */
+.lamp-row.dark  { background: transparent; border-color: var(--ink-3); }
+/* The one moving thing on the page, and it moves because the line is moving:
+   a surveyor is reading this repository right now. */
+.lamp-row.reading { background: var(--ink-3); animation: yardblink 1.8s steps(1, end) infinite; }
+@keyframes yardblink { 0%, 55% { opacity: 1 } 55.01%, 100% { opacity: .28 } }
+@media (prefers-reduced-motion: reduce) { .lamp-row.reading { animation: none } }
+
+/* Foot of the sheet, where a key goes. */
+.yard-key {
+  display: flex; flex-wrap: wrap; gap: .4rem 1.5rem;
+  margin: 1rem 0 0; padding-left: .45rem;
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3);
+}
+.yard-key span { display: inline-flex; align-items: center; gap: .45rem; }
+
+/* ------------------------------------------------------------- nothing yet
+
+   First run. There is no list, so the intake stops being a line in a header
+   and becomes the screen -- and this is the one place the surveyor paragraph
+   earns its keep, because you have never seen one run. */
+
+.yard-first { max-width: 620px; padding: 4rem 0 3rem; }
+.yard-first .defn { margin-bottom: 1.6rem; }
+
+.intake-plate {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 1.15rem 1.25rem 1.25rem;
+}
+.intake-plate .intake-label { display: block; margin: 0 0 .28rem; }
+.intake-plate .intake-row { display: flex; gap: .6rem; align-items: end; margin-top: .7rem; }
+.intake-plate .intake-row > div { flex: 1 1 auto; min-width: 0; }
+.intake-plate .intake-row .btn { flex: none; }
+.intake-note {
+  margin: .85rem 0 0; padding-top: .8rem;
+  border-top: 1px solid var(--line);
+  font-size: var(--t-body); line-height: 1.5; color: var(--ink-3);
+}
+
+.intake-key {
+  margin: .85rem 0 0; padding: .55rem .8rem;
+  border-left: 3px solid var(--accent);
+  font-size: var(--t-body); line-height: 1.5; color: var(--ink-2);
+}
+.intake-form + .intake-key { margin: -.5rem 0 1.5rem; }
+
+.yard-steps {
+  display: grid; gap: .55rem;
+  margin: 1.75rem 0 0; padding: 0; list-style: none;
+  counter-reset: step;
+}
+.yard-steps li {
+  display: grid; grid-template-columns: 1.4rem 1fr; gap: .7rem;
+  align-items: start;
+  font-size: .875rem; line-height: 1.55; color: var(--ink-3);
+}
+.yard-steps li::before {
+  counter-increment: step; content: counter(step);
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3);
+  border: 1px solid var(--line-strong); border-radius: 50%;
+  width: 1.4rem; height: 1.4rem; display: grid; place-items: center;
+  margin-top: .05rem;
+}
+.yard-steps b { color: var(--ink-2); font-weight: 500; }
+
+/* --------------------------------------------------------------- narrower
+
+   Measured against the content column, not the window: the rail is a fixture
+   above 1023px and a disclosure below it, so a 1024px window has *less* room
+   for this page than a 900px one does. A window-width query gets that exactly
+   backwards. */
+
+.wrap.yard { container-type: inline-size; }
+
+@container (max-width: 860px) {
+  .yard-hero { padding-top: 2rem; }
+  .intake-form { grid-template-columns: minmax(0, 1fr) auto; }
+  .intake-label { grid-column: 1 / -1; }
+  .intake-form .f-path { grid-column: 1 / -1; }
+  /* Where the checks run and how many features exist are facts about a project
+     you have opened. What its checks did is the fact you scan a list for. */
+  .yard-lh, .prow { grid-template-columns: 16px minmax(0, 1fr) 5.5rem 7.75rem; }
+  .lh-env, .lh-feat, .prow-facts > .prow-fact:nth-child(2), .prow-feat { display: none; }
+}
+
+@container (max-width: 560px) {
+  .yard-hero h1, .yard-first h1 { font-size: 1.875rem; gap: .55rem; }
+  .page-mark { width: 1.8rem; height: 1.8rem; }
+  .yard-hero .defn, .yard-first .defn { font-size: .9375rem; }
+  .intake-form { grid-template-columns: minmax(0, 1fr); }
+  .intake-form .btn { justify-self: start; }
+  .yard-lh, .prow { grid-template-columns: 16px minmax(0, 1fr); gap: 0 .85rem; }
+  .lh-checks { display: none; }
+  /* The columns are gone, so the facts run together under the name and print
+     their own units. */
+  .prow-facts {
+    display: flex; flex-wrap: wrap; gap: .15rem .9rem;
+    grid-column: 2; margin-top: .35rem;
+  }
+  .prow-facts > .prow-fact:nth-child(2), .prow-feat { display: inline; }
+  /* Two em dashes in a row would say nothing twice. One says it once, in words,
+     because there is no column head left to explain the dash. */
+  .prow-fact.blank ~ .prow-fact.blank { display: none; }
+  .prow-fact .u { display: inline; }
+  .prow-flag { grid-column: 2; margin-top: .45rem; }
+  .prow { padding: .85rem .45rem; }
+  .yard-key { gap: .3rem 1.1rem; }
+  .intake-plate .intake-row { flex-wrap: wrap; }
+}
+
+/* The crew page is not inside a .yard container, so its own narrow step is a
+   window query -- it has nothing that needs measuring against a column. */
+@media (max-width: 560px) {
+  .crew-title { font-size: 1.875rem; gap: .55rem; }
+  .crew-sub { font-size: .9375rem; }
+}
+
+/* A route the tool itself says is refusing calls. The one gauge line drawn as
+   an alarm, because it is not a reading to interpret -- see `limitLine`. */
+.hwin.hlimit .hwin-name,
+.hwin.hlimit .hwin-num { color: var(--red, var(--red-flag)); font-weight: 600; }
+/* Two spans, not the gauge's three, and the second is the tool's own sentence
+   of any length. On the gauge grid it would land in the track column unwrappable
+   and push the card past its column. Stacked, label over reason, it wraps. */
+.hwin.hlimit { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
+.hwin.hlimit .hwin-num { white-space: normal; overflow-wrap: anywhere; line-height: 1.4; }
+

@@ -1,0 +1,20 @@
+{
+ "blob": "57248cfaeba68466bfb4092248259c83aa69177e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Describes Fabrika's security model (agents in sealed containers, isolation via Docker, egress proxy, credentials on disk), what it protects and does not protect, and how to report vulnerabilities.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

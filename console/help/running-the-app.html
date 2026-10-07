@@ -1,0 +1,34 @@
+<p class="lead">At review you can open the feature's app in your browser and look at it. Fabrika starts it
+  from the feature's branch, the same way it starts it for the checks, and only this machine can reach it.</p>
+
+<h4>Why it's there</h4>
+<p>Review asks you to rule on things: criteria Fabrika couldn't test, and an argument that a page shows
+  what the spec asked for. Looking at the page is the quickest way to judge both. Without this you'd check
+  out the branch, install it, and find free ports next to your own dev servers.</p>
+
+<h4>What happens when you press it</h4>
+<ul>
+  <li>Fabrika runs the environment's setup in the feature's worktree, then starts its services, runs
+    its preparation steps and creates the test database, exactly as it does before the checks.</li>
+  <li>It asks the page for an answer, and gives you the link once it gets one. This takes about as long
+    as setup takes; the button's tooltip says about how long, from the last run.</li>
+  <li>Your ruling on a criterion you check by hand records that the app was open, and the commit it was
+    running.</li>
+</ul>
+
+<h4>What it can and can't reach</h4>
+<p>The app stays on the same sealed network the checks run on. It can't reach the internet or anything
+  else on this machine, so a call to a payment provider or a map service fails there. That says nothing
+  about the feature. Its data is whatever the environment's preparation seeds.</p>
+<p>Fabrika forwards each service's port to <span class="mono">127.0.0.1</span> under the same number, so
+  the addresses the app was given work in your browser. Nothing is reachable from other machines.</p>
+
+<h4>When it closes</h4>
+<p>When you press Stop, when you rule on the feature or send it for more work, and after an hour with
+  the review page closed. Restarting Fabrika closes it too.</p>
+
+<h4>When there's no button</h4>
+<p>Fabrika needs to know which service a person opens. The survey says so in the environment, and the
+  project reading checks that it opens on the main branch. If the survey couldn't tell, survey again, or
+  set it on the <a data-help="environment">environment</a>. A library or a command-line tool has nothing
+  to open, and its environment says so.</p>

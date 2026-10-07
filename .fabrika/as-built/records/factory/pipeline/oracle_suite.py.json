@@ -1,0 +1,142 @@
+{
+ "blob": "1468a80ed661fe3f429c36b1a40faf5be65f2a80",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "assemble_oracle_suite",
+   "assemble_breaker_suite",
+   "oracle_files",
+   "place_blind_file",
+   "runner_naming",
+   "blind_write_targets",
+   "feature_test_dir",
+   "unruled",
+   "usable_suite",
+   "normalize_criterion_ids",
+   "retarget_command"
+  ],
+  "domain_terms": [
+   "oracle suite",
+   "acceptance criterion",
+   "test placement",
+   "feature",
+   "breaker suite"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "ArbiterReport",
+   "BlindPlacement",
+   "BreakerAccount",
+   "BreakerSuite",
+   "BreakerTest",
+   "IntegrationReport",
+   "OracleAccount",
+   "OracleSuite",
+   "Spec",
+   "SupportFile",
+   "TestFile",
+   "Authored"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 35,
+    "name": "_disclaimed_paths"
+   },
+   {
+    "calls": [],
+    "line": 57,
+    "name": "_title_key"
+   },
+   {
+    "calls": [],
+    "line": 65,
+    "name": "assemble_oracle_suite"
+   },
+   {
+    "calls": [],
+    "line": 148,
+    "name": "assemble_breaker_suite"
+   },
+   {
+    "calls": [],
+    "line": 212,
+    "name": "_suite_detail"
+   },
+   {
+    "calls": [],
+    "line": 234,
+    "name": "oracle_files"
+   },
+   {
+    "calls": [],
+    "line": 258,
+    "name": "place_blind_file"
+   },
+   {
+    "calls": [],
+    "line": 334,
+    "name": "_commit_all"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 344,
+    "name": "set_aside"
+   },
+   {
+    "calls": [],
+    "line": 375,
+    "name": "runner_naming"
+   },
+   {
+    "calls": [],
+    "line": 426,
+    "name": "blind_write_targets"
+   },
+   {
+    "calls": [],
+    "line": 460,
+    "name": "feature_test_dir"
+   },
+   {
+    "calls": [],
+    "line": 481,
+    "name": "unruled"
+   },
+   {
+    "calls": [
+     "normalize_criterion_ids"
+    ],
+    "line": 517,
+    "name": "usable_suite"
+   },
+   {
+    "calls": [],
+    "line": 533,
+    "name": "normalize_criterion_ids"
+   },
+   {
+    "calls": [],
+    "line": 563,
+    "name": "retarget_command"
+   }
+  ],
+  "imports": [
+   "factory/executors.py",
+   "factory/schemas.py",
+   "factory/workspace.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git"
+  ],
+  "purpose": "Assembles oracle and breaker test suites from disk artifacts, routing test files to appropriate directories based on the test framework. Manages test metadata, criterion tagging, and validates suite usability.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

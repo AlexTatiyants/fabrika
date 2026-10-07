@@ -1,0 +1,180 @@
+{
+ "blob": "b75c89efaf04a314654d4f78e367def1e5fd6460",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "BuildMixin"
+  ],
+  "domain_terms": [
+   "spec\u2014the feature's requirements to be built",
+   "packet\u2014the complete result of a build including decisions, findings, and files",
+   "lanes\u2014parallel build and verify execution paths that do not observe each other",
+   "convergence\u2014merging lane results and running gates and repair loops",
+   "oracle\u2014the verification suite that checks criteria without seeing implementation",
+   "workers\u2014agents that write code and unit tests",
+   "integrator\u2014combines worker output and writes integration tests",
+   "gates\u2014quality checks that run against the build",
+   "rework round\u2014iterative repair cycle to fix issues found in gates"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "EvidenceStore",
+   "Packet",
+   "Spec",
+   "WorkerOutput",
+   "IntegrationReport",
+   "OracleSuite",
+   "GateReport",
+   "QAReport",
+   "ReworkSummary",
+   "FindingLedger"
+  ],
+  "entities_written": [
+   "attribution_wiring record",
+   "verify_lane_failed record",
+   "blind_unplaceable record",
+   "writes record",
+   "diffstat record",
+   "unclaimed record",
+   "packet_raw record",
+   "packet record",
+   "usage record",
+   "plan_draw record"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 64,
+    "name": "BuildMixin"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "current_payload",
+     "spec_hash",
+     "reset_phases",
+     "this_process",
+     "_save",
+     "_emit",
+     "check_attribution_wiring",
+     "require_authoring_environment",
+     "_build"
+    ],
+    "line": 67,
+    "name": "run_build"
+   },
+   {
+    "calls": [
+     "open_sandbox",
+     "_as_built_begin",
+     "record_headroom",
+     "_digest_before",
+     "recorded_attempt",
+     "_drop_broken_suite",
+     "_cut",
+     "role_prompt",
+     "_phase",
+     "_build_lane",
+     "_verify_lane",
+     "integration_detail",
+     "normalize_criterion_ids",
+     "place_blind_file",
+     "_route",
+     "store_append",
+     "_apply_writes",
+     "_disclaimed_paths",
+     "oracle_files",
+     "retarget_command",
+     "_dedupe_writes",
+     "safe_join",
+     "_converge",
+     "merge_reviews",
+     "_renumber_decisions",
+     "check_unit_environments",
+     "check_headroom",
+     "check_agent_failures",
+     "compute_unclaimed",
+     "collect_disclosures",
+     "compute_stats",
+     "_rapporteur_block",
+     "guide_lib_index",
+     "_guides_at",
+     "_base_of",
+     "_answered_by",
+     "order_packet",
+     "restore_packet",
+     "unchecked_levels",
+     "guides_held",
+     "_as_built_change",
+     "_commit_packet",
+     "observed_draw"
+    ],
+    "line": 129,
+    "name": "_build"
+   },
+   {
+    "calls": [
+     "_phase"
+    ],
+    "line": 154,
+    "name": "reused"
+   },
+   {
+    "calls": [
+     "reused",
+     "_build_lane"
+    ],
+    "line": 174,
+    "name": "build_lane"
+   },
+   {
+    "calls": [
+     "reused",
+     "_verify_lane"
+    ],
+    "line": 188,
+    "name": "verify_lane"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 302,
+    "name": "already_on_branch"
+   },
+   {
+    "calls": [
+     "place_blind_file"
+    ],
+    "line": 257,
+    "name": "_route"
+   }
+  ],
+  "imports": [
+   "factory/projects.py",
+   "factory/guides.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/trace.py",
+   "factory/pipeline/records.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/ledger.py",
+   "factory/pipeline/ownership.py",
+   "factory/pipeline/checks/gate_results.py",
+   "factory/pipeline/checks/agents.py",
+   "factory/pipeline/checks/seams.py",
+   "factory/pipeline/packet.py",
+   "factory/pipeline/helpers.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Orchestrates the complete build pipeline from specification to finished packet: runs the cut phase, executes parallel build and verify lanes, converges their results through gates and repair loops, computes comprehensive statistics, and produces the final judgement packet.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

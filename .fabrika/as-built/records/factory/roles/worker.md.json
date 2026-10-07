@@ -1,0 +1,27 @@
+{
+ "blob": "09122d551a5021c8961698c1f5fb3952ce62a828",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "work unit",
+   "specification",
+   "unit test",
+   "decision",
+   "duplication",
+   "repository convention"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Guidance for the worker agent role, which builds a work unit from an approved specification by writing code following repository conventions, logging decisions, and disclosing assumptions and deviations.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

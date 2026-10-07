@@ -1,0 +1,89 @@
+{
+ "blob": "81bf884ff6e7beaa08a02fd84080276e75770e7c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "BlindSuiteMixin"
+  ],
+  "domain_terms": [
+   "blind suite",
+   "oracle's tests",
+   "criteria",
+   "test trace recording",
+   "gate",
+   "witness"
+  ],
+  "entities_defined": [
+   "BlindSuiteMixin"
+  ],
+  "entities_read": [
+   "GateConfig",
+   "FeatureState",
+   "GateResult",
+   "TestFileCommand",
+   "EvidenceStore",
+   "Sandbox"
+  ],
+  "entities_written": [
+   "EvidenceStore"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "BlindSuiteMixin"
+   },
+   {
+    "calls": [
+     "run_gate",
+     "_collect_probe",
+     "run_per_file"
+    ],
+    "line": 22,
+    "name": "_run_blind_suite"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "_unpack_trace"
+    ],
+    "line": 219,
+    "name": "_collect_traces"
+   },
+   {
+    "calls": [
+     "trace_player"
+    ],
+    "line": 319,
+    "name": "_unpack_trace"
+   },
+   {
+    "calls": [
+     "run_per_file"
+    ],
+    "line": 354,
+    "name": "_collect_probe"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/gates.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/recordings.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the filesystem",
+   "a test framework runner",
+   "a container sandbox"
+  ],
+  "purpose": "Mixin for running an oracle's test suite in isolation from the project's own tests, and collecting test recordings and diagnostic probes from the execution.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

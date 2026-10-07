@@ -1,0 +1,26 @@
+{
+ "blob": "dcdf1367cb6c7f77f277a728c0e470716869852a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "history",
+   "ledger",
+   "commits",
+   "decisions",
+   "features"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation for the history tab showing all changes to a project: commits written by Fabrika, decisions made, check runs, readings, and features.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

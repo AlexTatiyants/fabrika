@@ -1,0 +1,28 @@
+{
+ "blob": "1d0b6ccaa0d8313762bd5b2317f7486d15ad3373",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "API key",
+   "provider",
+   "base URL",
+   "credentials",
+   "subscription"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [
+   "model provider API"
+  ],
+  "purpose": "Documents how to set up and store an API key for the model provider so agents can run.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

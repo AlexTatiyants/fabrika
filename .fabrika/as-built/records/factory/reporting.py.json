@@ -1,0 +1,155 @@
+{
+ "blob": "15c51d5d208881b91d6d8c0d4768eec14e0f3303",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Candidate",
+   "Outcome",
+   "Search",
+   "candidates",
+   "earlier_answers",
+   "brief",
+   "read_answer",
+   "usable_report",
+   "reset_tree",
+   "reason",
+   "search"
+  ],
+  "domain_terms": [
+   "test reporting command",
+   "canary test",
+   "JUnit XML report",
+   "test file rule"
+  ],
+  "entities_defined": [
+   "Candidate",
+   "Outcome",
+   "Search"
+  ],
+  "entities_read": [
+   "BlindPlacement",
+   "TestFileCommand"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 51,
+    "name": "Candidate"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "Outcome"
+   },
+   {
+    "calls": [],
+    "line": 72,
+    "name": "Search"
+   },
+   {
+    "calls": [],
+    "line": 80,
+    "name": "proposes"
+   },
+   {
+    "calls": [],
+    "line": 85,
+    "name": "_key"
+   },
+   {
+    "calls": [
+     "rule_for",
+     "_key",
+     "Candidate"
+    ],
+    "line": 89,
+    "name": "candidates"
+   },
+   {
+    "calls": [
+     "Outcome"
+    ],
+    "line": 113,
+    "name": "earlier_answers"
+   },
+   {
+    "calls": [],
+    "line": 133,
+    "name": "brief"
+   },
+   {
+    "calls": [],
+    "line": 162,
+    "name": "read_answer"
+   },
+   {
+    "calls": [],
+    "line": 174,
+    "name": "usable_report"
+   },
+   {
+    "calls": [],
+    "line": 188,
+    "name": "reset_tree"
+   },
+   {
+    "calls": [],
+    "line": 201,
+    "name": "reason"
+   },
+   {
+    "calls": [
+     "candidates",
+     "earlier_answers",
+     "_ask_and_prove",
+     "Outcome",
+     "_key"
+    ],
+    "line": 217,
+    "name": "search"
+   },
+   {
+    "calls": [
+     "CommandExecutor",
+     "Sandbox",
+     "unit_environment",
+     "failed",
+     "probe_placement",
+     "read_answer",
+     "reset_tree",
+     "Outcome",
+     "_key",
+     "usable_report"
+    ],
+    "line": 252,
+    "name": "_ask_and_prove"
+   },
+   {
+    "calls": [
+     "Outcome"
+    ],
+    "line": 258,
+    "name": "failed"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/gates.py",
+   "factory/schemas.py",
+   "factory/executors.py",
+   "factory/sandbox.py",
+   "factory/unitenv.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "subprocess",
+   "file system"
+  ],
+  "purpose": "Finds and proves JUnit XML reporting commands for test runners, so each test can report its own result instead of all tests in a file sharing one verdict.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

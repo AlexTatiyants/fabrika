@@ -1,0 +1,26 @@
+{
+ "blob": "973e7ac79fd4eea77a92a0b58b4f1212c8486f3b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "feature review",
+   "acceptance criteria",
+   "security findings",
+   "blind test",
+   "probe"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Guidance for the reviewer agent role, which examines finished features and builds the strongest available case against shipping them by identifying duplication, spec gaps, convention breaks, and security issues.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

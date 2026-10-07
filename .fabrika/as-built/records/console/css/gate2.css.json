@@ -1,0 +1,52 @@
+{
+ "blob": "60943e079bcdc9ed146d1e706e1aa0b9d28bb0aa",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "mat-dot",
+   "mat-mini",
+   "cd-cols",
+   "cd-ask",
+   "cd-filter",
+   "cd-chip",
+   "cd-file",
+   "cd-side",
+   "cd-dec",
+   "cd-finding",
+   "ev-cols",
+   "ev-pane",
+   "ee",
+   "ee-ledger",
+   "ee-band",
+   "ee-sheet",
+   "ee-gate",
+   "ee-test",
+   "ee-probe",
+   "ee-gaps",
+   "tp-wrap",
+   "tp",
+   "rw-add",
+   "rw-composer-inline",
+   "g2-toreview"
+  ],
+  "domain_terms": [
+   "requirement",
+   "evidence",
+   "gate check",
+   "test result",
+   "flag filing"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "CSS styling for Gate 2 screens, which display requirements, evidence for those requirements, code that fulfills them, and an interface for filing flags across any part of the view.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

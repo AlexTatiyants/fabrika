@@ -1,0 +1,212 @@
+{
+ "blob": "b63124fb5ded83ee746652a08e410b51d586f44a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "HOST_RANGES",
+   "POOL",
+   "BLOCK_PREFIX",
+   "TRANSPARENT_PORT",
+   "DNS_PORT",
+   "DNS_TTL",
+   "CONNECT_TIMEOUT_S",
+   "blocks",
+   "block_of",
+   "container_range",
+   "proxy_address",
+   "stand_in_block",
+   "laid_out",
+   "public",
+   "describe",
+   "resolve",
+   "StandIns",
+   "STAND_INS",
+   "LOCAL_SUFFIXES",
+   "A",
+   "AAAA",
+   "ANY",
+   "NOERROR",
+   "FORMERR",
+   "NXDOMAIN",
+   "NOTIMP",
+   "REFUSED",
+   "parse_query",
+   "answer",
+   "original_destination",
+   "pipe",
+   "note",
+   "carry",
+   "main"
+  ],
+  "domain_terms": [
+   "sealed container networks",
+   "stand-in addresses",
+   "egress policy"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 81,
+    "name": "blocks"
+   },
+   {
+    "calls": [],
+    "line": 85,
+    "name": "block_of"
+   },
+   {
+    "calls": [],
+    "line": 99,
+    "name": "container_range"
+   },
+   {
+    "calls": [],
+    "line": 104,
+    "name": "proxy_address"
+   },
+   {
+    "calls": [],
+    "line": 108,
+    "name": "stand_in_block"
+   },
+   {
+    "calls": [
+     "blocks"
+    ],
+    "line": 113,
+    "name": "laid_out"
+   },
+   {
+    "calls": [],
+    "line": 124,
+    "name": "public"
+   },
+   {
+    "calls": [],
+    "line": 131,
+    "name": "describe"
+   },
+   {
+    "calls": [],
+    "line": 147,
+    "name": "resolve"
+   },
+   {
+    "calls": [],
+    "line": 171,
+    "name": "StandIns"
+   },
+   {
+    "calls": [],
+    "line": 182,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 186,
+    "name": "address_for"
+   },
+   {
+    "calls": [],
+    "line": 204,
+    "name": "name_for"
+   },
+   {
+    "calls": [],
+    "line": 223,
+    "name": "parse_query"
+   },
+   {
+    "calls": [
+     "parse_query",
+     "block_of",
+     "address_for"
+    ],
+    "line": 253,
+    "name": "answer"
+   },
+   {
+    "calls": [],
+    "line": 284,
+    "name": "_Datagrams"
+   },
+   {
+    "calls": [],
+    "line": 285,
+    "name": "connection_made"
+   },
+   {
+    "calls": [
+     "answer"
+    ],
+    "line": 288,
+    "name": "datagram_received"
+   },
+   {
+    "calls": [
+     "answer"
+    ],
+    "line": 294,
+    "name": "_dns_stream"
+   },
+   {
+    "calls": [],
+    "line": 318,
+    "name": "original_destination"
+   },
+   {
+    "calls": [],
+    "line": 327,
+    "name": "pipe"
+   },
+   {
+    "calls": [],
+    "line": 344,
+    "name": "note"
+   },
+   {
+    "calls": [
+     "original_destination",
+     "name_for",
+     "resolve",
+     "pipe",
+     "note"
+    ],
+    "line": 355,
+    "name": "carry"
+   },
+   {
+    "calls": [
+     "carry",
+     "_Datagrams",
+     "_dns_stream"
+    ],
+    "line": 395,
+    "name": "main"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "containers",
+   "public internet servers",
+   "the operating system"
+  ],
+  "purpose": "Egress proxy that controls network access from sealed container environments by intercepting and validating DNS and TCP connections, allowing only to public addresses while blocking private/loopback ranges.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "main",
+    "kind": "command",
+    "method": "",
+    "name": "factory.egress_proxy"
+   }
+  ]
+ }
+}

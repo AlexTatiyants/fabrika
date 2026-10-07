@@ -1,0 +1,38 @@
+<p class="lead">The crew page shows every agent: what it does, the model it runs on, and the account and program
+  that carry its calls. Most of what you change about how Fabrika thinks, you change here.</p>
+
+<h4>The diagram</h4>
+<p>The pipeline, drawn in the order it runs: the project, the spec, the two lanes that can't see each other (the
+  build, and the oracle writing blind tests), review, the repair loop, and the as-built. Blue agents build
+  something, red ones check what another built, plain ones do neither, dashed boxes are plain code, and the accent
+  boxes are you. Each agent shows its model; select one to open it.</p>
+
+<h4>The agents</h4>
+<p>Every agent has a row, grouped by when it runs, with a sentence on what it does, its model and route, the size
+  of its prompt in words, its temperature and reasoning effort, how many calls it has made, its spend, and its
+  fallback lane. Spend is in dollars on a route billed per token, and in turns on a subscription, which reports no
+  dollars per call.</p>
+
+<h4>Changing an agent</h4>
+<p>Select a row to open its sheet: the model (each option says which route it goes through), temperature, maximum
+  tokens, reasoning effort, and, for a provider that serves a model from several hosts, which hosts and whether it
+  may fall back between them. The whole prompt is underneath, editable. <b>Save</b> writes the settings into
+  <span class="mono">factory.yaml</span>, comments intact, and the prompt into its own file.</p>
+
+<h4>Many agents at once</h4>
+<p><b>Agent configuration</b>, above the agent rows, sets the crew by side and by level instead of one agent at a
+  time. Pick the provider that serves the blue team and the one that serves the red; say what <b>deep</b>,
+  <b>standard</b> and <b>light</b> mean on each provider (presets are filled in); and drag agents between levels,
+  or select several and move them together. Every agent's model follows from those choices. An agent can be pinned
+  to a model of its own, and one edited here with a different model is pinned the same way. The screen warns
+  before it writes if a checker would share a vendor with what it checks. See
+  <a data-help="agent-configuration">Agent configuration</a>.</p>
+
+<h4>Another reading</h4>
+<p>Under <b>another reading</b>, give a review agent of your own a name and a model and press <b>Add</b>. It reads
+  the same evidence bundle as the reviewer, so it's how you add an angle of your own; write its prompt before the
+  next run. A review agent can read each packet more than once (samples), be switched off, or be removed.</p>
+
+<p>Further down the page are the accounts and harnesses, the network proxy and the fallback lanes. See
+  <a data-help="routes-and-plans">Routes, models and plan limits</a>, <a data-help="network-proxy">The network
+  proxy</a> and <a data-help="fallbacks-and-independence">Fallbacks and the independence rule</a>.</p>

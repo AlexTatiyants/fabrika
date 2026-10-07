@@ -1,0 +1,26 @@
+{
+ "blob": "2eee42de9cc63604b33dd0c783a676803b4bc98b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "agent",
+   "provider",
+   "team",
+   "level",
+   "model"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Documents the agent configuration screen where providers and thinking levels are assigned to teams (blue builders, red checkers) and individual agents can be pinned or moved between levels.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "blob": "856eea7a1fa93518f2a86b257c128ac4be71c0fe",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "scall",
+   "rout",
+   "linkish",
+   "rgraph",
+   "run-links",
+   "g-runs",
+   "p-gist",
+   "rr-does",
+   "role-band",
+   "cut-head",
+   "cut-sides",
+   "cut-call"
+  ],
+  "domain_terms": [
+   "run",
+   "step call",
+   "agent output",
+   "execution graph",
+   "crew role",
+   "plan review"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the display of run execution details (calls, outputs, execution graph), run listings, crew roles, and plan review interface.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

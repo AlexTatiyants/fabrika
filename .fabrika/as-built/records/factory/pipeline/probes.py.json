@@ -1,0 +1,73 @@
+{
+ "blob": "0b9222a2e9a136b4bcbb1da8f6d7674efdbf4193",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "probe_evidence",
+   "probe_budget",
+   "probe_finding_id",
+   "breaker_findings",
+   "probes_proven_passing",
+   "breaker_detail"
+  ],
+  "domain_terms": [
+   "breaker probes",
+   "adversarial tests",
+   "findings",
+   "evidence"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "BreakerReport",
+   "BreakerSuite",
+   "BreakerTest",
+   "Finding"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 13,
+    "name": "probe_evidence"
+   },
+   {
+    "calls": [],
+    "line": 47,
+    "name": "probe_budget"
+   },
+   {
+    "calls": [],
+    "line": 64,
+    "name": "probe_finding_id"
+   },
+   {
+    "calls": [
+     "probe_finding_id",
+     "probe_evidence"
+    ],
+    "line": 91,
+    "name": "breaker_findings"
+   },
+   {
+    "calls": [],
+    "line": 218,
+    "name": "probes_proven_passing"
+   },
+   {
+    "calls": [],
+    "line": 238,
+    "name": "breaker_detail"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Generates findings from adversarial probe test results and supplies evidence for the review process to judge probe claims.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

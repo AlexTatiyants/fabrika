@@ -1,0 +1,40 @@
+<p class="lead">You say what a feature should do, and you rule on what comes back. Everything in between is done
+  by model agents, in a fixed order that plain code decides.</p>
+
+<h4>Three places you decide</h4>
+<div class="hp-flow">
+  <div class="hp-step you"><b>Repo ready</b>accept a project's checks, once</div><span class="hp-arrow">→</span>
+  <div class="hp-step you"><b>Spec review</b>answer the questions, approve the spec</div><span class="hp-arrow">→</span>
+  <div class="hp-step"><b>The build</b>agents build, test, review and repair</div><span class="hp-arrow">→</span>
+  <div class="hp-step you"><b>Feature review</b>rule on the review packet</div>
+</div>
+<p>Nothing asks for your input while a build runs: a review you could click through mid-run would stop being a
+  review. The one exception is plan review, and it happens only when two agents disagree about how to cut the work.
+  See <a data-help="plan-review">Plan review</a>.</p>
+
+<h4>What comes back</h4>
+<p>Not a pull request. A review packet: the code, on a branch of its own, and a structured argument that it does
+  what the spec asked. Acceptance tests written from the spec by an agent that never saw the code, your project's
+  own checks, a review panel's objections, and what the repair loop did about each. You audit the argument and rule
+  on what it leaves you, rather than reading every line.</p>
+<p>Every feature is built in its own worktree, on its own branch. Your checkout is never written to, and every
+  agent and check runs in a sealed container.</p>
+
+<h4>Where things are</h4>
+<ul>
+  <li><b>yard</b>: your projects, and where you add one.</li>
+  <li><b>crew</b>: the agents, the models they run on, and the accounts that pay for them.</li>
+  <li><b>control room</b>: settings that belong to you on this machine.</li>
+  <li><b>help</b>: this. Press <code>?</code> on any screen to open the topic for it.</li>
+</ul>
+<p>The rail on the left lists every project and its features in flight; <b>Needs you</b> narrows it to what is
+  waiting on you, and <code>[</code> hides it.</p>
+
+<h4>Where to start</h4>
+<ul>
+  <li><a data-help="adding-a-project">Adding a project</a>, and what repo ready asks of you.</li>
+  <li><a data-help="writing-the-intent">Starting a feature</a>, then <a data-help="the-questions">the
+    questions</a> and <a data-help="the-spec">the spec</a>.</li>
+  <li><a data-help="the-review-packet">The review packet</a>, and <a data-help="your-calls">your calls</a>.</li>
+  <li><a data-help="the-crew">The crew</a>, if you want to change who does what.</li>
+</ul>

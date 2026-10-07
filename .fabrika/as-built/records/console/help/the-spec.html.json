@@ -1,0 +1,27 @@
+{
+ "blob": "c6bb3499ebb42fae8e275817420a046a9c6c056b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "spec",
+   "acceptance criterion",
+   "spec writer",
+   "spec checker",
+   "blind test",
+   "test level"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Explains the spec as a contract for what a feature must do, how it is written, and how to approve it before build starts.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

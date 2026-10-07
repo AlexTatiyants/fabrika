@@ -1,0 +1,490 @@
+{
+ "blob": "6d43b1020c2c19ccf13b19b424a58765a7bda6d7",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "onMainClick",
+   "dispatchMainClick",
+   "working",
+   "busyEl",
+   "inFlight",
+   "busyScope",
+   "coverBusy",
+   "paintBusy",
+   "withBusy",
+   "createProject",
+   "setCheckRuns",
+   "dropGate",
+   "adoptRecommendation",
+   "declineRecommendation",
+   "ratchetCheck",
+   "ruleOnCheck",
+   "undoCheck",
+   "applyDiagnosisFix",
+   "holdNewCode",
+   "savePolicy",
+   "declineFamily",
+   "reinstateFamily",
+   "reinstateRecommendation",
+   "reinstateGate",
+   "approveProject",
+   "uncommittedUnseen",
+   "askResurvey",
+   "askProposeChanges",
+   "resurvey",
+   "proposeChanges",
+   "rulePart"
+  ],
+  "domain_terms": [
+   "project",
+   "check and gate",
+   "reading",
+   "recommendation",
+   "proposal",
+   "feature"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "dispatchMainClick",
+     "errorToast"
+    ],
+    "line": 15,
+    "name": "onMainClick"
+   },
+   {
+    "calls": [
+     "panelOpen.get",
+     "panelOpen.set",
+     "panelChoice.set",
+     "savePanelPrefs",
+     "busyScope",
+     "inFlight.has",
+     "toast",
+     "agentConfigClick",
+     "setupClick",
+     "createProject",
+     "addReviewAgent",
+     "render",
+     "saveProvider",
+     "testProvider",
+     "closeSheet",
+     "toggleFlag",
+     "jumpToPromptLine",
+     "checkRoute",
+     "applyCleanup",
+     "startEgress",
+     "refreshEgress",
+     "testEgress",
+     "saveRole",
+     "deleteReviewAgent",
+     "moveDockerfile",
+     "retireDockerfile",
+     "startDraft",
+     "saveEdits",
+     "setCheckRuns",
+     "reinstateGate",
+     "dropGate",
+     "adoptRecommendation",
+     "declineRecommendation",
+     "reinstateRecommendation",
+     "ratchetCheck",
+     "ruleOnCheck",
+     "undoCheck",
+     "applyDiagnosisFix",
+     "holdNewCode",
+     "declineFamily",
+     "reinstateFamily",
+     "approveProject",
+     "askResurvey",
+     "askProposeChanges",
+     "ruleOnCut",
+     "showConsequence",
+     "hideConsequence",
+     "rule",
+     "askRevalidate",
+     "askRebuild",
+     "askRetryBuild",
+     "armDiscard",
+     "writeScaffolding",
+     "showScaffoldDiff",
+     "runBaseline",
+     "api",
+     "refreshProject",
+     "liveRecommendations",
+     "diagnosisOf",
+     "recPrompt",
+     "decideGuide",
+     "closeGuideSheet",
+     "loadIntakePlan",
+     "sendReintake",
+     "sendCorrection",
+     "discardFeature",
+     "discardProject",
+     "approveSpec",
+     "parkedChecks"
+    ],
+    "line": 24,
+    "name": "dispatchMainClick"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 553,
+    "name": "working"
+   },
+   {
+    "calls": [],
+    "line": 612,
+    "name": "busyScope"
+   },
+   {
+    "calls": [],
+    "line": 618,
+    "name": "coverBusy"
+   },
+   {
+    "calls": [
+     "clearInterval"
+    ],
+    "line": 632,
+    "name": "paintBusy"
+   },
+   {
+    "calls": [
+     "errorToast"
+    ],
+    "line": 666,
+    "name": "withBusy"
+   },
+   {
+    "calls": [
+     "api",
+     "encodeURIComponent"
+    ],
+    "line": 689,
+    "name": "createProject"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject"
+    ],
+    "line": 713,
+    "name": "setCheckRuns"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 722,
+    "name": "dropGate"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast",
+     "errorToast"
+    ],
+    "line": 756,
+    "name": "adoptRecommendation"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 773,
+    "name": "declineRecommendation"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "runBaseline",
+     "toast"
+    ],
+    "line": 788,
+    "name": "ratchetCheck"
+   },
+   {
+    "calls": [
+     "api",
+     "encodeURIComponent",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 802,
+    "name": "ruleOnCheck"
+   },
+   {
+    "calls": [
+     "api",
+     "encodeURIComponent",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 813,
+    "name": "undoCheck"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast",
+     "runBaseline"
+    ],
+    "line": 823,
+    "name": "applyDiagnosisFix"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "runBaseline",
+     "toast"
+    ],
+    "line": 836,
+    "name": "holdNewCode"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 852,
+    "name": "savePolicy"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 877,
+    "name": "declineFamily"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 889,
+    "name": "reinstateFamily"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 902,
+    "name": "reinstateRecommendation"
+   },
+   {
+    "calls": [
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast"
+    ],
+    "line": 915,
+    "name": "reinstateGate"
+   },
+   {
+    "calls": [
+     "api",
+     "encodeURIComponent",
+     "refreshProject",
+     "parkedChecks",
+     "toast"
+    ],
+    "line": 925,
+    "name": "approveProject"
+   },
+   {
+    "calls": [],
+    "line": 952,
+    "name": "uncommittedUnseen"
+   },
+   {
+    "calls": [
+     "confirmDialog",
+     "uncommittedUnseen",
+     "resurvey"
+    ],
+    "line": 962,
+    "name": "askResurvey"
+   },
+   {
+    "calls": [
+     "confirmDialog",
+     "uncommittedUnseen",
+     "proposeChanges"
+    ],
+    "line": 975,
+    "name": "askProposeChanges"
+   },
+   {
+    "calls": [
+     "working",
+     "api",
+     "encodeURIComponent",
+     "refreshProject"
+    ],
+    "line": 988,
+    "name": "resurvey"
+   },
+   {
+    "calls": [
+     "working",
+     "api",
+     "encodeURIComponent",
+     "refreshProject"
+    ],
+    "line": 1002,
+    "name": "proposeChanges"
+   },
+   {
+    "calls": [
+     "api",
+     "encodeURIComponent",
+     "refreshProject",
+     "partsWaiting",
+     "waitingChanges",
+     "toast",
+     "runBaseline"
+    ],
+    "line": 1022,
+    "name": "rulePart"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the backend API server"
+  ],
+  "purpose": "Handles all user interactions (clicks, input, drag-drop, keyboard) in the console UI, manages a busy overlay for long-running API calls, and dispatches actions to update state and make API requests to the backend server.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/projects"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/approve"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/log/{seq}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/checks/runs"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/gates/decline"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/recommendations/adopt"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/recommendations/decline"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/checks/ratchet"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/proposal/check"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/proposal/check/undo"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/diagnosis/apply"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/checks/new-code"
+   },
+   {
+    "method": "PATCH",
+    "path": "/api/projects/{projectId}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/families/decline"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/families/reinstate"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/recommendations/reinstate"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/gates/reinstate"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/resurvey"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/proposal"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/proposal/apply"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/guides/skills-dir"
+   },
+   {
+    "method": "GET",
+    "path": "/api/features/{featureId}/log/{seq}"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "onMainClick",
+    "kind": "screen",
+    "method": "",
+    "name": "console UI interactions"
+   }
+  ]
+ }
+}

@@ -1,0 +1,187 @@
+{
+ "blob": "a551ab39b9ced9f4c6cfe9ae9e01ebd2f810ae88",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Standing",
+   "Preview",
+   "PreviewError",
+   "Previews",
+   "standing",
+   "probe",
+   "measure",
+   "setup_seconds"
+  ],
+  "domain_terms": [
+   "preview",
+   "feature",
+   "session",
+   "sealed network",
+   "port forwarding"
+  ],
+  "entities_defined": [
+   "Standing",
+   "Preview",
+   "PreviewError",
+   "Previews"
+  ],
+  "entities_read": [
+   "Project",
+   "ProjectRegistry",
+   "Config"
+  ],
+  "entities_written": [
+   "Preview"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 46,
+    "name": "_now"
+   },
+   {
+    "calls": [],
+    "line": 67,
+    "name": "_prefer"
+   },
+   {
+    "calls": [
+     "test_session",
+     "Door"
+    ],
+    "line": 77,
+    "name": "standing"
+   },
+   {
+    "calls": [],
+    "line": 132,
+    "name": "_get"
+   },
+   {
+    "calls": [
+     "_get"
+    ],
+    "line": 141,
+    "name": "probe"
+   },
+   {
+    "calls": [
+     "standing",
+     "probe"
+    ],
+    "line": 167,
+    "name": "measure"
+   },
+   {
+    "calls": [],
+    "line": 231,
+    "name": "setup_seconds"
+   },
+   {
+    "calls": [],
+    "line": 238,
+    "name": "PreviewError"
+   },
+   {
+    "calls": [],
+    "line": 245,
+    "name": "Previews.__init__"
+   },
+   {
+    "calls": [],
+    "line": 253,
+    "name": "Previews._lock"
+   },
+   {
+    "calls": [],
+    "line": 256,
+    "name": "Previews._tell"
+   },
+   {
+    "calls": [],
+    "line": 261,
+    "name": "Previews.get"
+   },
+   {
+    "calls": [
+     "preview_problems"
+    ],
+    "line": 269,
+    "name": "Previews.describe"
+   },
+   {
+    "calls": [
+     "head_sha",
+     "_open"
+    ],
+    "line": 300,
+    "name": "Previews.start"
+   },
+   {
+    "calls": [
+     "runner_for",
+     "run_setup",
+     "standing",
+     "probe",
+     "_release",
+     "_tell"
+    ],
+    "line": 323,
+    "name": "Previews._open"
+   },
+   {
+    "calls": [],
+    "line": 391,
+    "name": "Previews._release"
+   },
+   {
+    "calls": [
+     "_release"
+    ],
+    "line": 407,
+    "name": "Previews.stop"
+   },
+   {
+    "calls": [
+     "stop"
+    ],
+    "line": 435,
+    "name": "Previews.stop_all"
+   },
+   {
+    "calls": [
+     "stop"
+    ],
+    "line": 439,
+    "name": "Previews.reap"
+   },
+   {
+    "calls": [],
+    "line": 222,
+    "name": "Standing.view"
+   },
+   {
+    "calls": [],
+    "line": 222,
+    "name": "Preview.view"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/gates.py",
+   "factory/projects.py",
+   "factory/git.py",
+   "factory/schemas.py",
+   "factory/containers.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker"
+  ],
+  "purpose": "Manages preview sessions \u2014 temporary environments held open so humans can manually review running applications during the review stage. Previews run on a sealed network with port forwarding from the host, and are tracked by feature and held in memory by this server process.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

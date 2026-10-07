@@ -1,0 +1,109 @@
+{
+ "blob": "641e12e066ec157a5de1f8c0f87ee87abdceccdb",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "SHELL_WORDS",
+   "ALIASES",
+   "UnitEnv",
+   "NO_ENV",
+   "binaries",
+   "project_binaries",
+   "write_shims",
+   "unit_environment"
+  ],
+  "domain_terms": [
+   "authoring unit",
+   "container environment",
+   "agent",
+   "gate",
+   "harness"
+  ],
+  "entities_defined": [
+   "UnitEnv"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 117,
+    "name": "binaries"
+   },
+   {
+    "calls": [
+     "binaries"
+    ],
+    "line": 151,
+    "name": "project_binaries"
+   },
+   {
+    "calls": [],
+    "line": 162,
+    "name": "write_shims"
+   },
+   {
+    "calls": [],
+    "line": 231,
+    "name": "_session_container"
+   },
+   {
+    "calls": [],
+    "line": 236,
+    "name": "_services_note"
+   },
+   {
+    "calls": [],
+    "line": 266,
+    "name": "_inside_note"
+   },
+   {
+    "calls": [],
+    "line": 295,
+    "name": "_note"
+   },
+   {
+    "calls": [],
+    "line": 334,
+    "name": "_UnitProject"
+   },
+   {
+    "calls": [],
+    "line": 354,
+    "name": "_harness_layers"
+   },
+   {
+    "calls": [
+     "_UnitProject",
+     "runner_for",
+     "_harness_layers",
+     "harness_image",
+     "run_setup",
+     "test_session",
+     "_session_container",
+     "write_shims",
+     "project_binaries",
+     "_note",
+     "_inside_note",
+     "_services_note"
+    ],
+    "line": 369,
+    "name": "unit_environment"
+   }
+  ],
+  "imports": [
+   "factory/containers.py",
+   "factory/gates.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "filesystem"
+  ],
+  "purpose": "Provides isolated container environments for each authoring unit, so agents can execute code (tests, migrations) with the project's dependencies, services, and database present rather than in bare subprocess.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

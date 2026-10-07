@@ -1,0 +1,238 @@
+/* Gate 0 in four steps, numbered so the dependency between them shows: what
+   the repository has, what the factory still needs, and what to do about it. */
+
+/* ---------------------------------------------------------------------------
+   Gate 0, in four steps.
+   Interleave what the repository already checks with what the factory still
+   needs, top the pile with a verdict on the project, and a check red for want
+   of a harness file reads exactly like a check red for a real defect. These
+   number the steps so the dependency is visible: what the repo has, what it
+   lacks, the measurement of both, and what that buys.
+   --------------------------------------------------------------------------- */
+/* These name the two things a build has to prove. At 17px -- three pixels
+   over body text -- under a smaller caption in monospace caps, the caption
+   reads as the heading and the heading reads as a subtitle. */
+.step-title { font-size: 1.375rem; letter-spacing: -.01em; margin: 0 0 .25rem; }
+
+/* Section 2's list. One type scale, one box, three columns: what is missing,
+   what it buys, and the button. Everything else is behind a disclosure -- the
+   rationale paragraph and the file's contents both, because neither is needed
+   to decide and at full size both get read out loud. */
+.hz { border: 1px solid var(--line); background: var(--surface); border-radius: 3px; }
+.hz-row {
+  display: grid; grid-template-columns: 1fr auto; gap: .35rem .9rem;
+  align-items: start; padding: .7rem .9rem; border-bottom: 1px solid var(--line);
+}
+.hz-row:last-child { border-bottom: 0; }
+.hz-path { font-family: var(--mono); font-size: .8125rem; overflow-wrap: anywhere; }
+.hz-why  { font-size: .8125rem; color: var(--ink-2); margin: .2rem 0 0; }
+/* ONE SHAPE FOR EVERY PROPOSAL.
+
+   The field being replaced, the verb, and what differs -- then the difference
+   itself, then the reading's own words under a disclosure labelled the same way
+   on every card. A presentation per kind would mean five shapes for five
+   kinds, each leading with a paragraph of model prose and none of them showing
+   the change.
+   -------------------------------------------------------------------------- */
+.p {
+  background: var(--surface); border: 1px solid var(--line); margin-bottom: .55rem;
+}
+.p-head {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .75rem;
+  padding: .6rem .85rem; border-bottom: 1px solid var(--line);
+}
+.p-pick { display: flex; align-items: center; gap: .6rem; cursor: pointer; flex: 1 1 18ch; }
+.p-pick input { width: 15px; height: 15px; accent-color: var(--accent-ink); flex: none; }
+/* Keeps the field name on the same rule as every other card's when the row has
+   no checkbox to offer. */
+.p-nopick { width: 15px; flex: none; }
+.p-field {
+  font-family: var(--mono); font-size: .8125rem; font-weight: 500; overflow-wrap: anywhere;
+}
+.p-verb {
+  font-family: var(--mono); font-size: var(--t-label); letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3);
+  border: 1px solid var(--line-strong); padding: .1rem .4rem;
+}
+.p-delta { font-size: .75rem; color: var(--ink-3); margin-left: auto; }
+
+/* The difference and the reasoning are the same kind of thing to a reader --
+   detail behind the header -- so they get the same control, one above the
+   other, and the card is its header until you ask for more. */
+.p-open, .p-why { border-top: 1px solid var(--line); }
+.p-open > summary, .p-why > summary {
+  padding: .45rem .85rem; font-size: .6875rem; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-3); cursor: pointer; list-style: none;
+}
+.p-open > summary::-webkit-details-marker { display: none; }
+.p-open > summary::before { content: '\25B8\00a0'; }
+.p-open[open] > summary::before { content: '\25BE\00a0'; }
+.p-open > summary:hover { color: var(--accent-ink); }
+/* The card's own gutter. Without it the restated line and the diff start at
+   the card's edge while every other line on it is inset, which reads as two
+   cards that have run together. */
+.p > .ts-restated { margin: 0; padding: .45rem .85rem; }
+/* What a card proposes sits inside the card, like its diff and its restated
+   line. Rendered bare, the rules run to the card's left edge while everything
+   around them is indented. */
+.p .ts-rule { padding-left: .85rem; padding-right: .85rem; }
+.p .ts-rule.ts-sub { padding-left: 1.95rem; }
+.p .ts-tier { padding-left: .85rem; padding-right: .85rem; }
+/* Tiers in a proposal are separate decisions: a firmer rule and more room
+   between them, and the tier's name a step larger. */
+.p .ts-tier + .ts-tier { border-top: 2px solid var(--line-strong); }
+.p .ts-tier { padding-top: .8rem; padding-bottom: .5rem; }
+.p .ts-tier .ts-name { font-size: .95rem; }
+/* The verdict and proof badges on a tier, light rather than solid: beside the
+   choices below them, solid green would be the loudest thing on the card and
+   says only that a tier works. */
+.ts-head .pill-green { color: var(--green); background: var(--green-wash);
+  border-color: color-mix(in srgb, var(--green) 35%, transparent); }
+.p .ts-tier .ts-rule { padding-left: 1.1rem; }
+/* The disclosure on a level's row, as a control rather than a word left at
+   the end of the sentence: a word immediately after the runner, in the same
+   line, reads as though "why" were part of the runner's name. */
+.p .ts-why > summary .ts-more { margin-left: auto; }
+.p .ts-why > summary .ts-more::before { content: '\25B8\00a0'; }
+.p .ts-why[open] > summary .ts-more::before { content: '\25BE\00a0'; }
+.p-diff {
+  font-family: var(--mono); font-size: .75rem; line-height: 1.7;
+  padding: .1rem 0 .5rem; overflow: auto; max-height: 18rem;
+}
+.p-diff .dl { padding: 0 .85rem; white-space: pre; }
+.p-diff .dl.add { background: var(--green-wash); color: var(--green); }
+.p-diff .dl.del { background: var(--red-wash); color: var(--red); }
+
+.p-why > summary::-webkit-details-marker { display: none; }
+.p-why > summary::before { content: '\25B8\00a0'; }
+.p-why[open] > summary::before { content: '\25BE\00a0'; }
+.p-why > summary:hover { color: var(--accent-ink); }
+.p-why p { margin: 0 .85rem .7rem; font-size: .875rem; color: var(--ink-2); }
+.p-ev { font-family: var(--mono); font-size: .75rem; }
+.p-cost {
+  margin: 0; padding: .5rem .85rem; font-size: .8125rem; color: var(--ink-3);
+  border-top: 1px solid var(--line);
+}
+.p .rec-act { padding: .6rem .85rem; }
+/* A proposal said as a sentence (the preview card): inset like the rest of
+   the card, body-size type, and the fine print a step quieter. */
+.p-plain { padding: .7rem .85rem .55rem; font-size: .9rem; line-height: 1.5; color: var(--ink); }
+.p-plain p { margin: 0 0 .4rem; }
+.p-plain .dim { color: var(--ink-3); font-size: .85rem; }
+.p-plain .mono { font-size: .8rem; }
+.p-plain-k { font-family: var(--mono); font-size: var(--t-label); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); margin-right: .4rem; }
+.p-plain-list { margin: 0 0 .5rem; padding-left: 1.1rem; font-size: .85rem; }
+.p-plain-list .mono { overflow-wrap: anywhere; color: var(--ink-2); }
+
+.hz-more { grid-column: 1 / -1; margin-top: .1rem; }
+.hz-more > summary {
+  font-size: .6875rem; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--ink-3); cursor: pointer;
+}
+.hz-more > summary:hover { color: var(--accent-ink); }
+
+.hz-pre {
+  background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 2px;
+  padding: .6rem .7rem; margin: .5rem 0; max-height: 22rem; overflow: auto;
+  font-size: .72rem; line-height: 1.5;
+}
+
+/* "The code answering you is not the code on disk."
+   Amber rather than red: nothing is broken, but nothing you run right now can
+   be trusted to reflect what you changed. Rendered only when true -- an
+   indicator that is lit when all is well stops being read. */
+/* Red rather than amber, and above the masthead rather than inside a page.
+   Amber beside a page's own content reads as one more note among several; this
+   one says every button on the page will be answered by code that is not the
+   code on disk, and the two actions it names cost money. */
+#stale-bar { position: sticky; top: 0; z-index: 20; }
+#stale-bar .stale-strip {
+  border: 0; border-bottom: 1px solid var(--lamp-red);
+  background: var(--lamp-red-wash);
+  color: var(--red-ink-deep); margin: 0;
+  padding: .6rem var(--gutter);
+}
+#stale-bar .ss-lamp { color: var(--lamp-red); }
+#stale-bar .stale-strip .mono { color: inherit; }
+
+.stale-strip {
+  display: flex; gap: .7rem; align-items: flex-start;
+  border: 1px solid var(--lamp-amber); border-left-width: 3px;
+  background: var(--accent-wash); border-radius: 0;
+  padding: .8rem 1rem; margin: 0 0 1.25rem; font-size: .875rem; line-height: 1.5;
+}
+.stale-strip .ss-lamp { color: var(--lamp-amber); flex: 0 0 auto; margin-top: .15rem; }
+.stale-strip b { display: block; margin-bottom: .15rem; }
+
+/* The questions a reading predates, inside that same strip. Its own class
+   rather than `.rb-list`, which belongs to the rework panel and carries rules
+   -- flex rows, a divider per item -- that mean something there and nothing
+   here. */
+.sb-list { list-style: disc; margin: .45rem 0 .5rem; padding-left: 1.1rem; }
+.sb-list li { padding: .12rem 0; }
+.sb-list code { font-size: .8125rem; }
+
+/* "These rows are older than your last change." Quiet, and only while a red row
+   could be the stale one -- a warning that is always up is a warning nobody
+   reads, and the point of this one is that it appears exactly when it explains
+   something. */
+.stale-note {
+  border-left: 3px solid var(--lamp-amber); border-radius: 0;
+  background: var(--accent-wash); padding: .6rem .85rem; margin: 0 0 .9rem;
+}
+
+
+
+
+/* The long-call overlay, over the pane whose call it is and nothing more.
+
+   It covers this project's actions because those are the ones that must not be
+   taken twice: a second re-survey while the first is in flight is a second model
+   call and a proposal that supersedes the one being waited for. It does not
+   cover the floor, because a reader waiting ten minutes on one project is
+   exactly the reader most likely to want to look at another. */
+/* `hidden` has to be spelled out here. The attribute works through the user
+   agent's `[hidden] { display: none }`, which any author `display` rule beats --
+   so without this the flex below would make this overlay visible on every page
+   load, unpositioned, with a clock reading 0:00 and nothing running. */
+.busy-overlay[hidden] { display: none; }
+.busy-overlay {
+  position: fixed; z-index: 60;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 18vh;
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  backdrop-filter: blur(1.5px);
+}
+.busy-card {
+  width: min(30rem, calc(100vw - 3rem));
+  border: 1px solid var(--line-strong); border-left-width: 3px;
+  background: var(--surface); padding: 1.1rem 1.25rem;
+}
+.busy-what { margin: .55rem 0 .3rem; font-size: 1rem; font-weight: 600; }
+.busy-meta { margin: 0; font-size: .78rem; color: var(--ink-3); font-family: var(--mono); }
+.busy-clock { font-variant-numeric: tabular-nums; }
+
+/* Indeterminate on purpose: nothing here knows how long a model will take, and a
+   bar filling at a guessed rate is a worse lie than no bar at all. */
+.busy-bar { height: 3px; background: var(--line); overflow: hidden; }
+.busy-bar i {
+  display: block; height: 100%; width: 34%;
+  background: var(--accent); animation: busy-slide 1.5s ease-in-out infinite;
+}
+@keyframes busy-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(320%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .busy-bar i { animation: none; width: 100%; opacity: .5; }
+}
+
+
+/* A recommendation the reading could not write itself. */
+.rec-title { margin: 0 0 .2rem; display: flex; align-items: baseline; gap: .5rem; }
+.rec-how {
+  font-size: .78rem; color: var(--ink-2); background: var(--paper);
+  border-left: 2px solid var(--line); padding: .45rem .7rem; margin: .45rem 0 .6rem;
+}
+

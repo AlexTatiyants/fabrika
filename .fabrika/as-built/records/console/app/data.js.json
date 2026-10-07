@@ -1,0 +1,306 @@
+{
+ "blob": "0fd24548a7f798ebe3d3736e36a560dddcba1ada",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "loadIntakePlan",
+   "loadLog",
+   "applyMeters",
+   "pollMeters",
+   "startMeterPoll",
+   "loadRoles",
+   "checkRoute",
+   "loadProjects",
+   "loadProject",
+   "notFoundScreen",
+   "announce",
+   "stageAnnouncement",
+   "refresh",
+   "refreshProject",
+   "seedAnswers",
+   "route"
+  ],
+  "domain_terms": [
+   "feature",
+   "project",
+   "route (connection)",
+   "stage (pipeline state)",
+   "packet (deliverable)",
+   "proposal (for review)"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "projects",
+   "features",
+   "roles",
+   "routes",
+   "provider",
+   "egress",
+   "meters",
+   "feature",
+   "project",
+   "overview",
+   "history",
+   "proposal",
+   "traces",
+   "log"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "api",
+     "featureUrl",
+     "render"
+    ],
+    "line": 8,
+    "name": "loadIntakePlan"
+   },
+   {
+    "calls": [
+     "api",
+     "featureUrl"
+    ],
+    "line": 15,
+    "name": "loadLog"
+   },
+   {
+    "calls": [],
+    "line": 41,
+    "name": "applyMeters"
+   },
+   {
+    "calls": [
+     "api",
+     "applyMeters",
+     "render"
+    ],
+    "line": 49,
+    "name": "pollMeters"
+   },
+   {
+    "calls": [
+     "pollMeters"
+    ],
+    "line": 55,
+    "name": "startMeterPoll"
+   },
+   {
+    "calls": [
+     "api",
+     "applyMeters",
+     "startMeterPoll",
+     "asBuiltCrewSoon",
+     "render"
+    ],
+    "line": 86,
+    "name": "loadRoles"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "render",
+     "toast"
+    ],
+    "line": 124,
+    "name": "checkRoute"
+   },
+   {
+    "calls": [
+     "api"
+    ],
+    "line": 137,
+    "name": "loadProjects"
+   },
+   {
+    "calls": [
+     "api",
+     "projectSection",
+     "asBuiltLoad"
+    ],
+    "line": 161,
+    "name": "loadProject"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 195,
+    "name": "notFoundScreen"
+   },
+   {
+    "calls": [],
+    "line": 229,
+    "name": "announce"
+   },
+   {
+    "calls": [],
+    "line": 236,
+    "name": "stageAnnouncement"
+   },
+   {
+    "calls": [
+     "api",
+     "featureUrl",
+     "loadProjects",
+     "announce",
+     "stageAnnouncement",
+     "seedAnswers",
+     "render"
+    ],
+    "line": 264,
+    "name": "refresh"
+   },
+   {
+    "calls": [
+     "loadProjects",
+     "loadProject",
+     "render"
+    ],
+    "line": 312,
+    "name": "refreshProject"
+   },
+   {
+    "calls": [],
+    "line": 318,
+    "name": "seedAnswers"
+   },
+   {
+    "calls": [
+     "loadProjects",
+     "loadSetup",
+     "loadHelp",
+     "loadAgentConfig",
+     "loadRoles",
+     "releaseGate2",
+     "loadProject",
+     "refresh",
+     "loadLog",
+     "loadIntakePlan"
+    ],
+    "line": 336,
+    "name": "route"
+   }
+  ],
+  "imports": [
+   "console/app/state.js",
+   "console/app/util.js",
+   "console/app/render.js",
+   "console/app/vocab.js",
+   "console/app/setup.js",
+   "console/app/help.js",
+   "console/app/agent-config.js",
+   "console/app/yard.js",
+   "console/app/project.js",
+   "console/app/review.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the back end API",
+   "browser DOM",
+   "browser location and hash"
+  ],
+  "purpose": "Loads data for screens (logs, roles, projects, features) and implements hash-based routing that turns URL changes into screen navigation and data fetches.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/api/projects"
+   },
+   {
+    "method": "GET",
+    "path": "/api/features"
+   },
+   {
+    "method": "GET",
+    "path": "/api/version"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/proposal"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/overview"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/history"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/log"
+   },
+   {
+    "method": "GET",
+    "path": "/api/features/{projectId}/{featureId}/intake-plan"
+   },
+   {
+    "method": "GET",
+    "path": "/api/features/{projectId}/{featureId}/log"
+   },
+   {
+    "method": "GET",
+    "path": "/api/features/{projectId}/{featureId}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/features/{projectId}/{featureId}/traces"
+   },
+   {
+    "method": "GET",
+    "path": "/api/meters"
+   },
+   {
+    "method": "POST",
+    "path": "/api/meters/refresh"
+   },
+   {
+    "method": "GET",
+    "path": "/api/roles"
+   },
+   {
+    "method": "GET",
+    "path": "/api/provider"
+   },
+   {
+    "method": "GET",
+    "path": "/api/routes"
+   },
+   {
+    "method": "POST",
+    "path": "/api/routes/{name}/check"
+   },
+   {
+    "method": "GET",
+    "path": "/api/egress"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "route",
+    "kind": "export",
+    "method": "",
+    "name": "route"
+   },
+   {
+    "handler": "refresh",
+    "kind": "export",
+    "method": "",
+    "name": "refresh"
+   },
+   {
+    "handler": "refreshProject",
+    "kind": "export",
+    "method": "",
+    "name": "refreshProject"
+   }
+  ]
+ }
+}

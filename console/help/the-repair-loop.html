@@ -1,0 +1,35 @@
+<p class="lead">When the review finds something fixable, Fabrika tries to fix it itself, in rounds, inside limits
+  set in <span class="mono">factory.yaml</span>. From your calls, you can send more to the same loop.</p>
+
+<h4>How a round works</h4>
+<p>The arbiter routes each finding. Those routed for repair go to repairers, which run in parallel, each fixing one
+  named defect and nothing else on the way past. Then the line runs again over the repaired code, and each finding
+  is marked repaired, still standing, or no longer holding. A repairer can't touch the blind tests or the breaker's
+  probes; a fix that belongs in a blind test goes to the oracle instead. When the loop is done, the simplifier
+  removes what's correct but written twice, a last full review runs, and the rapporteur writes the packet.</p>
+
+<h4>What bounds it</h4>
+<p>Every stopping condition is a number a person wrote down, read by code and never by a model:</p>
+<ul>
+  <li><span class="mono">rework.max_rounds</span>: two by default. Needing a third usually means the loop has stopped
+    fixing the code and started arguing with the reviewer.</li>
+  <li><span class="mono">rework.max_attempts_per_finding</span>: a finding tried twice and still there comes to you,
+    with what was tried.</li>
+  <li><span class="mono">rework.budget_usd</span>: the money the loop may spend, counted over the feature's whole
+    life, less a reserve kept back so a packet can always be produced. Verifying again, building again or sending it
+    round again doesn't buy more.</li>
+  <li><span class="mono">rework.wall_clock_minutes</span>, and the usage window of any plan the run is on.</li>
+</ul>
+<p>The budget is in dollars, and an agent on a subscription reports turns, not dollars, so the budget can't stop it.
+  When that happened, <b>Stats</b> says so.</p>
+
+<h4>Sending your own</h4>
+<p>Calls you tag <b>repair</b> go to the same loop: <b>Send to the repair loop</b> resumes the build against the
+  same spec, reusing the plan, the blind tests and the work already merged, with your notes as the objectives. Once
+  the budget is spent the button is disabled, and the card says what's left and that raising
+  <span class="mono">rework.budget_usd</span> is how to buy another round.</p>
+
+<h4>The Repairs tab</h4>
+<p>One row per round, opening onto the units it sent out: the file, what the diff does, the findings it closed, and
+  the choices it made. The last row is why the loop stopped. A loop that converged and a loop that ran out of rounds
+  mean opposite things.</p>

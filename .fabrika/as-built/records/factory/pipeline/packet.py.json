@@ -1,0 +1,198 @@
+{
+ "blob": "239a5d8639fc6e26b23da6f0613cb77fd5245668",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "merge_scouts",
+   "merge_reviews",
+   "what_landed",
+   "dedupe_findings",
+   "order_packet",
+   "restore_packet",
+   "compute_qa",
+   "hold_for_manual_checks",
+   "compute_stats",
+   "collect_disclosures",
+   "OPEN_OUTCOMES"
+  ],
+  "domain_terms": [
+   "packet",
+   "criterion",
+   "finding",
+   "decision",
+   "gate",
+   "verdict"
+  ],
+  "entities_defined": [
+   "OPEN_OUTCOMES"
+  ],
+  "entities_read": [
+   "ScoutReport",
+   "ReviewReport",
+   "Finding",
+   "FindingRecord",
+   "Decision",
+   "GateReport",
+   "GateResult",
+   "Spec",
+   "OracleSuite",
+   "Packet",
+   "TraceRow",
+   "PacketStats",
+   "FileWrite",
+   "WorkerOutput",
+   "ReworkSummary",
+   "BreakerReport",
+   "UnclaimedFile"
+  ],
+  "entities_written": [
+   "Packet",
+   "ScoutReport",
+   "ReviewReport",
+   "QAReport",
+   "PacketStats"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "union",
+     "union_by",
+     "ScoutReport"
+    ],
+    "line": 43,
+    "name": "merge_scouts"
+   },
+   {
+    "calls": [],
+    "line": 52,
+    "name": "union"
+   },
+   {
+    "calls": [],
+    "line": 61,
+    "name": "union_by"
+   },
+   {
+    "calls": [
+     "dedupe_findings",
+     "ReviewReport"
+    ],
+    "line": 91,
+    "name": "merge_reviews"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 119,
+    "name": "what_landed"
+   },
+   {
+    "calls": [
+     "_severity_rank"
+    ],
+    "line": 168,
+    "name": "dedupe_findings"
+   },
+   {
+    "calls": [],
+    "line": 184,
+    "name": "_severity_rank"
+   },
+   {
+    "calls": [
+     "Packet"
+    ],
+    "line": 188,
+    "name": "order_packet"
+   },
+   {
+    "calls": [
+     "MaterialityItem",
+     "change_size",
+     "_severity_rank"
+    ],
+    "line": 228,
+    "name": "restore_packet"
+   },
+   {
+    "calls": [
+     "TestSummary"
+    ],
+    "line": 315,
+    "name": "_gate_evidence"
+   },
+   {
+    "calls": [],
+    "line": 374,
+    "name": "_why_unsettled"
+   },
+   {
+    "calls": [
+     "match_case"
+    ],
+    "line": 396,
+    "name": "case_verdicts"
+   },
+   {
+    "calls": [],
+    "line": 425,
+    "name": "reported_in"
+   },
+   {
+    "calls": [
+     "_gate_evidence",
+     "case_verdicts",
+     "CriterionResult",
+     "reported_in",
+     "_why_unsettled",
+     "QAReport"
+    ],
+    "line": 442,
+    "name": "compute_qa"
+   },
+   {
+    "calls": [],
+    "line": 680,
+    "name": "_open_blockers"
+   },
+   {
+    "calls": [
+     "ManualCheck"
+    ],
+    "line": 699,
+    "name": "hold_for_manual_checks"
+   },
+   {
+    "calls": [
+     "change_size",
+     "_open_blockers",
+     "PacketStats"
+    ],
+    "line": 727,
+    "name": "compute_stats"
+   },
+   {
+    "calls": [],
+    "line": 799,
+    "name": "collect_disclosures"
+   }
+  ],
+  "imports": [
+   "factory/gates.py",
+   "factory/schemas.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/trace.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the filesystem"
+  ],
+  "purpose": "Merges partial reports from multiple agents into a unified packet for human review. Scores acceptance criteria based on test results, ranks findings and decisions, and ensures the rapporteur cannot omit collected data\u2014enforced by restore_packet restoring anything omitted by order_packet.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

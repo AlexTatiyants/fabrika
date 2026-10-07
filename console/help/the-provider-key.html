@@ -1,0 +1,21 @@
+<p class="lead">Agents on the API route need a key for your model provider. Until one is set, nothing can
+  run.</p>
+
+<h4>Where it goes</h4>
+<p>Open the <b>crew</b> page. With no key, its <i>Provider</i> card is open and says nothing can run; once a key is
+  stored, the card folds into one line at the foot of the page, with <b>change</b> and <b>test</b>.</p>
+<p>Paste the <b>api key</b>, set the <b>base url</b> if your provider isn't the one shown (any OpenAI-compatible
+  API works), and press <b>Save and test</b>. Saving and testing are one action: Fabrika stores the key, then asks
+  the provider whether it accepts it, and says what it found. <b>Test saved key</b> asks again later.</p>
+
+<h4>Where it's kept</h4>
+<p>In <span class="mono">.factory-credentials.json</span> beside <span class="mono">factory.yaml</span>, readable
+  only by you (mode 0600), and never sent back to the browser in full. It is kept out of
+  <span class="mono">factory.yaml</span> because that file is rewritten on every role edit and shown in this
+  console.</p>
+<p>An environment variable of the same name always wins. While one is set, the field is locked; unset it to store
+  a key here instead.</p>
+
+<h4>Subscriptions</h4>
+<p>Agents can also run on a coding assistant's subscription, through its command-line tool. Those sign in through
+  the tool itself, not here. See <a data-help="routes-and-plans">Routes, models and plan limits</a>.</p>

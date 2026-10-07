@@ -1,0 +1,27 @@
+<p class="lead">Architecture is how the system runs: who uses it, which processes it's made of, and what it
+  talks to outside the repository.</p>
+
+<h4>The map</h4>
+<p>Each box in the middle is a process (a server, a web app, a worker), and carries the subsystems that run in
+  it. Around it are the people and systems that use it, and the outside services it uses. Select a box to open
+  it.</p>
+<p>How sure each part is shows in the line style: <i>code confirmed it</i>, <i>the reader reported it</i> in
+  the files it names, or <i>only named</i>, in configuration or documentation.</p>
+<p>The band along the bottom is <i>build and tooling</i>: subsystems where nothing runs in production, and
+  outside systems that build, test or ship the code rather than serve it, such as CI or Docker for packaging.
+  An outside system named only in build, CI and dependency files lands there, whatever the cartographer called
+  it; one that running code names stays beside what runs.</p>
+
+<h4>Outside systems</h4>
+<p>Databases, other services, APIs, and the build and tooling systems, marked as such. Each says what it's
+  used for, how many files name it, which subsystems reach it and which capabilities depend on it. Libraries,
+  build tools and this repository's own name are listed apart as <i>Not outside systems</i>, though files
+  mention them.</p>
+
+<h4>Endpoints</h4>
+<p>Every route the code serves, with the file that handles it, the process it runs in, who calls it, and
+  whether a test reaches it. Filter by text, kind, caller, capability, or <i>untested</i>.</p>
+
+<h4>An older reading</h4>
+<p>A reading made before the as-built drew how the system runs has no architecture, and the page says so. Read
+  again: only one more question is asked, and files that haven't changed aren't read again.</p>

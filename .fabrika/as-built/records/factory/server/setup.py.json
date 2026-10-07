@@ -1,0 +1,275 @@
+{
+ "blob": "d830b8902a8dd235b728c8d89715e71789c2f138",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "setup station",
+   "harness",
+   "API key",
+   "account",
+   "route"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "config",
+   "route state",
+   "machine state"
+  ],
+  "entities_written": [
+   "route enabled state",
+   "API key",
+   "crew configuration",
+   "rework limits",
+   "setup state"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "FastAPI",
+     "Context",
+     "cm.Jobs",
+     "cm.check_machine",
+     "cm.can_start_docker",
+     "cm.route_takes_key",
+     "cm.read_state",
+     "cm.connected_routes",
+     "cm.start_docker",
+     "cm.install_route",
+     "cm.harness_ready",
+     "cm.crew_summary",
+     "cm.write_state",
+     "cm.staff",
+     "write_credential",
+     "write_executor_kind",
+     "write_rework_limits",
+     "write_route_enabled",
+     "mask_key",
+     "api_key_source",
+     "ConfigError"
+    ],
+    "line": 27,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "cm.check_machine"
+    ],
+    "line": 35,
+    "name": "check_machine"
+   },
+   {
+    "calls": [
+     "HTTPException"
+    ],
+    "line": 42,
+    "name": "route_or_404"
+   },
+   {
+    "calls": [
+     "cm.harness_ready"
+    ],
+    "line": 48,
+    "name": "harnesses"
+   },
+   {
+    "calls": [
+     "cm.read_state"
+    ],
+    "line": 75,
+    "name": "get_brief"
+   },
+   {
+    "calls": [
+     "cm.read_state",
+     "routes.survey",
+     "cm.connected_routes",
+     "cm.route_takes_key",
+     "mask_key",
+     "cm.crew_summary"
+    ],
+    "line": 82,
+    "name": "get_setup"
+   },
+   {
+    "calls": [
+     "check_machine"
+    ],
+    "line": 143,
+    "name": "post_machine"
+   },
+   {
+    "calls": [
+     "cm.can_start_docker",
+     "HTTPException",
+     "cm.start_docker",
+     "cm.check_machine"
+    ],
+    "line": 147,
+    "name": "post_start_docker"
+   },
+   {
+    "calls": [
+     "route_or_404",
+     "HTTPException",
+     "cm.install_route"
+    ],
+    "line": 160,
+    "name": "post_install"
+   },
+   {
+    "calls": [
+     "route_or_404",
+     "routes.refresh",
+     "RuntimeError"
+    ],
+    "line": 172,
+    "name": "post_check"
+   },
+   {
+    "calls": [
+     "route_or_404",
+     "HTTPException",
+     "cm.route_takes_key",
+     "write_credential",
+     "write_route_enabled",
+     "ConfigError"
+    ],
+    "line": 185,
+    "name": "put_key"
+   },
+   {
+    "calls": [
+     "route_or_404",
+     "cm.read_state",
+     "cm.write_state"
+    ],
+    "line": 223,
+    "name": "post_decline"
+   },
+   {
+    "calls": [
+     "cm.connected_routes",
+     "routes.survey",
+     "HTTPException",
+     "write_executor_kind",
+     "cm.harness_ready",
+     "cm.build_harness"
+    ],
+    "line": 231,
+    "name": "post_harnesses"
+   },
+   {
+    "calls": [
+     "cm.staff",
+     "ConfigError",
+     "HTTPException",
+     "cm.crew_summary"
+    ],
+    "line": 250,
+    "name": "put_crew"
+   },
+   {
+    "calls": [
+     "write_rework_limits",
+     "ConfigError",
+     "HTTPException",
+     "cm.write_state"
+    ],
+    "line": 258,
+    "name": "put_limits"
+   }
+  ],
+  "imports": [
+   "factory/commissioning.py",
+   "factory/config.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "HTTP (httpx)"
+  ],
+  "purpose": "Registers FastAPI routes for the setup screen that measure five setup stations and handle actions: starting Docker, running install commands, storing and checking API keys, building harnesses, configuring crew size, and setting rework limits.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "get_brief",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/setup/brief"
+   },
+   {
+    "handler": "get_setup",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/setup"
+   },
+   {
+    "handler": "post_machine",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/setup/machine"
+   },
+   {
+    "handler": "post_start_docker",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/setup/docker/start"
+   },
+   {
+    "handler": "post_install",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/setup/routes/{name}/install"
+   },
+   {
+    "handler": "post_check",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/setup/routes/{name}/check"
+   },
+   {
+    "handler": "put_key",
+    "kind": "route",
+    "method": "PUT",
+    "name": "/api/setup/routes/{name}/key"
+   },
+   {
+    "handler": "post_decline",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/setup/routes/{name}/decline"
+   },
+   {
+    "handler": "post_harnesses",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/setup/harnesses"
+   },
+   {
+    "handler": "put_crew",
+    "kind": "route",
+    "method": "PUT",
+    "name": "/api/setup/crew"
+   },
+   {
+    "handler": "put_limits",
+    "kind": "route",
+    "method": "PUT",
+    "name": "/api/setup/limits"
+   },
+   {
+    "handler": "post_finish",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/setup/finish"
+   }
+  ]
+ }
+}

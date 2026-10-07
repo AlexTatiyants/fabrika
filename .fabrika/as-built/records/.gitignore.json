@@ -1,0 +1,20 @@
+{
+ "blob": "a186bc426a765baba0f2fcd310778534d76604f3",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "config",
+  "launches": [],
+  "outside": [],
+  "purpose": "Specifies files and directories to exclude from git, including virtual environments, cache directories, credentials, and design tool working state.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

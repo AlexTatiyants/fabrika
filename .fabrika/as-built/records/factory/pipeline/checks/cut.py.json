@@ -1,0 +1,118 @@
+{
+ "blob": "1b2009663f36deafafc318bf4a8c4b8a3398f6f5",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "unit_dependencies",
+   "check_unit_independence",
+   "CHECK_LIMIT",
+   "anchored_objections",
+   "settle_objections",
+   "objection_block",
+   "criteria_changed",
+   "units_changed",
+   "cut_facts",
+   "merge_units",
+   "cut_open",
+   "pending_ruling",
+   "check_cut"
+  ],
+  "domain_terms": [
+   "unit (work unit)",
+   "cut (architectural division)",
+   "spec (specification)",
+   "seam (boundary between units)",
+   "objection (concern about spec/plan)"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "spec_text"
+    ],
+    "line": 33,
+    "name": "unit_dependencies"
+   },
+   {
+    "calls": [
+     "unit_dependencies"
+    ],
+    "line": 71,
+    "name": "check_unit_independence"
+   },
+   {
+    "calls": [],
+    "line": 134,
+    "name": "anchored_objections"
+   },
+   {
+    "calls": [],
+    "line": 164,
+    "name": "settle_objections"
+   },
+   {
+    "calls": [],
+    "line": 197,
+    "name": "objection_block"
+   },
+   {
+    "calls": [
+     "spec_text"
+    ],
+    "line": 208,
+    "name": "criteria_changed"
+   },
+   {
+    "calls": [],
+    "line": 223,
+    "name": "units_changed"
+   },
+   {
+    "calls": [
+     "unit_dependencies",
+     "irreversible_changes"
+    ],
+    "line": 236,
+    "name": "cut_facts"
+   },
+   {
+    "calls": [],
+    "line": 272,
+    "name": "merge_units"
+   },
+   {
+    "calls": [],
+    "line": 315,
+    "name": "cut_open"
+   },
+   {
+    "calls": [],
+    "line": 326,
+    "name": "pending_ruling"
+   },
+   {
+    "calls": [],
+    "line": 345,
+    "name": "check_cut"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/flags.py",
+   "factory/pipeline/records.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "EvidenceStore"
+  ],
+  "purpose": "Checks whether a feature spec has been properly divided into independent work units that can each verify their own work, validates the architectural cut, and manages objections and rulings on those divisions.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

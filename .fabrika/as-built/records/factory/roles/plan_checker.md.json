@@ -1,0 +1,27 @@
+{
+ "blob": "054f40c1c2bc39e878b7998f873f81741c0344da",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "unit",
+   "plan",
+   "guess",
+   "seam",
+   "criterion",
+   "cut"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Role definition for an agent that reviews an architect's plan before workers start, identifying where units will fail due to missing dependencies, guesses, or misalignment.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,298 @@
+{
+ "blob": "6ff4f8b0af979dc1f9a4098cfe4f2145b271af6b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "GUIDE_LAYERS",
+   "CLEANUP_WORDS",
+   "guideBase",
+   "guidePlural",
+   "guideView",
+   "guideProposals",
+   "guidesTab",
+   "guideLayer",
+   "skillsDirPick",
+   "guideProposal",
+   "guideEdits",
+   "guideEdited",
+   "guideEditFile",
+   "guideSheetEdited",
+   "guideProposalRow",
+   "guideSheetHtml",
+   "syncGuideSheet",
+   "closeGuideSheet",
+   "decideGuide",
+   "guideContradictions",
+   "guideCommitted",
+   "dependencyInventory",
+   "policyLine",
+   "runnerNames",
+   "tokenCount",
+   "routeWord",
+   "costSplit",
+   "money",
+   "overviewTile",
+   "waitingRow",
+   "costTile"
+  ],
+  "domain_terms": [
+   "guides (repository documentation)",
+   "proposals (proposed edits)",
+   "dependencies (packages and licenses)",
+   "skills (coding skill files)",
+   "cost (token spending and billing)"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "project guides",
+   "guide proposals",
+   "dependencies",
+   "cost records"
+  ],
+  "entities_written": [
+   "guide edits",
+   "guide open state"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 20,
+    "name": "guideBase"
+   },
+   {
+    "calls": [],
+    "line": 21,
+    "name": "guidePlural"
+   },
+   {
+    "calls": [],
+    "line": 22,
+    "name": "guideView"
+   },
+   {
+    "calls": [],
+    "line": 26,
+    "name": "guideProposals"
+   },
+   {
+    "calls": [
+     "guideView",
+     "guideBase",
+     "guidePlural",
+     "sectionHead",
+     "esc",
+     "guideProposalRow",
+     "guideLayer",
+     "guideContradictions"
+    ],
+    "line": 30,
+    "name": "guidesTab"
+   },
+   {
+    "calls": [
+     "guideProposalRow",
+     "skillsDirPick",
+     "icon",
+     "esc"
+    ],
+    "line": 54,
+    "name": "guideLayer"
+   },
+   {
+    "calls": [
+     "guideView",
+     "esc",
+     "icon"
+    ],
+    "line": 84,
+    "name": "skillsDirPick"
+   },
+   {
+    "calls": [
+     "guidePlural"
+    ],
+    "line": 105,
+    "name": "guideProposal"
+   },
+   {
+    "calls": [
+     "guideProposal"
+    ],
+    "line": 123,
+    "name": "guideEdits"
+   },
+   {
+    "calls": [],
+    "line": 133,
+    "name": "guideEdited"
+   },
+   {
+    "calls": [
+     "guideEdits"
+    ],
+    "line": 134,
+    "name": "guideEditFile"
+   },
+   {
+    "calls": [
+     "guideEdited",
+     "guideEdits"
+    ],
+    "line": 138,
+    "name": "guideSheetEdited"
+   },
+   {
+    "calls": [
+     "guideProposal",
+     "guideEdited",
+     "esc",
+     "icon"
+    ],
+    "line": 140,
+    "name": "guideProposalRow"
+   },
+   {
+    "calls": [
+     "guideProposal",
+     "esc"
+    ],
+    "line": 177,
+    "name": "guideSheetHtml"
+   },
+   {
+    "calls": [
+     "guideEdits",
+     "guideSheetHtml",
+     "mountMarkdownEditor",
+     "drawOutline",
+     "syncPromptCount",
+     "markSheetDirty",
+     "positionSheet"
+    ],
+    "line": 223,
+    "name": "syncGuideSheet"
+   },
+   {
+    "calls": [
+     "render"
+    ],
+    "line": 253,
+    "name": "closeGuideSheet"
+   },
+   {
+    "calls": [
+     "guideEdits",
+     "withBusy",
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "toast",
+     "guideCommitted"
+    ],
+    "line": 261,
+    "name": "decideGuide"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 281,
+    "name": "guideContradictions"
+   },
+   {
+    "calls": [],
+    "line": 291,
+    "name": "guideCommitted"
+   },
+   {
+    "calls": [
+     "icon",
+     "esc",
+     "policyLine",
+     "ago"
+    ],
+    "line": 298,
+    "name": "dependencyInventory"
+   },
+   {
+    "calls": [
+     "edRow",
+     "esc"
+    ],
+    "line": 338,
+    "name": "policyLine"
+   },
+   {
+    "calls": [],
+    "line": 385,
+    "name": "runnerNames"
+   },
+   {
+    "calls": [],
+    "line": 401,
+    "name": "tokenCount"
+   },
+   {
+    "calls": [],
+    "line": 407,
+    "name": "routeWord"
+   },
+   {
+    "calls": [],
+    "line": 414,
+    "name": "costSplit"
+   },
+   {
+    "calls": [],
+    "line": 422,
+    "name": "money"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 429,
+    "name": "overviewTile"
+   },
+   {
+    "calls": [
+     "costSplit",
+     "esc",
+     "rel"
+    ],
+    "line": 438,
+    "name": "waitingRow"
+   },
+   {
+    "calls": [
+     "overviewTile",
+     "costSplit",
+     "money",
+     "tokenCount",
+     "esc",
+     "routeWord",
+     "icon"
+    ],
+    "line": 482,
+    "name": "costTile"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Displays and manages the repository's coding guidelines (AGENTS.md, DESIGN.md, skills) that agents read, along with proposals to edit them. Also renders project dependencies, test infrastructure, and cost/token usage information for the console UI.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/projects/{id}/guides/draft"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{id}/guides/offer"
+   }
+  ],
+  "ways_in": []
+ }
+}

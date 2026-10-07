@@ -1,0 +1,158 @@
+{
+ "blob": "b4a470aba6e4d933f1a31556f177e53b598c03ec",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "RULING_WORDS",
+   "project_events",
+   "feature_events",
+   "fold",
+   "summary",
+   "project_history"
+  ],
+  "domain_terms": [
+   "project ledger",
+   "event",
+   "feature",
+   "check",
+   "verdict",
+   "ruling"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "project records (ledger)",
+   "features"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 29,
+    "name": "RULING_WORDS"
+   },
+   {
+    "calls": [],
+    "line": 41,
+    "name": "_words"
+   },
+   {
+    "calls": [],
+    "line": 48,
+    "name": "_proposed"
+   },
+   {
+    "calls": [],
+    "line": 68,
+    "name": "_cost"
+   },
+   {
+    "calls": [],
+    "line": 76,
+    "name": "_feature_name"
+   },
+   {
+    "calls": [],
+    "line": 84,
+    "name": "_attributed_feature"
+   },
+   {
+    "calls": [],
+    "line": 94,
+    "name": "_event"
+   },
+   {
+    "calls": [
+     "_event",
+     "_edits",
+     "_proposed",
+     "_cost",
+     "_attributed_feature",
+     "_feature_name"
+    ],
+    "line": 102,
+    "name": "project_events"
+   },
+   {
+    "calls": [],
+    "line": 226,
+    "name": "_edits"
+   },
+   {
+    "calls": [
+     "_event"
+    ],
+    "line": 248,
+    "name": "feature_events"
+   },
+   {
+    "calls": [
+     "_sum_costs"
+    ],
+    "line": 282,
+    "name": "fold"
+   },
+   {
+    "calls": [],
+    "line": 322,
+    "name": "_sum_costs"
+   },
+   {
+    "calls": [
+     "_proposed",
+     "_cost",
+     "_sum_costs"
+    ],
+    "line": 330,
+    "name": "summary"
+   },
+   {
+    "calls": [
+     "fold",
+     "project_events",
+     "feature_events"
+    ],
+    "line": 355,
+    "name": "project_history"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Transforms a project's ledger records into human-readable event history. Extracts meaningful changes (edits, checks, decisions, features) from raw audit trails, deduplicates noise (snapshots, timings), and groups similar events together.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "project_events",
+    "kind": "export",
+    "method": "",
+    "name": "project_events"
+   },
+   {
+    "handler": "feature_events",
+    "kind": "export",
+    "method": "",
+    "name": "feature_events"
+   },
+   {
+    "handler": "fold",
+    "kind": "export",
+    "method": "",
+    "name": "fold"
+   },
+   {
+    "handler": "summary",
+    "kind": "export",
+    "method": "",
+    "name": "summary"
+   },
+   {
+    "handler": "project_history",
+    "kind": "export",
+    "method": "",
+    "name": "project_history"
+   }
+  ]
+ }
+}

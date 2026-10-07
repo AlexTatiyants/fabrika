@@ -1,0 +1,27 @@
+{
+ "blob": "97985fe310000cd87156d5dbe288958a57e8d19a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "seam",
+   "unit",
+   "integration test",
+   "provider",
+   "consumer",
+   "contract"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Role definition for an agent that joins work built by separate workers by verifying seams match, wiring components together, and writing integration tests.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

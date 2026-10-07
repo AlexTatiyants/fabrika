@@ -1,0 +1,28 @@
+<p class="lead">Every test has to leave things as it found them, so the next test starts from the same
+  place. The survey reads how your tests do that, level by level.</p>
+
+<h4>The four answers</h4>
+<ul>
+  <li><b>Reset for every test.</b> Something resets the data before or after each test whether the test
+    remembers or not: a fixture that recreates the database, a transaction rolled back, a truncate. The
+    strongest answer.</li>
+  <li><b>Each test uses its own data.</b> Nothing is reset, and nothing needs to be: every test that writes
+    creates its own space first (its own workspace, account or folder) and writes only there. Leftovers pile
+    up, but no test reads another's.</li>
+  <li><b>Each test undoes its own.</b> Nothing resets the data; the convention is that each test removes what
+    it made. It works while every test remembers. Fabrika's tests follow the same convention.</li>
+  <li><b>No cleanup.</b> Nothing resets the data and tests don't undo anything. Tests at this level can break
+    each other, so Fabrika doesn't check criteria here until one of the fixes is in.</li>
+</ul>
+<p>Unit tests share no data, so cleanup never takes the unit level out; only a missing runner does.</p>
+
+<h4>What Fabrika already does for you</h4>
+<p>Every check session runs in a fresh environment of its own, which is thrown away afterwards, databases
+  included. So nothing a test writes survives into the next run. Cleanup only matters <i>within</i> a run,
+  where all the tests share one environment.</p>
+
+<h4>When the survey offers a fix</h4>
+<p>For a level with no cleanup, one where each test undoes its own, or one where the way tests keep to their
+  own data isn't somewhere a new test can use it, the survey offers fixes. Each is one complete change: a setup file your test runner loads, a
+  helper new tests can import, a reset step, or a prompt for your coding agent. See
+  <a data-help="changing-your-repository">When Fabrika asks you to change your repository</a>.</p>

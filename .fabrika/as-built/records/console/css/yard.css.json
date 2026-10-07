@@ -1,0 +1,26 @@
+{
+ "blob": "5221524b13d5a7652951207fbce9aba37a099a82",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "project",
+   "lamp",
+   "ledger",
+   "intake",
+   "yard"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the yard page (project ledger), intake form, project rows with lamps, and responsive layouts for narrow screens. Also styles the crew page title.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

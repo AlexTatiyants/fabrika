@@ -1,0 +1,90 @@
+{
+ "blob": "dc312c40c8d6b5a0b079c84b8bbe5c202c509d23",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "compute_rework",
+   "human_flags",
+   "flag_findings",
+   "seed_flags"
+  ],
+  "domain_terms": [
+   "gate 2 flag",
+   "disposition",
+   "repair routing",
+   "finding",
+   "ledger"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "HumanFlag",
+   "Finding",
+   "ReworkPlan",
+   "FindingLedger"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "ReworkPlan"
+    ],
+    "line": 14,
+    "name": "compute_rework"
+   },
+   {
+    "calls": [
+     "model_validate"
+    ],
+    "line": 66,
+    "name": "human_flags"
+   },
+   {
+    "calls": [
+     "split",
+     "join",
+     "strip",
+     "len",
+     "rstrip"
+    ],
+    "line": 87,
+    "name": "_one_line"
+   },
+   {
+    "calls": [
+     "strip"
+    ],
+    "line": 94,
+    "name": "_flag_note"
+   },
+   {
+    "calls": [
+     "_flag_note",
+     "_one_line",
+     "Finding"
+    ],
+    "line": 116,
+    "name": "flag_findings"
+   },
+   {
+    "calls": [
+     "add",
+     "flag_findings",
+     "_flag_note"
+    ],
+    "line": 173,
+    "name": "seed_flags"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/pipeline/ledger.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Interprets human flags placed at gate 2 and routes them to repair, oracle, or acceptance based on disposition, implementing INV-6.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

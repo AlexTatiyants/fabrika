@@ -1,0 +1,35 @@
+<p class="lead">A project's page is where you look after the project itself: its checks, how it's tested, its
+  rules, its environment and its history. It opens on an overview of what needs you.</p>
+
+<h4>The tabs</h4>
+<ul>
+  <li><b>overview</b>: one line on what's waiting, a tile for each area (amber where something needs you), and the
+    features waiting on you, building and finished.</li>
+  <li><b>checks</b>: the commands every feature is held to. See <a data-help="checks">Checks</a>.</li>
+  <li><b>tests</b>: whether Fabrika can test what it builds, level by level. See <a data-help="test-levels">Test
+    levels</a>.</li>
+  <li><b>guides</b>: the repository's own rules for how code is written. See <a data-help="guides">Guides</a>.</li>
+  <li><b>survey</b>: what reading the repository found, and the project's own facts. See
+    <a data-help="survey">The survey</a>.</li>
+  <li><b>environment</b>: where the checks run. See <a data-help="environment">The environment</a>.</li>
+  <li><b>as-built</b>: a plain account of the codebase as it stands. See <a data-help="as-built">The
+    as-built</a>.</li>
+  <li><b>history</b>: everything that has happened to the project. See <a data-help="history">History</a>.</li>
+</ul>
+<p>A dot on a tab says something there needs you: a failing check, a proposal waiting, a level waiting on your
+  choice. The project's name, in the bar, leads back to the overview.</p>
+
+<h4>The bar</h4>
+<p>A plate stamps whether the checks are proven (<i>certified</i>, <i>not certified</i>, <i>unproven</i> or
+  <i>out of calibration</i>) and how many of the three test levels Fabrika checks. Beside it,
+  <b>Resurvey</b> has a model read the repository again and propose changes you accept item by item, <b>Run
+  checks</b> runs every check on untouched code, and <b>Start a feature</b> opens the composer once the checks are
+  accepted.</p>
+
+<h4>Changing things</h4>
+<p>Each thing is edited on the tab that shows it: Checks, Environment and Survey each have an <b>Edit</b> in their
+  heading. Saving a change to the checks or the environment (<b>Save and run checks</b>) runs the checks again at
+  once, so a broken edit is found in minutes rather than by the next feature. The project's name, its repository
+  and the branch features start from are edited on the Survey tab, which also holds <b>Remove project</b>. Removing
+  a project leaves your repository untouched, and keeps the feature branches unless you tick the box to delete
+  them.</p>

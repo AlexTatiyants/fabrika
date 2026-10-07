@@ -1,0 +1,25 @@
+{
+ "blob": "3c9162710ce4b3eb758919c8789b10bffe5ee80e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "check",
+   "regression",
+   "test",
+   "environment"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Documents checks: commands already run in a repository for linting, type checking and testing. Explains where they come from, why they matter, how to run them, and how to handle failing checks.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

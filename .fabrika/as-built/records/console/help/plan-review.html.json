@@ -1,0 +1,27 @@
+{
+ "blob": "32b18093ffa75073ca7945c22b3a7e308cf258e6",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "plan review",
+   "architect",
+   "plan checker",
+   "work units",
+   "seams",
+   "cut"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation for plan review: when the architect and plan checker disagree on how to cut work into units, and how to rule on the disagreement.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

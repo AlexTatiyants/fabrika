@@ -1,0 +1,661 @@
+/* The project's As-built tab, graphite throughout; then the dependency tables,
+   why a red check is red, coverage, and the repository's guides, which follow
+   it here. */
+
+/* ------------------------------------------------------------------ as-built
+   The project's As-built tab. Graphite throughout, like the other maps: what
+   is known about a codebase has no opinion about a run, so no lamp colours --
+   green and amber appear only on the freshness pill, which is about the
+   reading, not the code. */
+.ab-band { display: flex; gap: 1rem; align-items: center; padding: .8rem 1rem; margin: 0 0 1rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 2px; }
+.ab-band .grow { flex: 1; line-height: 1.5; }
+.ab-band code, .ab-changed code, .tab-intro code { font-family: var(--mono); font-size: .8125rem; }
+.ab-err { margin: 0 0 1rem; color: var(--red); font-size: .875rem; }
+.ab-changed { margin: 0 0 1rem; }
+.q-head .focus-toggle { margin-left: .2rem; }
+.ab-title { font-family: var(--display); font-size: 1.5rem; margin: .2rem 0 .3rem; }
+.ab-title.mono { font-family: var(--mono); font-size: 1.15rem; font-weight: 500; }
+.ab-summary { max-width: 62rem; margin: 0 0 1rem; line-height: 1.55; color: var(--ink); }
+.ab-map { padding: .8rem 1rem .6rem; margin: 0 0 1.2rem; }
+.ab-scroll { overflow-x: auto; }
+.ab-scroll svg { display: block; }
+.ab-node rect { fill: var(--surface-lift); stroke: var(--line-strong); stroke-width: 1; }
+.ab-node:not(.static) { cursor: pointer; }
+.ab-node:not(.static):hover rect, .ab-node:focus rect { stroke: var(--ink); }
+.ab-node:focus { outline: none; }
+.ab-nt { font-family: var(--body); font-size: 14px; font-weight: 500; fill: var(--ink); }
+.ab-ns { font-family: var(--mono); font-size: 11px; fill: var(--ink-2); }
+.ab-ns.dim { fill: var(--ink-3); }
+.ab-edge { fill: none; stroke: var(--rail); opacity: .75; }
+.ab-edge.dash { stroke-dasharray: 5 4; }
+.ab-head { fill: var(--rail); }
+.ab-count rect { fill: var(--surface); stroke: var(--line); }
+.ab-count text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+.ab-legend { margin: .5rem 0 0; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+  display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.ab-sw { display: inline-block; width: 22px; border-top: 1.5px solid var(--rail); vertical-align: middle; }
+.ab-sw.dash { border-top-style: dashed; }
+.ab-h { font-family: var(--mono); font-size: .6875rem; font-weight: 400; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); margin: 1rem 0 .5rem; }
+.ab-list { list-style: none; margin: 0; padding: 0; }
+.ab-list li { padding: .45rem 0; border-top: 1px solid var(--line); line-height: 1.45; }
+.ab-list li:first-child { border-top: 0; padding-top: .1rem; }
+.ab-list li > span { display: block; color: var(--ink-2); font-size: .875rem; }
+.ab-link { background: none; border: 0; padding: 0; font: inherit; color: var(--ink); cursor: pointer; text-align: left; }
+.ab-link.mono { font-family: var(--mono); font-size: .8125rem; }
+.ab-link:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+.ab-bar { display: block; height: 5px; border: 1px solid var(--line); border-radius: 2px; background: var(--surface-sunk); overflow: hidden; }
+.ab-bar i { display: block; height: 100%; background: var(--ink-2); }
+.ab-table { width: 100%; border-collapse: collapse; font-size: .875rem; margin: 0 0 1rem; color: inherit; }
+.ab-table th { text-align: left; font-family: var(--mono); font-size: .625rem; font-weight: 400; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); padding: 0 .8rem .4rem 0; border-bottom: 1px solid var(--line-strong); }
+.ab-table td { padding: .5rem .8rem .5rem 0; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.45; }
+.ab-table .num { text-align: right; font-family: var(--mono); font-size: .8125rem; white-space: nowrap; }
+.ab-warn { color: var(--accent-ink); }
+.wm-system { margin: 0 0 1.1rem; padding: .7rem .9rem; background: var(--surface); border: 1px solid var(--line); border-radius: 2px; }
+.wm-system-h { margin: 0 0 .35rem; font-family: var(--mono); font-size: .6875rem; font-weight: 400; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); }
+.wm-system ul { margin: 0; padding-left: 1.1rem; line-height: 1.5; }
+.wm-system-a { display: inline-block; margin-top: .35rem; font-size: .8125rem; color: var(--accent-ink); }
+/* An agent of the as-built that is working now, on the crew diagram and band. */
+.dia-agent.dia-live rect { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 4 3; animation: ab-march 1s linear infinite; }
+@keyframes ab-march { to { stroke-dashoffset: -14; } }
+@media (prefers-reduced-motion: reduce) { .dia-agent.dia-live rect { animation: none; } }
+.ab-crew-live { display: flex; gap: .5rem; align-items: flex-start; margin-left: auto; font-family: var(--mono);
+  font-size: .75rem; color: var(--ink-2); line-height: 1.5; }
+/* The as-built's own navigation: which view, where you are in it, and the
+   siblings of the page you are on. Sticky, so the way back is always on screen. */
+.ab-nav { position: sticky; top: var(--mast-h); z-index: 5; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+  margin: 0 0 .6rem; padding: .5rem 0 .45rem; background: var(--paper); border-bottom: 1px solid var(--line); }
+.ab-tabs { display: flex; gap: 1.1rem; }
+.ab-tabs a { font-family: var(--mono); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-3); text-decoration: none; padding: .25rem 0; border-bottom: 2px solid transparent; }
+.ab-tabs a span { margin-left: .4rem; color: var(--ink-3); opacity: .7; text-transform: none; letter-spacing: 0; }
+.ab-tabs a:hover { color: var(--ink); }
+.ab-tabs a.on { color: var(--ink); border-bottom-color: var(--ink); }
+.ab-chip { font-size: .8125rem; color: var(--ink-2); text-decoration: none; padding: .15rem .55rem;
+  border: 1px solid var(--line); border-radius: 2px; background: var(--surface); }
+.ab-chip.mono { font-family: var(--mono); font-size: .75rem; }
+.ab-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+.ab-chip.here { border-color: var(--ink); color: var(--ink); background: var(--surface-lift); font-weight: 500; }
+a.ab-link { text-decoration: none; }
+/* Under the masthead where there is one; a project page has its board
+   instead and hides the masthead, and a gap left for it shows the page
+   scrolling through above the tabs. */
+body.reading .ab-nav, body.has-board .ab-nav { top: 0; }
+/* The numbers that join a box on the map to its row in the list. */
+.ab-badge { fill: var(--ink); }
+.ab-badge-n { font-family: var(--mono); font-size: 11px; font-weight: 500; fill: var(--paper); }
+.ab-num { display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: var(--paper);
+  font-family: var(--mono); font-size: .6875rem; font-weight: 500; }
+.ab-subs { list-style: none; margin: 0 0 1rem; padding: 0; }
+.ab-subs li { border-top: 1px solid var(--line); }
+.ab-subs li:last-child { border-bottom: 1px solid var(--line); }
+/* Not a table: the name is the row's heading with its size at the right of
+   the same line, and the description reads across the full width under it.
+   Columns for size and description would leave the description a narrow strip
+   wrapping to twenty lines. */
+.ab-subs a { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-areas: "num name size" "num what what"; gap: .3rem 1rem; align-items: baseline;
+  padding: .8rem .2rem .85rem; color: var(--ink); text-decoration: none; }
+.ab-subs a > .ab-num, .ab-subs a > .ab-sq { grid-area: num; align-self: start; }
+.ab-subs-name { grid-area: name; font-size: 1rem; }
+.ab-subs-size { grid-area: size; text-align: right; white-space: nowrap; }
+.ab-subs-what { grid-area: what; max-width: 72rem; }
+.ab-subs a:hover { background: var(--surface); }
+.ab-subs a:hover .ab-subs-name { color: var(--accent-ink); }
+.ab-subs .ab-num { align-self: start; }
+.ab-subs-name { font-weight: 500; }
+.ab-subs-size { font-size: .75rem; color: var(--ink-3); }
+.ab-subs-what { font-size: .875rem; color: var(--ink-2); line-height: 1.45; }
+@media (max-width: 700px) { .ab-subs a { grid-template-areas: "num name name" "num size size" "num what what"; }
+  .ab-subs-size { text-align: left; } }
+/* The as-built's overview: the project overview's lead, tiles and headings,
+   with two columns of sections under them. */
+.ab-lead { margin-top: .6rem; }
+.ab-ov { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+@media (max-width: 1100px) { .ab-ov { grid-template-columns: 1fr; } }
+.db-h .ic { width: 20px; height: 20px; flex: none; }
+.ab-finds, .ab-start { list-style: none; margin: 0; padding: 0; }
+.ab-find, .ab-start li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: .75rem; padding: .8rem 0;
+  border-bottom: 1px solid var(--line); }
+.ab-find b { display: block; font-weight: 600; line-height: 1.35; }
+.ab-find p, .ab-start p { margin: .2rem 0 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); overflow-wrap: anywhere; }
+.ab-find-ic { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+  border-radius: 50%; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+.ab-find-ic .ic { width: 15px; height: 15px; }
+.ab-share { display: block; height: 6px; margin: .45rem 0 .1rem; max-width: 18rem; border-radius: 2px;
+  background: var(--surface-sunk); border: 1px solid var(--line); overflow: hidden; }
+.ab-share i { display: block; height: 100%; background: var(--ink-2); }
+.ab-start .ab-num { margin-top: .1rem; }
+.ab-hub-n { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 22px;
+  padding: 0 .3rem; border: 1px solid var(--line-strong); border-radius: 2px; font-size: .75rem; color: var(--ink-2); }
+/* A page among its siblings: previous, next, and for subsystems the map's numbers. */
+.ab-pager { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 1rem;
+  margin: 0 0 1.2rem; padding: .45rem .1rem; border-bottom: 1px solid var(--line); font-size: .8125rem; }
+.ab-pg-prev, .ab-pg-next { display: inline-flex; align-items: center; gap: .45rem; min-width: 0; color: var(--ink-2); text-decoration: none; }
+.ab-pg-prev span:last-child, .ab-pg-next span:not(.ab-num) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-pg-next { justify-self: end; }
+.ab-pg-prev:hover, .ab-pg-next:hover { color: var(--accent-ink); }
+.ab-pg-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.ab-pg-at { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.ab-pg-at a { color: var(--ink-2); }
+.ab-pg-at a:hover { color: var(--accent-ink); }
+.ab-num.sm { width: 19px; height: 19px; font-size: .625rem; }
+a.ab-num { text-decoration: none; background: var(--surface); color: var(--ink-2); border: 1px solid var(--line-strong); }
+a.ab-num:hover { border-color: var(--ink); color: var(--ink); }
+a.ab-num.here { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.ab-pager .ab-pg-prev .ab-num, .ab-pager .ab-pg-next .ab-num { background: var(--surface); color: var(--ink-2); border: 1px solid var(--line-strong); }
+/* The subsystem's own head, numbered as on the map. */
+.ab-subhead { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: .8rem; align-items: start; }
+.ab-subhead > .ab-num { width: 30px; height: 30px; font-size: .8125rem; margin-top: .35rem; }
+.ab-subhead .ab-summary { margin-bottom: 1rem; }
+/* Small numbers, light: the board's cells, label over value, a meter under. */
+.ab-plate { display: flex; flex-wrap: wrap; margin: 0 0 1.8rem; border: 1px solid var(--line-strong);
+  border-radius: 2px; background: var(--surface); }
+.ab-pl { flex: 1 1 10rem; display: flex; flex-direction: column; gap: .25rem; padding: .6rem .9rem; border-right: 1px solid var(--line); }
+.ab-pl:last-child { border-right: 0; }
+.ab-pl dt { font-family: var(--mono); font-size: .625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.ab-pl dd { margin: 0; font-family: var(--mono); font-size: .9375rem; color: var(--ink); }
+.ab-pl-note { font-size: .75rem; color: var(--ink-3); }
+.ab-meter { display: block; height: 5px; border-radius: 2px; background: var(--surface-sunk); border: 1px solid var(--line); overflow: hidden; }
+.ab-meter i { display: block; height: 100%; background: var(--ink-2); }
+.ab-meter.thin { height: 3px; margin-top: .3rem; border: 0; }
+.ab-segs { display: flex; gap: 2px; }
+.ab-segs i { flex: 1; max-width: 18px; height: 5px; border-radius: 1px; background: var(--line); }
+.ab-segs i.on { background: var(--lamp-green); }
+/* How a subsystem connects: what uses it, it, what it uses. */
+.ab-cx { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(12rem, 16rem) auto minmax(0, 1fr); gap: .8rem; align-items: center; }
+.ab-cx-col { display: flex; flex-direction: column; gap: .4rem; }
+.ab-cx-l { margin: 0 0 .1rem; font-family: var(--mono); font-size: .625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.ab-cx-box { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .5rem; align-items: center;
+  padding: .45rem .6rem; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 2px;
+  color: var(--ink); text-decoration: none; font-size: .875rem; }
+.ab-cx-box:hover { border-color: var(--ink); }
+.ab-cx-n { font-size: .6875rem; color: var(--ink-3); white-space: nowrap; }
+.ab-cx-here { display: flex; gap: .55rem; align-items: center; padding: .7rem .8rem; border: 2px solid var(--ink);
+  border-radius: 2px; background: var(--surface-lift); }
+.ab-cx-here b { font-weight: 600; line-height: 1.3; }
+.ab-cx-arrow { font-size: 1.2rem; color: var(--rail); }
+@media (max-width: 900px) { .ab-cx { grid-template-columns: 1fr; } .ab-cx-arrow { transform: rotate(90deg); justify-self: center; } }
+/* Files: the folder quiet, the name loud. */
+.ab-fname { text-decoration: none; font-family: var(--mono); font-size: .8125rem; color: var(--ink); }
+.ab-fname .dir { color: var(--ink-3); }
+.ab-fname b { font-weight: 500; }
+.ab-fname:hover b { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+.ab-yes { color: var(--lamp-green); }
+.ab-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem; }
+@media (max-width: 900px) { .ab-two { grid-template-columns: 1fr; } }
+.ab-chips { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.ab-table th.num { font-size: .625rem; font-family: var(--mono); }
+/* Inside a subsystem: a file's name in mono, other subsystems drawn quieter. */
+.ab-nt.mono { font-family: var(--mono); font-size: 12.5px; font-weight: 500; }
+.ab-outer rect { fill: var(--surface-sunk); stroke-dasharray: 4 3; }
+.ab-fmap .ab-edge { opacity: .35; }
+.ab-fmap .ab-count { opacity: .6; }
+.ab-fmap.dense .ab-edge { opacity: .5; }
+.ab-fmap.dense .ab-link-g:not(.big) .ab-count { opacity: 0; }
+.ab-fmap.focusing .ab-link-g { opacity: .12; }
+.ab-fmap.focusing .ab-link-g.hot { opacity: 1; }
+.ab-fmap.focusing .ab-link-g.hot .ab-edge { opacity: 1; stroke: var(--ink); }
+.ab-fmap.focusing .ab-link-g.hot .ab-count { opacity: 1; }
+.ab-fmap.focusing [data-node] { opacity: .35; }
+.ab-fmap.focusing [data-node].near { opacity: 1; }
+.ab-fmap.focusing [data-node].near rect { stroke: var(--ink); }
+@media (prefers-reduced-motion: no-preference) { .ab-fmap .ab-link-g, .ab-fmap [data-node] { transition: opacity .12s ease; } }
+/* The capability grid: capabilities against the map's numbered subsystems. */
+.ab-grid { border-collapse: separate; border-spacing: 0; font-size: .875rem; color: inherit; }
+.ab-grid th, .ab-grid td { padding: 3px 4px; }
+.ab-grid thead th { vertical-align: bottom; padding-bottom: .5rem; border-bottom: 1px solid var(--line-strong); }
+.ab-grid-name { text-align: left; min-width: 16rem; max-width: 24rem; padding-right: 1rem !important; }
+.ab-grid-name a { display: inline-flex; align-items: center; gap: .5rem; color: var(--ink); text-decoration: none; font-weight: 500; }
+.ab-grid-name a:hover span:last-child { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+.ab-grid thead .ab-grid-name { display: flex; justify-content: space-between; }
+.ab-grid-l { font-family: var(--mono); font-size: .625rem; font-weight: 400; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ab-grid-l.num, .ab-grid-ways { text-align: right; padding-left: 1rem !important; }
+.ab-grid-col { text-align: center; }
+.ab-grid tbody tr:not(.ab-grid-area):hover td, .ab-grid tbody tr:not(.ab-grid-area):hover th { background: var(--surface-lift); }
+.ab-cell { text-align: center; width: 30px; }
+.ab-cell a { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; }
+.ab-cell i { display: block; width: 18px; height: 18px; border-radius: 2px; }
+.ab-cell i.direct { background: var(--ink); }
+.ab-cell i.motion { border: 2px solid var(--ink); box-sizing: border-box; }
+.ab-grid-ways { font-size: .75rem; color: var(--ink-2); }
+.ab-grid-test { min-width: 6rem; padding-left: .8rem !important; }
+.ab-shared { background: var(--surface-sunk); color: var(--ink-3); border: 1px dashed var(--line-strong); }
+.ab-key { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: middle; }
+.ab-key.direct { background: var(--ink); }
+.ab-key.motion { border: 2px solid var(--ink); box-sizing: border-box; }
+/* A capability's number is square, a subsystem's round: two kinds of thing. */
+.ab-sq { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 22px; height: 22px;
+  border-radius: 3px; border: 1.5px solid var(--ink); color: var(--ink); font-family: var(--mono); font-size: .6875rem; font-weight: 500; }
+.ab-caps .ab-sq { align-self: start; }
+.ab-cap-area { margin-left: .6rem; font-family: var(--mono); font-size: .625rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 400; }
+.ab-sq.sm { width: 19px; height: 19px; font-size: .625rem; }
+a.ab-sq { text-decoration: none; background: var(--surface); color: var(--ink-2); border-color: var(--line-strong); }
+a.ab-sq:hover { border-color: var(--ink); color: var(--ink); }
+a.ab-sq.here { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.ab-subhead > .ab-sq { width: 30px; height: 30px; font-size: .8125rem; margin-top: .35rem; }
+.ab-grid-area-c { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); padding-right: 1rem !important; white-space: nowrap; }
+.ab-grid thead .ab-grid-name { display: table-cell; }
+/* Support subsystems: drawn, numbered, and quieter than the ones that do the work. */
+.ab-node.ab-support rect { fill: var(--surface-sunk); stroke-dasharray: 4 3; }
+.ab-node.ab-support .ab-badge { fill: var(--ink-3); }
+.ab-node.ab-support .ab-nt { fill: var(--ink-2); font-weight: 400; }
+.ab-band-rule { stroke: var(--line); stroke-dasharray: 2 4; }
+.ab-band-l { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; fill: var(--ink-3); }
+.ab-h-note { margin-left: .6rem; text-transform: none; letter-spacing: 0; color: var(--ink-3); }
+.ab-subs-support .ab-num { background: var(--ink-3); }
+.ab-subs-support .ab-subs-name { font-weight: 400; color: var(--ink-2); }
+.ab-legend .ab-link .ab-num.sm { margin-right: .15rem; vertical-align: middle; background: var(--ink-3); color: var(--paper); }
+.ab-title .pill { vertical-align: middle; font-family: var(--mono); font-size: .625rem; }
+/* A capability's page: the subsystem page's shape, with its own flow. */
+.ab-flow .ab-cx-box .small { font-size: .8125rem; }
+.ab-cx-then { margin-top: .5rem !important; }
+.ab-cx-quiet { background: var(--surface-sunk); border-style: dashed; }
+.ab-way { white-space: nowrap; }
+.ab-verb { display: inline-block; min-width: 3.4rem; margin-right: .5rem; font-size: .6875rem; font-weight: 500; color: var(--ink); }
+.ab-verb.quiet { color: var(--ink-3); font-weight: 400; }
+.ab-handler { display: block; margin-top: .15rem; font-size: .75rem; color: var(--ink-3); }
+.ab-link .ab-num.sm { vertical-align: middle; margin-right: .2rem; }
+.ab-pl-note .ab-num.sm { margin-right: .15rem; }
+/* Three-letter IDs, not numbers: a subsystem's in a rounded pill, a
+   capability's square-cornered, so the two kinds read apart. */
+.ab-num, .ab-sq { width: auto; min-width: 38px; padding: 0 .42rem; letter-spacing: .06em; font-size: .6875rem; }
+.ab-num { border-radius: 11px; }
+.ab-num.sm, .ab-sq.sm { min-width: 32px; height: 19px; padding: 0 .3rem; font-size: .5625rem; }
+.ab-subhead { grid-template-columns: auto minmax(0, 1fr); }
+.ab-subhead > .ab-num, .ab-subhead > .ab-sq { width: auto; min-width: 48px; height: 28px; font-size: .8125rem; }
+.ab-subhead > .ab-num { border-radius: 14px; }
+.ab-badge-n { font-size: 10px; letter-spacing: .06em; }
+/* An order, not an ID: where to start reading stays numbered. */
+.ab-ord { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: .6875rem; font-weight: 500; }
+.ab-node rect.ab-badge { fill: var(--ink); stroke: none; stroke-dasharray: none; }
+.ab-node.ab-support rect.ab-badge { fill: var(--ink-3); }
+.ab-node:hover rect.ab-badge, .ab-node:focus rect.ab-badge { stroke: none; }
+.ab-outer rect.ab-badge { fill: var(--ink-3); }
+/* One file: its path the way the tables write it, and how it connects. */
+.ab-file-title { font-family: var(--mono); font-size: 1.15rem; font-weight: 400; }
+.ab-file-title .dir { color: var(--ink-3); }
+.ab-file-title b { font-weight: 600; color: var(--ink); }
+.ab-cx-here .mono { font-family: var(--mono); font-size: .875rem; }
+.ab-cx-box .ab-num.sm, .ab-cx-here .ab-num.sm { flex: none; }
+.ab-cx-away { background: var(--surface-sunk); }
+.ab-cx-shaky { border-style: dashed; }
+.ab-fn-l { margin-left: .35rem; color: var(--ink-3); font-size: .625rem; }
+.ab-chip.mono { font-family: var(--mono); font-size: .75rem; }
+.ab-list .ab-link .ab-sq.sm { vertical-align: middle; margin-right: .2rem; }
+
+/* A file's two views, under its head: what the reading says, and the source. */
+.ab-views { display: flex; gap: 1.2rem; margin: -.25rem 0 1.25rem; border-bottom: 1px solid var(--line); }
+.ab-views a { display: inline-flex; align-items: center; gap: .4rem; padding: .4rem 0; margin-bottom: -1px;
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  text-decoration: none; border-bottom: 2px solid transparent; }
+.ab-views a svg { width: 14px; height: 14px; }
+.ab-views a span { color: var(--ink-3); opacity: .75; text-transform: none; letter-spacing: 0; }
+.ab-views a:hover { color: var(--ink); }
+.ab-views a.on { color: var(--ink); border-bottom-color: var(--ink); }
+.ab-views .ab-views-open { margin: 0 0 .35rem auto; align-self: center; padding: .2rem .6rem; border-bottom-width: 1px;
+  border-bottom-color: var(--line-strong); font-family: var(--body); font-size: .75rem; letter-spacing: 0;
+  text-transform: none; color: var(--ink-2); }
+
+/* The source: an outline that stays beside you, and the lines. */
+.ab-src-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 13.5rem; gap: 1.5rem; align-items: start; }
+.ab-src-outline { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; font-size: .8125rem;
+  padding-left: .25rem; }
+@media (max-width: 900px) { .ab-src-wrap { grid-template-columns: minmax(0, 1fr); }
+  .ab-src-outline { order: -1; position: static; max-height: none; } }
+.ab-src-outline ul { list-style: none; margin: 0 0 .6rem; padding: 0; }
+.ab-src-outline li a { display: flex; justify-content: space-between; gap: .5rem; padding: .18rem .45rem;
+  border-left: 3px solid transparent; color: var(--ink-2); text-decoration: none; }
+.ab-src-outline li a .mono { font-size: .75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-src-outline li a:hover { background: var(--surface); color: var(--ink); }
+.ab-src-outline li a.on { background: var(--surface-lift); color: var(--ink); font-weight: 500; }
+.ab-src-outline li a.reach-d { border-left-color: var(--ink); }
+.ab-src-outline li a.reach-m { border-left-color: var(--line-strong); }
+.ab-src-part { margin: .6rem 0 .15rem; font-size: .75rem; font-weight: 500; color: var(--ink); }
+.ab-src-k { margin: 0 0 .25rem; font-family: var(--mono); font-size: .625rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-3); flex: none; }
+
+.ab-src { overflow-x: auto; border: 1px solid var(--line); background: var(--surface-lift); margin-top: .5rem; }
+.ab-src-in { width: max-content; min-width: 100%; padding: .35rem 0; }
+.ab-src-row { display: flex; font-family: var(--mono); font-size: .75rem; line-height: 1.55; }
+.ab-src-row:hover { background: var(--surface); }
+.ab-src-row.here, .ab-src-row:target { background: var(--accent-wash); }
+.ab-src-n { position: sticky; left: 0; flex: none; width: 3.6rem; padding-right: .8rem; text-align: right;
+  color: var(--ink-3); background: var(--surface-lift); text-decoration: none; user-select: none;
+  box-shadow: inset -3px 0 transparent; opacity: .8; }
+.ab-src-row:hover .ab-src-n, .ab-src-row.here .ab-src-n { background: inherit; }
+.ab-src-n:hover { color: var(--ink); opacity: 1; }
+.ab-src-row.reach-d .ab-src-n { box-shadow: inset -3px 0 var(--ink); }
+.ab-src-row.reach-m .ab-src-n { box-shadow: inset -3px 0 var(--line-strong); }
+.ab-src-row code { display: block; padding: 0 1.2rem 0 .8rem; white-space: pre; font: inherit; color: var(--ink); background: none; }
+.ab-src .t-c { color: var(--ink-3); font-style: italic; }
+.ab-src .t-s { color: var(--green-ok); }
+.ab-src .t-k { color: var(--team-build); }
+.ab-src-call { color: inherit; text-decoration: underline; text-decoration-color: var(--line-strong);
+  text-underline-offset: 2px; }
+.ab-src-call:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
+.ab-src-ent { background: var(--amber-wash); border-radius: 2px; }
+.ab-src-note { display: inline-flex; align-items: center; gap: .3rem; margin-left: 2ch; padding: 0 .45rem;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink-2);
+  font-family: var(--body); font-size: .6875rem; font-style: normal; text-decoration: none; vertical-align: 1px; }
+.ab-src-note:hover { border-color: var(--ink); color: var(--ink); }
+.ab-src-note.shaky { border-style: dashed; }
+.ab-src-note .ab-num.sm { min-width: 28px; height: 15px; font-size: .5rem; }
+
+/* The card above a function: what the reading knows about it. It stays at
+   the left edge while the lines under it scroll sideways. */
+.ab-src-card { position: sticky; left: 0; box-sizing: border-box; width: min(56rem, 100%); max-width: 56rem;
+  margin: .7rem 0 .15rem; padding: .4rem .8rem .45rem 4.4rem; border-top: 1px solid var(--line);
+  font-family: var(--body); font-size: .75rem; white-space: normal; }
+.ab-src-in > .ab-src-card:first-child { margin-top: 0; border-top: 0; }
+.ab-src-card-h { display: flex; align-items: baseline; gap: .6rem; margin: 0; }
+.ab-src-card-h b { font-size: .8125rem; }
+.ab-src-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .7rem; margin: .25rem 0 0; }
+.ab-src-meta .ab-src-k { min-width: 6.5rem; margin: 0; }
+.ab-src-meta .ab-link { font-size: .75rem; }
+.ab-src-meta .ab-link .ab-sq.sm { vertical-align: middle; margin-right: .15rem; }
+.ab-src-moved .ab-sq.sm { border-style: dashed; }
+.ab-src-to { display: inline-flex; align-items: center; gap: .25rem; font-family: var(--mono); font-size: .6875rem;
+  color: var(--ink-2); text-decoration: none; }
+.ab-src-to:hover { color: var(--accent-ink); text-decoration: underline; }
+.ab-src-to svg { width: 12px; height: 12px; }
+.ab-src-to .ab-num.sm { min-width: 28px; height: 15px; font-size: .5rem; }
+.ab-src-card .ab-yes svg { width: 12px; height: 12px; vertical-align: -2px; }
+.ab-src-row, .ab-src-card { scroll-margin-top: 5rem; }
+/* A path has no spaces to break at, and one long enough pushes the whole page
+   sideways; in running text it breaks where it has to. */
+.ab-list code, .ab-start code, .ab-finds code, .ab-changed code, .ab-err code, .tab-intro code { overflow-wrap: anywhere; }
+.ab-subs-what { overflow-wrap: anywhere; }
+.ab-table td { overflow-wrap: break-word; }
+/* A subsystem's files: the size under the name, so the name gets the room;
+   the two counts are narrow, their headings wrapping onto two lines. */
+.ab-files .ab-file-cell { width: 17rem; }
+.ab-file-size { display: block; margin-top: .3rem; font-size: .6875rem; color: var(--ink-3); }
+.ab-file-size .ab-meter { width: 9rem; }
+.ab-files th.ab-narrow { width: 4.5rem; white-space: normal; line-height: 1.3; }
+.ab-files td.num { width: 4.5rem; }
+
+/* ---- the Architecture tab: how it runs -------------------------------- */
+.ab-arch-lead { margin: 0 0 .8rem; }
+.ab-arch { width: 100%; height: auto; display: block; }
+.ab-arch text { font-family: var(--body); fill: var(--ink); }
+.ab-arch .t-name { font-size: 15px; font-weight: 600; }
+.ab-arch .t-sub { font-size: 12px; fill: var(--ink-2); }
+.ab-arch .t-how { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-3); }
+.ab-arch .t-col { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; fill: var(--ink-3); }
+.ab-arch .t-edge { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-2); }
+.ab-arch .box { fill: var(--surface-lift); stroke: var(--ink); stroke-width: 1.5; }
+.ab-arch .box.run { stroke-width: 2; }
+.ab-arch .box.out { fill: var(--surface); stroke: var(--line-strong); }
+.ab-arch .box.named { fill: var(--surface); stroke: var(--line-strong); stroke-dasharray: 5 4; }
+.ab-arch .box.who { fill: var(--surface-sunk); stroke: var(--line-strong); }
+.ab-arch .band { fill: none; stroke: var(--line-strong); stroke-dasharray: 2 4; }
+.ab-arch .pill rect { fill: var(--ink); }
+.ab-arch .pill text { fill: var(--paper); font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .06em; }
+.ab-arch .pill.sup rect { fill: var(--ink-3); }
+.ab-arch a:hover .pill rect { fill: var(--accent-ink); }
+.ab-arch .sq rect { fill: var(--surface-lift); stroke: var(--ink); stroke-width: 1.3; }
+.ab-arch .sq text { fill: var(--ink); font-family: var(--mono); font-size: 9.5px; font-weight: 500; letter-spacing: .05em; }
+.ab-arch .e { fill: none; stroke-width: 1.6; }
+.ab-arch .e.code { stroke: var(--ink); stroke-width: 2.2; }
+.ab-arch .e.said { stroke: var(--ink-3); }
+.ab-arch .e.named { stroke: var(--ink-3); stroke-dasharray: 4 4; }
+.ab-arch .ah-code { fill: var(--ink); }
+.ab-arch .ah-said { fill: var(--ink-3); }
+.ab-arch .ab-arch-out { cursor: pointer; }
+.ab-arch .ab-arch-out:hover .box, .ab-arch .ab-arch-out:focus .box { stroke: var(--ink); }
+.ab-legend3 { display: flex; flex-wrap: wrap; gap: .3rem 1.3rem; }
+.ab-legend3 i { display: inline-block; width: 24px; height: 0; margin-right: .4rem; vertical-align: middle; border-top: 2.5px solid var(--ink); }
+.ab-legend3 i.said { border-top: 1.6px solid var(--ink-3); }
+.ab-legend3 i.named { border-top: 1.6px dashed var(--ink-3); }
+
+.ab-osys { list-style: none; margin: 0; padding: 0; }
+.ab-osys li { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "n h" "w w" "v v";
+  gap: .25rem 1rem; padding: .75rem .2rem .8rem; border-top: 1px solid var(--line); scroll-margin-top: 5rem; }
+.ab-osys li:last-child { border-bottom: 1px solid var(--line); }
+.ab-os-n { grid-area: n; font-weight: 500; }
+.ab-os-h { grid-area: h; font-size: .75rem; color: var(--ink-3); text-align: right; }
+.ab-os-w { grid-area: w; font-size: .875rem; color: var(--ink-2); line-height: 1.45; }
+.ab-os-v { grid-area: v; display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; font-size: .75rem; color: var(--ink-3); }
+.ab-os-v a { text-decoration: none; }
+.ab-os-v code { overflow-wrap: anywhere; }
+.ab-os-not { margin: .8rem 0 0; font-size: .8125rem; color: var(--ink-2); line-height: 1.6; }
+.ab-os-not code { font-size: .75rem; }
+.ab-flash { animation: ab-flash 1.4s ease-out; }
+@keyframes ab-flash { from { background: var(--accent-wash); } to { background: transparent; } }
+
+.ab-ep-g { margin: 1.1rem 0 .3rem; font-weight: 500; }
+.ab-ep-g span { margin-left: .4rem; font-family: var(--mono); font-size: .75rem; color: var(--ink-3); font-weight: 400; }
+.ab-eps .ab-ep-h { display: block; font-size: .6875rem; color: var(--ink-3); }
+.ab-where { margin: 0 0 .5rem; }
+.ab-os-dis { list-style: none; margin: .35rem 0 0; padding: 0; font-size: .8125rem; color: var(--ink-2); }
+.ab-os-dis li { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: 1rem; padding: .3rem 0; border-top: 1px solid var(--line); }
+.ab-os-dis .ab-os-k { font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 900px) { .ab-os-dis li { grid-template-columns: minmax(0, 1fr); gap: .1rem; } }
+.ab-num.ab-tool { background: var(--ink-3); }
+
+/* The endpoints' filters: a search, then a row per question. */
+.ab-filters { display: grid; gap: .45rem; margin: 0 0 .6rem; padding: .7rem .8rem; border: 1px solid var(--line);
+  background: var(--surface); border-radius: 3px; }
+.ab-fsearch { width: 100%; max-width: 30rem; box-sizing: border-box; padding: .4rem .6rem; font: inherit; font-size: .8125rem;
+  color: var(--ink); background: var(--surface-lift); border: 1px solid var(--line-strong); border-radius: 2px; }
+.ab-fsearch:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
+.ab-frow { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.ab-flabel { min-width: 6.5rem; font-family: var(--mono); font-size: .625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.ab-fchip { display: inline-flex; align-items: center; gap: .35rem; padding: .15rem .55rem; font: inherit; font-size: .75rem;
+  color: var(--ink-2); background: var(--surface-lift); border: 1px solid var(--line); border-radius: 11px; cursor: pointer; }
+.ab-fchip span { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+.ab-fchip:hover { border-color: var(--ink-3); color: var(--ink); }
+.ab-fchip.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.ab-fchip.on span { color: var(--paper); opacity: .75; }
+.ab-fselect { font: inherit; font-size: .75rem; padding: .2rem .4rem; color: var(--ink); background: var(--surface-lift);
+  border: 1px solid var(--line-strong); border-radius: 2px; max-width: 22rem; }
+.ab-fcheck { display: inline-flex; align-items: center; gap: .3rem; margin-left: .6rem; font-size: .75rem; color: var(--ink-2); }
+.ab-fcount { margin-left: auto; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+.ab-fclear { font-size: .75rem; }
+.ab-sort { padding: 0; border: 0; background: none; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.ab-sort:hover, .ab-sort.on { color: var(--ink); }
+.ab-eps tr[hidden], .ab-ep-grp[hidden] { display: none; }
+.ab-ep-grp { overflow-x: auto; }
+.pill.ab-gen { background: var(--surface-sunk); color: var(--ink-3); border-color: var(--line); }
+.ab-gen-note { display: flex; gap: .45rem; align-items: flex-start; margin: .5rem 0 0; font-size: .8125rem; color: var(--ink-3); line-height: 1.45; }
+.ab-gen-note svg { width: 15px; height: 15px; flex: none; margin-top: .15rem; }
+.ab-err.ab-paused { color: var(--ink-2); border-color: var(--amber-edge); background: var(--amber-wash); }
+
+/* The reading is behind the checkout: said in the header, loud enough to see,
+   and the list of files behind a press. */
+.ab-stale { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem .6rem; font: inherit;
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em; color: var(--ink-on-amber);
+  background: var(--lamp-amber); border: 1px solid var(--lamp-amber); border-radius: 11px; cursor: pointer; white-space: nowrap; }
+.ab-stale svg { width: 13px; height: 13px; }
+.ab-stale:hover, .ab-stale.on { background: var(--amber-wash); color: var(--ink); border-color: var(--amber-line); }
+.ab-changed-box { margin: 0 0 1rem; padding: .6rem .8rem; border: 1px solid var(--amber-edge); background: var(--amber-wash); border-radius: 3px; }
+.ab-changed-list { list-style: none; margin: .3rem 0 .4rem; padding: 0; columns: 2 26rem; column-gap: 2rem; font-size: .75rem; }
+.ab-changed-list li { break-inside: avoid; padding: .1rem 0; }
+.ab-changed-list { max-height: 16rem; overflow-y: auto; }
+
+/* On the As-built tab: the project's tabs and strip stick, the title row
+   scrolls away, and the as-built's views stick under them. */
+body.has-board.ab-on header.board { position: sticky; top: var(--ab-board-top, -52px); z-index: 8; }
+body.has-board.ab-on .ab-nav { top: var(--ab-board-h, 103px); }
+body.reading.ab-on .ab-nav { top: 0; }
+
+/* The as-built's tabs and, on a file, its two views: one block that sticks. */
+.ab-navs { position: sticky; top: var(--mast-h); z-index: 5; background: var(--paper); margin: 0 0 .6rem; }
+.ab-navs .ab-nav { position: static; margin: 0; }
+body.reading .ab-navs, body.has-board .ab-navs { top: 0; }
+body.has-board.ab-on .ab-navs { top: var(--ab-board-h, 103px); }
+body.reading.ab-on .ab-navs { top: 0; }
+.ab-navs .ab-views { margin: 0; padding-top: .15rem; background: var(--paper); }
+.ab-views-file { margin-left: .4rem; align-self: center; font-size: .6875rem; color: var(--ink-3); max-width: 22rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-views-file:only-child { display: none; }
+/* Under the sticky block, not behind it: the source's outline, and the line a jump lands on. */
+body.ab-on .ab-src-outline { top: calc(var(--ab-board-h, 103px) + 5.5rem); max-height: calc(100vh - var(--ab-board-h, 103px) - 6.5rem); }
+body.ab-on .ab-src-row, body.ab-on .ab-src-card, body.ab-on .ab-osys li { scroll-margin-top: calc(var(--ab-board-h, 103px) + 6rem); }
+
+/* ---- a subsystem by its folders --------------------------------------- */
+.ab-fm-bar { display: flex; align-items: center; gap: .8rem; padding: .2rem .6rem .5rem; font-size: .8125rem; color: var(--ink-3); }
+.ab-fm-say { flex: 1; min-width: 0; }
+.ab-fm-say b { color: var(--ink); font-weight: 500; }
+svg.ab-fm { width: 100%; height: auto; display: block; }
+.ab-fm text { font-family: var(--body); fill: var(--ink); }
+.ab-fm .t-name { font-size: 14px; font-weight: 600; }
+.ab-fm .t-file { font-family: var(--mono); font-size: 11.5px; fill: var(--ink); }
+.ab-fm .entry .t-file { font-size: 13px; font-weight: 600; }
+.ab-fm .t-how { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-3); }
+.ab-fm .t-col { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; fill: var(--ink-3); }
+.ab-fm .twist { font-family: var(--mono); font-size: 12px; fill: var(--ink-3); }
+.ab-fm-grp { cursor: pointer; }
+.ab-fm-grp rect.box { fill: var(--surface-lift); stroke: var(--ink); stroke-width: 1.5; }
+.ab-fm-grp.entry rect.box { stroke-width: 2.2; }
+.ab-fm-grp:hover rect.box, .ab-fm-grp:focus rect.box { stroke: var(--accent-ink); }
+.ab-fm-file { cursor: pointer; }
+.ab-fm-file rect { fill: var(--surface); stroke: var(--line); }
+.ab-fm-file:hover rect, .ab-fm-file:focus rect { stroke: var(--ink); }
+.ab-fm-file.gen text { fill: var(--ink-3); }
+.ab-fm-ext { cursor: pointer; }
+.ab-fm-ext rect { fill: var(--surface); stroke: var(--line-strong); stroke-dasharray: 4 3; }
+.ab-fm-ext:hover rect { stroke: var(--ink); }
+.ab-fm .pill rect { fill: var(--ink); }
+.ab-fm .pill text { fill: var(--paper); font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .06em; }
+.ab-fm-shared rect.box { fill: none; stroke: var(--line-strong); stroke-dasharray: 2 4; }
+.ab-fm-shared a:hover text { fill: var(--accent-ink); }
+.ab-fm .e { fill: none; stroke: var(--ink-3); }
+.ab-fm .e.shaky { stroke-dasharray: 5 4; }
+.ab-fm .ah { fill: var(--ink-3); }
+.ab-fm .n rect { fill: var(--paper); stroke: var(--line-strong); }
+.ab-fm .n text { font-family: var(--mono); font-size: 10px; fill: var(--ink-2); }
+.ab-fm.focused .e, .ab-fm.focused .n { opacity: .18; }
+.ab-fm.focused .ab-fm-grp rect.box, .ab-fm.focused .ab-fm-file rect, .ab-fm.focused .ab-fm-ext rect { opacity: .55; }
+.ab-fm .ab-fm-file.me rect, .ab-fm .ab-fm-grp.me rect.box { stroke: var(--accent-ink); stroke-width: 2.2; opacity: 1; fill: var(--accent-wash); }
+.ab-fm .ab-fm-file.near rect { stroke: var(--ink); opacity: 1; fill: var(--surface-lift); }
+.ab-fm .ab-fm-grp.near rect.box, .ab-fm .ab-fm-ext.near rect { opacity: 1; stroke: var(--ink); }
+.ab-fm .hot { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.ab-fm .hot.in { stroke: var(--accent-ink); }
+.ab-fm .hot.ext { stroke-dasharray: 3 3; }
+.ab-fm .badge rect { fill: var(--ink); }
+.ab-fm .badge text { fill: var(--paper); font-family: var(--mono); font-size: 10px; }
+/* A caller in a capability's flow: its name, and its folder under it. */
+.ab-cx-box.ab-cx-file { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
+.ab-cx-fname { font-size: .8125rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-cx-dir { font-size: .6875rem; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-cx-also { margin: .35rem 0 0; }
+
+/* Dependencies: the packet's tab, and the project's own list on its Checks
+   page. Tables of facts; a row that needs a ruling is marked, the rest quiet. */
+.deps { max-width: 72rem; }
+.deps-lede { font-size: 1.02rem; color: var(--ink-2); margin: .2rem 0 1rem; }
+.deps-note, .deps-removed { font-size: .9rem; color: var(--ink-3); margin: .6rem 0; }
+.deps-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.deps-table th { text-align: left; font-family: var(--mono); font-size: .7rem; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  border-bottom: 1px solid var(--line-strong); padding: .35rem .5rem .35rem 0; }
+.deps-table td { border-bottom: 1px solid var(--line); padding: .4rem .5rem .4rem 0;
+  vertical-align: top; }
+.dep-nested .dep-name { padding-left: 1.2rem; }
+.dep-eco { display: block; font-size: .76rem; color: var(--ink-3); }
+.dep-kind { font-family: var(--mono); font-size: .76rem; color: var(--ink-3); }
+.dep-trouble .dep-name .mono { font-weight: 600; }
+.dep-flag { font-size: .82rem; color: var(--red-ink, var(--ink)); }
+.dep-adv { font-size: .8rem; }
+.dep-osv { display: block; }
+.dep-group td { font-size: .78rem; color: var(--ink-3); padding-top: .8rem; }
+.deps-list { list-style: none; padding: 0; margin: .5rem 0 0; font-size: .9rem; }
+.deps-list li { display: flex; flex-wrap: wrap; gap: .2rem .8rem; padding: .25rem 0;
+  border-bottom: 1px solid var(--line); }
+.deps-all summary { cursor: pointer; color: var(--accent-ink); font-size: .9rem; margin-top: .5rem; }
+.deps-policy { margin-top: .6rem; }
+.deps-survey { margin-top: 1.6rem; }
+@media (max-width: 720px) {
+  .deps-table thead { display: none; }
+  .deps-table tr { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); }
+  .deps-table td { border: 0; }
+}
+
+/* Why a red check is red: the cause, its evidence one press down, and each fix
+   with what its try read. */
+.dx { margin: .2rem 0 .7rem; display: grid; gap: .45rem; }
+.dx-why { margin: 0; font-size: .95rem; color: var(--ink); line-height: 1.45; }
+.dx-k { font: 600 .72rem/1 var(--cond); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+  margin-right: .35rem; }
+.dx-tag { display: inline-block; font: 600 .68rem/1 var(--cond); letter-spacing: .1em; text-transform: uppercase;
+  padding: .2rem .4rem; border-radius: 3px; background: var(--surface-sunk); color: var(--ink-2); margin-right: .35rem; }
+.dx-tag.ok { background: var(--green-wash); color: var(--green); }
+.dx-ev { margin: .3rem 0 0; padding-left: 1.1rem; font-size: .8125rem; color: var(--ink-2); }
+.dx-ev li { margin: .15rem 0; overflow-wrap: anywhere; }
+.dx-fix { border-left: 2px solid var(--surface-sunk); padding: .1rem 0 .1rem .7rem; }
+.dx-fix-t { margin: 0; font-weight: 600; font-size: .9rem; overflow-wrap: anywhere; }
+.dx-try { margin: .15rem 0 .35rem; font-size: .85rem; color: var(--ink-2); }
+.dx-try.ok { color: var(--green); }
+.dx-try.bad { color: var(--red); }
+.dx-fix .acts { margin: 0; }
+.dx-fix pre { margin-top: .4rem; max-height: 22rem; overflow: auto; }
+.dx-failed { margin: 0 0 .5rem; font-size: .875rem; color: var(--ink-3); }
+
+/* Coverage, on its own beside a check's status. */
+.q-end { display: inline-flex; align-items: baseline; gap: .5rem; justify-self: end; }
+.cov-pill { font: 600 .8125rem/1 var(--mono); padding: .25rem .45rem; border-radius: 3px; white-space: nowrap;
+  background: var(--surface-sunk); color: var(--ink-2); }
+.cov-pill small { font: 500 .68rem/1 var(--cond); letter-spacing: .1em; text-transform: uppercase; margin-left: .2rem; }
+.cov-pill.ok { background: var(--green-wash); color: var(--green); }
+.cov-pill.warn { background: var(--amber-wash); color: var(--amber); }
+.cov-pill.bad { background: var(--red-wash); color: var(--red); }
+
+/* Coverage on or off, at the top of the tests family. */
+.cov-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem .9rem; padding: .55rem 0;
+  border-bottom: 1px solid var(--line); font-size: .875rem; }
+.cov-k { font: 600 .72rem/1 var(--cond); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.cov-state { font: 600 .72rem/1 var(--cond); letter-spacing: .12em; text-transform: uppercase;
+  padding: .25rem .45rem; border-radius: 3px; background: var(--surface-sunk); color: var(--ink-2); }
+.cov-state.ok { background: var(--green-wash); color: var(--green); }
+.cov-state.warn { background: var(--amber-wash); color: var(--amber); }
+.cov-by { display: inline-flex; align-items: baseline; gap: .4rem; }
+.cov-by .mono { font-size: .8125rem; }
+.cov-why { color: var(--ink-2); }
+.cov-acts { display: inline-flex; gap: .4rem; margin-left: auto; }
+
+/* Guides: the repository's own files, layer by layer. */
+.gd-layer { margin-bottom: 1rem; }
+.gd-layer .fam-title { margin: 0 0 .2rem; }
+.gd-row .q-line { grid-template-columns: auto minmax(8rem, max-content) minmax(0, 1fr) auto; }
+.gd-row .q-name { font-family: var(--mono); font-size: .875rem; }
+.gd-dir { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .6rem 0 .2rem; }
+/* A proposal is one line until it is opened. The actions sit beside the
+   line rather than inside it, so pressing one never toggles the row. */
+.gd-prop {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .2rem .75rem;
+  align-items: start; padding: .55rem 0; border-bottom: 1px solid var(--line);
+}
+.gd-prop:last-child { border-bottom: 0; }
+.gd-prop-line > summary {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .1rem .6rem;
+  align-items: baseline; cursor: pointer; list-style: none;
+}
+.gd-prop-line > summary::-webkit-details-marker { display: none; }
+.gd-prop-line > summary .q-lamp { margin-top: .35rem; }
+.gd-prop-title { font-weight: 600; }
+.gd-prop-title::after { content: " ▸"; color: var(--ink-3); font-weight: 400; }
+.gd-prop-line[open] .gd-prop-title::after { content: " ▾"; }
+.gd-prop-files { grid-column: 2; font-size: var(--t-meta); color: var(--ink-3); }
+.gd-prop-files .mono { color: var(--ink-2); }
+.gd-prop-more { margin: .5rem 0 0 1.35rem; }
+.gd-prop-more p { margin: 0 0 .5rem; max-width: 70ch; }
+.gd-prop-acts { display: flex; gap: .4rem; }
+.sheet-rail .s-why { font-size: var(--t-meta); color: var(--ink-2); max-width: 90ch; }
+@media (max-width: 640px) {
+  .gd-prop { grid-template-columns: 1fr; }
+  .gd-prop-acts { margin-left: 1.35rem; }
+}
+
+.f-cite { margin: .35rem 0; font-size: .875rem; color: var(--ink-2); }
+.ee-guides { margin: 0; padding-left: 1.1rem; font-size: .875rem; }
+.ee-guides li { margin: .2rem 0; }
+

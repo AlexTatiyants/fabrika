@@ -1,0 +1,141 @@
+{
+ "blob": "980178825883a8d0e227d203e6d5517288b469cf",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "HELP_START",
+   "HELP_FOR",
+   "HELP_FOR_VIEW",
+   "HELP_FOR_STAGE",
+   "help",
+   "loadHelp",
+   "helpTopicList",
+   "helpTitle",
+   "helpMatches",
+   "helpNav",
+   "helpArticle",
+   "helpScreen",
+   "helpHost",
+   "renderHelpDrawer",
+   "openHelp",
+   "closeHelp",
+   "helpForHere",
+   "sectionHead"
+  ],
+  "domain_terms": [
+   "help topics",
+   "articles",
+   "help drawer",
+   "help search"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 39,
+    "name": "loadHelp"
+   },
+   {
+    "calls": [],
+    "line": 50,
+    "name": "helpTopicList"
+   },
+   {
+    "calls": [
+     "helpTopicList"
+    ],
+    "line": 54,
+    "name": "helpTitle"
+   },
+   {
+    "calls": [
+     "helpTopicList"
+    ],
+    "line": 61,
+    "name": "helpMatches"
+   },
+   {
+    "calls": [
+     "esc",
+     "helpMatches"
+    ],
+    "line": 69,
+    "name": "helpNav"
+   },
+   {
+    "calls": [
+     "esc",
+     "helpTitle"
+    ],
+    "line": 82,
+    "name": "helpArticle"
+   },
+   {
+    "calls": [
+     "helpNav",
+     "helpArticle"
+    ],
+    "line": 93,
+    "name": "helpScreen"
+   },
+   {
+    "calls": [],
+    "line": 110,
+    "name": "renderHelpDrawer"
+   },
+   {
+    "calls": [
+     "loadHelp",
+     "renderHelpDrawer"
+    ],
+    "line": 133,
+    "name": "openHelp"
+   },
+   {
+    "calls": [
+     "renderHelpDrawer"
+    ],
+    "line": 140,
+    "name": "closeHelp"
+   },
+   {
+    "calls": [
+     "mountedView",
+     "projectSection",
+     "abHelpHere"
+    ],
+    "line": 146,
+    "name": "helpForHere"
+   },
+   {
+    "calls": [
+     "esc",
+     "editButton"
+    ],
+    "line": 221,
+    "name": "sectionHead"
+   }
+  ],
+  "imports": [
+   "console/app/util.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Manages help topics from console/help/ as a dedicated page or as an overlay drawer over any screen.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/static/help/topics.json"
+   },
+   {
+    "method": "GET",
+    "path": "/static/help/{slug}.html"
+   }
+  ],
+  "ways_in": []
+ }
+}

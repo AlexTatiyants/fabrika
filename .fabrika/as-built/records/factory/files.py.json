@@ -1,0 +1,30 @@
+{
+ "blob": "a4db70c3fa8afc019612b3a0440051ed4ac73d21",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "write_atomic"
+  ],
+  "domain_terms": [
+   "atomic write"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 17,
+    "name": "write_atomic"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Writes files atomically by creating a temporary file with restricted permissions and renaming it into place, ensuring readers never encounter empty or half-written state.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "blob": "b97e701f18a1cc029248cfc95f5a23646133ba70",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "main",
+   "crumbsEl",
+   "mastNavEl",
+   "toastEl",
+   "liveEl",
+   "panelBody",
+   "panelScrim",
+   "panelStatusEl",
+   "panelSearchEl",
+   "panelFiltersEl",
+   "featureBarEl",
+   "state",
+   "projectUrl",
+   "checkAnchor",
+   "editHref",
+   "ROLES_HREF",
+   "CONTROL_ROOM_HREF",
+   "HELP_HREF",
+   "featureUrl",
+   "featureHref",
+   "logHref",
+   "MAT_ORDER",
+   "MAT_BLURB",
+   "BANDS",
+   "bandOf"
+  ],
+  "domain_terms": [
+   "state",
+   "routes",
+   "stages",
+   "bands",
+   "features",
+   "projects"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 102,
+    "name": "projectUrl"
+   },
+   {
+    "calls": [],
+    "line": 106,
+    "name": "checkAnchor"
+   },
+   {
+    "calls": [],
+    "line": 110,
+    "name": "editHref"
+   },
+   {
+    "calls": [],
+    "line": 115,
+    "name": "featureUrl"
+   },
+   {
+    "calls": [],
+    "line": 116,
+    "name": "featureHref"
+   },
+   {
+    "calls": [
+     "featureHref"
+    ],
+    "line": 117,
+    "name": "logHref"
+   },
+   {
+    "calls": [],
+    "line": 138,
+    "name": "bandOf"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines the global application state object, URL routing utilities, stage vocabulary, and band definitions for the console UI.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

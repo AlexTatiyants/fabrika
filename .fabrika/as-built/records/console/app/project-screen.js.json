@@ -1,0 +1,281 @@
+{
+ "blob": "599109fb0f3e5fb3c99c938d485c983ac284842c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "EDITABLE",
+   "editButton",
+   "editBar",
+   "edRow",
+   "edInput",
+   "edLines",
+   "environmentEditor",
+   "previewEditor",
+   "checksEditor",
+   "surveyEditor",
+   "saveEdits",
+   "todoCard",
+   "todoSection",
+   "liveRecommendations",
+   "adoptForm",
+   "recTodo",
+   "recPrompt",
+   "recBody",
+   "firstSentence",
+   "declinedRecommendations",
+   "declinedChecks",
+   "parkedChecks",
+   "judgingCount",
+   "gateCount",
+   "staleBaselineNote",
+   "projectScreen"
+  ],
+  "domain_terms": [
+   "checks and gates",
+   "survey",
+   "environment",
+   "baseline test results",
+   "recommendations",
+   "features"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "project",
+   "gates",
+   "environment",
+   "baseline",
+   "recommendations"
+  ],
+  "entities_written": [
+   "project",
+   "gates",
+   "environment"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 19,
+    "name": "editButton"
+   },
+   {
+    "calls": [],
+    "line": 25,
+    "name": "editBar"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 36,
+    "name": "edRow"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 41,
+    "name": "edInput"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 45,
+    "name": "edLines"
+   },
+   {
+    "calls": [
+     "edRow",
+     "esc",
+     "previewEditor",
+     "environmentProblems"
+    ],
+    "line": 50,
+    "name": "environmentEditor"
+   },
+   {
+    "calls": [
+     "edRow",
+     "esc"
+    ],
+    "line": 87,
+    "name": "previewEditor"
+   },
+   {
+    "calls": [
+     "esc",
+     "checkAnchor"
+    ],
+    "line": 109,
+    "name": "checksEditor"
+   },
+   {
+    "calls": [
+     "editBar",
+     "edRow",
+     "edInput",
+     "esc"
+    ],
+    "line": 136,
+    "name": "surveyEditor"
+   },
+   {
+    "calls": [
+     "projectUrl",
+     "api",
+     "withBusy",
+     "refreshProject",
+     "runBaseline",
+     "toast"
+    ],
+    "line": 150,
+    "name": "saveEdits"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 193,
+    "name": "todoCard"
+   },
+   {
+    "calls": [],
+    "line": 211,
+    "name": "todoSection"
+   },
+   {
+    "calls": [],
+    "line": 223,
+    "name": "liveRecommendations"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 234,
+    "name": "adoptForm"
+   },
+   {
+    "calls": [
+     "recBody"
+    ],
+    "line": 264,
+    "name": "recTodo"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 293,
+    "name": "recPrompt"
+   },
+   {
+    "calls": [
+     "esc",
+     "firstSentence",
+     "todoCard"
+    ],
+    "line": 330,
+    "name": "recBody"
+   },
+   {
+    "calls": [],
+    "line": 377,
+    "name": "firstSentence"
+   },
+   {
+    "calls": [
+     "esc",
+     "todoSection"
+    ],
+    "line": 392,
+    "name": "declinedRecommendations"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 417,
+    "name": "declinedChecks"
+   },
+   {
+    "calls": [
+     "isGreen"
+    ],
+    "line": 443,
+    "name": "parkedChecks"
+   },
+   {
+    "calls": [
+     "isGreen"
+    ],
+    "line": 450,
+    "name": "judgingCount"
+   },
+   {
+    "calls": [
+     "esc",
+     "rel"
+    ],
+    "line": 456,
+    "name": "gateCount"
+   },
+   {
+    "calls": [
+     "esc",
+     "rel"
+    ],
+    "line": 474,
+    "name": "staleBaselineNote"
+   },
+   {
+    "calls": [
+     "unrunnableGates",
+     "projectSection",
+     "projectBar",
+     "readingBehindStrip",
+     "standingBlocks",
+     "checksQuestion",
+     "icon",
+     "tabHead",
+     "overviewSection",
+     "asBuiltSection",
+     "esc",
+     "blockingItems",
+     "movesDockerfile",
+     "gateLine",
+     "parkedChecks",
+     "isGreen",
+     "toolingDriftBlock",
+     "resurveyBlock",
+     "testsTab",
+     "guidesTab",
+     "historySection",
+     "firstRunSection",
+     "projectPanels",
+     "environmentProblems",
+     "staleBaselineNote"
+    ],
+    "line": 491,
+    "name": "projectScreen"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the project configuration screen with editable sections for checks, environment setup, and survey data; displays baseline test results, recommendations, and editor forms for modifying project settings.",
+  "routes_called": [
+   {
+    "method": "PATCH",
+    "path": "/api/projects/{id}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{id}/checks/runs"
+   }
+  ],
+  "ways_in": []
+ }
+}

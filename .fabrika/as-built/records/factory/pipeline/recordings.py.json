@@ -1,0 +1,53 @@
+{
+ "blob": "cff0922b62ca269a674ff1f000108f6a1d6cba26",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "trace_player"
+  ],
+  "domain_terms": [
+   "browser recording",
+   "Playwright trace",
+   "frames",
+   "walkthrough player"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 60,
+    "name": "_jpeg_size"
+   },
+   {
+    "calls": [
+     "_jpeg_size"
+    ],
+    "line": 88,
+    "name": "_without_leading_blanks"
+   },
+   {
+    "calls": [
+     "_first_lines",
+     "_without_leading_blanks",
+     "_jpeg_size"
+    ],
+    "line": 120,
+    "name": "trace_player"
+   }
+  ],
+  "imports": [
+   "factory/pipeline/text.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "zipfile"
+  ],
+  "purpose": "Extracts browser recordings from test trace archives and assembles them into a player-ready format with frames and step labels.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

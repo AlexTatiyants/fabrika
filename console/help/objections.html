@@ -1,0 +1,27 @@
+<p class="lead">Objections are everything the review raised about the change, security included. Blind spots are
+  the places where the run's own figures are worth less than they look.</p>
+
+<h4>Who objects</h4>
+<p>The breaker attacks the finished code and proves each break with a test that fails. The reviewer reads the whole
+  change and makes the strongest case against shipping it, and any review agent you add on the crew page reads the
+  same bundle; none of them can see what the others said. The arbiter then decides what happens to each finding:
+  real or not, fixable, or yours to rule on.</p>
+
+<h4>Objections</h4>
+<p>At the top is the strongest case against shipping this, in its proponent's words. Then every finding, in bands
+  by what the repair loop did about it: <i>The loop tried to fix these and could not</i>, <i>The loop never tried
+  these</i>, <i>An agent argued these away</i>, <i>The loop fixed these</i>. Each row carries its severity and its
+  category, so a security finding is found by its category, such as authz or exposure. Below the bands, what each
+  agent examined and found sound.</p>
+<p>Nothing is dropped for having been fixed: a packet that got shorter as the loop worked would look better and be
+  worth less. A finding that restates another is folded under it.</p>
+
+<h4>Blind spots</h4>
+<p>Every figure in a packet is computed as though everything meant to run did run. Where that isn't true, the thing
+  that failed is the one thing that can't report it: an agent that never returned files no finding, and a suite
+  that died early names no failures. Blind spots are computed, not reported. Each one names the figure it makes
+  look better, and is marked <i>discount</i> or, where nothing was measured at all, <i>nothing measured</i>. The
+  figures under <b>Stats</b> carry a † into the blind spot that discounts them.</p>
+
+<p>Both tabs end with a box for something in your own words. It's filed as a flag, tagged <b>repair</b> unless you
+  choose otherwise, and joins the card at the foot of Your calls. See <a data-help="your-calls">Your calls</a>.</p>

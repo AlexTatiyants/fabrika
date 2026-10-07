@@ -1,0 +1,383 @@
+{
+ "blob": "83e924f5497a31db82a48d3ea1e3768aac130ec9",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "journal_calls",
+   "stop_journaling",
+   "journal_call",
+   "route_tokens",
+   "call_entry",
+   "LLMError",
+   "refusal_words",
+   "RouteExhausted",
+   "RateLimited",
+   "RoleUsage",
+   "extract_json",
+   "LLM",
+   "SCHEMA_ATTEMPTS"
+  ],
+  "domain_terms": [
+   "role",
+   "route",
+   "model",
+   "completion",
+   "schema",
+   "LLM role and model usage",
+   "billing and cost tracking",
+   "provider rate limits and credits",
+   "budget guard and spend ceilings"
+  ],
+  "entities_defined": [
+   "LLMError",
+   "RouteExhausted",
+   "RateLimited",
+   "RoleUsage",
+   "LLM"
+  ],
+  "entities_read": [
+   "RoleUsage",
+   "RouteConfig"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 61,
+    "name": "journal_calls"
+   },
+   {
+    "calls": [],
+    "line": 66,
+    "name": "stop_journaling"
+   },
+   {
+    "calls": [],
+    "line": 70,
+    "name": "journal_call"
+   },
+   {
+    "calls": [
+     "_dig",
+     "_as_float"
+    ],
+    "line": 82,
+    "name": "route_tokens"
+   },
+   {
+    "calls": [
+     "_as_float"
+    ],
+    "line": 96,
+    "name": "call_entry"
+   },
+   {
+    "calls": [],
+    "line": 149,
+    "name": "LLMError"
+   },
+   {
+    "calls": [],
+    "line": 159,
+    "name": "refusal_words"
+   },
+   {
+    "calls": [],
+    "line": 169,
+    "name": "RouteExhausted"
+   },
+   {
+    "calls": [],
+    "line": 181,
+    "name": "_SkipSpent"
+   },
+   {
+    "calls": [],
+    "line": 189,
+    "name": "RateLimited"
+   },
+   {
+    "calls": [
+     "read_windows"
+    ],
+    "line": 230,
+    "name": "_windows_full"
+   },
+   {
+    "calls": [],
+    "line": 244,
+    "name": "_retry_after"
+   },
+   {
+    "calls": [],
+    "line": 257,
+    "name": "RoleUsage"
+   },
+   {
+    "calls": [],
+    "line": 300,
+    "name": "extract_json"
+   },
+   {
+    "calls": [],
+    "line": 346,
+    "name": "_dig"
+   },
+   {
+    "calls": [],
+    "line": 363,
+    "name": "_merge_jsonl"
+   },
+   {
+    "calls": [
+     "_as_float"
+    ],
+    "line": 389,
+    "name": "principal_model"
+   },
+   {
+    "calls": [],
+    "line": 410,
+    "name": "_as_float"
+   },
+   {
+    "calls": [
+     "_drop_empty_pairs"
+    ],
+    "line": 417,
+    "name": "cli_argv"
+   },
+   {
+    "calls": [],
+    "line": 449,
+    "name": "_drop_empty_pairs"
+   },
+   {
+    "calls": [],
+    "line": 473,
+    "name": "strict_schema"
+   },
+   {
+    "calls": [
+     "use_mirror"
+    ],
+    "line": 503,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 540,
+    "name": "client"
+   },
+   {
+    "calls": [],
+    "line": 553,
+    "name": "reset_client"
+   },
+   {
+    "calls": [],
+    "line": 568,
+    "name": "aclose"
+   },
+   {
+    "calls": [],
+    "line": 575,
+    "name": "_post"
+   },
+   {
+    "calls": [],
+    "line": 609,
+    "name": "_payload"
+   },
+   {
+    "calls": [],
+    "line": 644,
+    "name": "mark_spent"
+   },
+   {
+    "calls": [],
+    "line": 657,
+    "name": "spent"
+   },
+   {
+    "calls": [
+     "_fallback_for",
+     "_on_route",
+     "journal_call",
+     "mark_spent"
+    ],
+    "line": 666,
+    "name": "_complete"
+   },
+   {
+    "calls": [],
+    "line": 741,
+    "name": "_fallback_for"
+   },
+   {
+    "calls": [
+     "_run_cli",
+     "_post",
+     "_payload"
+    ],
+    "line": 768,
+    "name": "_on_route"
+   },
+   {
+    "calls": [
+     "kill"
+    ],
+    "line": 788,
+    "name": "_communicate"
+   },
+   {
+    "calls": [
+     "cli_argv",
+     "completion_box",
+     "_communicate",
+     "_dig",
+     "_merge_jsonl",
+     "_note_windows",
+     "_windows_full",
+     "_retry_after",
+     "_as_float"
+    ],
+    "line": 812,
+    "name": "_run_cli"
+   },
+   {
+    "calls": [
+     "_note_answered"
+    ],
+    "line": 980,
+    "name": "_account"
+   },
+   {
+    "calls": [],
+    "line": 1067,
+    "name": "_exchange_key"
+   },
+   {
+    "calls": [],
+    "line": 1070,
+    "name": "_park_usage"
+   },
+   {
+    "calls": [
+     "_exchange_key"
+    ],
+    "line": 1073,
+    "name": "take_usage"
+   },
+   {
+    "calls": [],
+    "line": 1087,
+    "name": "_truncated"
+   },
+   {
+    "calls": [
+     "_truncated",
+     "_content"
+    ],
+    "line": 1103,
+    "name": "_refuse_truncated"
+   },
+   {
+    "calls": [],
+    "line": 1118,
+    "name": "_content"
+   },
+   {
+    "calls": [
+     "_complete",
+     "_refuse_truncated",
+     "_park_usage",
+     "_content",
+     "extract_json"
+    ],
+    "line": 1132,
+    "name": "ask"
+   },
+   {
+    "calls": [],
+    "line": 1201,
+    "name": "_note_answered"
+   },
+   {
+    "calls": [
+     "_note_answered"
+    ],
+    "line": 1207,
+    "name": "record_external"
+   },
+   {
+    "calls": [
+     "MeterStore"
+    ],
+    "line": 1261,
+    "name": "meters"
+   },
+   {
+    "calls": [
+     "read_windows",
+     "read_credits"
+    ],
+    "line": 1273,
+    "name": "_note_windows"
+   },
+   {
+    "calls": [],
+    "line": 1291,
+    "name": "coverage"
+   },
+   {
+    "calls": [],
+    "line": 1324,
+    "name": "usage_report"
+   }
+  ],
+  "imports": [
+   "factory/procs.py",
+   "factory/isolation.py",
+   "factory/config.py",
+   "factory/agentbox.py",
+   "factory/meters.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "LLM provider APIs",
+   "subprocess CLIs for model providers",
+   "the local filesystem"
+  ],
+  "purpose": "Central entry point for all LLM queries in the system. Provides a unified interface to OpenAI-compatible model endpoints, handles request/response marshaling, validates structured output against schemas, tracks usage and costs, manages retry logic and provider fallbacks, and journals all model calls.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "LLM",
+    "kind": "export",
+    "method": "",
+    "name": "LLM"
+   },
+   {
+    "handler": "ask",
+    "kind": "export",
+    "method": "",
+    "name": "LLM.ask"
+   },
+   {
+    "handler": "journal_calls",
+    "kind": "export",
+    "method": "",
+    "name": "journal_calls"
+   },
+   {
+    "handler": "stop_journaling",
+    "kind": "export",
+    "method": "",
+    "name": "stop_journaling"
+   }
+  ]
+ }
+}

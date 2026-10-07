@@ -1,0 +1,430 @@
+/* Small parts that load after the crew page and before the gate screens: the
+   editor link, the ledger, folds, the two questions a build answers, the
+   toast, and the narrow-window rules for everything above. */
+
+/* ---------------------------------------------- control room: the editor url
+
+   Presets are a shortcut into the same field, not a second control -- picking
+   one just writes that editor's template into the input, which stays the
+   thing that is actually saved. */
+.editor-presets { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1rem; }
+.editor-chip {
+  font: 500 .75rem/1 var(--mono); letter-spacing: .02em;
+  padding: .42rem .75rem; border: 1px solid var(--line-strong); border-radius: var(--radius);
+  background: var(--surface-lift); color: var(--ink-2); cursor: pointer;
+}
+.editor-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+.editor-chip.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.editor-preview {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: .1rem .4rem;
+  margin-top: 1rem; padding: .65rem .8rem;
+  background: var(--surface-sunk); border-radius: var(--radius);
+}
+.editor-preview code { color: var(--ink); word-break: break-all; }
+
+/* ------------------------------------------------------------- the ledger */
+
+.log-row {
+  display: grid; width: 100%;
+  grid-template-columns: 2.6rem 4.2rem minmax(0, 1fr) 7rem 12rem 3.2rem 3.2rem 4rem 1.2rem;
+  gap: .5rem; align-items: baseline; text-align: left;
+  padding: .32rem .45rem;
+  background: none; border: 0; border-bottom: 1px solid var(--line);
+  cursor: pointer; font: inherit; color: inherit;
+}
+.log-row:hover { background: var(--surface); }
+.log-row.open { background: var(--surface); border-bottom-color: transparent; }
+.log-row.head {
+  cursor: default; font-family: var(--mono); font-size: .625rem;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
+}
+.log-row.head:hover { background: none; }
+.log-row:not(.agent) .lr-kind { color: var(--ink-3); }
+.lr-seq, .lr-time { font-size: .6875rem; color: var(--ink-3); }
+.lr-kind { font-size: .875rem; }
+.lr-role { font-size: .75rem; }
+.lr-model { font-size: .6875rem; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lr-num { font-size: .6875rem; color: var(--ink-3); text-align: right; }
+/* What the call cost is the number a reader scans this column for, so it is
+   the one that is not grey. */
+.lr-cost { color: var(--ink-2); }
+.log-row:not(.agent) .lr-cost { color: var(--ink-3); }
+
+.log-detail {
+  padding: .6rem .5rem 1rem;
+  background: var(--surface); border-bottom: 1px solid var(--line-strong);
+}
+.log-detail pre { max-height: 460px; }
+
+@media (max-width: 900px) {
+  .log-row { grid-template-columns: 2.4rem minmax(0, 1fr) 3.2rem 4rem 1.2rem; }
+  .log-row .lr-time, .log-row .lr-model, .log-row .lr-role { display: none; }
+}
+
+.discard { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+
+/* ------------------------------------------------------------------- folds */
+
+/* A section that presents itself as a line. The marker is on the summary rather
+   than a nested element so the whole header row is the hit target. */
+.fold > summary {
+  cursor: pointer;
+  list-style: none;
+}
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::marker { content: ''; }
+.fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Air above, because these are the page's two questions and without it they
+   run into whatever sits above them. */
+/* One rule, not two. `.step-eyebrow` carries a border-top of its own, so an
+   eyebrow inside a section header would draw a second line 22px under this
+   one, which a reader sees as a stray extra line. So the header carries no
+   eyebrow, and this rule alone separates the two questions. */
+.sec-fold { margin-top: 2.4rem; border-top: 1px solid var(--line); padding-top: 1.4rem; }
+.sec-fold > summary { position: relative; padding-right: 1.4rem; }
+.sec-fold > summary .step-title { margin: 0 0 .25rem; }
+/* And between the header and what it opens onto. Without it the title,
+   summary line and first paragraph are lines of type at different sizes with
+   nothing between them. */
+.sec-fold[open] > summary { margin-bottom: 1.1rem; }
+/* A caret that says which way this goes, in the corner where one is expected. */
+.sec-fold > summary::after {
+  content: '';
+  position: absolute; right: .25rem; top: .7rem;
+  width: .45rem; height: .45rem;
+  border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3);
+  transform: rotate(45deg); transition: transform .12s ease;
+}
+.sec-fold[open] > summary::after { transform: rotate(-135deg); }
+/* The collapsed answer. It exists so a closed question can be read without
+   opening it -- so once it IS open, it is the same fact as the rows underneath
+   said twice, in the cramped gap between a title and a paragraph. */
+.fold-line {
+  margin: .1rem 0 0; font-size: .8125rem; color: var(--ink-3);
+  font-family: var(--mono);
+}
+.sec-fold[open] > summary .fold-line { display: none; }
+.fold-line b { color: var(--red); font-weight: 600; }
+
+/* Titles stay outside the fold: a fold nobody opens must not be where things go
+   to be forgotten. */
+.fold-peek {
+  margin: .4rem 0 0; padding-left: 1.1rem;
+  font-size: .8125rem; color: var(--ink-3);
+}
+.fold-peek li { margin: .15rem 0; }
+.fold[open] + .fold-peek, .fold[open] ~ .fold-peek { display: none; }
+
+/* One line under a proposal card, never a card of its own. */
+.ts-restated { margin: .5rem 0 0; }
+
+/* A unified diff, coloured only where it carries meaning. */
+.diff-out { max-height: 26rem; overflow: auto; margin-top: .7rem; }
+
+/* The project's name is the way back to its landing page, and should read as
+   the heading it is until there is somewhere to go. */
+.ftitle a { color: inherit; text-decoration: none; }
+.ftitle a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.declined { margin-top: .9rem; }
+.declined .hz-row { padding: .55rem 0; }
+
+/* One row, one shape, whatever it is about: a check that ran, a check that
+   does not exist yet, a level of testing, a file being offered. The lamp is
+   read first, the verdict last, and the to-do that answers it is inside. */
+.q-rows { margin-top: .2rem; }
+/* The checks by the question each asks. A heading per family, quiet enough
+   that the rows stay what the eye lands on. */
+.fam + .fam { margin-top: 1.2rem; }
+.proposal-note { display: flex; gap: .55rem; align-items: flex-start; padding: .6rem .8rem;
+  margin: .2rem 0 1rem; border: 1px solid var(--line-strong); border-radius: var(--radius);
+  background: var(--surface-lift); }
+.proposal-note p { margin: 0; font-size: .92rem; color: var(--ink-2); }
+.proposal-note .ic { margin-top: .2rem; color: var(--accent-ink); flex: none; }
+.q-proposed { color: var(--accent-ink); }
+.todo.prop { border-left-color: var(--accent-ink); }
+.todo.prop .todo-does code { font-size: .86rem; }
+.fam-h { font-family: var(--mono); font-size: .74rem; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-2); margin: 0 0 .1rem;
+  padding-bottom: .3rem; border-bottom: 1px solid var(--line-strong); }
+.fam-asks { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-3);
+  margin-left: .4rem; }
+.fam-empty { margin: .45rem 0 0; font-size: .92rem; color: var(--ink-3); }
+.fam-h { display: flex; align-items: baseline; gap: .45rem; }
+.fam-ic { align-self: center; color: var(--ink-2); flex: none; }
+.q-more { margin-top: .15rem; }
+.q-more > summary { cursor: pointer; font-size: .82rem; color: var(--ink-3); list-style: none;
+  display: inline-flex; align-items: center; gap: .3rem; }
+.q-more > summary::-webkit-details-marker { display: none; }
+.q-more > summary::before { content: "\25B8"; font-size: .7rem; transition: transform .12s ease; }
+.q-more[open] > summary::before { transform: rotate(90deg); }
+.q-more > summary:hover { color: var(--ink-2); }
+.q-more[open] > .q-sub:first-of-type { margin-top: .3rem; }
+@media (prefers-reduced-motion: reduce) { .q-more > summary::before { transition: none; } }
+.answer-field.inp-pct { width: 4.5rem; display: inline-block; padding: .1rem .35rem; font-size: .88rem; }
+/* Seven green rows are the common case and the least interesting thing on the
+   page: nothing that already worked is broken. Set at the same rhythm as a
+   row with a to-do card under it, a project in its normal state would spend
+   most of a screen saying so. So they are tighter, and the commands wrap at
+   the same leading rather than a looser one. */
+.q-row { border-bottom: 1px solid var(--line); padding: .45rem 0; }
+.q-line, .q-fact, .q-fact code { line-height: 1.35; }
+/* A row that has something to say keeps its air. */
+.q-row:has(.todo) { padding: .8rem 0; }
+.q-row:last-child { border-bottom: 0; }
+.q-line {
+  display: grid; grid-template-columns: auto 7rem minmax(0, 1fr) auto;
+  gap: .75rem; align-items: baseline;
+}
+.q-lamp {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--lamp-off); align-self: start; margin-top: .3rem;
+}
+.q-lamp.g { background: var(--lamp-green); }
+.q-lamp.r { background: var(--lamp-red); }
+.q-lamp.a { background: var(--lamp-amber); }
+.q-name { font-weight: 600; font-family: var(--mono); font-size: .875rem; }
+.q-fact { color: var(--ink-2); min-width: 0; }
+.q-fact code { font-family: var(--mono); font-size: .8125rem; color: var(--ink); }
+
+/* A row for something that does not exist yet has no name -- there is no check
+   to have one, and deriving one from the command gives two different
+   suggestions the same word. So the command takes the name's column as well as
+   its own, and carries the weight a name would: an empty first column reads as
+   a row that failed to render, and the subject of the row reads as a footnote
+   to nothing. */
+.q-name:empty { display: none; }
+.q-name:empty + .q-fact { grid-column: 2 / 4; }
+.q-name:empty + .q-fact code { font-size: .875rem; font-weight: 600; }
+.q-name:empty + .q-fact + .chip { grid-column: 4; }
+
+/* Except that a suggestion does have a name: the reading writes one, and it is
+   a sentence rather than an identifier -- "Audit dependencies for known
+   vulnerabilities", not `api-lint`. What the rule above rightly refuses is a
+   name *derived from the command*, which would give two suggestions the same
+   word; a written one is the opposite problem. Set in the text face and given
+   room to be prose, because a title wrapped five deep down a 7rem mono column
+   is less readable than the command it stands in for. */
+/* Stacked at every width: the title leads with the whole row to itself, and
+   the command sits under it as the detail it is. Side by side, a column wide
+   enough for the command leaves the title wrapping in whatever is left. */
+.q-line.prose { grid-template-columns: auto minmax(0, 1fr) auto; row-gap: .15rem; }
+.q-line.prose .q-name {
+  grid-column: 2; font-family: inherit; font-size: .9375rem; line-height: 1.35;
+}
+.q-line.prose .q-fact { grid-column: 2; grid-row: 2; }
+.q-line.prose .chip { grid-column: 3; grid-row: 1; }
+
+/* The verdict, in the words of the thing it is about. Three tones, and the
+   tone is the whole of the colour on this page apart from the lamps. */
+.chip {
+  font-family: var(--cond); font-size: .75rem; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; white-space: nowrap;
+  padding: .15rem .5rem; border-radius: 2px;
+}
+.chip.ok { background: var(--green-wash); color: var(--green); }
+.chip.warn { background: var(--amber-wash); color: var(--amber); }
+.chip.bad { background: var(--red-wash); color: var(--red); }
+
+.file-out { max-height: 22rem; overflow: auto; margin-top: .7rem; }
+
+@media (max-width: 640px) {
+  .q-line { grid-template-columns: auto 1fr auto; }
+  .q-fact { grid-column: 2 / -1; }
+}
+
+/* ------------------------------- the two questions a build has to answer */
+
+/* Air above and inside. `.wrap` carries no padding of its own, and this is the
+   first thing in it -- without air the card sits flush against the dark bar
+   with its text against its own edges, which reads as a strip the page ran out
+   of room for rather than the first thing it has to say. */
+.standing {
+  display: flex; align-items: center; gap: 1.1rem;
+  padding: 1.15rem 1.35rem;
+  margin-top: 1.8rem;
+}
+.standing + .standing { margin-top: .6rem; }
+.standing .acts { margin-top: .8rem; }
+.standing .big {
+  font-family: var(--cond); font-size: 1.75rem; font-weight: 700; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.standing p { margin: 0; }
+.standing .mono { font-family: var(--mono); font-size: .8125rem; }
+.standing .blockers { margin: .4rem 0 .6rem; padding-left: 1.2rem; }
+.standing .blockers li { margin: .15rem 0; }
+.standing .blocks-how { color: var(--ink-2); font-size: var(--t-body); }
+.blocks { background: var(--amber-wash); border-left: 3px solid var(--lamp-amber); }
+.blocks .big { color: var(--amber); }
+
+/* A question's heading. The icon is there because two sections of running text
+   at the same size read as one, and this page is mostly two sections. */
+.q-head {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  margin-top: 1rem; padding-bottom: .45rem;
+  border-bottom: 2px solid var(--ink);
+}
+.q-head svg { width: 22px; height: 22px; flex: none; color: var(--ink); }
+.q-head h3 {
+  font-family: var(--cond); font-size: 1.375rem; font-weight: 600;
+  margin: 0; letter-spacing: -.005em;
+}
+.q-job { color: var(--ink-3); font-size: .875rem; }
+.q-meter { margin-left: auto; display: flex; align-items: center; gap: .5rem; }
+.q-tally {
+  font-family: var(--mono); font-size: .75rem; color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.q-tally b { color: var(--red); font-weight: 600; }
+.q-bars { display: flex; gap: 3px; }
+.q-bars i { width: 20px; height: 7px; border-radius: 1px; background: var(--line-strong); }
+.q-bars i.g { background: var(--lamp-green); }
+.q-bars i.r { background: var(--lamp-red); }
+.q-bars i.a { background: var(--lamp-amber); }
+
+/* A suggestion, inside the row or the question it answers. Sunk rather than
+   raised: it is a note about the thing above it, not another object. */
+.todo {
+  margin: .7rem 0 .1rem 1.6rem; padding: .75rem .9rem;
+  background: var(--surface-sunk); border-left: 2px solid var(--line-strong);
+}
+.todo-src {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 .35rem;
+}
+.todo-does { margin: 0 0 .4rem; }
+.todo-how { margin: 0 0 .5rem; font-size: .875rem; color: var(--ink-2); }
+.todo-note { margin: 0 0 .5rem; font-size: .875rem; color: var(--ink-3); }
+.todo-note .mono { font-family: var(--mono); font-size: .8125rem; }
+
+/* A control that belongs to a sentence rather than to the row of verbs. The
+   advice says to put a ceiling in the command; this is how, and it reads
+   better at the end of that sentence than as a fourth button competing with
+   the two real choices. */
+.inline-act {
+  font-family: var(--cond); font-size: .75rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--ink-2); text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+}
+.inline-act:hover { color: var(--ink); border-bottom-color: var(--ink); }
+.todo-gain {
+  display: flex; align-items: center; gap: .4rem; margin: 0 0 .1rem;
+  font-family: var(--mono); font-size: .75rem; color: var(--green);
+}
+.todo-gain svg { width: 13px; height: 13px; flex: none; }
+.todo-gain code { font-family: var(--mono); }
+.todo .acts { display: flex; gap: .45rem; flex-wrap: wrap; margin-top: .6rem; }
+
+/* ------------------------------------------------- what can be verified */
+
+/* One row per level. Three columns, because there are three things worth
+   knowing about a level and the rest is scenery. */
+.lv { width: 100%; border-collapse: collapse; margin: .2rem 0 .6rem; }
+.lv td { padding: .6rem .5rem; border-top: 1px solid var(--line); vertical-align: baseline; }
+.lv tr:first-child td { border-top: 0; }
+.lv-name { font-weight: 600; width: 8.5rem; }
+.lv-what { color: var(--ink-3); }
+.lv-verdict { text-align: right; white-space: nowrap; }
+
+/* ----------------------------------------- what the verify lane asked for */
+
+.asks { margin-top: .9rem; }
+.ask {
+  padding: .55rem 0 .55rem .8rem;
+  border-left: 2px solid var(--line-strong);
+}
+.ask + .ask { margin-top: .3rem; }
+.ask-need { font-weight: 600; }
+.ask-cost {
+  margin: .15rem 0 0;
+  font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+}
+
+/* ------------------------------------------------------------------- toast */
+
+/* Under the masthead rather than at the foot of the window. The foot of the
+   window is as far from the thing you just pressed as the viewport allows, and on a
+   long page -- the harness card, the gate list -- your eye is nowhere near it.
+   Above the busy overlay's z-index, because the message that matters most is
+   the one explaining why the overlay just went away. */
+.toasts {
+  position: fixed; z-index: 70;
+  /* Centred over the pane, not the window -- the same reasoning as the busy
+     overlay. The rail is 264px of chrome on a wide screen, and a note centred
+     on the viewport sits visibly left of the column it is about. */
+  top: calc(var(--mast-h) + .6rem);
+  left: calc(50% + var(--panel-w) / 2); transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: .4rem;
+  width: min(92vw, 560px);
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  display: flex; align-items: flex-start; gap: .6rem;
+  padding: .6rem .7rem .6rem .9rem;
+  font-size: .875rem; border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .16);
+  animation: toast-in .14s ease-out;
+}
+.toast-body { flex: 1; min-width: 0; }
+.toast-info { background: var(--ink); color: var(--paper); }
+/* A failure does not look like a confirmation. Red, named, and it stays until
+   it is dismissed -- an error that clears itself is an error nobody read. */
+.toast-error {
+  background: var(--red-wash); color: var(--ink);
+  border: 1px solid var(--red); border-left-width: 3px;
+}
+.toast-tag {
+  display: block;
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--red);
+}
+.toast-x {
+  flex: none; border: 0; background: none; cursor: pointer;
+  font-size: 1.1rem; line-height: 1; padding: 0 .2rem; color: inherit; opacity: .6;
+}
+.toast-x:hover { opacity: 1; }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+/* Wherever the rail is not taking up room, the pane is the window. */
+body[data-rail="off"] .toasts { left: 50%; }
+
+.empty { padding: 2.5rem 0; color: var(--ink-3); }
+.error-box { border-left: 3px solid var(--red); background: var(--red-wash); padding: .8rem 1rem; }
+.error-box pre { margin: .4rem 0 0; white-space: pre-wrap; font-size: .75rem; }
+
+/* ------------------------------------------------------------- responsive */
+
+/* Below this the rail is a disclosure rather than a fixture: on a narrow
+   screen a permanent 264px of chrome costs more than it tells you. */
+@media (max-width: 1023px) {
+  body { padding-left: 0; }
+  .panel { transform: translateX(-100%); transition: transform .16s ease; box-shadow: none; }
+  body[data-panel="open"] .panel { transform: translateX(0); box-shadow: 0 0 40px -12px rgba(20,24,26,.5); }
+  body:not([data-panel="open"]) .panel-scrim { display: none; }
+  .panel-toggle { display: inline-flex; }
+  .masthead { justify-content: space-between; }
+  /* The rail is a disclosure here, not a fixture, so the pane is the window. */
+  .toasts { left: 50%; }
+}
+
+@media (max-width: 520px) {
+  :root { --gutter: 14px; }
+  body { font-size: 15px; }
+  .verdict-headline { font-size: 1.125rem; }
+  .decision dl { grid-template-columns: 1fr; gap: .1rem; }
+  .decision dt { padding-top: .5rem; }
+  .mat-bar { height: 38px; }
+  .mat-seg .seg-label { display: none; }
+  .trace-row { grid-template-columns: 3.4rem minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+

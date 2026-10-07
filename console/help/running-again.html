@@ -1,0 +1,28 @@
+<p class="lead">A packet you don't trust, a build that stopped, a feature you're done with: each has its own
+  button, and each says what it keeps before it acts.</p>
+
+<h4>Verify again</h4>
+<p>For a packet that measured the harness rather than the code. The code on the branch stays exactly as it is, and
+  everything that judges it runs again from nothing: the checks, the blind tests, the probes, the review panel and
+  the repair loop. The packet you're reading is kept, marked as being replaced, until the new one lands. Only on a
+  packet awaiting your ruling.</p>
+
+<h4>Build again</h4>
+<p>For a build that was itself the problem: units whose environment never came up, a plan written before the
+  architect had read the repository. The units are built again over the spec you already approved; spec review isn't
+  reopened, and your answers stand. <b>The branch is reset first</b>, to the commit the feature started from, so
+  the code on it is replaced rather than added to. The old commits stay reachable in git, and the ledger records
+  the commit to recover them from.</p>
+
+<h4>Resume the run</h4>
+<p>When a build stops partway, because a station failed or the process running it went away, <b>Resume the
+  run</b> picks it up where it stopped. Only what stopped runs again; the plan, the blind tests and the units that
+  finished are reused.</p>
+<p>All three spend from the same budget as the run before them, counted over the feature's whole life. See
+  <a data-help="the-repair-loop">Repairs and the repair loop</a>.</p>
+
+<h4>Discard</h4>
+<p><b>Discard</b>, in the feature's bar, removes the feature's ledger (every prompt, every response, the packet)
+  and its checkout. It asks twice. The branch is kept, so anything built survives in git; only the discard on the
+  feature's ledger screen offers to delete the branch too, and says that loses the code. A feature can't be
+  discarded while agents are still writing to it.</p>

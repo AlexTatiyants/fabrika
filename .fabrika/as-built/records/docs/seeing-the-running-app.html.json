@@ -1,0 +1,27 @@
+{
+ "blob": "3b8f49ad732c6c3574a6fad26201da4a6baf4925",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "preview (running app for review)",
+   "feature (code change under review)",
+   "verdict (review decision)",
+   "service (running component)",
+   "door (network forwarder)",
+   "sealed network (isolated network)"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "A design note explaining Fabrika's preview feature, which lets reviewers open and interact with a running application built from a feature branch during code review, without network access. Documents the problem motivation, technical architecture using a two-hop network forwarder, and implementation plan.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,543 @@
+/* The base layer of three screens -- the gate-1 document, the running screen
+   and the review screen -- and the form fields they share. Several of these
+   rules are overridden further down; they stay here because order is meaning. */
+
+/* ---------------------------------------------------------- the gate-1 doc
+
+   One document in one order, and a rail that is both its contents and, in the
+   counts, the shape of the spec at a glance. */
+
+/* The 1.9rem above the document's first line lives here rather than on that
+   line's own margin. `.doc-tools` is a zero-height row the fold control hangs
+   out of, so any margin the title carries pushes the title down and leaves
+   the control stranded on a line of its own above it. As the column's padding
+   it moves both at once, and the control comes to rest on the title's line
+   where it belongs. */
+.wrap.doc-wrap { max-width: 1280px; padding-top: 1rem; }
+/* A reading measure inside the full column, rather than a narrower column --
+   so prose stays legible without the header moving to meet it. */
+.doc-wrap > .narrow { max-width: 720px; }
+
+/* Findings are lists and want the width; the scout's prose does not. */
+.scout-cols {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 1.5rem 2.5rem; margin-top: 1.5rem;
+}
+.scout-list { min-width: 0; }
+.scout-list .doc-list li { overflow-wrap: anywhere; }
+.scout-list .more { margin-top: .4rem; }
+.scout-list .more > summary {
+  cursor: pointer; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+}
+.scout-list .more > summary:hover { color: var(--ink); }
+.scout-list .more .doc-list { margin-top: .4rem; }
+.slice-note { padding: .7rem 0; border-top: 1px solid var(--line); }
+.slice-note p:last-child {
+  margin: 0; font-size: .875rem; line-height: 1.6; color: var(--ink-2); max-width: 84ch;
+}
+.doc {
+  display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 3rem;
+  align-items: start; margin-top: 1.5rem;
+}
+.doc-sec { scroll-margin-top: calc(var(--mast-h) + 5rem); }
+
+.sec-head {
+  display: flex; align-items: center; gap: .6rem;
+  margin: 2.75rem 0 .9rem; padding-top: .7rem;
+  border-top: 1px solid var(--line-strong);
+  scroll-margin-top: calc(var(--mast-h) + 5rem);
+}
+.doc-sec:first-child .sec-head { margin-top: 1.25rem; }
+.sec-head .ic { width: 16px; height: 16px; color: var(--ink-2); }
+.sec-head h2 {
+  font-family: var(--display); font-size: 1.0625rem; font-weight: 600;
+  line-height: 1.2; margin: 0;
+}
+.sec-count { font-size: .75rem; color: var(--ink-3); }
+/* Every packet tab opens with one plain sentence saying what is on it, at one
+   size and in one place, so moving between tabs does not move the reading. */
+.tab-lead { margin: 1rem 0 1.1rem; font-size: var(--t-head); line-height: 1.6; color: var(--ink-2); }
+
+.sec-sub { font-size: .875rem; color: var(--ink-3); margin: -.5rem 0 1rem; max-width: 78ch; }
+
+.subhead {
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 .35rem;
+}
+.doc-list {
+  margin: 0; padding-left: 1.15rem;
+  font-size: .9375rem; line-height: 1.55; color: var(--ink-2);
+}
+.doc-list li { margin-bottom: .35rem; }
+
+details.decided > summary { cursor: pointer; font-size: .875rem; color: var(--ink-2); }
+details.decided > summary::marker { color: var(--ink-3); }
+.decided-body { margin-top: .8rem; }
+
+.toc { position: sticky; top: calc(var(--mast-h) + 4.5rem); display: flex; flex-direction: column; gap: 1px; }
+.toc-label {
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 .5rem .5rem;
+}
+.toc-item {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .3rem .5rem; text-decoration: none;
+  border-left: 2px solid transparent; color: var(--ink-3);
+}
+.toc-item:hover { color: var(--ink); background: var(--surface); }
+.toc-item.on { color: var(--ink); border-left-color: var(--accent); background: var(--surface); }
+.toc-item.on .ic { color: var(--accent-ink); }
+.toc-name { flex: 1; font-size: .8125rem; line-height: 1.3; }
+.toc-count { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); flex: none; }
+.toc-item.on .toc-count { color: var(--accent-ink); }
+
+@media (max-width: 1100px) {
+  .doc { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .toc { display: none; }
+}
+.spec-summary { font-size: 1.0625rem; line-height: 1.55; color: var(--ink-2); }
+
+.ac-row {
+  display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) auto 1.2rem;
+  gap: .7rem; align-items: baseline; width: 100%; text-align: left;
+  padding: .6rem .5rem;
+  background: none; border: 0; border-bottom: 1px solid var(--line);
+  font: inherit; color: inherit; cursor: pointer;
+}
+.ac-row:hover { background: var(--surface); }
+.ac-row.open { background: var(--surface); border-bottom-color: transparent; }
+.ac-code { font-size: .75rem; color: var(--ink-3); }
+.ac-statement {
+  font-size: .9375rem; line-height: 1.45;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.ac-row.open .ac-statement { -webkit-line-clamp: unset; overflow: visible; }
+
+/* Why and Verified by are the same criterion continued, so they start on the
+   statement's own left edge: the row's padding, the id column, the gap between
+   them. A heavy row spends 3px of that padding on its accent border and the
+   accent runs on down the open card, so the sum is the same either way and the
+   two blocks share one edge. The right edge is the row's, not a reading
+   measure -- a measure narrower than the statement above it reads as the panel
+   being indented from something. */
+.ac-detail {
+  padding: .2rem .5rem .8rem calc(.5rem + 3.6rem + .7rem);
+  background: var(--surface); border-bottom: 1px solid var(--line-strong);
+  font-size: .875rem; color: var(--ink-2);
+}
+.ac-row.heavy.open + .ac-detail {
+  border-left: 3px solid var(--accent);
+  padding-left: calc(.5rem + 3.6rem + .7rem - 3px);
+}
+.ac-detail p { margin: 0 0 .3rem; }
+.ac-detail p:last-child { margin-bottom: 0; }
+
+.settled { padding: .6rem .5rem; border-bottom: 1px solid var(--line); }
+.settled-q { font-size: .8125rem; color: var(--ink-3); margin-bottom: .15rem; }
+.settled-a { font-size: .9375rem; }
+
+/* the shape of the change, before the list of criteria */
+
+.worked { margin-bottom: 1.25rem; }
+
+/* Two panels rather than one paragraph: the point of a worked example is the
+   comparison, and a reader should not have to hunt for the word "after". */
+.worked-pair {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+}
+.worked-side { padding: .85rem 1.1rem; background: var(--surface); }
+.worked-side.before { background: var(--surface-sunk); }
+.worked-when {
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 .3rem;
+}
+/* `.after` is the start screen's short-name row -- `margin-top: 2rem`, and a
+   flex container. A bare `.after` here would match it, start this cell 32px
+   below its neighbour, and show the pair's 1px-gap background through as a
+   grey band above it. A bare state word as a class collides easily in this
+   file, so the modifier is scoped. */
+.worked-side.then .worked-when { color: var(--accent-ink); }
+.worked-text { font-size: 1rem; line-height: 1.55; margin: 0; }
+.worked-side.before .worked-text { color: var(--ink-2); }
+
+/* The change map. Graphite throughout: a screen calling an endpoint is not a
+   thing that needs your judgment, so none of it takes the accent. */
+
+.cmap-wrap { margin: 0 0 1.75rem; }
+.cmap { width: 100%; height: auto; display: block; }
+.cmap .head {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .09em; fill: var(--ink-3);
+}
+.cmap .tbl { font-family: var(--mono); font-size: 10px; fill: var(--ink-3); }
+.cmap .edge { fill: none; stroke: var(--line-strong); stroke-width: 1; opacity: .5; }
+.cmap .n rect { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1; }
+.cmap .n text { font-family: var(--mono); font-size: 10px; fill: var(--ink); }
+.cmap .verb { font-size: 9px; fill: var(--ink-3); letter-spacing: .06em; }
+.cmap .tally { font-size: 9px; fill: var(--ink-3); }
+.cmap .path { font-size: 10.5px; fill: var(--ink); }
+.cmap .op { fill: var(--green); font-weight: 600; }
+.cmap .op.alter { fill: var(--amber); }
+.cmap .op.gone { fill: var(--red); }
+.cmap .tbl.muted { fill: var(--ink-3); font-style: italic; }
+.cmap .ext rect { fill: none; stroke-dasharray: 3 3; }
+.cmap .ext .name { fill: var(--ink-2); }
+.cmap .type { fill: var(--ink-3); font-size: 9px; }
+
+/* Isolation on hover is what makes two dozen curves readable. */
+.cmap.lit .edge { opacity: .12; }
+.cmap.lit .edge.on { opacity: 1; stroke: var(--ink); stroke-width: 1.4; }
+.cmap.lit .n rect, .cmap.lit .n text { opacity: .35; }
+.cmap.lit .n.on rect, .cmap.lit .n.on text { opacity: 1; }
+.cmap.lit .n.on rect { stroke: var(--ink); }
+
+.cmap-wrap figcaption {
+  font-size: .8125rem; color: var(--ink-3); margin-top: .8rem; max-width: 78ch;
+}
+.cmap-wrap .dropped { margin-top: .35rem; }
+.cmap-wrap .dropped > summary { cursor: pointer; }
+.cmap-wrap .dropped ul {
+  margin: .4rem 0 0; padding-left: 1.1rem;
+  font-family: var(--mono); font-size: .6875rem; line-height: 1.6;
+}
+
+/* One key for the whole section: the marks appear in the map and in all three
+   columns, so neither owns them. */
+.oplegend {
+  display: flex; gap: 1.1rem; flex-wrap: wrap;
+  margin: 0 0 1.1rem;
+  font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+}
+.oplegend > span { display: inline-flex; align-items: baseline; gap: .3rem; }
+.oplegend .op { font-weight: 600; }
+.oplegend .op.new { color: var(--green); }
+.oplegend .op.alter { color: var(--amber); }
+.oplegend .op.gone { color: var(--red); }
+
+.schema { margin-bottom: .7rem; }
+.schema-table { font-size: .75rem; color: var(--ink-3); margin: 0 0 .2rem; }
+.schema-col {
+  display: grid; grid-template-columns: 1rem minmax(0, 1fr) auto auto;
+  gap: .4rem; align-items: baseline;
+  font-size: .75rem; margin: 0 0 .1rem; padding: .12rem .35rem;
+  background: var(--surface); border-radius: 2px;
+}
+.schema-col .op { color: var(--green); font-weight: 600; }
+.schema-col.drop .op { color: var(--red); }
+.schema-col.alter .op { color: var(--amber); }
+/* A column name is the identity of the row, so it wraps rather than truncates.
+   Identifiers give CSS no break opportunities of their own -- an underscore is
+   not one -- so without this a long name paints straight over the type. */
+.schema-col .name { color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.schema-col .type, .schema-col .null { justify-self: end; }
+.schema-col .type, .schema-col .null { color: var(--ink-3); font-size: .6875rem; }
+.schema-note { font-size: .75rem; color: var(--ink-2); margin: .1rem 0 .4rem 1.4rem; }
+
+.iface { margin-bottom: .6rem; }
+/* Routes and file paths offer no break opportunities of their own: a slash is
+   not one. Same reason the schema column names need this. */
+.iface p { margin: 0; font-size: .8125rem; overflow-wrap: anywhere; }
+.iface-change { color: var(--ink-2); }
+.where-path { color: var(--ink-3); font-family: var(--mono); font-size: .75rem; }
+
+/* The same three marks the data column uses, so all of "what it touches" reads
+   in one language: added, changed, taken away. */
+.iface .op {
+  display: inline-block; width: 1rem;
+  font-family: var(--mono); font-weight: 600; color: var(--green);
+}
+.iface.alter .op { color: var(--amber); }
+.iface.gone .op { color: var(--red); }
+.iface.gone > p:first-child b { text-decoration: line-through; text-decoration-thickness: 1px; }
+
+/* Derived, and the only thing in the section that gets the accent. */
+.cannot {
+  margin-bottom: 1.5rem; padding: .8rem 1rem;
+  background: var(--surface); border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.cannot .subhead { display: flex; align-items: center; gap: .35rem; color: var(--accent-ink); }
+.cannot .subhead .ic { color: var(--accent-ink); }
+.cannot-note { font-size: .8125rem; color: var(--ink-3); margin: .5rem 0 0; max-width: 76ch; }
+
+.ac-group + .ac-group { margin-top: 1.5rem; }
+.ac-group-label { margin-bottom: .3rem; }
+.ac-row.heavy { border-left: 3px solid var(--accent); padding-left: calc(.5rem - 3px); }
+.ac-rev {
+  display: inline-flex; align-items: center; gap: .25rem;
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .04em;
+  color: var(--ink-3); white-space: nowrap;
+}
+.ac-rev.hard .ic, .ac-rev.irreversible .ic { color: var(--accent-ink); }
+.ac-rev.irreversible, .ac-rev.hard { color: var(--accent-ink); }
+
+/* ------------------------------------------------------- 3. running screen */
+
+.phase-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.phase-list li {
+  display: grid; grid-template-columns: 12px 1fr auto; align-items: baseline; gap: .7rem;
+  padding: .5rem .25rem; border-bottom: 1px solid var(--line);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); transform: translateY(-1px); }
+.dot.done    { background: var(--ink-2); }
+.dot.running { background: var(--accent); animation: pulse 1.4s ease-in-out infinite; }
+.dot.failed  { background: var(--red); }
+/* A phase that was never needed. Hollow rather than filled: it did not run, and
+   it is not waiting to. */
+.dot.skipped { background: transparent; box-shadow: inset 0 0 0 1px var(--line-strong); }
+.phase-name { font-family: var(--display); font-size: .9375rem; }
+.phase-name.pending { color: var(--ink-3); font-weight: 400; }
+.phase-detail { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.phase-time { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+.airgap-note {
+  margin-top: 1.25rem; padding: .7rem .9rem;
+  border-left: 3px solid var(--line-strong);
+  color: var(--ink-2); font-size: .9375rem;
+}
+
+/* -------------------------------------------------------- 4. review screen */
+
+.verdict-strip { padding: 2rem 0 1.25rem; }
+.verdict-headline {
+  font-family: var(--display); font-size: 1.2rem; font-weight: 600;
+  line-height: 1.3; max-width: 62ch; margin: .35rem 0 .6rem;
+}
+
+.budget { font-family: var(--mono); font-size: .8125rem; color: var(--ink-2); }
+.budget b { color: var(--ink); font-weight: 500; }
+
+.stat-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+}
+.stat { padding: .7rem .8rem; background: var(--surface); }
+.stat .n { font-family: var(--display); font-size: 1.5rem; font-weight: 600; line-height: 1.1; display: block; }
+.stat .k { font-size: .8125rem; color: var(--ink-3); }
+.stat.red   { background: var(--red-wash); }
+.stat.red   .n { color: var(--red); }
+.stat.amber { background: var(--amber-wash); }
+.stat.amber .n { color: var(--amber); }
+.stat.green .n { color: var(--green); }
+
+/* the signature element */
+.materiality { margin: 2.5rem 0; }
+.mat-caption {
+  font-family: var(--display); font-size: 1.0625rem; margin-bottom: .7rem;
+}
+.mat-caption .n { font-variant-numeric: tabular-nums; }
+.mat-caption .arrow { color: var(--ink-3); margin: 0 .3rem; }
+.mat-bar {
+  display: flex; width: 100%; height: 46px; overflow: hidden;
+  border-radius: 2px; background: var(--surface-sunk);
+}
+.mat-seg {
+  position: relative; border: 0; padding: 0; cursor: pointer;
+  min-width: 3px; transition: filter .12s ease;
+  display: flex; align-items: center; justify-content: flex-start;
+}
+.mat-seg + .mat-seg { box-shadow: inset 1px 0 0 var(--paper); }
+.mat-seg:hover { filter: brightness(1.06); }
+.mat-seg[aria-expanded="true"] { box-shadow: inset 0 -3px 0 var(--ink); }
+.mat-seg .seg-label {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em;
+  padding-left: .5rem; white-space: nowrap; overflow: hidden;
+}
+.mat-legend {
+  display: flex; flex-wrap: wrap; gap: .25rem 1.1rem; margin-top: .55rem;
+  font-family: var(--mono); font-size: .75rem; color: var(--ink-3);
+}
+.mat-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+.swatch { width: 9px; height: 9px; border-radius: 1px; display: inline-block; }
+.mat-thesis { margin-top: .55rem; font-size: .875rem; color: var(--ink-2); max-width: 66ch; }
+
+.mat-files { margin-top: .75rem; border-top: 1px solid var(--line); }
+.mat-file {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .5rem 1rem;
+  padding: .55rem .25rem; border-bottom: 1px solid var(--line);
+}
+.mat-file .path { font-family: var(--mono); font-size: .8125rem; word-break: break-all; }
+.mat-file .lines { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.mat-file .why { grid-column: 1 / -1; font-size: .875rem; color: var(--ink-2); }
+.mat-file.novel .path { color: var(--accent-ink); }
+
+.objection {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-wash);
+  padding: .9rem 1.1rem; border-radius: 0 var(--radius) var(--radius) 0;
+}
+.objection p:last-child { margin-bottom: 0; }
+.objection .who {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent-ink); margin-bottom: .4rem;
+}
+
+.trace-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.trace-row {
+  display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) auto; gap: .5rem .8rem;
+  align-items: baseline; padding: .5rem .5rem; border-bottom: 1px solid var(--line);
+}
+.trace-row .stmt { font-size: .9375rem; }
+.trace-row .meta { grid-column: 2 / -1; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+.trace-row.orphan_requirement { background: var(--red-wash); }
+.trace-row.untested { background: var(--amber-wash); }
+
+.decision {
+  margin: .85rem 0; padding: 1rem 1.1rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.decision.needs-you { border-left: 3px solid var(--accent); }
+.decision.ruled { opacity: .72; }
+.decision .rank {
+  font-family: var(--mono); font-size: .75rem; color: var(--ink-3); margin-right: .5rem;
+}
+.decision .d-title { font-family: var(--display); font-size: 1rem; font-weight: 600; }
+.decision .d-pills { display: flex; flex-wrap: wrap; gap: .3rem; margin: .5rem 0 .6rem; }
+.decision dl { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: .3rem .9rem; margin: .6rem 0 0; font-size: .9375rem; }
+.decision dt { font-family: var(--mono); font-size: .6875rem; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); padding-top: .2rem; }
+.decision dd { margin: 0; color: var(--ink-2); }
+.decision dd ul { margin: 0; padding-left: 1.05rem; }
+.decision .d-actions { display: flex; gap: .5rem; align-items: center; margin-top: .85rem; flex-wrap: wrap; }
+.ruling-note { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+
+.confidence { display: inline-flex; align-items: center; gap: .4rem; }
+.conf-bar { width: 46px; height: 5px; background: var(--surface-sunk); border-radius: 1px; overflow: hidden; }
+.conf-fill { height: 100%; background: var(--ink-2); display: block; }
+.conf-fill.low { background: var(--accent); }
+
+.finding {
+  padding: .8rem .9rem; border-bottom: 1px solid var(--line);
+}
+.finding .f-head { display: flex; gap: .5rem; align-items: baseline; flex-wrap: wrap; margin-bottom: .3rem; }
+.finding .f-title { font-family: var(--display); font-weight: 600; font-size: .9375rem; }
+.finding .f-detail { font-size: .9375rem; color: var(--ink-2); }
+.finding .f-evidence { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); margin-top: .35rem; word-break: break-word; }
+
+/* A finding the loop settled is still on the page, and still readable -- it is
+   dimmed, not hidden, because the argument the packet makes includes what was
+   found and dealt with, not only what is left. */
+.finding.f-settled { background: var(--surface-sunk); }
+.finding.f-settled .f-title { color: var(--ink-2); font-weight: 500; }
+.finding .f-detail.dim { color: var(--ink-3); font-family: var(--mono); font-size: .75rem; }
+
+.rework {
+  margin: 0 0 1.2rem; padding: .9rem 1rem;
+  background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 4px;
+}
+.rework .mat-caption { font-size: .9375rem; margin-bottom: .35rem; }
+.rework .mat-thesis { margin-top: .5rem; }
+
+/* A gate result carries its own output. Failed ones are worth finding on a
+   page that is mostly green, and the tail is a terminal dump: monospace, its
+   own scroll, never widening the page. */
+.gate-result { display: block; }
+.gate-result.failed .path { color: var(--red); }
+/* Failed here and failed before this feature. Still red, but not this change's
+   fault, and it should not read like an alarm. */
+.gate-result.failed.inherited .path { color: var(--ink-2); }
+.gate-result .why { display: block; color: var(--ink-3); }
+.gate-out { margin-top: .35rem; }
+.gate-out pre {
+  max-height: 22rem; overflow: auto; font-size: .7rem; line-height: 1.45;
+  background: var(--surface-sunk); padding: .6rem .7rem; border-radius: 3px;
+  white-space: pre; margin: 0;
+}
+
+/* A recommendation is advice, not an alarm: quieter than a finding, and its
+   evidence is the part that earns it a reading. */
+.card.rec { margin-bottom: .6rem; }
+/* A form inside a panel reads like the fact lists beside it: label in a fixed
+   left column, control and hint in the right. Stacked, each field costs three
+   lines and a full-page-wide input for a value like `main`; this is the same
+   information at roughly a third of the height. */
+.ppanel .field {
+  display: grid; grid-template-columns: 11rem 1fr; gap: .2rem 1.5rem;
+  align-items: start; padding: .35rem 0; border-bottom: 1px solid var(--line);
+}
+/* An instrument, not a touch target. 40px of control at 16px type is sized for
+   a thumb; these are typed into with a keyboard, rarely, and that height is
+   most of what would make the page long. */
+.ppanel .field > .answer-field { font-size: .875rem; padding: .3rem .5rem; }
+.ppanel .field-hint { line-height: 1.4; }
+.ppanel .field:last-child { border-bottom: 0; }
+.ppanel .field > :not(.field-label) { grid-column: 2; }
+.ppanel .field-hint { font-size: .8125rem; color: var(--ink-3); margin: 0; }
+
+/* A ref, a tag, a number: none of them needs the width of the page. Text that
+   is genuinely long -- a path, a Dockerfile -- still gets it. */
+.ppanel .field > input.answer-field { max-width: 32rem; }
+.ppanel .field > input[data-draft="repo"],
+.ppanel .field > input[data-draft$="image"],
+.ppanel .field > input[data-draft$="compose_file"] { max-width: 46rem; }
+.ppanel .field > input[type="number"] { max-width: 12rem; }
+.ppanel .field > select.answer-field { max-width: 34rem; }
+.ppanel .field > textarea.answer-field { max-width: none; }
+
+@media (max-width: 720px) {
+  .ppanel .field { grid-template-columns: 1fr; gap: .2rem; }
+  /* The single column is not enough on its own: the two-column rule also places
+     every control in `grid-column: 2`, and grid answers that by creating a
+     second track implicitly -- a 29px label column and a ragged right edge.
+     The override has to repeat the selector exactly, because `:not(.field-label)`
+     counts as a class and outranks a `> *`. */
+  .ppanel .field > :not(.field-label) { grid-column: 1; }
+  .ppanel .field > input.answer-field,
+  .ppanel .field > select.answer-field { max-width: none; }
+}
+.card.rec .who { margin-bottom: .3rem; }
+.card.rec .f-evidence {
+  font-family: var(--mono); font-size: .75rem; color: var(--ink-3);
+  margin: .35rem 0; word-break: break-word;
+}
+
+.disclosure-list { list-style: none; margin: 0; padding: 0; }
+.disclosure-list li { padding: .4rem 0; border-top: 1px solid var(--line); font-size: .875rem; color: var(--ink-2); }
+
+details.raw > summary {
+  cursor: pointer; font-family: var(--mono); font-size: .75rem; color: var(--ink-3);
+  padding: .4rem 0;
+}
+details.raw pre {
+  max-height: 380px; overflow: auto; padding: .8rem;
+  background: var(--surface-sunk); border-radius: var(--radius);
+  font-size: .75rem; line-height: 1.45;
+}
+
+/* Long paths, ids and evidence strings are the most common content here, and
+   they are exactly what breaks a narrow layout. Let them break. */
+.decision dd,
+.decision dd li,
+.trace-row .meta,
+.trace-row .stmt,
+.finding .f-title,
+.finding .f-detail,
+.finding .f-evidence,
+.disclosure-list li,
+.rail-item,
+.mat-file .why { min-width: 0; overflow-wrap: anywhere; }
+
+/* ------------------------------------------------------------------ forms */
+
+.field { display: grid; gap: .3rem; }
+.field-hint { font-size: .8125rem; color: var(--ink-2); max-width: 68ch; }
+.field-hint b { font-weight: 600; color: var(--ink); }
+
+.field-inline {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em; color: var(--ink-3);
+}
+.field-inline.grow { flex: 1 1 220px; }
+.field-inline .answer-field { min-width: 0; }
+
+select.answer-field { appearance: none; background: var(--surface-lift); }
+textarea.answer-field { resize: vertical; line-height: 1.45; }
+textarea.answer-field.code,
+.answer-field.mono { font-family: var(--mono); font-size: .8125rem; }
+.answer-field.tiny { width: 6.5rem; flex: none; }
+.answer-field:disabled { background: var(--surface-sunk); color: var(--ink-3); cursor: not-allowed; }
+

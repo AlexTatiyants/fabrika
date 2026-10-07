@@ -1,0 +1,38 @@
+<p class="lead">Fabrika tests everything it builds. For that to work, your repository needs a way to run a
+  test, clean up after it, and run it again with the same result.</p>
+
+<h4>Why tests have to be repeatable</h4>
+<p>Fabrika is designed to validate the code it builds automatically, often while nobody is watching. It
+  writes tests for each acceptance criterion and runs them, again and again, as it builds and repairs. A test
+  that leaves data behind changes what the next test sees, so a failure can be the leftovers rather than the
+  code. Fabrika can only trust a result if every test sets up what it needs and tears it down afterwards.</p>
+
+<h4>What the survey looks for</h4>
+<ul>
+  <li><b>Test runners</b> at three levels: unit (logic on its own), integration (your app's own interfaces),
+    and user (the whole system, the way a person uses it). See <a data-help="test-levels">Test levels</a>.</li>
+  <li><b>How tests set up and clean up</b> at each level: a fresh database per test, each test working in data
+    it creates, fakes undone after every test, and so on. See <a data-help="setup-and-cleanup">Setting up and
+    cleaning up</a>.</li>
+</ul>
+<p>Where either is missing, the survey proposes a fix.</p>
+
+<h4>What happens next</h4>
+<div class="hp-flow">
+  <div class="hp-step"><b>Survey</b>reads your runners and how your tests clean up</div><span class="hp-arrow">→</span>
+  <div class="hp-step"><b>Proposal</b>one choice per test level</div><span class="hp-arrow">→</span>
+  <div class="hp-step"><b>Fabrika applies it</b>settings and support files, with your OK</div><span class="hp-arrow hp-or">or</span>
+  <div class="hp-step you"><b>You change the code</b>hand the prompt to your coding agent, then re-survey</div><span class="hp-arrow">→</span>
+  <div class="hp-step"><b>Checked on every build</b>criteria at that level are tested automatically</div>
+</div>
+
+<h4>When the fix is in your code</h4>
+<p>Some fixes need changes Fabrika won't make on its own, like an API endpoint that lets a test create its own
+  data. For those Fabrika gives you a ready-to-use prompt. Hand it to your coding agent, commit the change, and
+  re-survey. See <a data-help="changing-your-repository">When Fabrika asks you to change your repository</a>.</p>
+
+<h4>If a level can't be checked</h4>
+<p>You can say no to any fix. Fabrika still builds features, but it <b>won't check acceptance criteria at a
+  level that can't run tests cleanly</b>: it would only produce failures that say nothing about the code.
+  Those criteria are marked on the spec before you freeze it, and at review they arrive as a checklist for you
+  to check by hand. See <a data-help="unchecked-levels">When a level isn't checked</a>.</p>

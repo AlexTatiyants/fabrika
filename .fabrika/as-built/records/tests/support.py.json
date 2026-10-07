@@ -1,0 +1,107 @@
+{
+ "blob": "efb1e8169986d180cf9ef129b884470e0f82e21a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "app_js",
+   "stylesheet",
+   "factory_source",
+   "factory_files",
+   "class_source",
+   "suite_source"
+  ],
+  "domain_terms": [
+   "console",
+   "stylesheet",
+   "factory module",
+   "test suite"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "console scripts",
+   "stylesheets",
+   "factory Python modules",
+   "test files"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 84,
+    "name": "app_js"
+   },
+   {
+    "calls": [],
+    "line": 89,
+    "name": "stylesheet"
+   },
+   {
+    "calls": [],
+    "line": 94,
+    "name": "factory_source"
+   },
+   {
+    "calls": [],
+    "line": 106,
+    "name": "factory_files"
+   },
+   {
+    "calls": [],
+    "line": 118,
+    "name": "class_source"
+   },
+   {
+    "calls": [],
+    "line": 136,
+    "name": "suite_source"
+   }
+  ],
+  "imports": [],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "file system"
+  ],
+  "purpose": "Unified accessors for test source reading\u2014allows tests to query console scripts, stylesheets, and factory modules as consolidated text without depending on specific file locations or organization.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "app_js",
+    "kind": "export",
+    "method": "",
+    "name": "app_js"
+   },
+   {
+    "handler": "stylesheet",
+    "kind": "export",
+    "method": "",
+    "name": "stylesheet"
+   },
+   {
+    "handler": "factory_source",
+    "kind": "export",
+    "method": "",
+    "name": "factory_source"
+   },
+   {
+    "handler": "factory_files",
+    "kind": "export",
+    "method": "",
+    "name": "factory_files"
+   },
+   {
+    "handler": "class_source",
+    "kind": "export",
+    "method": "",
+    "name": "class_source"
+   },
+   {
+    "handler": "suite_source",
+    "kind": "export",
+    "method": "",
+    "name": "suite_source"
+   }
+  ]
+ }
+}

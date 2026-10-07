@@ -1,0 +1,474 @@
+{
+ "blob": "cf0f211000cd276de6d95580f96408681bf1071a",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "spec_hash",
+   "spec_text",
+   "parse_package_lines",
+   "installable_names",
+   "import_lines",
+   "fixture_inventory",
+   "cleanup_line",
+   "cleanup_context",
+   "unchecked_levels",
+   "manual_criteria",
+   "tested_spec",
+   "testing_context",
+   "verify_context",
+   "iter_repo_files",
+   "launched_scripts",
+   "repo_digest",
+   "is_setup_name",
+   "is_setup_path",
+   "testing_paths",
+   "SymbolIndex",
+   "symbol_index",
+   "repo_tree",
+   "is_generated",
+   "is_runner_output",
+   "slice_repo",
+   "slice_digest",
+   "slice_coverage",
+   "digest_coverage",
+   "safe_join",
+   "uncommitted_paths",
+   "BlankTree",
+   "BaseTree",
+   "Worktree",
+   "PathEscape",
+   "WorktreeError",
+   "tooling_paths",
+   "tooling_drift",
+   "commit_paths",
+   "read_paths",
+   "TOOLING_GLOBS"
+  ],
+  "domain_terms": [
+   "spec and acceptance criteria",
+   "repository digest and file tree",
+   "symbol index and duplication",
+   "test fixtures and setup files",
+   "oracle and verify lane",
+   "repository slice",
+   "worktree isolation",
+   "tooling configuration",
+   "repository digest"
+  ],
+  "entities_defined": [
+   "SymbolIndex",
+   "RepoSlice",
+   "PathEscape",
+   "WorktreeError",
+   "BlankTree",
+   "BaseTree",
+   "Worktree"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 75,
+    "name": "is_generated"
+   },
+   {
+    "calls": [],
+    "line": 79,
+    "name": "is_runner_output"
+   },
+   {
+    "calls": [],
+    "line": 102,
+    "name": "_kept"
+   },
+   {
+    "calls": [],
+    "line": 124,
+    "name": "spec_hash"
+   },
+   {
+    "calls": [],
+    "line": 145,
+    "name": "spec_text"
+   },
+   {
+    "calls": [],
+    "line": 265,
+    "name": "parse_package_lines"
+   },
+   {
+    "calls": [],
+    "line": 294,
+    "name": "installable_names"
+   },
+   {
+    "calls": [],
+    "line": 329,
+    "name": "import_lines"
+   },
+   {
+    "calls": [],
+    "line": 371,
+    "name": "fixture_inventory"
+   },
+   {
+    "calls": [],
+    "line": 400,
+    "name": "cleanup_line"
+   },
+   {
+    "calls": [
+     "cleanup_line"
+    ],
+    "line": 428,
+    "name": "cleanup_context"
+   },
+   {
+    "calls": [],
+    "line": 450,
+    "name": "unchecked_levels"
+   },
+   {
+    "calls": [
+     "unchecked_levels"
+    ],
+    "line": 492,
+    "name": "manual_criteria"
+   },
+   {
+    "calls": [
+     "manual_criteria"
+    ],
+    "line": 504,
+    "name": "tested_spec"
+   },
+   {
+    "calls": [
+     "import_lines",
+     "cleanup_line"
+    ],
+    "line": 515,
+    "name": "testing_context"
+   },
+   {
+    "calls": [
+     "installable_names",
+     "spec_text"
+    ],
+    "line": 632,
+    "name": "verify_context"
+   },
+   {
+    "calls": [],
+    "line": 721,
+    "name": "_is_probably_text"
+   },
+   {
+    "calls": [],
+    "line": 731,
+    "name": "_git_listed_files"
+   },
+   {
+    "calls": [
+     "_all_repo_files",
+     "is_generated"
+    ],
+    "line": 768,
+    "name": "iter_repo_files"
+   },
+   {
+    "calls": [
+     "_git_listed_files"
+    ],
+    "line": 773,
+    "name": "_all_repo_files"
+   },
+   {
+    "calls": [
+     "iter_repo_files"
+    ],
+    "line": 816,
+    "name": "launched_scripts"
+   },
+   {
+    "calls": [],
+    "line": 847,
+    "name": "_digest_tier"
+   },
+   {
+    "calls": [
+     "iter_repo_files",
+     "launched_scripts",
+     "_digest_tier",
+     "_is_probably_text"
+    ],
+    "line": 863,
+    "name": "repo_digest"
+   },
+   {
+    "calls": [],
+    "line": 955,
+    "name": "is_setup_name"
+   },
+   {
+    "calls": [
+     "is_setup_name",
+     "_is_test_name"
+    ],
+    "line": 973,
+    "name": "is_setup_path"
+   },
+   {
+    "calls": [
+     "iter_repo_files",
+     "_is_test_path"
+    ],
+    "line": 989,
+    "name": "testing_paths"
+   },
+   {
+    "calls": [],
+    "line": 1035,
+    "name": "_is_test_name"
+   },
+   {
+    "calls": [
+     "_is_test_name"
+    ],
+    "line": 1041,
+    "name": "_is_test_path"
+   },
+   {
+    "calls": [],
+    "line": 1046,
+    "name": "SymbolIndex"
+   },
+   {
+    "calls": [],
+    "line": 1051,
+    "name": "duplicates"
+   },
+   {
+    "calls": [],
+    "line": 1055,
+    "name": "render"
+   },
+   {
+    "calls": [
+     "iter_repo_files"
+    ],
+    "line": 1109,
+    "name": "symbol_index"
+   },
+   {
+    "calls": [
+     "iter_repo_files"
+    ],
+    "line": 1160,
+    "name": "repo_tree"
+   },
+   {
+    "calls": [],
+    "line": 1172,
+    "name": "_tokens"
+   },
+   {
+    "calls": [
+     "_tokens",
+     "iter_repo_files",
+     "_is_probably_text",
+     "_slice_name",
+     "RepoSlice"
+    ],
+    "line": 1176,
+    "name": "slice_repo"
+   },
+   {
+    "calls": [],
+    "line": 1275,
+    "name": "_slice_name"
+   },
+   {
+    "calls": [],
+    "line": 1283,
+    "name": "slice_digest"
+   },
+   {
+    "calls": [
+     "iter_repo_files",
+     "_is_probably_text"
+    ],
+    "line": 1303,
+    "name": "slice_coverage"
+   },
+   {
+    "calls": [
+     "iter_repo_files",
+     "_is_probably_text"
+    ],
+    "line": 1332,
+    "name": "digest_coverage"
+   },
+   {
+    "calls": [],
+    "line": 1370,
+    "name": "safe_join"
+   },
+   {
+    "calls": [],
+    "line": 1392,
+    "name": "uncommitted_paths"
+   },
+   {
+    "calls": [],
+    "line": 1449,
+    "name": "BlankTree.__init__"
+   },
+   {
+    "calls": [],
+    "line": 1453,
+    "name": "BlankTree.__enter__"
+   },
+   {
+    "calls": [],
+    "line": 1485,
+    "name": "BlankTree.__exit__"
+   },
+   {
+    "calls": [],
+    "line": 1490,
+    "name": "BlankTree.assert_blank"
+   },
+   {
+    "calls": [],
+    "line": 1539,
+    "name": "BaseTree.__init__"
+   },
+   {
+    "calls": [
+     "has_commit"
+    ],
+    "line": 1546,
+    "name": "BaseTree.__enter__"
+   },
+   {
+    "calls": [],
+    "line": 1573,
+    "name": "BaseTree.__exit__"
+   },
+   {
+    "calls": [],
+    "line": 1581,
+    "name": "BaseTree.assert_at_base"
+   },
+   {
+    "calls": [],
+    "line": 1615,
+    "name": "Worktree.__init__"
+   },
+   {
+    "calls": [
+     "has_commit"
+    ],
+    "line": 1626,
+    "name": "Worktree.__enter__"
+   },
+   {
+    "calls": [],
+    "line": 1653,
+    "name": "Worktree.__exit__"
+   },
+   {
+    "calls": [],
+    "line": 1664,
+    "name": "Worktree.mode"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 1668,
+    "name": "Worktree.write"
+   },
+   {
+    "calls": [],
+    "line": 1677,
+    "name": "Worktree.changed_files"
+   },
+   {
+    "calls": [],
+    "line": 1698,
+    "name": "Worktree.diff"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 1720,
+    "name": "Worktree.exists"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 1729,
+    "name": "Worktree.read"
+   },
+   {
+    "calls": [],
+    "line": 1776,
+    "name": "_matches_tooling"
+   },
+   {
+    "calls": [
+     "iter_repo_files",
+     "_matches_tooling"
+    ],
+    "line": 1788,
+    "name": "tooling_paths"
+   },
+   {
+    "calls": [
+     "tooling_paths",
+     "is_repo",
+     "git.out"
+    ],
+    "line": 1806,
+    "name": "tooling_drift"
+   },
+   {
+    "calls": [
+     "is_repo",
+     "git.out",
+     "head_sha"
+    ],
+    "line": 1868,
+    "name": "commit_paths"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 1897,
+    "name": "read_paths"
+   }
+  ],
+  "imports": [
+   "factory/git.py",
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git (via subprocess)",
+   "git",
+   "subprocess",
+   "filesystem"
+  ],
+  "purpose": "Repo digests, context generation, and symbol indexing for the Fabrika factory pipeline. Provides utilities to compute bounded textual views of repositories, serialize specs, filter packages and imports, build testing context for the oracle, and index symbols for duplication detection.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "blob": "43f1f97e0a40056adcdd3bcbeee8bdfe58eddb12",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "acceptance criterion",
+   "oracle",
+   "spec objection",
+   "testability",
+   "requirement coverage"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Guidance for the spec checker agent role, which reads draft specifications before freeze and raises objections where the spec will fail agents building or testing from it.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

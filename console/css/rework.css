@@ -1,0 +1,175 @@
+/* The rework screen, the one screen rework.js draws with a reconciler because
+   you type into it while it refreshes. */
+
+/* --------------------------------------------------------------------------
+   The rework screen.
+
+   The only screen whose markup this stylesheet does not describe -- rework.js
+   builds it with a reconciler, because it is the only one you type into while
+   the page refreshes underneath you. The vocabulary is the same as everywhere
+   else: pills for status, graphite for what is settled, accent for what wants
+   you. Nothing here is new; it is the same system pointed at a screen the
+   string builder cannot hold.
+   -------------------------------------------------------------------------- */
+
+.rw-top { padding: 1.75rem 0 1rem; }
+
+.rw-cols {
+  display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 2rem;
+  align-items: start; margin-bottom: 3rem;
+}
+
+.rw-error {
+  margin: 0 0 1rem; padding: .6rem .8rem;
+  font-size: .875rem; color: var(--red);
+  background: var(--red-wash); border: 1px solid var(--red); border-radius: var(--radius);
+}
+
+/* -- the flags ---------------------------------------------------------- */
+
+.rw-group { margin-bottom: 1.6rem; }
+.rw-group-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: .75rem;
+  padding-bottom: .35rem; margin-bottom: .1rem;
+  border-bottom: 1px solid var(--line);
+}
+.rw-group-head h3 { margin: 0; font-size: .9375rem; }
+.rw-group-note { font-size: .75rem; color: var(--ink-3); }
+
+/* Only repair changes where the review goes. Dismissed is an outcome, not a
+   route, and colouring it would say it competes with repair. */
+.rw-repair .rw-group-head { border-bottom-color: var(--accent); }
+.rw-repair .rw-group-head h3 { color: var(--accent-ink); }
+
+.rw-flag { padding: .8rem .25rem .85rem; border-bottom: 1px solid var(--line); }
+.rw-flag-head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; margin-bottom: .35rem; }
+.rw-anchor { font-size: .6875rem; color: var(--ink-3); }
+.rw-id { font-size: .6875rem; color: var(--line-strong); margin-left: auto; }
+.rw-text { margin: 0 0 .55rem; font-size: .875rem; line-height: 1.5; max-width: 78ch; }
+.rw-flag-foot { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+
+/* A tag you can change looks like one: dashed, and it moves under the pointer. */
+.rw-tag { border-style: dashed; cursor: pointer; font: inherit; font-family: var(--mono); font-size: .6875rem; }
+.rw-tag:hover:not(:disabled) { border-style: solid; }
+.rw-tag:disabled { opacity: .5; cursor: wait; }
+.rw-consequence { font-size: .75rem; color: var(--ink-3); }
+
+/* -- the composer ------------------------------------------------------- */
+
+.rw-composer { margin-top: 1.75rem; }
+.rw-composer textarea {
+  width: 100%; padding: .55rem .7rem; resize: vertical;
+  font-size: .875rem; line-height: 1.5;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+}
+.rw-composer textarea:focus-visible { border-color: var(--accent); }
+.rw-composer-foot { display: flex; align-items: center; gap: .5rem; margin-top: .5rem; }
+.rw-composer select {
+  padding: .25rem .4rem; font-size: .8125rem;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius);
+}
+
+/* -- where it goes ------------------------------------------------------ */
+
+/* Drawn like the strongest case on Objections: paper, a plain border, and the
+   route's colour on the left edge and in the label only. A washed head would
+   make a card that is mostly waiting read as a warning. Waiting has no colour of its
+   own, because nothing has been decided yet. */
+.rw-route {
+  position: sticky; top: calc(var(--mast-h) + 4.5rem);
+  background: var(--surface); border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--rw-edge, var(--line-strong)); border-radius: var(--radius);
+  overflow: hidden;
+}
+.rw-route-bad  { --rw-edge: var(--red); }
+.rw-route-go   { --rw-edge: var(--accent); }
+.rw-route-ok   { --rw-edge: var(--green); }
+.rw-route-wait { --rw-edge: var(--ink-3); }
+
+.rw-route-head { padding: .8rem 1rem .85rem; }
+
+/* The card's only label, set as the strongest-case box sets its own. */
+.rw-route-title {
+  font-family: var(--cond); font-size: .6875rem; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; line-height: 1.3; margin-bottom: .35rem;
+  color: var(--rw-edge, var(--ink-3));
+}
+/* No `max-width`: this is one statement, not a paragraph, and it fits a line
+   at the width the console already runs at. */
+.rw-because { margin: .15rem 0 0; font-size: var(--t-body); color: var(--ink-2); line-height: 1.55; }
+
+.rw-forced { padding: .8rem 1rem; border-bottom: 1px solid var(--line); }
+.rw-forced-item { margin: 0 0 .4rem; font-size: .8125rem; line-height: 1.5; }
+.rw-counter {
+  margin: .6rem 0 0; padding-top: .6rem; border-top: 1px dashed var(--line-strong);
+  font-size: .75rem; color: var(--ink-3); line-height: 1.5;
+}
+
+/* ---- what is actually being sent ---------------------------------------
+
+   Not a tally -- `3` over `to the repair loop`. Your note is the only
+   thing on this card the repair loop reads, and a count of your notes is the
+   list with the words taken out of it. Three fixed columns, so the tags read
+   straight down: what you called it, what you said, and what it hangs off. */
+.rw-filed-row { display: grid; grid-template-columns: 6.2rem minmax(0, 1fr) auto;
+  gap: .75rem; align-items: baseline; padding: .42rem 1rem;
+  border-top: 1px solid var(--line); }
+.rw-filed-row:first-child { border-top: 0; }
+.rw-ftag { justify-self: start; cursor: pointer; }
+.rw-ftag:hover:not(:disabled) { outline: 1px solid var(--ink-3); }
+.rw-ftag:disabled { cursor: default; opacity: .75; }
+.rw-said { margin: 0; font-size: var(--t-body); color: var(--ink); line-height: 1.5; }
+/* Ruled without typing anything. Set apart from the rows that ARE your words,
+   because the whole point of this list is that those are yours. */
+.rw-said-none { color: var(--ink-3); font-style: italic; }
+.rw-on { font-size: var(--t-meta); color: var(--ink-3); white-space: nowrap; }
+.rw-on-mine { color: var(--accent-ink); }
+/* Where the sentence above stops applying. Everything over this line is
+   going; everything under it is staying. The words are the ones this screen
+   already grouped by (`GROUPS`, rework.js), and the tag on a row below it is
+   not this label repeated -- it is the button that undoes it. */
+.rw-kept-h { padding: .38rem 1rem .34rem; background: var(--surface-sunk);
+  border-top: 1px solid var(--line-strong);
+  font-size: var(--t-small); color: var(--ink-3); }
+.rw-kept-h b { font-family: var(--cond); font-size: var(--t-label); font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin-right: .45rem; }
+.rw-kept-h + .rw-filed-row { border-top: 0; }
+
+/* The budget, in the one state where it has anything to say. Shown always, a
+   head, a meter and three sentences of policy would stand through the middle
+   of the one action on this card on every run, reading `$8.75 of $8.75`. */
+.rw-short { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap;
+  padding: .5rem 1rem .55rem; background: var(--red-wash);
+  border-top: 1px solid var(--red-edge);
+  font-size: var(--t-small); color: var(--ink-2); line-height: 1.5; }
+.rw-short b { flex: none; font-family: var(--cond); font-size: var(--t-label);
+  font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+.rw-short .mono { color: var(--ink); }
+
+/* The button is the width of its label. A primary button run to the full
+   1080px of the column is not emphasis, it is a wall. Its footnote and the
+   other way out of the screen sit beside it rather than stacked under it. */
+.rw-route-foot { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;
+  padding: .7rem 1rem .75rem; border-top: 1px solid var(--line); }
+.rw-route-foot .btn { flex: none; }
+/* Beside the button on the worklist, where the card is the width of the
+   column; under it in the Repairs sidebar, where the card is 380px and the
+   same two sentences would wrap to five lines in the gap left over. The
+   basis decides which, so neither screen needs a rule of its own. */
+.rw-route-n { flex: 1 1 22rem; min-width: 0; }
+.rw-note { margin: 0; font-size: var(--t-small); color: var(--ink-3); line-height: 1.55; }
+.rw-note + .rw-note { margin-top: .2rem; }
+.rw-note a { color: var(--accent-ink); }
+
+@media (max-width: 900px) {
+  .rw-cols { grid-template-columns: 1fr; }
+  .rw-route { position: static; }
+}
+
+.rw-sent {
+  margin: 0 0 1rem; padding: .6rem .8rem;
+  font-size: .875rem; color: var(--accent-ink);
+  background: var(--accent-wash); border: 1px solid var(--accent); border-radius: var(--radius);
+}
+

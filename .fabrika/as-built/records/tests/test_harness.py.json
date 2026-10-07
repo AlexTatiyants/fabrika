@@ -1,0 +1,1313 @@
+{
+ "blob": "f054afffbde4e0080a4e2b1197589bfc60ee346c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_the_docker_command_mounts_the_sandbox_and_cuts_the_network",
+   "test_setup_gets_the_network_and_gates_do_not",
+   "test_an_unbuildable_environment_fails_rather_than_running_on_the_host",
+   "test_a_host_environment_is_the_only_way_to_skip_the_container",
+   "test_an_image_tag_is_content_addressed",
+   "test_every_agent_exchange_records_what_it_cost",
+   "test_a_role_can_be_given_longer_than_its_route",
+   "test_a_truncated_answer_is_refused_not_retried",
+   "test_a_truncated_answer_is_refused_on_the_schemaless_path_too",
+   "test_a_harness_own_files_are_not_applied_as_the_units_work",
+   "test_a_harness_with_no_key_is_refused_rather_than_launched",
+   "test_a_worker_with_a_checkout_is_not_also_handed_a_transcription_of_it",
+   "test_integration_is_billed_to_the_integrator_not_the_worker",
+   "test_concurrent_features_get_their_own_compose_stack",
+   "test_only_the_gate_service_and_its_dependencies_are_started",
+   "test_a_stack_left_by_a_killed_run_does_not_poison_the_next_one",
+   "test_the_setup_container_and_its_image_are_cleaned_up",
+   "test_a_container_id_is_read_from_stdout_not_guessed",
+   "test_a_full_docker_disk_is_named_before_a_build_and_where_it_bites",
+   "test_the_setup_container_outlives_the_teardown_that_starts_the_stack",
+   "test_a_gate_states_its_own_entrypoint",
+   "test_a_runner_declares_whether_setup_survives_it",
+   "test_a_harness_that_edits_nothing_is_not_narrated_as_work",
+   "test_the_second_attempt_is_told_what_happened_on_the_first",
+   "test_a_repair_survives_the_model_that_cannot_describe_it",
+   "test_a_harness_that_will_not_write_falls_back_to_the_direct_executor",
+   "test_a_fallback_that_also_produces_nothing_records_the_honest_empty_unit",
+   "test_the_coding_harness_is_given_a_role_prompt",
+   "test_the_flags_are_configuration_not_literals",
+   "test_an_empty_file_the_harness_created_is_not_counted_as_work",
+   "test_the_fallback_is_shown_the_files_it_must_return_whole",
+   "test_the_harness_reports_what_it_spent_and_the_ledger_takes_it",
+   "test_a_harness_that_produced_nothing_still_reports_its_spend",
+   "test_a_harness_that_cannot_report_is_not_a_failed_unit",
+   "test_the_two_ends_of_the_spend_marker_agree",
+   "test_a_configured_command_may_contain_braces",
+   "test_a_harness_killed_at_the_timeout_still_reports_what_it_spent",
+   "test_a_timeout_keeps_what_the_harness_managed_to_say",
+   "test_a_route_that_runs_out_sends_the_role_somewhere_rather_than_ending_the_run",
+   "test_the_agents_with_a_filesystem_fall_back_too",
+   "test_a_role_that_reports_the_parts_is_not_a_role_that_spent_nothing",
+   "test_authoring_confines_by_reading_not_by_asking",
+   "test_the_harness_task_file_carries_the_role_contract",
+   "test_the_harness_records_what_authoring_cost",
+   "test_authoring_reads_the_files_the_harness_wrote",
+   "test_authoring_refuses_a_turn_that_wrote_nothing",
+   "test_a_gauge_saying_the_plan_has_room_is_not_a_refusal",
+   "test_an_empty_file_is_not_a_written_test",
+   "test_the_task_file_is_not_collected_as_one_of_the_tests",
+   "test_the_oracle_can_write_a_suite_into_a_blank_tree",
+   "test_the_role_contract_reaches_the_agent_not_just_the_accounting_call",
+   "test_the_prompt_goes_on_stdin_not_the_command_line",
+   "test_a_cli_that_fails_with_exit_zero_is_still_a_failure",
+   "test_a_cli_that_prints_prose_is_not_read_as_an_answer",
+   "test_a_jsonl_route_reads_the_answer_off_the_last_event",
+   "test_a_jsonl_routes_failure_is_read_from_the_last_event_too",
+   "test_a_line_that_is_not_json_does_not_sink_the_whole_stream",
+   "test_a_plans_figure_never_reaches_the_ledger_as_a_cost",
+   "test_a_call_on_a_billed_route_still_records_its_cost",
+   "test_an_empty_placeholder_takes_its_flag_with_it",
+   "test_an_oversized_argv_names_the_field_that_overran",
+   "test_a_file_writing_role_can_be_pointed_at_a_subscription_harness",
+   "test_a_role_without_a_route_still_uses_the_global_harness",
+   "test_the_default_route_is_a_description_not_a_second_copy",
+   "test_a_harness_told_no_task_file_is_fed_on_stdin",
+   "test_a_missing_tool_is_told_apart_from_one_nobody_signed_into",
+   "test_an_auth_failure_is_read_as_an_auth_failure",
+   "test_a_working_route_says_it_cannot_be_billed",
+   "test_an_unchecked_route_is_not_drawn_as_a_failure",
+   "test_an_account_refusing_a_call_is_not_a_broken_harness",
+   "test_a_refusal_stops_being_the_verdict_once_its_hold_runs_out",
+   "test_a_call_answered_since_the_refusal_clears_it",
+   "test_a_route_names_its_harness_and_its_account_apart",
+   "test_a_refusal_stored_as_a_broken_harness_is_re_read_on_the_way_in",
+   "test_a_stored_error_that_is_a_real_error_stays_one",
+   "test_a_stored_check_does_not_outlive_the_names_in_the_config",
+   "test_a_survey_spends_nothing",
+   "test_the_connection_check_goes_down_the_path_a_real_call_takes",
+   "test_an_api_route_offers_the_models_this_project_already_uses",
+   "test_a_billed_route_still_counts_against_the_budget",
+   "test_a_tool_too_old_for_a_model_is_its_own_state",
+   "test_an_outdated_tool_is_not_mistaken_for_an_auth_failure",
+   "test_no_model_named_means_no_model_flag_sent",
+   "test_the_model_that_answered_is_recorded_not_the_one_configured",
+   "test_a_role_with_no_model_never_books_an_empty_string",
+   "test_the_connection_check_does_not_fail_on_a_stale_model_id",
+   "test_a_connection_check_outlives_the_process_that_made_it",
+   "test_a_reconfigured_route_discards_the_answer_about_the_old_one",
+   "test_the_route_store_never_takes_the_console_down",
+   "test_one_harness_s_flags_are_never_appended_to_another",
+   "test_the_ledger_records_a_model_name_not_a_usage_dump",
+   "test_the_ledger_can_say_which_agents_the_budget_did_not_cover"
+  ],
+  "domain_terms": [
+   "harness",
+   "executor",
+   "runner",
+   "spend",
+   "unit",
+   "harness (CLI execution environment)",
+   "route (LLM provider routing)",
+   "budget and billing (cost tracking)",
+   "session (work execution)",
+   "agent role (worker, oracle, reviewer)",
+   "harness \u2014 a driver that runs agents in containers",
+   "rate limit window \u2014 constraint on API calls with reset timing",
+   "egress proxy \u2014 gateway controlling outbound network traffic",
+   "sealed network \u2014 internal Docker network with restricted routing",
+   "session \u2014 one execution of an agent with input/output tracking",
+   "route \u2014 an LLM provider endpoint or CLI command",
+   "containers",
+   "preview environments",
+   "rate limiting",
+   "workers"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "LLM",
+   "Config",
+   "RoleConfig",
+   "RouteConfig",
+   "CommandExecutor",
+   "RouteMonitor",
+   "ReviewReport",
+   "ScoutReport",
+   "BlankTree",
+   "RouteExhausted",
+   "LLMError"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "_docker_config",
+     "DockerRunner"
+    ],
+    "line": 9,
+    "name": "test_the_docker_command_mounts_the_sandbox_and_cuts_the_network"
+   },
+   {
+    "calls": [
+     "_docker_config",
+     "DockerRunner"
+    ],
+    "line": 27,
+    "name": "test_setup_gets_the_network_and_gates_do_not"
+   },
+   {
+    "calls": [
+     "ProjectRegistry",
+     "EnvironmentSpec",
+     "_docker_config",
+     "build_image",
+     "DockerError"
+    ],
+    "line": 52,
+    "name": "test_an_unbuildable_environment_fails_rather_than_running_on_the_host"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ProjectRegistry",
+     "EnvironmentSpec",
+     "runner_for",
+     "LocalRunner",
+     "build_image"
+    ],
+    "line": 76,
+    "name": "test_a_host_environment_is_the_only_way_to_skip_the_container"
+   },
+   {
+    "calls": [
+     "EnvironmentSpec",
+     "image_tag",
+     "NAME_PREFIX"
+    ],
+    "line": 96,
+    "name": "test_an_image_tag_is_content_addressed"
+   },
+   {
+    "calls": [
+     "LLM",
+     "EvidenceStore"
+    ],
+    "line": 114,
+    "name": "test_every_agent_exchange_records_what_it_cost"
+   },
+   {
+    "calls": [
+     "load_config",
+     "LLM",
+     "LLMError"
+    ],
+    "line": 153,
+    "name": "test_a_role_can_be_given_longer_than_its_route"
+   },
+   {
+    "calls": [
+     "load_config",
+     "LLM",
+     "LLMError",
+     "ScoutReport"
+    ],
+    "line": 172,
+    "name": "test_a_truncated_answer_is_refused_not_retried"
+   },
+   {
+    "calls": [
+     "load_config",
+     "LLM",
+     "LLMError"
+    ],
+    "line": 212,
+    "name": "test_a_truncated_answer_is_refused_on_the_schemaless_path_too"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_global_harness",
+     "SelfDisclosure",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 233,
+    "name": "test_a_harness_own_files_are_not_applied_as_the_units_work"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "ExecutorError",
+     "LLM",
+     "_global_harness",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 277,
+    "name": "test_a_harness_with_no_key_is_refused_rather_than_launched"
+   },
+   {
+    "calls": [
+     "unit_brief",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 310,
+    "name": "test_a_worker_with_a_checkout_is_not_also_handed_a_transcription_of_it"
+   },
+   {
+    "calls": [
+     "CommandExecutor",
+     "DirectExecutor"
+    ],
+    "line": 333,
+    "name": "test_integration_is_billed_to_the_integrator_not_the_worker"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ComposeRunner",
+     "runner_for",
+     "Project",
+     "EnvironmentSpec",
+     "ProjectState"
+    ],
+    "line": 352,
+    "name": "test_concurrent_features_get_their_own_compose_stack"
+   },
+   {
+    "calls": [
+     "ComposeRunner"
+    ],
+    "line": 403,
+    "name": "test_only_the_gate_service_and_its_dependencies_are_started"
+   },
+   {
+    "calls": [
+     "ComposeRunner"
+    ],
+    "line": 417,
+    "name": "test_a_stack_left_by_a_killed_run_does_not_poison_the_next_one"
+   },
+   {
+    "calls": [
+     "DockerRunner",
+     "ComposeRunner"
+    ],
+    "line": 431,
+    "name": "test_the_setup_container_and_its_image_are_cleaned_up"
+   },
+   {
+    "calls": [
+     "_last_id"
+    ],
+    "line": 441,
+    "name": "test_a_container_id_is_read_from_stdout_not_guessed"
+   },
+   {
+    "calls": [
+     "containers",
+     "Config"
+    ],
+    "line": 459,
+    "name": "test_a_full_docker_disk_is_named_before_a_build_and_where_it_bites"
+   },
+   {
+    "calls": [
+     "ComposeRunner"
+    ],
+    "line": 485,
+    "name": "test_the_setup_container_outlives_the_teardown_that_starts_the_stack"
+   },
+   {
+    "calls": [
+     "ComposeRunner",
+     "DockerRunner"
+    ],
+    "line": 504,
+    "name": "test_a_gate_states_its_own_entrypoint"
+   },
+   {
+    "calls": [
+     "LocalRunner",
+     "DockerRunner",
+     "ComposeRunner"
+    ],
+    "line": 525,
+    "name": "test_a_runner_declares_whether_setup_survives_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "NO_EDITS",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 550,
+    "name": "test_a_harness_that_edits_nothing_is_not_narrated_as_work"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "SelfDisclosure",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 597,
+    "name": "test_the_second_attempt_is_told_what_happened_on_the_first"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "LLMError",
+     "_harness_repo",
+     "_global_harness",
+     "REFLECTION_LOST",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 632,
+    "name": "test_a_repair_survives_the_model_that_cannot_describe_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "FELL_BACK",
+     "NO_EDITS",
+     "FileWrite",
+     "Spec",
+     "WorkUnit",
+     "WorkerOutput"
+    ],
+    "line": 685,
+    "name": "test_a_harness_that_will_not_write_falls_back_to_the_direct_executor"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "NO_EDITS",
+     "Spec",
+     "WorkUnit",
+     "WorkerOutput"
+    ],
+    "line": 748,
+    "name": "test_a_fallback_that_also_produces_nothing_records_the_honest_empty_unit"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 791,
+    "name": "test_the_coding_harness_is_given_a_role_prompt"
+   },
+   {
+    "calls": [
+     "_harness_for",
+     "_migration_repo",
+     "factory_source",
+     "WorkUnit"
+    ],
+    "line": 827,
+    "name": "test_the_flags_are_configuration_not_literals"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 860,
+    "name": "test_an_empty_file_the_harness_created_is_not_counted_as_work"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "WorkUnit"
+    ],
+    "line": 899,
+    "name": "test_the_fallback_is_shown_the_files_it_must_return_whole"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "SPEND_MARKER",
+     "_harness_repo",
+     "_global_harness",
+     "_Reflection",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 940,
+    "name": "test_the_harness_reports_what_it_spent_and_the_ledger_takes_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "SPEND_MARKER",
+     "_harness_repo",
+     "_global_harness",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 975,
+    "name": "test_a_harness_that_produced_nothing_still_reports_its_spend"
+   },
+   {
+    "calls": [
+     "harness_spend"
+    ],
+    "line": 1007,
+    "name": "test_a_harness_that_cannot_report_is_not_a_failed_unit"
+   },
+   {
+    "calls": [
+     "SPEND_MARKER"
+    ],
+    "line": 1016,
+    "name": "test_the_two_ends_of_the_spend_marker_agree"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 1027,
+    "name": "test_a_configured_command_may_contain_braces"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "_Reflection",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 1063,
+    "name": "test_a_harness_killed_at_the_timeout_still_reports_what_it_spent"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_harness_repo",
+     "_global_harness",
+     "_Reflection",
+     "Spec",
+     "WorkUnit"
+    ],
+    "line": 1114,
+    "name": "test_a_timeout_keeps_what_the_harness_managed_to_say"
+   },
+   {
+    "calls": [
+     "load_config",
+     "LLM",
+     "check_route_fallbacks"
+    ],
+    "line": 1152,
+    "name": "test_a_route_that_runs_out_sends_the_role_somewhere_rather_than_ending_the_run"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "_session_exhausted",
+     "fallback_session_model"
+    ],
+    "line": 1220,
+    "name": "test_the_agents_with_a_filesystem_fall_back_too"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 1279,
+    "name": "test_a_role_that_reports_the_parts_is_not_a_role_that_spent_nothing"
+   },
+   {
+    "calls": [],
+    "line": 1314,
+    "name": "test_authoring_confines_by_reading_not_by_asking"
+   },
+   {
+    "calls": [],
+    "line": 1325,
+    "name": "test_the_harness_task_file_carries_the_role_contract"
+   },
+   {
+    "calls": [
+     "_record_session_spend"
+    ],
+    "line": 1338,
+    "name": "test_the_harness_records_what_authoring_cost"
+   },
+   {
+    "calls": [
+     "_blank_repo",
+     "_global_harness",
+     "CommandExecutor",
+     "LLM"
+    ],
+    "line": 1359,
+    "name": "test_authoring_reads_the_files_the_harness_wrote"
+   },
+   {
+    "calls": [
+     "_blank_repo",
+     "_global_harness",
+     "CommandExecutor",
+     "LLM"
+    ],
+    "line": 1388,
+    "name": "test_authoring_refuses_a_turn_that_wrote_nothing"
+   },
+   {
+    "calls": [
+     "_streamed_session_route",
+     "_session_stream",
+     "_session_exhausted",
+     "_session_outcome"
+    ],
+    "line": 1409,
+    "name": "test_a_gauge_saying_the_plan_has_room_is_not_a_refusal"
+   },
+   {
+    "calls": [
+     "_blank_repo",
+     "_global_harness",
+     "CommandExecutor",
+     "LLM"
+    ],
+    "line": 1476,
+    "name": "test_an_empty_file_is_not_a_written_test"
+   },
+   {
+    "calls": [
+     "_blank_repo",
+     "_global_harness",
+     "CommandExecutor",
+     "LLM"
+    ],
+    "line": 1497,
+    "name": "test_the_task_file_is_not_collected_as_one_of_the_tests"
+   },
+   {
+    "calls": [
+     "_global_harness",
+     "CommandExecutor",
+     "LLM",
+     "BlankTree"
+    ],
+    "line": 1517,
+    "name": "test_the_oracle_can_write_a_suite_into_a_blank_tree"
+   },
+   {
+    "calls": [
+     "_global_harness",
+     "CommandExecutor",
+     "LLM",
+     "BlankTree"
+    ],
+    "line": 1552,
+    "name": "test_the_role_contract_reaches_the_agent_not_just_the_accounting_call"
+   },
+   {
+    "calls": [],
+    "line": 1580,
+    "name": "test_the_prompt_goes_on_stdin_not_the_command_line"
+   },
+   {
+    "calls": [
+     "_routed"
+    ],
+    "line": 1590,
+    "name": "test_a_cli_that_fails_with_exit_zero_is_still_a_failure"
+   },
+   {
+    "calls": [
+     "_routed"
+    ],
+    "line": 1604,
+    "name": "test_a_cli_that_prints_prose_is_not_read_as_an_answer"
+   },
+   {
+    "calls": [
+     "_jsonl_route",
+     "LLM"
+    ],
+    "line": 1616,
+    "name": "test_a_jsonl_route_reads_the_answer_off_the_last_event"
+   },
+   {
+    "calls": [
+     "_jsonl_route",
+     "LLM"
+    ],
+    "line": 1635,
+    "name": "test_a_jsonl_routes_failure_is_read_from_the_last_event_too"
+   },
+   {
+    "calls": [
+     "_merge_jsonl"
+    ],
+    "line": 1653,
+    "name": "test_a_line_that_is_not_json_does_not_sink_the_whole_stream"
+   },
+   {
+    "calls": [
+     "_routed",
+     "journal_calls",
+     "stop_journaling"
+    ],
+    "line": 1666,
+    "name": "test_a_plans_figure_never_reaches_the_ledger_as_a_cost"
+   },
+   {
+    "calls": [
+     "call_entry"
+    ],
+    "line": 1693,
+    "name": "test_a_call_on_a_billed_route_still_records_its_cost"
+   },
+   {
+    "calls": [
+     "_drop_empty_pairs"
+    ],
+    "line": 1705,
+    "name": "test_an_empty_placeholder_takes_its_flag_with_it"
+   },
+   {
+    "calls": [
+     "_routed"
+    ],
+    "line": 1715,
+    "name": "test_an_oversized_argv_names_the_field_that_overran"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1728,
+    "name": "test_a_file_writing_role_can_be_pointed_at_a_subscription_harness"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1753,
+    "name": "test_a_role_without_a_route_still_uses_the_global_harness"
+   },
+   {
+    "calls": [
+     "load_config",
+     "_global_harness"
+    ],
+    "line": 1772,
+    "name": "test_the_default_route_is_a_description_not_a_second_copy"
+   },
+   {
+    "calls": [],
+    "line": 1790,
+    "name": "test_a_harness_told_no_task_file_is_fed_on_stdin"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor"
+    ],
+    "line": 1800,
+    "name": "test_a_missing_tool_is_told_apart_from_one_nobody_signed_into"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor"
+    ],
+    "line": 1815,
+    "name": "test_an_auth_failure_is_read_as_an_auth_failure"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor"
+    ],
+    "line": 1837,
+    "name": "test_a_working_route_says_it_cannot_be_billed"
+   },
+   {
+    "calls": [
+     "RouteMonitor"
+    ],
+    "line": 1858,
+    "name": "test_an_unchecked_route_is_not_drawn_as_a_failure"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor"
+    ],
+    "line": 1878,
+    "name": "test_an_account_refusing_a_call_is_not_a_broken_harness"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor",
+     "base_status"
+    ],
+    "line": 1906,
+    "name": "test_a_refusal_stops_being_the_verdict_once_its_hold_runs_out"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor",
+     "base_status"
+    ],
+    "line": 1931,
+    "name": "test_a_call_answered_since_the_refusal_clears_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "base_status"
+    ],
+    "line": 1956,
+    "name": "test_a_route_names_its_harness_and_its_account_apart"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor",
+     "route_fingerprint"
+    ],
+    "line": 1973,
+    "name": "test_a_refusal_stored_as_a_broken_harness_is_re_read_on_the_way_in"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor",
+     "route_fingerprint"
+    ],
+    "line": 2000,
+    "name": "test_a_stored_error_that_is_a_real_error_stays_one"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor",
+     "route_fingerprint"
+    ],
+    "line": 2021,
+    "name": "test_a_stored_check_does_not_outlive_the_names_in_the_config"
+   },
+   {
+    "calls": [],
+    "line": 2050,
+    "name": "test_a_survey_spends_nothing"
+   },
+   {
+    "calls": [],
+    "line": 2058,
+    "name": "test_the_connection_check_goes_down_the_path_a_real_call_takes"
+   },
+   {
+    "calls": [
+     "load_config",
+     "RouteMonitor"
+    ],
+    "line": 2065,
+    "name": "test_an_api_route_offers_the_models_this_project_already_uses"
+   },
+   {
+    "calls": [
+     "LLM"
+    ],
+    "line": 2083,
+    "name": "test_a_billed_route_still_counts_against_the_budget"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor"
+    ],
+    "line": 2105,
+    "name": "test_a_tool_too_old_for_a_model_is_its_own_state"
+   },
+   {
+    "calls": [],
+    "line": 2132,
+    "name": "test_an_outdated_tool_is_not_mistaken_for_an_auth_failure"
+   },
+   {
+    "calls": [
+     "cli_argv"
+    ],
+    "line": 2146,
+    "name": "test_no_model_named_means_no_model_flag_sent"
+   },
+   {
+    "calls": [
+     "_routed"
+    ],
+    "line": 2157,
+    "name": "test_the_model_that_answered_is_recorded_not_the_one_configured"
+   },
+   {
+    "calls": [
+     "_routed"
+    ],
+    "line": 2185,
+    "name": "test_a_role_with_no_model_never_books_an_empty_string"
+   },
+   {
+    "calls": [],
+    "line": 2206,
+    "name": "test_the_connection_check_does_not_fail_on_a_stale_model_id"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor"
+    ],
+    "line": 2214,
+    "name": "test_a_connection_check_outlives_the_process_that_made_it"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor"
+    ],
+    "line": 2243,
+    "name": "test_a_reconfigured_route_discards_the_answer_about_the_old_one"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "RouteMonitor",
+     "base_status"
+    ],
+    "line": 2271,
+    "name": "test_the_route_store_never_takes_the_console_down"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 2284,
+    "name": "test_one_harness_s_flags_are_never_appended_to_another"
+   },
+   {
+    "calls": [],
+    "line": 2306,
+    "name": "test_the_ledger_records_a_model_name_not_a_usage_dump"
+   },
+   {
+    "calls": [
+     "LLM"
+    ],
+    "line": 2326,
+    "name": "test_the_ledger_can_say_which_agents_the_budget_did_not_cover"
+   },
+   {
+    "calls": [],
+    "line": 2347,
+    "name": "test_a_rate_limit_is_its_own_exception_not_a_broken_harness"
+   },
+   {
+    "calls": [
+     "_metered_route"
+    ],
+    "line": 2370,
+    "name": "test_a_windows_reading_is_pulled_from_wherever_the_route_says"
+   },
+   {
+    "calls": [
+     "_metered_route"
+    ],
+    "line": 2379,
+    "name": "test_a_route_that_reports_no_windows_reports_none"
+   },
+   {
+    "calls": [],
+    "line": 2391,
+    "name": "test_the_tightest_window_is_the_one_that_constrains"
+   },
+   {
+    "calls": [],
+    "line": 2406,
+    "name": "test_a_reading_from_before_the_reset_is_not_used"
+   },
+   {
+    "calls": [],
+    "line": 2420,
+    "name": "test_the_meter_store_merges_rather_than_replaces"
+   },
+   {
+    "calls": [],
+    "line": 2434,
+    "name": "test_a_measurement_never_takes_the_call_down_with_it"
+   },
+   {
+    "calls": [],
+    "line": 2445,
+    "name": "test_the_gauge_is_read_even_when_the_call_is_refused"
+   },
+   {
+    "calls": [
+     "_route_cfg"
+    ],
+    "line": 2453,
+    "name": "test_editing_a_flag_does_not_discard_a_sign_in"
+   },
+   {
+    "calls": [
+     "_route_cfg"
+    ],
+    "line": 2484,
+    "name": "test_a_different_binary_or_credential_still_discards_it"
+   },
+   {
+    "calls": [],
+    "line": 2511,
+    "name": "test_the_image_sweep_keeps_what_is_live_and_only_drops_what_it_minted"
+   },
+   {
+    "calls": [],
+    "line": 2566,
+    "name": "test_everything_this_factory_makes_in_docker_wears_its_name"
+   },
+   {
+    "calls": [
+     "_container_route"
+    ],
+    "line": 2586,
+    "name": "test_a_route_whose_credentials_all_miss_is_refused_before_anything_runs"
+   },
+   {
+    "calls": [
+     "_container_route"
+    ],
+    "line": 2604,
+    "name": "test_the_harness_layer_is_keyed_on_the_base_image_and_the_files_copied_in"
+   },
+   {
+    "calls": [
+     "_shipped_container_routes"
+    ],
+    "line": 2630,
+    "name": "test_a_harness_brings_its_own_runtime_and_leaves_the_project_s_alone"
+   },
+   {
+    "calls": [
+     "_container_route"
+    ],
+    "line": 2663,
+    "name": "test_a_harness_that_breaks_the_rules_is_refused_before_anything_is_built"
+   },
+   {
+    "calls": [
+     "_container_route"
+    ],
+    "line": 2677,
+    "name": "test_a_harness_that_cannot_run_in_the_project_s_image_says_why_in_its_terms"
+   },
+   {
+    "calls": [
+     "_executor",
+     "_container_route",
+     "_Prepared"
+    ],
+    "line": 2714,
+    "name": "test_a_session_whose_container_was_not_prepared_says_why_instead_of_the_guard"
+   },
+   {
+    "calls": [
+     "_docker_config"
+    ],
+    "line": 2767,
+    "name": "test_a_container_cannot_reach_the_machine_it_runs_on"
+   },
+   {
+    "calls": [
+     "_docker_config"
+    ],
+    "line": 2824,
+    "name": "test_a_container_is_stripped_of_what_a_test_runner_never_needs"
+   },
+   {
+    "calls": [],
+    "line": 2883,
+    "name": "test_an_account_that_is_a_placeholder_is_not_published_as_an_account"
+   },
+   {
+    "calls": [
+     "app_js"
+    ],
+    "line": 2921,
+    "name": "test_a_fallback_is_booked_as_the_model_it_actually_ran_on"
+   },
+   {
+    "calls": [],
+    "line": 2983,
+    "name": "test_every_call_is_written_down_in_the_order_it_happened"
+   },
+   {
+    "calls": [],
+    "line": 3052,
+    "name": "test_a_route_that_ran_out_is_not_asked_again_until_it_may_have_come_back"
+   },
+   {
+    "calls": [],
+    "line": 3086,
+    "name": "test_editing_nothing_is_not_reported_as_a_failed_session_for_the_integrator"
+   },
+   {
+    "calls": [],
+    "line": 3118,
+    "name": "test_no_agent_runs_on_this_machine"
+   },
+   {
+    "calls": [
+     "_carry_once"
+    ],
+    "line": 3157,
+    "name": "test_the_way_out_forwards_to_public_addresses_and_nothing_else"
+   },
+   {
+    "calls": [
+     "_docker_config"
+    ],
+    "line": 3180,
+    "name": "test_a_stack_sends_only_its_setup_and_its_agents_out"
+   },
+   {
+    "calls": [
+     "_carry_once"
+    ],
+    "line": 3206,
+    "name": "test_the_way_out_writes_down_what_it_forwarded_and_what_it_stopped"
+   },
+   {
+    "calls": [],
+    "line": 3248,
+    "name": "test_a_sealed_network_is_laid_out_so_the_proxy_can_answer_for_part_of_it"
+   },
+   {
+    "calls": [],
+    "line": 3267,
+    "name": "test_a_full_stand_in_block_gives_up_the_name_used_least_recently"
+   },
+   {
+    "calls": [],
+    "line": 3283,
+    "name": "test_a_sealed_network_is_made_on_the_first_free_block_and_moves_on_when_taken"
+   },
+   {
+    "calls": [],
+    "line": 3335,
+    "name": "test_a_container_s_resolver_asks_docker_first_and_the_proxy_second"
+   },
+   {
+    "calls": [
+     "factory_files"
+    ],
+    "line": 3348,
+    "name": "test_nothing_tells_a_container_about_the_proxy_any_more"
+   },
+   {
+    "calls": [],
+    "line": 3360,
+    "name": "test_the_way_out_is_summarized_by_who_tried_not_just_by_address"
+   },
+   {
+    "calls": [],
+    "line": 3393,
+    "name": "test_a_restarted_way_out_keeps_every_build_s_way_out"
+   },
+   {
+    "calls": [],
+    "line": 3453,
+    "name": "test_a_session_s_row_carries_what_the_session_itself_reported"
+   },
+   {
+    "calls": [
+     "build_argv",
+     "EnvironmentSpec",
+     "DockerError",
+     "containers_module"
+    ],
+    "line": 3494,
+    "name": "test_the_build_names_the_stage_and_the_projects_own_context"
+   },
+   {
+    "calls": [
+     "DockerConfig",
+     "door_argv",
+     "inner_argv"
+    ],
+    "line": 3512,
+    "name": "test_the_door_publishes_this_machines_loopback_and_nothing_wider"
+   },
+   {
+    "calls": [
+     "_stand_in_docker",
+     "DockerConfig",
+     "Door"
+    ],
+    "line": 3541,
+    "name": "test_half_an_open_door_is_closed_again"
+   },
+   {
+    "calls": [
+     "_stand_in_docker",
+     "DockerConfig",
+     "sweep_previews"
+    ],
+    "line": 3558,
+    "name": "test_the_boot_sweep_removes_only_what_a_preview_left"
+   },
+   {
+    "calls": [
+     "_ab_repo",
+     "load_config",
+     "_AbStub",
+     "AsBuiltReader"
+    ],
+    "line": 3586,
+    "name": "test_a_reading_pauses_itself_before_the_window_is_full"
+   },
+   {
+    "calls": [
+     "WindowReading"
+    ],
+    "line": 3594,
+    "name": "Gauge"
+   },
+   {
+    "calls": [
+     "route",
+     "LLM",
+     "RateLimited",
+     "FileRecord"
+    ],
+    "line": 3616,
+    "name": "test_a_refusal_with_no_words_is_read_as_the_limit_when_the_window_is_full"
+   },
+   {
+    "calls": [
+     "_route_cfg"
+    ],
+    "line": 3625,
+    "name": "route"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "_global_harness",
+     "load_config",
+     "CommandExecutor",
+     "LLM",
+     "found",
+     "WorkUnit",
+     "Spec"
+    ],
+    "line": 3640,
+    "name": "test_the_session_bridges_the_runner_that_starts_and_none_of_it_reaches_the_unit"
+   },
+   {
+    "calls": [
+     "SelfDisclosure"
+    ],
+    "line": 3657,
+    "name": "fake_ask"
+   },
+   {
+    "calls": [
+     "ExecutorConfig",
+     "ignored"
+    ],
+    "line": 3674,
+    "name": "test_an_openhands_worker_loads_the_root_agents_md_and_the_projects_skills"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py",
+   "factory/containers.py",
+   "factory/config.py",
+   "factory/executors.py",
+   "factory/schemas.py",
+   "factory/projects.py",
+   "factory/llm.py",
+   "factory/gates.py",
+   "factory/store.py",
+   "factory/pipeline/factory/__init__.py",
+   "factory/pipeline/factory/base.py",
+   "factory/workspace.py",
+   "factory/routes.py",
+   "factory/meters.py",
+   "factory/sessioncreds.py",
+   "factory/isolation.py",
+   "factory/egress_proxy.py",
+   "factory/egress.py",
+   "factory/asbuilt.py",
+   "factory/guides.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "subprocess (git operations)",
+   "a model provider",
+   "subprocess/asyncio for process execution",
+   "LLM API provider"
+  ],
+  "purpose": "Tests harness agents and their execution environments, covering container runners, network isolation, and LLM cost tracking.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

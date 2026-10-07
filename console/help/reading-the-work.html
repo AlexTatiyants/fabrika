@@ -1,0 +1,30 @@
+<p class="lead">The work map shows what was asked for beside what was built, and how they connect. It's the way
+  into one criterion, or one file.</p>
+
+<h4>The map</h4>
+<p>On the left, <b>Asked for</b>: every acceptance criterion, marked tested, failed test or untested, with the
+  objections that land on it. On the right, <b>Built</b>: every file the run changed, with how many of them need
+  your eyes. The lines between them are links computed from the workers' decisions and the blind tests' tags, never
+  asked of a model. The four counts across the top are the states the work can be in: criteria built and verified,
+  criteria built but not confirmed, criteria nothing built, and files nothing asked for. Press one to draw its
+  links; <b>Show where objections land</b> draws the objections instead.</p>
+
+<h4>How much a file needs you</h4>
+<ul>
+  <li><i>novel</i>: a real choice. This is the part a person has to read.</li>
+  <li><i>conventional</i>: the obvious way, following a convention the repository already had.</li>
+  <li><i>mechanical</i>: forced by the language or framework; there was no choice to make.</li>
+  <li><i>generated</i>: the output of a tool or template.</li>
+</ul>
+<p>The rapporteur classifies every file; one it leaves out counts as novel, never as safe.</p>
+
+<h4>One criterion</h4>
+<p><b>↗ open</b> on a criterion pins it at the top with only the code that serves it. Generated, mechanical and
+  conventional code is folded away by default, so what's left is where a choice was made. Its state is one of
+  <i>verified</i>, <i>failing</i>, <i>not settled</i>, <i>no test</i>, <i>no code</i> or <i>you check</i>, and its
+  evidence is one step further: the four kinds, each with what it doesn't prove.</p>
+
+<h4>One file</h4>
+<p><b>↗ open</b> on a file shows its diff, with what it was written for and every objection about it beside it. If
+  the control room has an editor set and you're on Fabrika's machine, <b>Open in your editor →</b> opens the real
+  file at the first changed line. See <a data-help="control-room">The control room</a>.</p>

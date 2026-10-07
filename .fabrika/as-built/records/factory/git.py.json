@@ -1,0 +1,75 @@
+{
+ "blob": "e69271385b03ba2d6b1e50d9de53a1c040641877",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "TIMEOUT",
+   "run",
+   "out",
+   "head_sha",
+   "current_branch",
+   "is_repo",
+   "has_commit"
+  ],
+  "domain_terms": [
+   "repository",
+   "commit",
+   "branch"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 25,
+    "name": "run"
+   },
+   {
+    "calls": [
+     "run"
+    ],
+    "line": 36,
+    "name": "out"
+   },
+   {
+    "calls": [
+     "out"
+    ],
+    "line": 42,
+    "name": "head_sha"
+   },
+   {
+    "calls": [
+     "out"
+    ],
+    "line": 47,
+    "name": "current_branch"
+   },
+   {
+    "calls": [
+     "out"
+    ],
+    "line": 52,
+    "name": "is_repo"
+   },
+   {
+    "calls": [
+     "out"
+    ],
+    "line": 57,
+    "name": "has_commit"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git"
+  ],
+  "purpose": "Unified wrapper for git command execution with timeouts and consistent error handling, replacing nine scattered wrappers that had drifted in behavior.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

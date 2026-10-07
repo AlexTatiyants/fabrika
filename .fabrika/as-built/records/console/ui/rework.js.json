@@ -1,0 +1,63 @@
+{
+ "blob": "28ff2698b7a3d894d73e526d5fc60605566ca534",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Route"
+  ],
+  "domain_terms": [
+   "finding",
+   "flag",
+   "disposition",
+   "repair round",
+   "route",
+   "packet"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 32,
+    "name": "lead"
+   },
+   {
+    "calls": [
+     "tagOf",
+     "noteOf",
+     "DISPOSITIONS",
+     "RAISED_HERE"
+    ],
+    "line": 60,
+    "name": "Filed"
+   },
+   {
+    "calls": [
+     "Filed",
+     "ROUTE",
+     "usd"
+    ],
+    "line": 103,
+    "name": "Route"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Screen 4 of the review UI\u2014displays flags/findings from code review and routes them through repair, reopen, or accept based on human dispositions.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "Route",
+    "kind": "export",
+    "method": "",
+    "name": "Route"
+   }
+  ]
+ }
+}

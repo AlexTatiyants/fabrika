@@ -1,0 +1,312 @@
+{
+ "blob": "efe558c41f9c8d01082e880a6ef8af98664e3734",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "SETUP_HREF",
+   "SU_STATIONS",
+   "loadSetup",
+   "suJob",
+   "suRunning",
+   "suFamily",
+   "suRouteLabel",
+   "suLamp",
+   "suMark",
+   "suCmd",
+   "suOpt",
+   "suRow",
+   "suNav",
+   "suMachine",
+   "suProvider",
+   "suAccount",
+   "suAccounts",
+   "suHarnesses",
+   "suCrew",
+   "suLimits",
+   "suDone",
+   "SU_WHY",
+   "setupScreen",
+   "suRefresh",
+   "suPost",
+   "suValue",
+   "setupClick"
+  ],
+  "domain_terms": [
+   "machine (Docker setup)",
+   "accounts (API keys and models)",
+   "harnesses (agent execution environments)",
+   "crew (builder and checker assignment)",
+   "limits (budget, time, repair rounds)"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state.setup",
+   "state.su"
+  ],
+  "entities_written": [
+   "state.setup",
+   "state.su",
+   "state.roles",
+   "state.ac"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "api"
+    ],
+    "line": 23,
+    "name": "loadSetup"
+   },
+   {
+    "calls": [],
+    "line": 35,
+    "name": "suJob"
+   },
+   {
+    "calls": [
+     "suJob"
+    ],
+    "line": 36,
+    "name": "suRunning"
+   },
+   {
+    "calls": [],
+    "line": 40,
+    "name": "suFamily"
+   },
+   {
+    "calls": [],
+    "line": 47,
+    "name": "suRouteLabel"
+   },
+   {
+    "calls": [
+     "suRunning",
+     "suJob"
+    ],
+    "line": 55,
+    "name": "suLamp"
+   },
+   {
+    "calls": [],
+    "line": 101,
+    "name": "suMark"
+   },
+   {
+    "calls": [],
+    "line": 103,
+    "name": "suCmd"
+   },
+   {
+    "calls": [],
+    "line": 107,
+    "name": "suOpt"
+   },
+   {
+    "calls": [
+     "suMark"
+    ],
+    "line": 110,
+    "name": "suRow"
+   },
+   {
+    "calls": [],
+    "line": 116,
+    "name": "suNav"
+   },
+   {
+    "calls": [
+     "suRunning",
+     "suJob",
+     "suRow",
+     "suNav"
+    ],
+    "line": 130,
+    "name": "suMachine"
+   },
+   {
+    "calls": [
+     "suMark"
+    ],
+    "line": 189,
+    "name": "suProvider"
+   },
+   {
+    "calls": [
+     "suJob",
+     "suMark",
+     "suOpt",
+     "suCmd"
+    ],
+    "line": 210,
+    "name": "suAccount"
+   },
+   {
+    "calls": [
+     "suProvider",
+     "suAccount",
+     "suNav",
+     "suFamily"
+    ],
+    "line": 278,
+    "name": "suAccounts"
+   },
+   {
+    "calls": [
+     "suRow",
+     "suNav"
+    ],
+    "line": 297,
+    "name": "suHarnesses"
+   },
+   {
+    "calls": [
+     "suFamily",
+     "suRouteLabel",
+     "suRow",
+     "suNav"
+    ],
+    "line": 350,
+    "name": "suCrew"
+   },
+   {
+    "calls": [
+     "suNav"
+    ],
+    "line": 396,
+    "name": "suLimits"
+   },
+   {
+    "calls": [
+     "suRow",
+     "suLamp",
+     "suNav"
+    ],
+    "line": 419,
+    "name": "suDone"
+   },
+   {
+    "calls": [
+     "suMachine",
+     "suAccounts",
+     "suHarnesses",
+     "suCrew",
+     "suLimits",
+     "suDone",
+     "suLamp"
+    ],
+    "line": 440,
+    "name": "setupScreen"
+   },
+   {
+    "calls": [
+     "loadSetup"
+    ],
+    "line": 480,
+    "name": "suRefresh"
+   },
+   {
+    "calls": [
+     "api"
+    ],
+    "line": 484,
+    "name": "suPost"
+   },
+   {
+    "calls": [],
+    "line": 488,
+    "name": "suValue"
+   },
+   {
+    "calls": [
+     "suPost",
+     "suValue"
+    ],
+    "line": 490,
+    "name": "setupClick"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "the backend server",
+   "browser DOM"
+  ],
+  "purpose": "Renders the setup/commissioning screen where users configure Docker, API accounts, harnesses, crew assignments, and resource limits before Fabrika can process features.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/api/setup"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/machine"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/docker/start"
+   },
+   {
+    "method": "POST",
+    "path": "/api/egress/start"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/provider"
+   },
+   {
+    "method": "POST",
+    "path": "/api/provider/test"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/setup/routes/{route}/key"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/routes/{route}/install"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/routes/{route}/check"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/routes/{route}/decline"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/harnesses"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/setup/crew"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/setup/limits"
+   },
+   {
+    "method": "POST",
+    "path": "/api/setup/finish"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "setupScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "#/?setup"
+   },
+   {
+    "handler": "setupClick",
+    "kind": "event",
+    "method": "",
+    "name": "setup UI click (data-su attributes)"
+   }
+  ]
+ }
+}

@@ -1,0 +1,452 @@
+{
+ "blob": "ac0d2198b085e0739ea0eab8933024c6f12eefae",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "saveRole",
+   "saveProvider",
+   "testProvider",
+   "saveEditorUrl",
+   "addReviewAgent",
+   "deleteReviewAgent",
+   "showScaffoldDiff",
+   "writeScaffolding",
+   "runBaseline",
+   "discardProject",
+   "discardFeature",
+   "sendReintake",
+   "sendCorrection",
+   "approveSpec",
+   "loadPlanCheck",
+   "planWarning",
+   "planActions",
+   "rule",
+   "confirmDialog",
+   "armed",
+   "askRebuild",
+   "rebuild",
+   "askRevalidate",
+   "armDiscard",
+   "askRetryBuild",
+   "retryBuild",
+   "revalidate",
+   "stopBar",
+   "cordSection",
+   "showConsequence",
+   "hideConsequence",
+   "verdict",
+   "REBUILD_TITLE",
+   "ARM_MS"
+  ],
+  "domain_terms": [
+   "roles (agent configuration)",
+   "projects (work collections)",
+   "features (work items)",
+   "scaffolding (generated code templates)",
+   "specifications (specs to be built)",
+   "rulings and verdicts (decisions on acceptance)"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "loadRoles",
+     "render",
+     "afterSheetSave",
+     "toast"
+    ],
+    "line": 6,
+    "name": "saveRole"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "render",
+     "toast",
+     "errorToast"
+    ],
+    "line": 35,
+    "name": "saveProvider"
+   },
+   {
+    "calls": [
+     "toast",
+     "withBusy",
+     "api",
+     "render"
+    ],
+    "line": 52,
+    "name": "testProvider"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "render",
+     "toast"
+    ],
+    "line": 64,
+    "name": "saveEditorUrl"
+   },
+   {
+    "calls": [
+     "toast",
+     "withBusy",
+     "api",
+     "loadRoles",
+     "render"
+    ],
+    "line": 76,
+    "name": "addReviewAgent"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "loadRoles",
+     "render"
+    ],
+    "line": 92,
+    "name": "deleteReviewAgent"
+   },
+   {
+    "calls": [
+     "working",
+     "api",
+     "projectUrl",
+     "errorToast"
+    ],
+    "line": 108,
+    "name": "showScaffoldDiff"
+   },
+   {
+    "calls": [
+     "toast",
+     "api",
+     "projectUrl",
+     "refreshProject",
+     "errorToast"
+    ],
+    "line": 131,
+    "name": "writeScaffolding"
+   },
+   {
+    "calls": [
+     "render",
+     "withBusy",
+     "api",
+     "projectUrl",
+     "refreshProject"
+    ],
+    "line": 183,
+    "name": "runBaseline"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "projectUrl",
+     "loadProjects",
+     "render",
+     "toast"
+    ],
+    "line": 204,
+    "name": "discardProject"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh",
+     "toast"
+    ],
+    "line": 218,
+    "name": "discardFeature"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh",
+     "toast"
+    ],
+    "line": 239,
+    "name": "sendReintake"
+   },
+   {
+    "calls": [
+     "toast",
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh"
+    ],
+    "line": 251,
+    "name": "sendCorrection"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh"
+    ],
+    "line": 277,
+    "name": "approveSpec"
+   },
+   {
+    "calls": [
+     "api",
+     "featureUrl",
+     "render"
+    ],
+    "line": 289,
+    "name": "loadPlanCheck"
+   },
+   {
+    "calls": [
+     "loadPlanCheck",
+     "esc"
+    ],
+    "line": 299,
+    "name": "planWarning"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 318,
+    "name": "planActions"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh",
+     "toast"
+    ],
+    "line": 336,
+    "name": "rule"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 373,
+    "name": "confirmDialog"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 414,
+    "name": "armed"
+   },
+   {
+    "calls": [
+     "confirmDialog",
+     "rebuild"
+    ],
+    "line": 435,
+    "name": "askRebuild"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh"
+    ],
+    "line": 448,
+    "name": "rebuild"
+   },
+   {
+    "calls": [
+     "confirmDialog",
+     "revalidate"
+    ],
+    "line": 459,
+    "name": "askRevalidate"
+   },
+   {
+    "calls": [
+     "armed",
+     "discardFeature"
+    ],
+    "line": 474,
+    "name": "armDiscard"
+   },
+   {
+    "calls": [
+     "confirmDialog",
+     "retryBuild"
+    ],
+    "line": 492,
+    "name": "askRetryBuild"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh"
+    ],
+    "line": 504,
+    "name": "retryBuild"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh"
+    ],
+    "line": 511,
+    "name": "revalidate"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 521,
+    "name": "stopBar"
+   },
+   {
+    "calls": [
+     "esc",
+     "rel"
+    ],
+    "line": 552,
+    "name": "cordSection"
+   },
+   {
+    "calls": [],
+    "line": 631,
+    "name": "showConsequence"
+   },
+   {
+    "calls": [],
+    "line": 643,
+    "name": "hideConsequence"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "featureUrl",
+     "refresh"
+    ],
+    "line": 650,
+    "name": "verdict"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "browser DOM",
+   "backend API"
+  ],
+  "purpose": "Handles UI button actions for the console: saving role and provider configuration, writing code scaffolding, managing project and feature decisions (approvals, rulings, discards, rebuilds), and providing confirmation dialogs with armed-state patterns for irreversible operations.",
+  "routes_called": [
+   {
+    "method": "PATCH",
+    "path": "/api/roles/{name}"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/roles/{name}/prompt"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/provider"
+   },
+   {
+    "method": "POST",
+    "path": "/api/provider/test"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/editor"
+   },
+   {
+    "method": "POST",
+    "path": "/api/roles"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/roles/{name}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/scaffold-diff"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/scaffold-and-read"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/scaffold"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/baseline"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/projects/{projectId}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/features/{featureId}/plan-check"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/reintake"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/correct"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/approve-spec"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/rulings"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/projects/{projectId}/features/{featureId}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/rebuild"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/revalidate"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/retry-build"
+   },
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/features/{featureId}/verdict"
+   }
+  ],
+  "ways_in": []
+ }
+}

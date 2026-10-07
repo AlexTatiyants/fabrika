@@ -1,0 +1,25 @@
+{
+ "blob": "98a97ae39631fb1e435be1feecfeeace00be2dae",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "capability",
+   "ways in",
+   "subsystem",
+   "tested"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Documents the capabilities view of the as-built report: how ways in are grouped into capabilities, the subsystem grid showing which code runs where, and tested counts.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

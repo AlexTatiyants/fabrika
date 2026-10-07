@@ -1,0 +1,22 @@
+{
+ "blob": "50e260645eb76163230adb8c476df1eff27186a6",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "__version__"
+  ],
+  "domain_terms": [],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Package initialization and version declaration for the factory.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

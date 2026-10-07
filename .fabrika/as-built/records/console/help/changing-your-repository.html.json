@@ -1,0 +1,26 @@
+{
+ "blob": "dca0dcf5d7102d4326e4b652027a6bbf7466a618",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "fix",
+   "test level",
+   "environment",
+   "prompt",
+   "repository"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Documents what fixes Fabrika can apply directly (settings, support files, environment steps) and what fixes require manual code changes with prompts to hand to a coding agent.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

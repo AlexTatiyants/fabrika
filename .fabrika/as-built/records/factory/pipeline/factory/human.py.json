@@ -1,0 +1,184 @@
+{
+ "blob": "69b1f0bcbfc48208ec9868396bea35a4c4669170",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "HumanMixin"
+  ],
+  "domain_terms": [
+   "feature",
+   "verdict",
+   "rework",
+   "flag",
+   "packet",
+   "spec"
+  ],
+  "entities_defined": [
+   "HumanMixin"
+  ],
+  "entities_read": [
+   "FeatureState",
+   "ReworkPlan",
+   "HumanFlag",
+   "InterrogationReport",
+   "Packet"
+  ],
+  "entities_written": [
+   "ruling",
+   "flag",
+   "flag_retag",
+   "dispatch",
+   "revalidate",
+   "rebuild",
+   "branch_reset",
+   "verdict",
+   "sandbox_release_failed"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "store_for"
+    ],
+    "line": 21,
+    "name": "record_ruling"
+   },
+   {
+    "calls": [
+     "store_for",
+     "human_flags"
+    ],
+    "line": 28,
+    "name": "flags"
+   },
+   {
+    "calls": [
+     "store_for",
+     "flags"
+    ],
+    "line": 37,
+    "name": "record_flag"
+   },
+   {
+    "calls": [
+     "store_for",
+     "flags",
+     "compute_rework"
+    ],
+    "line": 57,
+    "name": "retag_flag"
+   },
+   {
+    "calls": [
+     "flags",
+     "compute_rework"
+    ],
+    "line": 66,
+    "name": "rework_plan"
+   },
+   {
+    "calls": [
+     "store_for"
+    ],
+    "line": 70,
+    "name": "rework_budget"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "rework_plan"
+    ],
+    "line": 93,
+    "name": "_dispatchable"
+   },
+   {
+    "calls": [
+     "_dispatchable",
+     "store_for",
+     "rework_budget",
+     "run_build"
+    ],
+    "line": 111,
+    "name": "send_to_repair"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "open_sandbox",
+     "run_build"
+    ],
+    "line": 136,
+    "name": "revalidate"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "open_sandbox",
+     "run_build"
+    ],
+    "line": 184,
+    "name": "rebuild"
+   },
+   {
+    "calls": [
+     "_dispatchable",
+     "store_for",
+     "flags",
+     "open_sandbox",
+     "reinterrogate"
+    ],
+    "line": 275,
+    "name": "reopen_spec"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "open_sandbox",
+     "_commit_spec",
+     "_save",
+     "_emit"
+    ],
+    "line": 316,
+    "name": "record_verdict"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "owner_is_alive",
+     "open_sandbox",
+     "_emit"
+    ],
+    "line": 343,
+    "name": "delete_feature"
+   },
+   {
+    "calls": [
+     "project",
+     "store_for",
+     "is_orphaned"
+    ],
+    "line": 393,
+    "name": "features"
+   }
+  ],
+  "imports": [
+   "factory/projects.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/flags.py",
+   "factory/pipeline/ownership.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Handles human decisions at gate 2 and beyond: recording rulings and verdicts on features, managing flags and rework, rebuilding or revalidating work, reopening specs, and discarding features.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "blob": "2ed1fb4d94c07af62cbd3a444e5aaa80e34ffd85",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "finding",
+   "defect",
+   "repair",
+   "minimal diff",
+   "blast radius"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Role definition for an agent that fixes one named defect with minimal changes, avoiding refactoring, new abstractions, scope expansion, or test modification.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

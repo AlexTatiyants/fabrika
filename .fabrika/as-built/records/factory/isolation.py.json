@@ -1,0 +1,48 @@
+{
+ "blob": "104340dc95cfe50fe7f82dd56a0e6635dd562014",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "TEST_SUITE_ON_HOST",
+   "IsolationError",
+   "contained",
+   "require_contained"
+  ],
+  "domain_terms": [
+   "agent",
+   "container",
+   "isolation",
+   "sealed environment"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 35,
+    "name": "IsolationError"
+   },
+   {
+    "calls": [],
+    "line": 39,
+    "name": "contained"
+   },
+   {
+    "calls": [],
+    "line": 47,
+    "name": "require_contained"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker"
+  ],
+  "purpose": "Enforces that agents and their work run only inside sealed containers, isolated from the host machine and other features.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

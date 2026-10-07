@@ -1,0 +1,350 @@
+{
+ "blob": "f432f91859b63a7d27e0bcc70c5413f43273fd7b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "PROXY",
+   "SCRIPT",
+   "IMAGE_INSTALL",
+   "RESOLV_DIR",
+   "ensure_proxy",
+   "read_log",
+   "summarize",
+   "status",
+   "reserve_blocks",
+   "release_blocks",
+   "subnet_of",
+   "create_sealed",
+   "open_egress",
+   "close_egress",
+   "remove_sealed",
+   "resolver_file",
+   "resolver_argv",
+   "self_test"
+  ],
+  "domain_terms": [
+   "sealed network",
+   "egress proxy",
+   "Docker container",
+   "network address pool",
+   "resolver configuration"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 62,
+    "name": "_lock"
+   },
+   {
+    "calls": [
+     "procs.kill"
+    ],
+    "line": 69,
+    "name": "_docker"
+   },
+   {
+    "calls": [],
+    "line": 84,
+    "name": "_image_tag"
+   },
+   {
+    "calls": [
+     "_docker",
+     "_image_tag"
+    ],
+    "line": 89,
+    "name": "_image"
+   },
+   {
+    "calls": [],
+    "line": 105,
+    "name": "_run_argv"
+   },
+   {
+    "calls": [
+     "_run_argv"
+    ],
+    "line": 130,
+    "name": "_version"
+   },
+   {
+    "calls": [
+     "_docker"
+    ],
+    "line": 137,
+    "name": "_attached"
+   },
+   {
+    "calls": [
+     "_lock",
+     "_docker",
+     "_attached",
+     "_image",
+     "_join",
+     "subnet_of"
+    ],
+    "line": 144,
+    "name": "ensure_proxy"
+   },
+   {
+    "calls": [],
+    "line": 181,
+    "name": "_who"
+   },
+   {
+    "calls": [
+     "_docker"
+    ],
+    "line": 191,
+    "name": "_members"
+   },
+   {
+    "calls": [],
+    "line": 222,
+    "name": "_gone"
+   },
+   {
+    "calls": [],
+    "line": 240,
+    "name": "read_log"
+   },
+   {
+    "calls": [
+     "_who",
+     "_gone"
+    ],
+    "line": 257,
+    "name": "summarize"
+   },
+   {
+    "calls": [
+     "_docker",
+     "_attached",
+     "_members",
+     "summarize"
+    ],
+    "line": 280,
+    "name": "status"
+   },
+   {
+    "calls": [
+     "_docker"
+    ],
+    "line": 329,
+    "name": "_taken"
+   },
+   {
+    "calls": [
+     "_taken"
+    ],
+    "line": 349,
+    "name": "_free_block"
+   },
+   {
+    "calls": [
+     "_net_lock",
+     "_free_block",
+     "release_blocks",
+     "_pool_full"
+    ],
+    "line": 357,
+    "name": "reserve_blocks"
+   },
+   {
+    "calls": [],
+    "line": 372,
+    "name": "release_blocks"
+   },
+   {
+    "calls": [],
+    "line": 377,
+    "name": "_pool_full"
+   },
+   {
+    "calls": [
+     "_docker"
+    ],
+    "line": 383,
+    "name": "subnet_of"
+   },
+   {
+    "calls": [
+     "_net_lock",
+     "subnet_of",
+     "_free_block",
+     "_docker"
+    ],
+    "line": 395,
+    "name": "create_sealed"
+   },
+   {
+    "calls": [
+     "_docker",
+     "_image"
+    ],
+    "line": 447,
+    "name": "_install_rules"
+   },
+   {
+    "calls": [
+     "_docker",
+     "_install_rules"
+    ],
+    "line": 473,
+    "name": "_join"
+   },
+   {
+    "calls": [
+     "ensure_proxy",
+     "subnet_of"
+    ],
+    "line": 493,
+    "name": "open_egress"
+   },
+   {
+    "calls": [
+     "_docker"
+    ],
+    "line": 507,
+    "name": "close_egress"
+   },
+   {
+    "calls": [
+     "close_egress",
+     "_docker"
+    ],
+    "line": 517,
+    "name": "remove_sealed"
+   },
+   {
+    "calls": [],
+    "line": 523,
+    "name": "resolver_file"
+   },
+   {
+    "calls": [
+     "resolver_file"
+    ],
+    "line": 546,
+    "name": "resolver_argv"
+   },
+   {
+    "calls": [
+     "create_sealed",
+     "open_egress",
+     "subnet_of",
+     "_docker",
+     "remove_sealed"
+    ],
+    "line": 577,
+    "name": "self_test"
+   }
+  ],
+  "imports": [
+   "factory/procs.py",
+   "factory/config.py",
+   "factory/egress_proxy.py",
+   "factory/agentbox.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [
+   "factory/egress_proxy.py"
+  ],
+  "outside": [
+   "Docker",
+   "the local filesystem"
+  ],
+  "purpose": "Manages sealed Docker networks and the egress proxy that controls their internet access. Handles network creation, proxy startup, resolver configuration, and auditing outbound connections.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "ensure_proxy",
+    "kind": "export",
+    "method": "",
+    "name": "ensure_proxy"
+   },
+   {
+    "handler": "read_log",
+    "kind": "export",
+    "method": "",
+    "name": "read_log"
+   },
+   {
+    "handler": "summarize",
+    "kind": "export",
+    "method": "",
+    "name": "summarize"
+   },
+   {
+    "handler": "status",
+    "kind": "export",
+    "method": "",
+    "name": "status"
+   },
+   {
+    "handler": "reserve_blocks",
+    "kind": "export",
+    "method": "",
+    "name": "reserve_blocks"
+   },
+   {
+    "handler": "release_blocks",
+    "kind": "export",
+    "method": "",
+    "name": "release_blocks"
+   },
+   {
+    "handler": "subnet_of",
+    "kind": "export",
+    "method": "",
+    "name": "subnet_of"
+   },
+   {
+    "handler": "create_sealed",
+    "kind": "export",
+    "method": "",
+    "name": "create_sealed"
+   },
+   {
+    "handler": "open_egress",
+    "kind": "export",
+    "method": "",
+    "name": "open_egress"
+   },
+   {
+    "handler": "close_egress",
+    "kind": "export",
+    "method": "",
+    "name": "close_egress"
+   },
+   {
+    "handler": "remove_sealed",
+    "kind": "export",
+    "method": "",
+    "name": "remove_sealed"
+   },
+   {
+    "handler": "resolver_file",
+    "kind": "export",
+    "method": "",
+    "name": "resolver_file"
+   },
+   {
+    "handler": "resolver_argv",
+    "kind": "export",
+    "method": "",
+    "name": "resolver_argv"
+   },
+   {
+    "handler": "self_test",
+    "kind": "export",
+    "method": "",
+    "name": "self_test"
+   }
+  ]
+ }
+}

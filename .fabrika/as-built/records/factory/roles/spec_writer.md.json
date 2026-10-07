@@ -1,0 +1,27 @@
+{
+ "blob": "1a853fe048d4f14287633439f9613a609189db75",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "acceptance criterion",
+   "specification",
+   "intent",
+   "requirement",
+   "traceability matrix",
+   "verification"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Guidance for the spec writer agent role, which transforms an intent and human answers into a frozen specification with acceptance criteria that downstream agents build and test against.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

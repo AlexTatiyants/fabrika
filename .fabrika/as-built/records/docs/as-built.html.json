@@ -1,0 +1,28 @@
+{
+ "blob": "dc2616ec6a9c4bfba543b64b434e73c956d80727",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "as-built documentation",
+   "subsystem",
+   "capability",
+   "ways in",
+   "scout reader",
+   "packet",
+   "gate"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Design note explaining the \"as-built\" documentation system \u2014 a standing record of a codebase's structure, capabilities, and function for reviewers to understand systems built by agents, organized in three layers: structure (what the code is), function (what it does), and reasons (why it's built that way).",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

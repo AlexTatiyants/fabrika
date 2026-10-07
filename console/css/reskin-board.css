@@ -1,0 +1,651 @@
+/* The andon re-skin, first half: the board over a feature screen, the record
+   under it, the rail as a yard board, and gates 1 and 0 in that language.
+   It overrides what loads before it, which is why it loads after. */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE BOARD
+   Hangs over the line. Everything above the fold on a feature screen.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.board { background: var(--panel); color: var(--board-ink); border-bottom: 5px solid var(--panel-3); }
+.hall  { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
+
+/* the second register: where YOU are, never where the run is */
+.proc.steps { display: flex; align-items: center; flex-wrap: wrap; gap: 2px 0; margin: 0;
+              padding: 12px 0 2px; border-top: 1px solid var(--board-edge); margin-top: 13px; }
+.proc.steps .st { font: 600 9.5px/1 var(--cond); letter-spacing: .2em; text-transform: uppercase;
+                  color: var(--board-ink-2); text-decoration: none; padding: 6px 0;
+                  border-bottom: 2px solid transparent; }
+.proc.steps a.st:hover { color: var(--board-ink-hi); }
+.proc.steps .arr { color: var(--rail); padding: 0 11px; }
+.proc.steps .st.at    { color: var(--board-ink-hi); border-bottom-color: var(--board-ink-hi); }
+.proc.steps .st.here  { color: var(--board-ink); }
+.proc.steps .st.ahead { color: var(--board-faint); }
+.proc.steps .st.gate  { color: var(--board-amber); border-bottom-color: var(--lamp-amber); }
+.proc.steps .st.bad   { color: var(--lamp-red); }
+/* Not a step: the record of the runs, so it stands off the end of the row. */
+.proc.steps .runs-rule { align-self: stretch; width: 1px; margin: 0 22px; background: var(--rail); }
+
+/* the lamps: lit by the line, never by design */
+.stations { padding: 0 0 10px; overflow-x: auto; }
+.strip-inner { display: flex; min-width: 100%; position: relative; padding-bottom: 42px; }
+.stn { flex: 1 0 62px; display: flex; flex-direction: column; align-items: center; gap: 7px;
+       padding: 19px 4px 10px; border-right: 1px solid var(--board-edge); position: relative; }
+.stn:last-child { border-right: 0; }
+/* plan/build/validate/review: a divider and a silkscreen caption at the first
+   lamp of each group, so the row reads as four stages before it reads as
+   sixteen stations. Both are pseudo-elements with no width or padding of
+   their own -- neither touches the flex-shrink math tuned for the row below,
+   so the sixteen cells stay exactly as evenly spaced as they would be without
+   the grouping. The label centers on the cell itself, the same way the lamp
+   and its name already do, rather than at a fixed offset that only lines up
+   for one cell width. */
+.stn.grp-div::before {
+  content: ""; position: absolute; left: 0; top: 14px; bottom: 8px; width: 1px;
+  background: var(--board-rule);
+}
+.stn.grp-start::after {
+  content: attr(data-grp); position: absolute; top: 2px; left: 50%;
+  transform: translateX(-50%);
+  font: 600 7px/1 var(--cond); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--board-faint); white-space: nowrap;
+}
+.lamp { width: 22px; height: 22px; border-radius: 50%; background: var(--lamp-off);
+        border: 2px solid var(--board-seam); position: relative; flex: none; }
+.lamp.lit::after { content: ""; position: absolute; top: 3px; left: 4px; width: 7px; height: 4.5px;
+                   border-radius: 50%; background: color-mix(in srgb, var(--ink-reversed) 42%, transparent); }
+.lamp.green { background: var(--lamp-green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-green) 20%, transparent); }
+.lamp.amber { background: var(--lamp-amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-amber) 20%, transparent); }
+.lamp.red   { background: var(--lamp-red);   box-shadow: 0 0 0 4px color-mix(in srgb, var(--lamp-red) 24%, transparent); }
+.lamp.white { background: var(--lamp-white);           box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-white) 16%, transparent); }
+/* reached, and there was nothing for it to do -- not the same as never reached */
+.lamp.skipped { background: transparent; border: 2px dashed var(--board-rule); }
+.stn-no { font: 400 9px/1 var(--mono); color: var(--board-ink-4); }
+.stn-nm { font: 600 8.5px/1.15 var(--cond); letter-spacing: .1em; text-transform: uppercase;
+          color: var(--board-ink-2); text-align: center; }
+.stn.off .stn-nm { color: var(--board-faint); }
+.lamp.blink { animation: lampblink 1.6s steps(1, end) infinite; }
+@keyframes lampblink { 0%,55% { opacity: 1 } 55.01%,100% { opacity: .34 } }
+@media (prefers-reduced-motion: reduce) { .lamp.blink { animation: none } }
+
+/* the rework return rail: part of the layout, on it or not */
+.return-rail { position: absolute; left: 28.125%; right: 9.375%; bottom: 12px; height: 20px;
+          border: 2px solid var(--rail); border-top: 0; }
+.return-rail::after { content: ""; position: absolute; left: -7px; top: -3px;
+                 border-left: 6px solid transparent; border-right: 6px solid transparent;
+                 border-bottom: 8px solid var(--rail); }
+.return-rail span { position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 50%);
+               background: var(--panel); padding: 0 10px; white-space: nowrap;
+               font: 500 8.5px/1 var(--cond); letter-spacing: .2em; text-transform: uppercase;
+               color: var(--rail); }
+.return-rail.idle { --rail: var(--board-rule); border-style: dashed; }
+.return-rail.idle::after { border-bottom-color: var(--board-rule); }
+
+.board-acts { display: flex; gap: 9px; flex-wrap: wrap; padding: 4px 0 16px; }
+.board .btn { border-color: var(--board-faint); background: transparent; color: var(--board-ink); }
+.board .btn:hover:not(:disabled) { border-color: var(--board-ink-3); }
+.board .btn-primary { background: var(--lamp-amber); border-color: var(--lamp-amber); color: var(--ink-on-amber); }
+.board .btn:disabled { color: var(--board-ink-4); border-color: var(--panel-3); }
+
+/* ── the stop bar ───────────────────────────────────────────────────────────
+   Colour enters only to say the line is disrupted. A packet that ships says so
+   in a quiet bar with a green rule, because good news does not need a field. */
+.stopbar { margin: 0 0 1.5rem; padding: 22px var(--gutter) 20px;
+           margin-left: calc(var(--gutter) * -1); margin-right: calc(var(--gutter) * -1); }
+.stopbar.disrupted { background: var(--lamp-red); color: var(--ink-reversed); }
+.stopbar.good { background: transparent; color: var(--ink); border-top: 4px solid var(--green);
+                padding-top: 18px; }
+.stopbar-in { display: flex; gap: 24px; align-items: flex-start; }
+.stopbar-w { flex: none; font: 700 13px/1 var(--cond); letter-spacing: .24em; text-transform: uppercase;
+             border: 2px solid currentColor; padding: 9px 12px 8px; margin-top: 3px; }
+.stopbar.good .stopbar-w { color: var(--green); }
+.stopbar .verdict-headline { margin: 0; font-size: 18.5px; line-height: 1.45; font-weight: 300;
+                             max-width: 78ch; font-family: var(--body); letter-spacing: 0; }
+.stopbar-sum { margin: .7rem 0 0; font-size: 14.5px; line-height: 1.6; opacity: .88; max-width: 82ch; }
+.stopbar-foot { display: flex; gap: 26px; flex-wrap: wrap; margin-top: 16px; padding-top: 13px;
+                border-top: 1px solid color-mix(in srgb, var(--board-ink-hi) 30%, transparent); }
+.stopbar.good .stopbar-foot { border-top-color: var(--line); }
+.stopbar-foot span { font: 400 12px/1 var(--mono); opacity: .85; }
+.stopbar-foot b { opacity: 1; font-weight: 500; }
+/* The foot carries figures on every screen but one. On the packet page, where
+   the bar is worn over a run rather than under it, it carries the two things
+   there are to do from here -- so they are lettered as the figures are, and
+   told apart from them by being underlined rather than by being loud. */
+.stopbar-foot a, .stopbar-foot .stopbar-link {
+  font: 400 12px/1 var(--mono); background: none; border: 0; padding: 0; cursor: pointer;
+  color: inherit; text-decoration: underline; text-underline-offset: 3px;
+}
+.stopbar.normal .stopbar-foot a, .stopbar.normal .stopbar-foot .stopbar-link {
+  color: var(--board-amber); }
+.stopbar-foot a:hover, .stopbar-foot .stopbar-link:hover { color: var(--board-ink-hi); }
+.stopbar-foot a:focus-visible, .stopbar-foot .stopbar-link:focus-visible {
+  outline: 2px solid var(--lamp-amber); outline-offset: 3px; }
+
+/* Said once, above the packet somebody asked to see while a run is replacing
+   it. The bar above has already said a run is under way; this says what the
+   thing they just opened is. */
+.prev-note { margin: 0 0 1.15rem; font-size: var(--t-body); line-height: 1.6;
+  color: var(--ink-3); max-width: 78ch; }
+.stopbar.good .stopbar-foot span { color: var(--ink-3); }
+.stopbar.good .stopbar-foot b { color: var(--ink); }
+
+/* ── the cord ───────────────────────────────────────────────────────────── */
+.cord { background: var(--panel); color: var(--board-ink); margin: 2rem 0 0; }
+.cord-in { display: grid; grid-template-columns: 1fr 232px; }
+.cord-body { padding: 24px 26px 26px; }
+.cord-body h2 { margin: 0 0 8px; font: 600 17px/1 var(--cond); letter-spacing: .12em;
+                text-transform: uppercase; color: var(--board-ink-hi); }
+.cord-body p { margin: 0 0 20px; color: var(--board-ink-2); font-size: 15px; line-height: 1.6; max-width: 64ch; }
+.cord .acts { display: flex; gap: 12px; flex-wrap: wrap; }
+.cord .btn { font: 600 12px/1 var(--cond); letter-spacing: .16em; text-transform: uppercase;
+             padding: 15px 20px; border: 2px solid var(--board-faint); background: transparent; color: var(--board-ink); }
+.cord .btn-stop { background: var(--lamp-red); border-color: var(--lamp-red); color: var(--ink-reversed); }
+.cord .btn-danger { background: var(--lamp-red); border-color: var(--lamp-red); color: var(--ink-reversed); }
+.cord .btn-quiet { border-color: transparent; color: var(--board-ink-2); text-decoration: underline; }
+.cord-pull { border-left: 1px solid var(--panel-3); display: flex; flex-direction: column;
+             align-items: center; padding: 0 0 24px; }
+.cord-pull span { font: 600 9px/1.4 var(--cond); letter-spacing: .18em; text-transform: uppercase;
+                  color: var(--board-ink-4); text-align: center; margin-top: 10px; }
+.cord-settled { padding: 0; }
+.cord-settled .cord-body p { margin-bottom: 0; }
+
+/* the consequence: what the control is about to do, before it does it */
+.consequence-panel { margin: 20px 0 0; padding: 18px 20px 20px; background: var(--panel-2);
+                     border-top: 3px solid var(--lamp-red); }
+.consequence-panel[hidden] { display: none; }
+.cq-h { margin: 0 0 12px !important; font: 600 15px/1.4 var(--body); color: var(--board-ink-hi) !important; }
+.consequence-panel ul { margin: 0 0 18px; padding-left: 1.1rem; }
+.consequence-panel li { font-size: 14.5px; line-height: 1.6; color: var(--board-ink-2); margin: 0 0 7px; }
+.consequence-panel li b { color: var(--board-ink-hi); font-weight: 600; }
+.consequence-panel .mono { color: var(--board-ink); }
+
+@media (max-width: 860px) {
+  .stopbar-in { flex-direction: column; gap: 14px; }
+  .cord-in { grid-template-columns: 1fr; }
+  .cord-pull { border-left: 0; border-top: 1px solid var(--panel-3); flex-direction: row;
+               align-items: center; gap: 16px; padding: 16px 26px; }
+  .cord-pull span { margin-top: 0; text-align: left; }
+}
+
+/* A row that opens something is a button. As divs with onClick and tabindex
+   -1, these would let a keyboard reach the verdict but not one single
+   acceptance criterion -- it could rule, but only blind. */
+.cd-head {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; margin: 0; border: 0; border-radius: 0;
+  font: inherit; color: inherit; text-align: left;
+  background: transparent;
+}
+.cd-head { border-bottom: 1px solid var(--line); }
+.cd-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE RECORD
+   The board is for the glance. This is the register the console spends most of
+   its time in, and it is deliberately quieter: shop paperwork, not signage.
+   Nothing here is styled to look important -- it is important because of what
+   it counts, or because a station said it.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.section { margin: 2.5rem 0; }
+
+.pk-h {
+  margin: 0; font-family: var(--cond); font-size: 1.0625rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.pk-sub {
+  margin: .45rem 0 1rem; font-family: var(--mono); font-size: .75rem;
+  color: var(--ink-3); line-height: 1.6;
+}
+
+/* A section heading and its tally on one line. As the first half of the
+   paragraph below, the counts would make the reader parse a sentence to learn
+   a number; they are numbers, so they are set as numbers and the prose starts at
+   the point it is actually making. */
+.pk-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: .75rem 1.5rem; flex-wrap: wrap;
+}
+.pk-tally { display: flex; align-items: baseline; gap: 1.25rem; flex-wrap: wrap; }
+.pk-count {
+  font-family: var(--cond); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
+  white-space: nowrap;
+}
+.pk-count b {
+  font-size: 1.0625rem; font-weight: 600; letter-spacing: .01em;
+  text-transform: none; color: var(--ink); margin-right: .3em;
+}
+.pk-count[title] { cursor: help; }
+
+/* Prose, not a transcript. `.pk-sub` is monospace because most of the record's
+   captions are counted things; a paragraph explaining how to read a diagram is
+   a sentence, and the code face makes it one more thing to decode. */
+.pk-sub.pk-prose { font-family: var(--body); font-size: .8125rem; color: var(--ink-2); }
+
+.card { border-radius: 0; }
+
+/* counted, not decorated */
+.stat-row { border-radius: 0; gap: 1px; }
+.stat { padding: .85rem 1rem .95rem; }
+.stat .n { font-family: var(--cond); font-size: 1.6rem; letter-spacing: .01em; }
+.stat .k {
+  font-family: var(--cond); font-size: .625rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3);
+  display: block; margin-top: .3rem;
+}
+.stat.red   { background: var(--surface); }
+.stat.red   .n { color: var(--lamp-red); }
+.stat.amber { background: var(--surface); }
+.stat.amber .n { color: var(--accent); }
+.stat.green .n { color: var(--green); }
+
+/* what a station said, attributed to the station that said it */
+/* No bar. The section heading already says this is the strongest objection
+   raised, and a card that has a border does not need a second edge to say it
+   twice. Where an attribution exists, .who carries it in the checker's red. */
+.objection {
+  border-left: 0; border-radius: 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 1.05rem 1.2rem 1.1rem;
+}
+.objection .who {
+  font-family: var(--cond); font-size: .625rem; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--lamp-red);
+  margin-bottom: .55rem;
+}
+.objection p { font-size: 1rem; line-height: 1.6; max-width: 84ch; }
+
+/* a decision that needs a person wears it on top, not down the side */
+.decision { border-radius: 0; margin: .75rem 0; }
+/* The grouping heading already says these are waiting on you, and each carries
+   its own rank. An accent edge on top of that is decoration. */
+.decision.needs-you { border-left: 1px solid var(--line); border-radius: 0; }
+.decision.needs-you .rank { color: var(--accent); font-weight: 600; }
+.decision .d-title { font-family: var(--body); font-size: 1rem; font-weight: 600; letter-spacing: 0; }
+.decision .rank { font-family: var(--mono); }
+.decision dt {
+  font-family: var(--cond); font-size: .625rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+}
+
+/* square chips: a factory labels a part, it does not badge it */
+.pill {
+  border-radius: 2px; padding: .18rem .5rem .14rem;
+  font-family: var(--cond); font-size: .625rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+}
+.pill-accent { color: var(--ink-on-amber); background: var(--lamp-amber); border-color: var(--lamp-amber); }
+.pill-red    { color: var(--ink-reversed); background: var(--lamp-red); border-color: var(--lamp-red); }
+.pill-green  { color: var(--ink-reversed); background: var(--green); border-color: var(--green); }
+/* Without this every amber pill -- "unproved", "no cleanup" -- falls back to
+   the plain grey one and reads as nothing to see. A caution, so lighter than
+   the solid lamps beside it, but unmistakably amber. */
+.pill-amber  { color: var(--amber); background: var(--amber-wash); border-color: var(--amber); }
+
+.finding .f-title { font-family: var(--body); font-size: .9375rem; letter-spacing: 0; }
+.finding.f-settled { background: var(--surface-sunk); }
+
+.disclosure-list li {
+  font-family: var(--mono); font-size: .8125rem; line-height: 1.6;
+  color: var(--ink-2); padding: .6rem 0; border-bottom: 1px solid var(--line);
+}
+.disclosure-list li:last-child { border-bottom: 0; }
+
+/* the materiality band: what the code is made of. Only novel takes a colour,
+   because it is the only class that needs your eyes. */
+.mat-novel, .mat-seg.novel { background: var(--lamp-red); }
+
+h1, h2, h3 { font-family: var(--display); letter-spacing: .02em; }
+h1 { letter-spacing: .04em; }
+.eyebrow {
+  font-family: var(--cond); font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+/* ── a route that goes nowhere ─────────────────────────────────────────────
+   Says what happened, says nothing was lost by arriving here, and points back
+   at something real, rather than a placeholder that never resolves. */
+.notfound { padding: 3rem 0 2rem; }
+.nf-word {
+  font-family: var(--cond); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3);
+  margin: 0 0 .6rem;
+}
+.notfound h1 { margin: 0 0 .8rem; }
+.nf-why {
+  font-family: var(--mono); font-size: .8125rem; color: var(--lamp-red);
+  background: var(--surface); border: 1px solid var(--line);
+  padding: .7rem .9rem; margin: 0 0 1rem; overflow-wrap: anywhere;
+}
+.nf-hint { color: var(--ink-2); max-width: 60ch; margin: 0 0 1.5rem; }
+.nf-acts { display: flex; gap: .7rem; flex-wrap: wrap; }
+
+/* ── a stopped run, with somewhere to go ──────────────────────────────────── */
+
+.cord-note {
+  margin: 1.1rem 0 0 !important; padding-top: .85rem;
+  border-top: 1px solid var(--panel-3);
+  font-size: .8125rem !important; line-height: 1.6; color: var(--board-ink-2) !important;
+}
+.cord .cord-body:only-child { padding-right: 26px; }
+
+/* A stopped step is red lettering on the board, not a pale card on enamel:
+   base.css's .st.bad carries a light wash that belongs to a paper background. */
+.proc.steps .st.bad {
+  background: transparent; color: var(--lamp-red);
+  border-bottom-color: var(--lamp-red); padding: 6px 0;
+}
+.proc.steps .st.at.bad { border-bottom-color: var(--lamp-red); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE RAIL — the yard board
+   The header board says what is happening on ONE line. This says it for every
+   line on the floor, and it is on screen the whole time. So it is a board too:
+   enamel, lamps, condensed lettering. The floor's paperwork stays to the right.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.panel { background: var(--panel); border-right: 1px solid var(--board-seam); }
+.panel > .wordmark { border-bottom: 1px solid var(--panel-3); color: var(--board-ink); }
+.panel-body { padding: .6rem 0 2rem; }
+
+/* a line on the floor */
+.panel-project { padding: .3rem calc(var(--gutter) - 4px) .3rem 2px; }
+.panel-project-row { padding-left: calc(var(--gutter) - 28px); }
+/* Enamel: the rule is a lift off the panel, not a darker line drawn on it. */
+.panel-group { border-top-color: var(--panel-3); }
+.panel-group.dragging { opacity: .5; }
+.pg-toggle { color: var(--board-ink-4); }
+.pg-toggle:hover { color: var(--board-ink-hi); }
+.panel-project .pname {
+  font-family: var(--cond); font-size: .8125rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--board-ink-2);
+}
+.panel-project:hover .pname { color: var(--board-ink-hi); }
+.panel-project.current .pname { color: var(--board-ink-hi); }
+.panel-project .pmeta { font-family: var(--mono); font-size: .6875rem; color: var(--board-ink-4); }
+.panel-project.needs .pmeta { color: var(--board-amber); }
+
+/* a run on that line */
+.panel-feature { border-left: 3px solid transparent; }
+.panel-feature:hover { background: var(--panel-2); }
+.panel-feature.current { background: var(--panel-2); border-left-color: var(--rail); }
+.panel-feature.needs { border-left-color: transparent; }
+.panel-feature.current.needs { border-left-color: var(--lamp-amber); }
+.panel-feature .ftitle { color: var(--board-ink); }
+.panel-feature.current .ftitle { color: var(--board-ink-hi); }
+.panel-feature .fstage { color: var(--board-ink-4); }
+.panel-feature .fband {
+  font-family: var(--cond); font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--board-ink-3);
+}
+.panel-feature.needs .fband, .panel-feature.needs .fstage { color: var(--board-amber); }
+.panel-feature.failed .fband { color: var(--lamp-red); }
+.panel-feature .fsep { color: var(--board-rule); }
+
+/* the same five states as the board above, at rail scale */
+.panel-feature .fdot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--lamp-off); border: 1px solid var(--board-seam);
+  box-shadow: none; animation: none;
+}
+.panel-feature.needs .fdot   { background: var(--lamp-amber); box-shadow: 0 0 0 2px color-mix(in srgb, var(--lamp-amber) 22%, transparent); }
+.panel-feature.failed .fdot  { background: var(--lamp-red);   box-shadow: 0 0 0 2px color-mix(in srgb, var(--lamp-red) 24%, transparent); }
+.panel-feature.building .fdot,
+.panel-feature.intake .fdot {
+  background: var(--board-ink); box-shadow: 0 0 0 2px color-mix(in srgb, var(--lamp-white) 16%, transparent);
+  animation: lampblink 1.6s steps(1, end) infinite;
+}
+.panel-feature.accepted .fdot { background: var(--lamp-green); }
+
+/* A packet waiting on a ruling, coloured by what its review says: green when
+   it ships as it stands, red when it says do not. Ships-with-rulings keeps the
+   amber every row waiting on you already wears. */
+.panel-feature.v-ship .fdot { background: var(--lamp-green); box-shadow: 0 0 0 2px color-mix(in srgb, var(--lamp-green) 24%, transparent); }
+.panel-feature.v-ship .fstage { color: var(--board-green); }
+.panel-feature.v-stop .fdot { background: var(--lamp-red); box-shadow: 0 0 0 2px color-mix(in srgb, var(--lamp-red) 24%, transparent); }
+.panel-feature.v-stop .fstage { color: var(--board-red); }
+.panel-feature.current.v-ship { border-left-color: var(--lamp-green); }
+.panel-feature.current.v-stop { border-left-color: var(--lamp-red); }
+
+.panel-feature .pf-log { color: var(--board-ink-3); }
+.panel-feature.log-open .pf-log { color: var(--ink-on-amber); background: var(--lamp-amber); }
+.panel-quiet { color: var(--board-ink-4); }
+.panel-quiet:hover { color: var(--board-ink); }
+.panel-empty { color: var(--board-ink-3); }
+
+/* ── the floor, before you scroll it ───────────────────────────────────────
+   Dozens of projects on one rail means "has anything stopped" has to be
+   readable without opening a single group -- `.panel-status` says so in
+   one glance. Search and the filters are how you narrow the list itself. */
+.panel-status[hidden] { display: none; }
+.panel-feature[hidden], .panel-quiet[hidden] { display: none; }
+
+.panel-status { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px var(--gutter) 2px; }
+.ps-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--cond); font-weight: 600; font-size: .625rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 8px 4px; background: var(--panel-2); border: 1px solid var(--panel-3); color: var(--board-ink-2);
+}
+.ps-chip.red { background: color-mix(in srgb, var(--lamp-red) 16%, transparent); border-color: color-mix(in srgb, var(--lamp-red) 36%, transparent); color: var(--board-red); }
+
+.panel-search { padding: 10px var(--gutter) 8px; }
+.panel-search input {
+  width: 100%; background: var(--panel-2); border: 1px solid var(--panel-3); color: var(--board-ink);
+  font-family: var(--mono); font-size: .75rem; padding: 8px 9px; border-radius: var(--radius);
+}
+.panel-search input::placeholder { color: var(--board-ink-4); }
+.panel-search input:focus { outline: none; border-color: var(--lamp-amber); }
+
+.panel-filters { display: flex; gap: 2px; padding: 0 var(--gutter) 10px; border-bottom: 1px solid var(--panel-3); }
+.pfilter {
+  background: none; border: 0; border-bottom: 2px solid transparent; cursor: pointer;
+  font-family: var(--cond); font-weight: 600; font-size: .625rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--board-ink-4); padding: 0 9px 8px 0;
+}
+.pfilter:hover { color: var(--board-ink); }
+.pfilter.on { color: var(--board-ink-hi); border-bottom-color: var(--lamp-amber); }
+
+/* ── the masthead, over the paperwork ─────────────────────────────────── */
+.crumbs a { color: var(--ink-3); }
+.crumbs .here { color: var(--ink); font-weight: 500; }
+
+
+/* ── drift ─────────────────────────────────────────────────────────────────
+   The line is about to run on code you cannot see. Every feature is built in a
+   worktree branched from the base ref, so anything uncommitted -- or on another
+   branch -- is invisible to the scout, the interrogator and every worker. They
+   will report on the code they were shown, truthfully, which is exactly what
+   makes this expensive to notice.
+
+   It is amber because it is the one thing here that is genuinely waiting on a
+   person, and it is a filled plate rather than a bordered card because a
+   warning nobody reads is the same as no warning. */
+.drift-note {
+  margin: 1.1rem 0; padding: 1rem 1.15rem 1.05rem;
+  background: var(--lamp-amber); color: var(--ink-on-amber);
+}
+.drift-note .who {
+  display: flex; align-items: center; gap: .5rem;
+  font-family: var(--cond); font-size: .75rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--ink-on-amber);
+  margin: 0 0 .6rem;
+}
+.drift-mark {
+  width: 11px; height: 11px; border-radius: 50%; flex: none;
+  background: var(--ink-on-amber); box-shadow: 0 0 0 2px color-mix(in srgb, var(--ink-on-amber) 22%, transparent);
+}
+.drift-note p { font-size: .9375rem; line-height: 1.6; max-width: 78ch; }
+.drift-note p:last-child { margin-bottom: 0; }
+.drift-note .mono { background: color-mix(in srgb, var(--ink-on-amber) 10%, transparent); padding: 0 .25rem; }
+.drift-note a { color: var(--ink-on-amber); text-decoration: underline; }
+.drift-note .disclosure-list { margin: .8rem 0; border-top: 1px solid color-mix(in srgb, var(--ink-on-amber) 25%, transparent); }
+.drift-note .disclosure-list li {
+  border-bottom: 1px solid color-mix(in srgb, var(--ink-on-amber) 18%, transparent); color: var(--ink-on-amber);
+  padding: .45rem 0; font-size: .78125rem;
+}
+.drift-note .disclosure-list li:last-child { border-bottom: 0; }
+.drift-note .dim { color: color-mix(in srgb, var(--ink-on-amber) 62%, transparent); }
+.drift-note .small { font-size: .8125rem; }
+
+/* the one-line version, in the fact column */
+.f-line[style*="amber"] { color: var(--accent) !important; font-weight: 500; }
+
+/* The same warning at the moment it matters most: you are about to start a
+   feature, and the worktree will branch from the base ref rather than from
+   what is on your disk. Same amber plate as the drift note, because it is the
+   same fact. */
+.drift {
+  background: var(--lamp-amber); border: 0; border-radius: 0;
+  padding: 1rem 1.15rem 1.05rem; margin: 1.1rem 0;
+}
+.drift p { font-size: .9375rem; color: var(--ink-on-amber); line-height: 1.6; max-width: 78ch; }
+.drift p b { font-weight: 600; }
+.drift .mono { background: color-mix(in srgb, var(--ink-on-amber) 10%, transparent); padding: 0 .25rem; }
+.drift label {
+  display: flex; align-items: center; gap: .5rem; margin-top: .85rem;
+  padding-top: .8rem; border-top: 1px solid color-mix(in srgb, var(--ink-on-amber) 25%, transparent);
+  color: var(--ink-on-amber); font-size: .875rem; cursor: pointer;
+}
+.drift label input { accent-color: var(--ink-on-amber); width: 15px; height: 15px; }
+.drift label span {
+  font-family: var(--cond); font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; font-size: .8125rem;
+}
+
+/* ── the line running ──────────────────────────────────────────────────────
+   The quiet state. Nobody has called for help, so the bar takes no colour at
+   all -- it is the enamel of the board, continued. When the factory does its
+   job this screen is the least loud thing in the product. */
+.stopbar.normal { background: var(--panel-2); color: var(--board-ink); }
+.stopbar.normal .stopbar-w { color: var(--board-ink); }
+.stopbar.normal .verdict-headline { color: var(--board-ink); }
+.stopbar.normal .verdict-headline b { color: var(--board-ink-hi); }
+.stopbar.normal .verdict-headline a { color: var(--board-amber); }
+.stopbar.normal .stopbar-foot { border-top-color: var(--panel-3); }
+
+
+/* reached, and there was nothing for it to do -- drawn as a ring, the same
+   fifth state the board uses, so the two never disagree */
+.phase-list .dot.skipped {
+  background: transparent; border: 1.5px dashed var(--line-strong);
+}
+
+/* The step strip on the board inherits a set of rules written for a paper
+   ground: pill backgrounds in --surface-sunk, an inset rule in --ink. On enamel
+   those read as a solid white block and an invisible underline respectively.
+   The board's strip states are drawn in lettering and one underline, nothing
+   else, so every assumption from the paper version is cleared here. */
+.proc.steps .st,
+.proc.steps a.st:hover,
+.proc.steps .st.here,
+.proc.steps .st.gate,
+.proc.steps .st.at,
+.proc.steps .st.bad {
+  background: transparent; border-color: transparent; border-radius: 0;
+  box-shadow: none; opacity: 1; padding: 6px 0;
+}
+.proc.steps .st.here { font-weight: 600; }
+.proc.steps .st.at   { border-bottom: 2px solid var(--board-ink-hi); }
+.proc.steps .st.gate { border-bottom: 2px solid var(--lamp-amber); }
+.proc.steps .st.at.gate { border-bottom-color: var(--lamp-amber); }
+.proc.steps .st.at.bad  { border-bottom-color: var(--lamp-red); }
+.proc.steps a.st:hover { color: var(--board-ink-hi); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   GATE 1 — the work order
+   A line cannot run on an ambiguous work order. Station 02 pulls the cord
+   before production starts, and what it is waiting for is you.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* the progress strip becomes the plate: amber, because this is the one screen
+   in the product that exists entirely because a person is required */
+.strip {
+  background: var(--lamp-amber); color: var(--ink-on-amber);
+  border: 0; border-radius: 0; padding: .85rem 1.1rem; margin: 1.1rem 0 0;
+  font-family: var(--mono); font-size: .8125rem;
+}
+.strip b, .strip .strip-n { color: var(--ink-on-amber); font-weight: 600; }
+.strip-note { color: color-mix(in srgb, var(--ink-on-amber) 72%, transparent); }
+
+/* one query */
+.qrow {
+  border-left: 0; border-top: 1px solid var(--line);
+  padding: .95rem .5rem;
+}
+.qrow.blocking .qid { color: var(--accent); font-weight: 600; }
+.qrow.done { background: var(--surface-sunk); }
+.qtitle { font-family: var(--body); font-size: 1rem; letter-spacing: 0; }
+.qwhy { color: var(--ink-2); font-size: .875rem; line-height: 1.55; }
+
+/* An option is a thing you press, in the lettering of the floor. */
+.opts .opt {
+  border-radius: 0; border: 1px solid var(--line-strong);
+  background: var(--surface-lift); font-size: .875rem; padding: .5rem .75rem;
+}
+.opts .opt:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--ink); background: var(--accent-wash);
+}
+.opts .def {
+  font-family: var(--cond); font-size: .625rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+}
+
+/* the answer, in the row it answers */
+.ans-mark { color: var(--green); font-weight: 700; }
+.ans-text { font-size: .9375rem; }
+.ans-change {
+  font-family: var(--cond); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+}
+
+/* the reading this was built on, and the way to correct it */
+.restate { border-radius: 0; }
+.restate-eyebrow {
+  color: var(--accent); font-family: var(--cond); font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase; font-size: .625rem;
+}
+.restate-text { font-size: 1rem; line-height: 1.6; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   GATE 0 — the line itself
+   Not a run: the line every change will be held against. Four commands, the
+   cell they execute in, and what the survey is worried about.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.gline > summary { padding: .65rem .25rem; }
+.g-name { font-family: var(--body); font-size: .9375rem; letter-spacing: 0; }
+.g-cmd, .g-meta { font-family: var(--mono); font-size: .75rem; }
+
+/* A lamp, not a glyph, so a check reads the same way a station does. */
+.g-mark { padding-top: .1rem; }
+.g-mark .ic { width: 15px; height: 15px; }
+.gline.passed > summary .g-mark { color: var(--lamp-green); }
+.gline.failed > summary .g-mark { color: var(--lamp-red); }
+.gline.failed > summary .g-name { color: var(--ink); }
+
+/* A check that could not run did not fail: it reported nothing at all, and is
+   red forever until someone fixes where it runs. Filled red is a bad signal;
+   this is NO signal, so it is drawn hollow and named in amber -- the colour
+   that means a person is required. */
+.gline.unrunnable > summary .g-mark { color: var(--accent); }
+.gline.unrunnable > summary .g-name { color: var(--ink); }
+.gline.unrunnable > summary .g-meta { color: var(--accent); font-weight: 500; }
+.gline.unrunnable { background: var(--accent-wash); }
+.gline.never > summary .g-mark { color: var(--line-strong); }
+
+/* the survey's own facts */
+.facts-list dt {
+  font-family: var(--cond); font-size: .625rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3);
+}
+.facts-list dd { font-size: .9375rem; }
+
+/* Tabs on this screen name three different readings of one repository. */
+.ptabs [role="tab"], .ptabs .ptab {
+  font-family: var(--cond); font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; font-size: .6875rem;
+}
+

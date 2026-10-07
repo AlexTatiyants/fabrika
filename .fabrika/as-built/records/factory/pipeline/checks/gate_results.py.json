@@ -1,0 +1,140 @@
+{
+ "blob": "6d976053dd5b5931417fc30c97161479f0cc10bb",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "check_test_execution",
+   "check_attribution",
+   "check_blind_helper_errors",
+   "check_leaks",
+   "check_unreset_sort",
+   "check_oracle_file_failures",
+   "check_attribution_wiring",
+   "check_testing_conventions"
+  ],
+  "domain_terms": [
+   "gate",
+   "criterion",
+   "test file",
+   "feature",
+   "oracle"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "GateReport",
+   "GateResult",
+   "OracleSuite",
+   "TraceRow"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "blind_summary"
+    ],
+    "line": 16,
+    "name": "check_test_execution"
+   },
+   {
+    "calls": [],
+    "line": 58,
+    "name": "check_attribution"
+   },
+   {
+    "calls": [],
+    "line": 123,
+    "name": "_raised_in"
+   },
+   {
+    "calls": [],
+    "line": 141,
+    "name": "check_blind_helper_errors"
+   },
+   {
+    "calls": [],
+    "line": 201,
+    "name": "check_leaks"
+   },
+   {
+    "calls": [],
+    "line": 268,
+    "name": "check_unreset_sort"
+   },
+   {
+    "calls": [],
+    "line": 306,
+    "name": "check_oracle_file_failures"
+   },
+   {
+    "calls": [],
+    "line": 335,
+    "name": "check_attribution_wiring"
+   },
+   {
+    "calls": [],
+    "line": 413,
+    "name": "check_testing_conventions"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/pipeline/checks/blind.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Validates gate test reports by checking for issues like empty test runs, unattributed failures, test leaks, and configuration problems that prevent proper test tracing.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "check_test_execution",
+    "kind": "export",
+    "method": "",
+    "name": "check_test_execution"
+   },
+   {
+    "handler": "check_attribution",
+    "kind": "export",
+    "method": "",
+    "name": "check_attribution"
+   },
+   {
+    "handler": "check_blind_helper_errors",
+    "kind": "export",
+    "method": "",
+    "name": "check_blind_helper_errors"
+   },
+   {
+    "handler": "check_leaks",
+    "kind": "export",
+    "method": "",
+    "name": "check_leaks"
+   },
+   {
+    "handler": "check_unreset_sort",
+    "kind": "export",
+    "method": "",
+    "name": "check_unreset_sort"
+   },
+   {
+    "handler": "check_oracle_file_failures",
+    "kind": "export",
+    "method": "",
+    "name": "check_oracle_file_failures"
+   },
+   {
+    "handler": "check_attribution_wiring",
+    "kind": "export",
+    "method": "",
+    "name": "check_attribution_wiring"
+   },
+   {
+    "handler": "check_testing_conventions",
+    "kind": "export",
+    "method": "",
+    "name": "check_testing_conventions"
+   }
+  ]
+ }
+}

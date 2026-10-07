@@ -1,0 +1,56 @@
+{
+ "blob": "09c867435d4e1654b5b6b8902f96f76d25c24d8e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Disclosures",
+   "Decision"
+  ],
+  "domain_terms": [
+   "disclosure",
+   "decision",
+   "worker",
+   "unit",
+   "flag"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "indexOf",
+     "slice",
+     "startsWith"
+    ],
+    "line": 32,
+    "name": "parseDisclosure"
+   },
+   {
+    "calls": [
+     "map",
+     "filter"
+    ],
+    "line": 47,
+    "name": "Disclosures"
+   },
+   {
+    "calls": [
+     "Row"
+    ],
+    "line": 102,
+    "name": "Decision"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Components for displaying worker disclosures about their own work and decisions logged during implementation.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

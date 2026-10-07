@@ -1,0 +1,112 @@
+{
+ "blob": "b0e9065fe8d228fe66419ee9f4b5f4a04794de68",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "WorkMap",
+   "Reader",
+   "Marks",
+   "SystemChange",
+   "graph",
+   "states",
+   "bySeverity",
+   "MAT_RANK",
+   "KEY"
+  ],
+  "domain_terms": [
+   "criterion",
+   "file",
+   "finding",
+   "objection",
+   "packet",
+   "state"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "packetOf",
+     "findingsWithRecords",
+     "isRestatement"
+    ],
+    "line": 31,
+    "name": "graph"
+   },
+   {
+    "calls": [],
+    "line": 84,
+    "name": "bySeverity"
+   },
+   {
+    "calls": [
+     "bySeverity"
+    ],
+    "line": 87,
+    "name": "Marks"
+   },
+   {
+    "calls": [],
+    "line": 102,
+    "name": "states"
+   },
+   {
+    "calls": [],
+    "line": 138,
+    "name": "SystemChange"
+   },
+   {
+    "calls": [
+     "graph",
+     "states",
+     "useRef",
+     "useState",
+     "useEffect",
+     "fileRow",
+     "Reader",
+     "SystemChange"
+    ],
+    "line": 149,
+    "name": "WorkMap"
+   },
+   {
+    "calls": [
+     "fileIc",
+     "Marks"
+    ],
+    "line": 254,
+    "name": "fileRow"
+   },
+   {
+    "calls": [
+     "critIc",
+     "fileIc",
+     "Marks",
+     "Pill",
+     "bySeverity"
+    ],
+    "line": 387,
+    "name": "Reader"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js",
+   "console/ui/marks.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Displays a visual diagram matching acceptance criteria to the files that implement them, with details on verification status, test results, and code review objections. This is the first tab shown when reviewing a pull request.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "WorkMap",
+    "kind": "screen",
+    "method": "",
+    "name": "WorkMap"
+   }
+  ]
+ }
+}

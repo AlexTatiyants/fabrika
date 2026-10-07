@@ -1,0 +1,55 @@
+{
+ "blob": "88cd79d319d0e32ff5d64c1539ac2b7ad13dafeb",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "masthead",
+   "mast-nav",
+   "panel",
+   "board",
+   "nameplate",
+   "board-acts",
+   "btn",
+   "hdr",
+   "crumbline",
+   "sw-pick",
+   "stations",
+   "mini-lamps",
+   "mlamp",
+   "strip-toggle",
+   "tl-row",
+   "tl-bar",
+   "tl-band",
+   "opts",
+   "qmore",
+   "qrow",
+   "spec-title",
+   "ts-tier",
+   "cf",
+   "sc-file"
+  ],
+  "domain_terms": [
+   "board",
+   "lanes (plan, build, verify, review)",
+   "stations",
+   "lamps",
+   "features",
+   "checks"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "CSS custom properties (--panel, --board-ink, --lamp-*, --lane-* from other stylesheets)",
+   "static assets (/static/fabrika-mark.png)"
+  ],
+  "purpose": "Styles the Fabrika console's main UI shell, board, header, buttons, status lamps, timeline, questions, and interactive elements. Provides CSS visual design as overrides of base styles from other stylesheets.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

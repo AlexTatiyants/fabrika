@@ -1,0 +1,56 @@
+{
+ "blob": "29d4a97a4ff453ee9e9fe4adac65a17393422bd5",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ProgressHub"
+  ],
+  "domain_terms": [
+   "progress events",
+   "console streams",
+   "runs"
+  ],
+  "entities_defined": [
+   "ProgressHub"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 15,
+    "name": "ProgressHub.__init__"
+   },
+   {
+    "calls": [
+     "_deliver"
+    ],
+    "line": 21,
+    "name": "ProgressHub.publish"
+   },
+   {
+    "calls": [],
+    "line": 42,
+    "name": "ProgressHub._deliver"
+   },
+   {
+    "calls": [],
+    "line": 51,
+    "name": "ProgressHub.close"
+   },
+   {
+    "calls": [],
+    "line": 76,
+    "name": "ProgressHub.stream"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Distributes progress events from runs to all open console connections via server-sent events, with thread-safe cross-thread delivery from worker threads to the event loop.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

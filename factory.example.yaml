@@ -1,0 +1,1290 @@
+# ---------------------------------------------------------------------------
+# The only file in this project that names a model.
+#
+# There are no model defaults in code, no fallback strings and no hardcoded
+# provider. Moving the whole factory to a local server is a `base_url` change
+# plus edits to this file. If you ever find yourself adding a model name
+# somewhere else, that is the bug. (INV-7)
+# ---------------------------------------------------------------------------
+
+api:
+  base_url: https://openrouter.ai/api/v1
+  api_key: $OPENROUTER_API_KEY      # expanded from the environment at load time
+  timeout_s: 900
+  max_transport_retries: 4
+  backoff_base_s: 1.5
+  headers:
+    HTTP-Referer: http://localhost:8000
+    X-Title: software factory
+
+# ---------------------------------------------------------------------------
+# The comments below are the documentation: what each field means was
+# measured rather than guessed, and several of them record a wrong answer that
+# costs a day to find.
+#
+# Nothing here is switched on by pointing at it. A role with no `route:` uses
+# `default`, which is synthesised from `api` and `executor` above -- so a copy
+# of this file sends every call through those two blocks, and a route only
+# starts carrying calls when some role names it.
+# ---------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+# routes -- where a call goes, and what it is authenticated as
+#
+# Two things as one idea. `api` above serves completions over HTTP; `executor`
+# below serves filesystem sessions by launching a subprocess. Neither can
+# express "the spec writer runs on a Claude subscription", because a
+# subscription is neither of those -- it is a CLI that can serve both, and
+# brings its own sign-in instead of spending a key.
+#
+# A role with no `route:` uses `default`, which is synthesised from `api` and
+# `executor` and behaves exactly as those two blocks say. You do not have to
+# use any of this.
+#
+# `metered` is load-bearing. A route billed per token reports dollars and the
+# budget guard can stop a run before it overspends. A subscription reports
+# nothing, because there is nothing to report -- so those calls are booked as
+# `turns` and `unbilled_calls` rather than as `cost: 0.0`, which a reader would
+# take to mean the work was free.
+routes:
+
+  # ---- the default route, and the one line of it this file has to say -------
+  #
+  # Everything else about `default` still comes from the `api` and `executor`
+  # blocks above and below. What cannot be said there is where its sessions
+  # run -- so it is said here.
+  #
+  # This route carries every role billed against a provider key, which is most
+  # of them. Its harness is a script in this repository rather than an
+  # installed program, so the image gets the script and the pinned set it
+  # installs from; both are part of the image's cache key, so editing either
+  # rebuilds the layer instead of quietly running the last one.
+  #
+  # The pins are not fussiness. Resolved in the image instead, pip backtracks
+  # to a version of one dependency that pins an OpenTelemetry package against
+  # another that wants its own, and the install fails outright. The file is
+  # `.venv-openhands/bin/pip freeze` minus three macOS-only packages; regenerate
+  # it the same way when that venv moves.
+  default:
+    session_in_container: true
+    # What this route is, said as its two halves. The program that carries the
+    # call is the driver installed into the image below; who serves the model
+    # and bills for it is the key in the `api` block. One name could only ever
+    # be one of the two, and the console needs both.
+    harness_label: OpenHands
+    # What the harness reads of a repository's rules on its own: OpenHands'
+    # project loading takes the root files and `.agents/skills`, and the driver
+    # loads `.claude/skills` beside them.
+    reads_instructions: [AGENTS.md, CLAUDE.md]
+    reads_nested: false
+    reads_skills: [.agents/skills, .claude/skills, .openhands/skills]
+    account_label: openrouter.ai
+    account_kind: key
+    # Built in a stock uv image rather than with the project's Python: `uv`
+    # fetches a standalone interpreter into /opt/harness/python and makes the
+    # venv from it, so the harness needs nothing of the project's image but
+    # glibc. The check imports the SDK, because an interpreter that starts is
+    # not yet a harness that can.
+    container_build_image: ghcr.io/astral-sh/uv:0.9.30-bookworm-slim
+    container_build_files:
+      factory/harnesses/requirements-openhands.txt: /opt/harness/requirements.txt
+      factory/harnesses/openhands_driver.py: /opt/harness/driver.py
+    container_install:
+      - UV_PYTHON_INSTALL_DIR=/opt/harness/python uv python install 3.13
+      - UV_PYTHON_INSTALL_DIR=/opt/harness/python uv venv --managed-python --python 3.13 /opt/harness/venv
+      - uv pip install --no-cache --python /opt/harness/venv -q -r /opt/harness/requirements.txt
+    container_check:
+      - /opt/harness/venv/bin/python
+      - -c
+      - import openhands.sdk
+    container_session_command:
+      - /opt/harness/venv/bin/python
+      - /opt/harness/driver.py
+      - --task
+      - "{task_file}"
+      - --worktree
+      - "{worktree}"
+      - --model
+      - "{model}"
+      - --spend-file
+      - "{spend_file}"
+    container_env:
+      HOME: /agent-home
+      LLM_BASE_URL: "{base_url}"
+      OPENHANDS_SUPPRESS_BANNER: "1"
+    # The one thing that must not travel in argv.
+    container_credentials:
+      - kind: env
+        name: LLM_API_KEY
+        from_api_key: true
+
+  claude-code:
+    # `claude setup-token` once, interactively, and this runs on the
+    # subscription with no API key anywhere.
+    kind: cli
+    # How a role's `reasoning_effort` is said to this CLI. `none` turns thinking
+    # off, which `--effort low` does not: on Haiku 4.5, for one reader call,
+    # low thinks 1,797 tokens, medium 1,404, and off 0 -- in 10 seconds
+    # instead of 25, with the same answer.
+    effort:
+      none: {env: {MAX_THINKING_TOKENS: "0"}}
+      low: {args: ["--effort", "low"]}
+      medium: {args: ["--effort", "medium"]}
+      high: {args: ["--effort", "high"]}
+    metered: turns
+    label: Claude Code
+    harness_label: Claude Code
+    # CLAUDE.md, a folder's own included; skills only from `.claude/skills`.
+    # Newer versions fall back to AGENTS.md when there is no CLAUDE.md, but
+    # that can be switched off, so Fabrika does not count on it.
+    reads_instructions: [CLAUDE.md]
+    reads_nested: true
+    reads_skills: [.claude/skills]
+    account_label: Anthropic
+    account_kind: subscription
+    # ---- measured, and it works ------------------------------------------
+    #
+    # `--tools ""` is not tidiness, and it is not free either -- it is both
+    # required and cheaper. Several roles are defined by not having tools: the
+    # review panel gets one structured completion over a text bundle and
+    # nothing else, and the spec writer's whole relationship to the repository is
+    # the digest it was handed rather than the repository. A command that
+    # leaves tools on gives those agents a filesystem and voids both contracts
+    # without saying so. It also costs four times as much -- 4.6c against 18.5c
+    # for the same answer -- because every tool definition rides in the system
+    # prompt of every call.
+    #
+    # Worth knowing, because it is easy to misdiagnose: on an install a year
+    # behind, this exact command returns `400 tool_use ids must be unique` and
+    # the same schema does not return at all inside 150 seconds. Both are the
+    # old build. On 2.1.260 the pipeline's real schema answers in about ten
+    # seconds. If either symptom appears, check the version before the code.
+    # Streamed, not single-envelope. The `result` event at the end carries
+    # everything the single form did -- the structured answer, the cost, the
+    # model that ran -- and the stream additionally carries the window gauge,
+    # which the single form does not. `stdout_format: jsonl` folds the events
+    # back into one envelope, so every dotted path below reads the same either
+    # way.
+    stdout_format: jsonl
+    command:
+      - claude
+      - -p
+      - --output-format
+      - stream-json
+      - --verbose
+      - --tools
+      - ""
+      - --model
+      - "{model}"
+      - --append-system-prompt
+      - "{system}"
+      - --json-schema
+      - "{schema}"
+    # ---- the plan's own gauge ---------------------------------------------
+    #
+    # This tool reports, on every call, how much of each rolling window has been
+    # used and the exact second it resets. That is what makes a reserve possible
+    # for a subscription at all: without it a run learns it has reached the
+    # limit by being refused, which is the same as having no ceiling.
+    #
+    # It appears only in the streamed output, which is why `stdout_format` below
+    # is `jsonl` -- the single-envelope form carries the answer and the cost but
+    # not this.
+    #
+    # Read rather than counted, deliberately. Dollars we can count because we
+    # spent them; a window we cannot, because you are using this same plan
+    # yourself. A figure this factory computed would be wrong by however much
+    # your own session used, in the direction that matters.
+    meter_windows_key: rate_limit_info.unifiedWindows
+    meter_utilization_key: utilization
+    meter_resets_key: resetsAt
+    # Where a schema-shaped answer arrives: not in `result`, which holds the
+    # agent's prose about what it did.
+    schema_result_key: structured_output
+    # Where the answer and the accounting sit in the envelope it prints.
+    result_key: result
+    # Read this rather than the exit code. A `claude -p` whose token had expired
+    # exited 0 with a 401 in the body -- which, judged by exit code, is a
+    # successful completion of the string "API Error: 401".
+    error_key: is_error
+    cost_key: total_cost_usd
+    turns_key: num_turns
+    prompt_tokens_key: usage.input_tokens
+    # `input_tokens` is only the uncached remainder -- 72 of 1.9 million in one
+    # measured session. The rest of what it read is in the cache fields.
+    prompt_tokens_extra_keys:
+      - usage.cache_creation_input_tokens
+      - usage.cache_read_input_tokens
+    completion_tokens_key: usage.output_tokens
+    # A role here may name no model and let this tool use whatever it is
+    # configured with. That is the shortest path to a route that works: connect
+    # it, point an agent at it, and never look up an id.
+    default_model_ok: true
+    # And this is what makes that safe. The tool reports which model actually
+    # answered, so a run with no `--model` still records what produced the work.
+    resolved_model_key: modelUsage
+    timeout_s: 900
+    version_command: [claude, --version]
+    # Tiers first, pinned ids after.
+    #
+    # A tier is the thing you actually mean: the scout wants the cheap fast one,
+    # the worker wants the middle one, the spec writer wants the best one. Written
+    # as a tier that intent survives a model generation; written as an id it has
+    # to be re-decided every time one ships, in a file nobody opens for months.
+    #
+    # `fable` is the fourth, and it is a different axis rather than a rung on
+    # the same ladder -- reach for it where the job is writing a human will
+    # read. The rapporteur assembles the packet and the interrogator asks the
+    # questions that end up in front of a person, and both are judged on prose.
+    # It measured slowest and dearest of the four here (12.4s, 15.3c against
+    # sonnet's 9.6s and 4.6c on the same schema), which is the right trade for
+    # two roles and the wrong one for a worker.
+    #
+    # The catch, measured: a tier resolves against the table bundled in the
+    # *installed tool*, not against the API. A version well behind resolved
+    # every tier to the previous generation while the API served the newer one
+    # perfectly well -- so a stale install quietly runs older models, and says
+    # nothing. `resolved_model_key` below is what makes that visible rather than
+    # silent: the ledger and the packet record what answered, not what was
+    # asked for. If those disagree with what you expected, the tool is behind;
+    # update it.
+    #
+    # The pinned ids are here for a run that has to be reproducible, and for
+    # reaching a model the installed tool's tier table does not know about yet.
+    # An id the tool is too old for is refused with the version it needs.
+    models:
+      - haiku
+      - sonnet
+      - opus
+      - fable
+      - claude-opus-5
+      - claude-sonnet-5
+      - claude-fable-5-1
+    install_command: "npm i -g @anthropic-ai/claude-code"
+    setup_command: "claude setup-token"
+    setup_note: >-
+      The sign-in is an interactive browser handshake, so it cannot be done from
+      this page — it takes no flags and waits for a paste in a terminal. It is
+      once per machine, not per project, and nothing here stores the token.
+    setup_steps:
+      - Open a terminal on this machine.
+      - "Run: claude setup-token"
+      - It opens your browser. Sign in with the account that holds your subscription.
+      - Paste the code it gives you back into the terminal.
+      - Come back here and press Check.
+    docs_url: https://docs.claude.com/en/docs/claude-code/setup
+    # ---- file sessions: the half this tool is actually for -----------------
+    #
+    # An agent that writes code, in a checkout of its own. `acceptEdits` because
+    # nobody is at the other end: a permission prompt here is the same failure
+    # as a question -- the turn ends, nothing is written, and the unit is
+    # recorded as work the harness declined to do.
+    #
+    # The task arrives on stdin rather than as `{task_file}`, because a brief is
+    # the one input with no bound: a repo digest runs past 100kB and argv does
+    # not. The file is still written into the worktree (and ignored by name), so
+    # a human debugging a unit can read exactly what it was asked.
+    #
+    # No `--tools ""` here, obviously. The whole point of a session is the tools.
+    # What contains it is the worktree: `Worktree` gives each unit a checkout of
+    # its own, the executor collects only what changed inside it, and nothing
+    # the agent does reaches the branch except through that collection.
+    # Streamed for the same reason the completion command is: a session is
+    # where a plan's window is actually consumed -- one unit is turns of agentic
+    # work, not one exchange -- so this is the call whose gauge reading matters
+    # most, and the single-envelope form does not carry it.
+    # ---- authoring inside the unit's container ----------------------------
+    #
+    # This is where a session actually belongs. `--permission-mode
+    # bypassPermissions` below would be reckless on the host and is correct
+    # here: the container holds this unit's worktree, the project's
+    # dependencies and its database, and nothing else -- no other project, no
+    # keychain, no keys. `acceptEdits` is not enough: it approves file edits
+    # and still prompts for shell commands; headless, an unanswered prompt is
+    # a denial, and one run can produce hundreds of them (234, in one case).
+    session_in_container: true
+    # Built in a stock Node image, so the project's needs no npm, and started
+    # through a launcher under /opt/harness/bin (see `npm_launcher.sh`) rather
+    # than by name: the PATH in there is the project's.
+    container_build_image: node:24-bookworm-slim
+    container_build_files:
+      factory/harnesses/npm_launcher.sh: /opt/harness/npm_launcher.sh
+    container_install:
+      - apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+      - npm install -g --prefix /opt/harness/claude-code --no-fund --no-audit @anthropic-ai/claude-code@2.1.260 && npm cache clean --force
+      - sh /opt/harness/npm_launcher.sh /opt/harness/claude-code claude
+    container_session_command:
+      - /opt/harness/bin/claude
+      - -p
+      - --output-format
+      - stream-json
+      - --verbose
+      - --permission-mode
+      - bypassPermissions
+      - --model
+      - "{model}"
+    # The container's own HOME is the mounted worktree, which would put this
+    # tool's config, cache and session log inside the unit's diff.
+    container_env:
+      HOME: /agent-home
+      NPM_CONFIG_CACHE: /agent-home/.npm
+      XDG_CACHE_HOME: /agent-home/.cache
+    # Either of these is enough, and neither is required on its own: a token
+    # minted for a container is the better answer, and the sign-in this machine
+    # already has is the one that needs no extra step. A route whose
+    # credentials all miss is refused before the container is touched.
+    container_credentials:
+      - kind: env
+        name: CLAUDE_CODE_OAUTH_TOKEN
+        optional: true
+      - kind: keychain
+        service: Claude Code-credentials
+        target: /agent-home/.claude/.credentials.json
+        optional: true
+
+    session_command:
+      - claude
+      - -p
+      - --output-format
+      - stream-json
+      - --verbose
+      - --permission-mode
+      - acceptEdits
+      - --model
+      - "{model}"
+    # Where the result event lists the tool calls that were refused, so a unit
+    # that could not run its own checks is flagged rather than trusted.
+    denials_key: permission_denials
+
+  codex:
+    # Not installed on most machines, and that is the point: the card shows what
+    # connecting it would unlock rather than hiding a route that does not exist.
+    kind: cli
+    # How a role's `reasoning_effort` is said to this CLI. Its lowest level is
+    # `minimal`, so that is what `none` becomes.
+    effort:
+      none: {args: ["-c", "model_reasoning_effort=minimal"]}
+      low: {args: ["-c", "model_reasoning_effort=low"]}
+      medium: {args: ["-c", "model_reasoning_effort=medium"]}
+      high: {args: ["-c", "model_reasoning_effort=high"]}
+    metered: turns
+    label: Codex
+    harness_label: Codex
+    # AGENTS.md, a folder's own included; skills only from `.agents/skills`.
+    reads_instructions: [AGENTS.md]
+    reads_nested: true
+    reads_skills: [.agents/skills]
+    account_label: OpenAI
+    account_kind: subscription
+    # `--output-schema` takes a *path*, and this pipeline's own schema is
+    # measured going through it and validating. Strictly better than carrying
+    # the schema in the prompt: a schema on a path has no argument-size ceiling
+    # to reason about, and the file is there to read when a run has to be
+    # explained afterwards.
+    # `codex exec --json` has no flag to turn this off: it prints one JSON
+    # object per line -- thread.started, turn.started, an item.completed per
+    # step, then turn.completed or turn.failed -- never one envelope. The keys
+    # below are read against those events merged in order, so `item` ends up
+    # holding whichever `item.completed` came last (the answer, in a flattened
+    # exchange) and `error` holds `turn.failed`'s reason when there is one.
+    stdout_format: jsonl
+    command:
+      - codex
+      - exec
+      - --json
+      - --skip-git-repo-check
+      - --output-schema
+      - "{schema_file}"
+      - -m
+      - "{model}"
+    # A session, in a checkout of its own. `workspace-write` rather than
+    # `danger-full-access`: the agent needs to edit the tree it was given and
+    # nothing beyond it. The worktree already provides that containment, and
+    # the narrower sandbox costs nothing on top of it.
+    #
+    # On the job this route exists for -- writing a blind suite from a
+    # specification alone, in an empty directory -- both configured models
+    # produce suites that collect cleanly.
+    # ---- authoring inside the unit's container ----------------------------
+    #
+    # Its own sandbox is what blocks this one on the host -- `workspace-write`
+    # refuses the socket that reaches the unit's container, so the checks it
+    # wanted to run were unreachable. In here the container is the sandbox, so
+    # its own comes off.
+    #
+    # Measured: this harness refreshes its token during a session, which is why
+    # the credential below is copied rather than mounted. It rewrites the copy,
+    # the copy is discarded, and the sign-in your terminal uses is untouched.
+    session_in_container: true
+    # As Claude Code's: built in a stock Node image, started through a launcher.
+    # This one's command is a Node script around a static binary, so the
+    # launcher carries the stage's Node with it.
+    container_build_image: node:24-bookworm-slim
+    container_build_files:
+      factory/harnesses/npm_launcher.sh: /opt/harness/npm_launcher.sh
+    container_install:
+      - apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+      - npm install -g --prefix /opt/harness/codex --no-fund --no-audit @openai/codex@0.153.4 && npm cache clean --force
+      - sh /opt/harness/npm_launcher.sh /opt/harness/codex codex
+    container_session_command:
+      - /opt/harness/bin/codex
+      - exec
+      - --json
+      - --skip-git-repo-check
+      - --dangerously-bypass-approvals-and-sandbox
+      - -C
+      - "{worktree}"
+      - -m
+      - "{model}"
+    container_env:
+      HOME: /agent-home
+    container_credentials:
+      - kind: file
+        path: ~/.codex/auth.json
+        target: /agent-home/.codex/auth.json
+
+    session_command:
+      - codex
+      - exec
+      - --json
+      - --skip-git-repo-check
+      - -s
+      - workspace-write
+      - -C
+      - "{worktree}"
+      - -m
+      - "{model}"
+    result_key: item.text
+    error_key: error
+    prompt_tokens_key: usage.input_tokens
+    completion_tokens_key: usage.output_tokens
+
+    # ---- the plan's own gauge, one hop away --------------------------------
+    #
+    # This tool has the same two rolling windows the other one reports, and does
+    # not print them. As of codex-cli 0.153.4, `--json` emits exactly four
+    # event kinds -- thread.started, turn.started, item.completed, turn.completed
+    # -- and the last carries token counts and nothing about the plan. The
+    # windows go into the session rollout instead, as a `token_count` event, in
+    # a file named after the `thread_id` that *is* on stdout. Hence the glob.
+    #
+    # This is not a nice-to-have. A run can lose all three review agents in one
+    # moment to "Your workspace is out of credits", assemble a packet that says
+    # nothing about it, and report `0 findings still standing` -- which reads
+    # as a clean bill of health for a panel that never answered. The gauge below
+    # is what makes that a ceiling to plan against instead of a wall to hit.
+    #
+    # Shape, as one call returns it:
+    #   "rate_limits": {
+    #     "primary":   {"used_percent": 0.0,  "window_minutes": 300,   "resets_at": 1789091315},
+    #     "secondary": {"used_percent": 30.0, "window_minutes": 10080, "resets_at": 1789488540},
+    #     "credits": {"has_credits": false, "unlimited": false, "balance": null},
+    #     "plan_type": "team", ... }
+    #
+    # `used_percent` is 0-100 where the other tool's `utilization` is a
+    # fraction, so the scale converts. `resets_at` is already an absolute
+    # second, so no `meter_resets_relative` here. `credits` sits in the same map
+    # and is not a window; `read_windows` skips an entry with no utilization key
+    # rather than filing it as one at 0%.
+    meter_sidecar_glob: "~/.codex/sessions/**/rollout-*-{thread_id}.jsonl"
+    # Each rollout record carries its own `timestamp`. The file's mtime dates
+    # the last line written, which in a long session is not the last reading.
+    meter_observed_key: timestamp
+    meter_windows_key: payload.rate_limits
+    meter_utilization_key: used_percent
+    meter_resets_key: resets_at
+    meter_utilization_scale: 0.01
+    # `primary` and `secondary` are the tool's names for them; 300 and 10080 are
+    # what they are. The console says "5h" and "weekly" because of this line.
+    meter_window_minutes_key: window_minutes
+    # The balance behind the windows. Read and shown, acted on by nothing --
+    # this is the pool that can empty and take the whole review panel with it
+    # while both windows above still have room.
+    meter_credits_key: payload.rate_limits.credits
+    # The limit it says it hit, in its own words, when it refuses a call. When
+    # the workspace runs dry every session carries
+    # `workspace_member_credits_depleted` with both windows `null` -- so this is
+    # the only field that knows, and without it the card shows a stale weekly
+    # bar.
+    meter_limit_key: payload.rate_limits.rate_limit_reached_type
+
+    timeout_s: 900
+    version_command: [codex, --version]
+    # Not discovered -- same reasoning as the other routes' `models:` -- but
+    # worth a specific warning here: OpenAI rotates these, and a ChatGPT-plan
+    # sign-in accepts a materially different set than an API key does. An id
+    # that 404s here is not necessarily wrong forever, just retired; the
+    # human curating this list finds the current ones with
+    # `codex debug models`, not by guessing at a naming scheme.
+    models:
+      - gpt-5.6-sol
+      - gpt-5.6-terra
+      - gpt-5.6-luna
+      - gpt-5.5
+    install_command: "npm i -g @openai/codex"
+    setup_command: "codex login"
+    setup_note: >-
+      Sign in with a ChatGPT account to use that plan instead of an API key.
+      The command opens a browser; an API key is the alternative and is billed
+      per token.
+    setup_steps:
+      - Open a terminal on this machine.
+      - "Install it if you have not: npm i -g @openai/codex"
+      - "Run: codex login"
+      - Choose "Sign in with ChatGPT" and finish in the browser.
+      - Come back here and press Check.
+    docs_url: https://developers.openai.com/codex/cli
+
+
+  gemini-cli:
+    # Off until someone connects it, and connected with a key rather than a
+    # sign-in. Google retired the OAuth "Login with Google" path this route was
+    # first built on -- as of 2026-06-18 `gemini` no longer serves free-tier,
+    # AI Pro or AI Ultra individual accounts at all. API-key auth is
+    # unaffected, so this route now takes an AI Studio key and is billed per
+    # token like the provider key above.
+    #
+    # The console's setup screen switches it on: it stores the key under
+    # `key_env` beside the provider key (or the variable wins, if set), and
+    # writes `enabled: true` here. `_run_cli` in llm.py copies `api_key` into
+    # the container's environment under `key_env`, which is the variable the
+    # CLI reads in a session with no one to sign in.
+    #
+    # `enabled: false` is what `route_problem()` in config.py checks -- a role
+    # pointed here fails up front with a clear message instead of a subprocess
+    # error two phases into a run.
+    enabled: false
+    kind: cli
+    # No per-call control of thinking on this CLI, so no level is honoured
+    # here: a role's `reasoning_effort` runs at the model's own default.
+    effort: {}
+    # Tokens, not turns: an AI Studio key is billed per token, and `turns`
+    # would hide that spend from the budget guard entirely (see the note on
+    # `metered` above `routes:`).
+    metered: tokens
+    label: Gemini CLI
+    harness_label: Gemini CLI
+    # GEMINI.md, a folder's own included. No skills folder is counted on, so
+    # a session here is told where the skills are.
+    reads_instructions: [GEMINI.md]
+    reads_nested: true
+    reads_skills: []
+    account_label: Google
+    account_kind: key
+    api_key: $GEMINI_API_KEY
+    key_env: GEMINI_API_KEY
+    # One GET that proves a key before it is saved, costing nothing. The key
+    # goes in a header, not the query string, so it is never in a log line.
+    key_check_url: https://generativelanguage.googleapis.com/v1beta/models
+    key_check_header: x-goog-api-key
+    # No schema flag on this one, so the schema goes into the prompt and the
+    # ordinary repair loop catches an answer that comes back the wrong shape.
+    schema_in_prompt: true
+    command:
+      - gemini
+      - --output-format
+      - json
+      - --approval-mode
+      - default
+      - -m
+      - "{model}"
+    result_key: response
+    timeout_s: 900
+    version_command: [gemini, --version]
+    models:
+      - gemini-3-pro
+      - gemini-2.5-flash
+    # Every completion runs sealed, as Codex's and Claude Code's do (see
+    # agentbox.py): built in a stock Node image and started through the same
+    # launcher, so the image under it needs no Node of its own.
+    container_build_image: node:24-bookworm-slim
+    container_build_files:
+      factory/harnesses/npm_launcher.sh: /opt/harness/npm_launcher.sh
+    container_install:
+      - apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+      - npm install -g --prefix /opt/harness/gemini-cli --no-fund --no-audit @google/gemini-cli@0.62.0 && npm cache clean --force
+      - sh /opt/harness/npm_launcher.sh /opt/harness/gemini-cli gemini
+    container_env:
+      HOME: /agent-home
+      NPM_CONFIG_CACHE: /agent-home/.npm
+      XDG_CACHE_HOME: /agent-home/.cache
+    install_command: "npm i -g @google/gemini-cli"
+    setup_command: ""
+    setup_note: >-
+      Takes a Google AI Studio key, billed per token. Google no longer lets
+      individual accounts sign this tool in with a plan.
+    setup_steps:
+      - "Get a key at https://aistudio.google.com/apikey"
+      - Paste it here. Fabrika tests it with one free call before saving it.
+    docs_url: https://aistudio.google.com/apikey
+
+paths:
+  # There is no repository here. A repository belongs to a project, and projects
+  # are created at runtime by pointing the factory at a directory. One global
+  # repo path would let concurrent features corrupt each other.
+  evidence: .factory             # append-only ledgers: one per project, one per feature
+  sandboxes: .factory/sandboxes  # one git worktree per feature, ephemeral
+
+pipeline:
+  # Every agent runs in a sealed container, always; there is no setting for
+  # it. The retired `require_unit_container` is refused, because `false` put
+  # agents on this machine. See factory/isolation.py.
+
+  max_parallel_workers: 3
+
+  # The scout reads the repository in slices rather than one truncated pass. A
+  # single digest reports on the alphabetically-first fraction of a codebase and
+  # looks exactly like a report on all of it; slices trade one call for several
+  # and get a complete picture. This matters most on a small local model, where
+  # the truncation bit hardest and buying a larger context is not an option.
+  scout_slice_chars: 120000
+  scout_max_slices: 16
+  # Against a local server sharing one GPU, more concurrency is not faster: the
+  # requests queue and each one gets slower.
+  scout_parallel: 2
+  # The as-built reads a repository one file per call, so a first reading of a
+  # large repository is hundreds of calls; refreshes after it read only what
+  # changed. Same caution as the scout's about a local server.
+  as_built_parallel: 4
+  # A reading pauses itself once the reader's plan window is this full, leaving
+  # the rest for your own work on the same plan; Read again carries on. 0 = off.
+  as_built_pause_at: 0.85
+  # A reading at the commit a feature branches from, started with the feature,
+  # and one at its head before review -- so the packet says what the feature
+  # changed in the system. Only changed files are read, and it never holds the
+  # feature up.
+  as_built_on_features: true
+  repo_digest_budget: 120000   # default for a new project; each project may override
+  apply_writes: true
+
+  # Where the packet is written on the feature's own branch, as Markdown, in its
+  # own commit after the work. Empty disables it and the packet stays in the
+  # ledger only.
+  #
+  # The packet already exists twice -- a record in the ledger and a screen in the
+  # console -- and both need the machine the factory runs on. A branch goes to a
+  # remote, and the people who rule on it may have the repository and nothing
+  # else, so the argument travels with the code or it does not reach them.
+  #
+  # Per feature rather than one file at the root, because two features open at
+  # once would conflict over that file on merge, and a packet somebody has to
+  # resolve by hand is one nobody reads. `{feature_id}` is the only substitution.
+  #
+  # Named for the factory rather than for what it holds. `packets/` is a
+  # plausible directory in somebody's repository already, and a run that quietly
+  # committed into one would be writing into a stranger's filing system; nothing
+  # else is called `fabrika/`.
+  #
+  # A directory per feature rather than a file per feature, because the packet is
+  # unlikely to stay the only thing worth carrying on the branch -- the frozen
+  # spec and the matrix are the obvious next two. `fabrika/<id>.md` and a later
+  # `fabrika/<id>/` cannot both exist, and discovering that once the first
+  # repository has a year of them in it is a migration nobody wants.
+  packet_file: "fabrika/{feature_id}/packet.md"
+
+  # The frozen spec, written beside the packet when a human accepts the work.
+  # Empty disables it.
+  #
+  # At the verdict rather than at the build: until somebody accepts, nobody has
+  # agreed that this is what was wanted, and a spec on a branch that was then
+  # rejected would be a proposal filed as though it were a decision.
+  spec_file: "fabrika/{feature_id}/spec.md"
+
+# How containers are run on this machine. A project chooses only whether it uses
+# one at all and from what image; these are the knobs that belong to the host.
+#
+# Gates run with `--network none`. Anything that needs to fetch belongs in the
+# environment's `setup`, which runs with the network available -- once per sandbox on
+# the host, and once per assessment round in a container, which keeps nothing.
+# The container runs as your uid so the gates do not leave root-owned files in a
+# worktree you are about to read.
+docker:
+  binary: docker
+  memory: 4g
+  cpus: 2
+  pids_limit: 512
+  build_timeout_s: 1800
+  run_as_host_user: true
+
+executor:
+  # `direct` -- the model returns file contents as structured output. No tools.
+  # `command` -- hand the unit to a real coding harness in an isolated worktree,
+  #             then buy the decision log back with a second call.
+  kind: direct
+  # command: ["your-coding-cli", "--file", "{task_file}", "--cwd", "{worktree}"]
+  timeout_s: 1800
+  # A harness that reaches its model through LiteLLM names it with a provider
+  # prefix. Empty means "look api.base_url's host up in model_prefixes below";
+  # a provider not listed is one line here rather than a code change.
+  model_prefix: ""
+  model_prefixes:
+    openrouter.ai: "openrouter/"
+    api.openai.com: "openai/"
+    api.anthropic.com: "anthropic/"
+    api.groq.com: "groq/"
+    api.together.xyz: "together_ai/"
+    localhost: "openai/"        # Ollama, LM Studio, vLLM -- OpenAI-compatible
+    127.0.0.1: "openai/"
+
+defaults:
+  temperature: 0.2
+  max_tokens: 16000
+  reasoning_effort: medium
+
+  # Provider pinning. Empty here so the example runs anywhere, but you want a
+  # pinned list before you trust any measurement you take. The same model id is
+  # served by several hosts at different quantisations and different context
+  # windows; without pinning, an eval measures which host you happened to land
+  # on rather than whether your prompt got better. `allow_fallbacks: false` means
+  # a failure is a failure you get to see, rather than a silent downgrade.
+  providers: []
+  allow_fallbacks: false
+
+# Where each camp of agents goes when its own route will not carry it.
+#
+# Two lanes, and the reason is the whole point. One fallback for everybody
+# reads as prudence and puts the entire crew on one vendor the moment two
+# routes are dry -- and a panel reviewing code its own family wrote is not a
+# panel. The builders land in one lane and the checkers in the other, so
+# `adversary != worker` and `arbiter != reviewer` stay true on the worst day
+# rather than only on a good one.
+#
+# Different vendors, not different sizes: `model_family` reads the id's vendor
+# prefix, and two models from one shop share priors whatever their parameter
+# counts. `independence_problems` checks this and says so at rest.
+#
+# On the API route rather than a CLI, so there is no window to exhaust -- the
+# thing a fallback exists to survive -- and because `billed: true` means
+# `budget_usd` is a real ceiling on it, which it is not on either subscription.
+fallbacks:
+  build:
+    route: default
+    model: qwen/qwen3.8-27b
+    note: >-
+      The agents that make something: the scout, the spec writer, the architect,
+      the workers, the integrator, the repairers, and the arbiter that routes
+      what the panel found.
+  check:
+    route: default
+    model: z-ai/glm-5.3-flash
+    note: >-
+      The agents that check what was made: the oracle writing blind tests, the
+      breaker attacking the result, and the review panel reading it. 1.3M of
+      context, which the panel's bundle needs by the last round.
+
+# What each level of thinking means on each route -- the preset the console's
+# Agent configuration screen starts from. A role names a level (`deep`,
+# `standard` or `light`) below; with a `staffing:` block saying which route
+# serves the builders and which the checkers, that level becomes the role's
+# route, model and effort. Without one, as here, every role runs on the model
+# it names and its level is only a suggestion.
+#
+# A ladder within one vendor on each route, not a mix: what a level is for is
+# "how hard this agent has to think", and a level that changed vendors would
+# also change whose blind spots the agent has.
+levels:
+  default:
+    deep: {model: anthropic/claude-sonnet-4.5, reasoning_effort: high}
+    standard: {model: qwen/qwen3.8-27b, reasoning_effort: high}
+    light: {model: qwen/qwen3-coder, reasoning_effort: medium}
+  claude-code:
+    deep: {model: opus, reasoning_effort: high}
+    standard: {model: sonnet, reasoning_effort: high}
+    light: {model: haiku, reasoning_effort: medium}
+  codex:
+    # The 5.6 generation's three, in `codex debug models` order: workhorse,
+    # balanced, fast.
+    deep: {model: gpt-5.6-sol, reasoning_effort: high}
+    standard: {model: gpt-5.6-terra, reasoning_effort: medium}
+    light: {model: gpt-5.6-luna, reasoning_effort: low}
+  gemini-cli:
+    # No effort: this CLI has no per-call control of thinking.
+    deep: {model: gemini-3-pro}
+    standard: {model: gemini-3-pro}
+    light: {model: gemini-2.5-flash}
+
+roles:
+  # -------------------------------------------------------------------------
+  # HYPOTHESIS, NOT A FINDING.
+  #
+  # The bet below is that judgment roles (interrogator, spec writer, architect,
+  # oracle, adversary, rapporteur) need a strong reasoning model, and that
+  # execution roles (worker, integrator, scout, reviewer) can run on something
+  # cheaper. It is untested. It is here so you have something specific to
+  # disprove, not because it is known to be right. Measure it on your own
+  # repository before you believe it, and change it when the evidence says so.
+  # -------------------------------------------------------------------------
+
+  surveyor:
+    # Runs once per project, at gate 0. Reads a repository and works out how to
+    # test it and what environment those tests need. Everything it gets wrong is
+    # paid for by every feature built in that project afterwards, in failures
+    # that look like the feature's fault. Do not economise here.
+    level: deep
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.2
+    reasoning_effort: high
+    # Forty-five minutes. A route's own limit is fifteen, and the first reading of a
+    # repository takes eleven to fourteen on typical projects: a large structured
+    # answer over a whole digest, not a stuck call.
+    timeout_s: 2700
+    fallback: build
+
+  resurvey:
+    # Instructed by `surveyor.md`. A first reading of a repository and a later
+    # one are the same knowledge applied to different inputs, so they share one
+    # file: as two, a rule corrected in one and not the other leaves, say, a
+    # `user` tier `usable` on jsdom for a whole reading.
+    # The model, route and budget below stay this role's own.
+    prompt: surveyor
+    # A second reading, when the tooling has moved. It is handed the current
+    # gates and the diff since the last survey rather than the whole repository,
+    # so it is cheaper than `surveyor` and its output is small enough for a
+    # human to rule on line by line. Judgment role: deciding that a change
+    # means nothing is the answer most of the time, and the expensive mistake
+    # is churning a gate list that was already right.
+    level: deep
+    model: qwen/qwen3.8-27b
+    temperature: 0.2
+    reasoning_effort: high
+    # As `surveyor`: the same schema, and the same reason for the longer limit.
+    timeout_s: 2700
+    enabled: true
+    fallback: build
+
+  diagnose:
+    # Works out why a check is red before any feature starts, from its output,
+    # its settings and the environment, and proposes fixes that code then tries
+    # in a throwaway checkout. Once per red check, reused while nothing it read
+    # has changed. See `factory/diagnosis.py`. Judgment over evidence, like
+    # `resurvey`: a wrong cause offered with confidence costs more than a slow one.
+    level: deep
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.2
+    reasoning_effort: high
+    timeout_s: 900
+    fallback: build
+
+  guide_writer:
+    # Writes a draft guide from conventions several features' scouts observed,
+    # counted by code. Rare -- once a re-survey finds enough -- and short. A
+    # person edits it before anything is written to their repository.
+    level: standard
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.2
+    timeout_s: 600
+    fallback: build
+
+  reporter:
+    # Finds the command that makes a test runner write JUnit XML, when a
+    # test-file rule has none, by asking the runner installed in the project's
+    # container -- and the command is kept only if the canary proves it. See
+    # `factory/reporting.py`. Runs during a Resurvey, and only for rules with
+    # no `report` that no earlier reading has answered.
+    level: standard
+    model: qwen/qwen3-coder
+    temperature: 0.1
+    reasoning_effort: medium
+
+  scout:
+    level: light
+    model: qwen/qwen3-coder
+    temperature: 0.1
+    fallback: build
+
+  reader:
+    # The as-built's reader: one call per file, in parallel, reporting what the
+    # file contains in any language. A first reading of a repository is hundreds
+    # of these and a refresh reads only what changed, so this is the role to run
+    # cheap. Everything it reports is checked by code before it is drawn.
+    level: light
+    model: qwen/qwen3-coder
+    temperature: 0.1
+    # Thinking stays on. Measured on one mid-sized repository, thinking off
+    # saves nothing once files are read ten to a call ($3.58 against $3.53)
+    # and loses files, imports and routes; read one to a call it costs a tenth
+    # of the functions.
+    reasoning_effort: medium
+    fallback: build
+
+  cartographer:
+    # Names the groups code formed from the reader's reports, groups the ways in
+    # into capabilities, and writes the system's summary. A handful of calls per
+    # reading, and what a person reads first -- worth a better model than the
+    # reader's.
+    level: standard
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.3
+    fallback: build
+
+  interrogator:
+    # The most valuable single call in the pipeline: it is the only agent that
+    # gets to ask the human anything, and it gets one round. Pay for it.
+    level: deep
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.5
+    reasoning_effort: high
+    fallback: build
+
+  spec_writer:
+    # Not `planner`. It writes the spec, not the plan -- the architect writes
+    # the plan -- and with a checker after each, that name would put the wrong
+    # checker next to the wrong agent.
+    #
+    # The spec is one answer, and it grows with the feature: every criterion,
+    # its rationale and every resolved ambiguity are in the same completion. A
+    # sixteen-criterion feature spent 77% of the 16,000 default, and a spec
+    # writer cut off mid-spec takes gate 1 with it. It answers the spec
+    # checker with the whole spec again, so the same ceiling applies twice.
+    level: deep
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.2
+    max_tokens: 24000
+    reasoning_effort: high
+    fallback: build
+
+  spec_checker:
+    # Reads the draft spec as the oracle will, then against what was asked,
+    # and objects; the spec writer answers once. Its audience is the spec
+    # writer, not you: what it settles never reaches spec review, and what the
+    # spec writer rebuts arrives there as an open question. Remove this block
+    # and intake runs without a checker.
+    #
+    # A different family from `spec_writer` on purpose. A checker that shares
+    # the author's priors finds the author's blind spots last.
+    level: deep
+    model: z-ai/glm-4.6
+    temperature: 0.3
+    reasoning_effort: high
+    fallback: check
+
+  architect:
+    level: deep
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.2
+    reasoning_effort: high
+    fallback: build
+
+  plan_checker:
+    # Takes each worker's seat before any worker starts: given only this unit,
+    # its reading list and the spec, what would I have to guess? The architect
+    # answers once. An objection it does not settle, or a fact about the cut
+    # code can measure, stops the run at plan review. Remove this block and
+    # there is no plan review; the build runs straight from the plan.
+    #
+    # A different family from `architect`, for the same reason as above.
+    level: deep
+    model: z-ai/glm-4.6
+    temperature: 0.3
+    reasoning_effort: high
+    fallback: check
+
+  worker:
+    level: standard
+    model: qwen/qwen3-coder
+    temperature: 0.15
+    max_tokens: 32000
+    # Do not lower this to save money. It is the setting most often cut first
+    # and the one that costs most when cut: low effort in multi-turn agentic
+    # work produces malformed output and half-built units, which come back as
+    # schema retries and integration failures. You pay for the same unit twice
+    # and get the worse of the two.
+    reasoning_effort: high
+    fallback: build
+
+  integrator:
+    level: standard
+    model: qwen/qwen3-coder
+    temperature: 0.1
+    max_tokens: 24000
+    fallback: build
+
+  oracle:
+    # Sees the spec and nothing else, ever. (INV-1) Because it is writing tests
+    # from a contract rather than from code, it needs to reason about what the
+    # words actually oblige -- this is a judgment role, not an execution one.
+    level: deep
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.3
+    # It returns complete test files, so its output is the size of a test suite
+    # -- the most output-heavy role in the system, and far past the 16k
+    # default. How much it decides to write varies a lot run to run (fifteen
+    # files one attempt, two the next), so the ceiling has to cover the generous
+    # case or the whole verify lane fails on a coin flip. Measured: sixteen
+    # criteria came to 28,194 tokens, 88% of a 32,000 ceiling.
+    max_tokens: 48000
+    reasoning_effort: high
+    fallback: check
+
+  # ---- review agents ------------------------------------------------------
+  # Everything with `review: true` runs in the review phase against one
+  # evidence bundle, sampled as many times as it asks for. Findings are
+  # de-duplicated by title keeping the harsher reading, and the worst verdict
+  # across every agent is the one the packet carries. Out of the box that is
+  # just `reviewer`; add your own the same way, or in the console, and it
+  # reads the same bundle alongside it.
+
+  reviewer:
+    level: deep
+    model: z-ai/glm-4.6
+    temperature: 1.0
+    review: true
+    fallback: check
+
+    samples: 3
+    reasoning_effort: high
+  breaker:
+    # A harness agent, not a review agent: it writes tests and runs them, so it
+    # cannot be one of the `review: true` roles, which get one structured
+    # completion over a text bundle and no tools. It is the only agent that has
+    # read the implementation *and* can execute against it.
+    #
+    # Deliberately a different model family from `worker`, for the same reason
+    # the adversary is -- and more so, because this one's output executes. If
+    # you change `worker`, check that this is still a different family.
+    #
+    # Its tests are written, run, and deleted. They never land on the branch,
+    # where the project's own test gate would collect them and its signal would
+    # become a function of what the breaker happened to write that round.
+    #
+    # `reasoning_effort` is charged per turn, and on a harness route this role
+    # takes hundreds of them: read the checkout, write a probe, run it, watch it
+    # fail, check it failed for the reason claimed. One measured session spent
+    # 1.1M tokens against a 9k-token brief -- the loop, not the reading -- and
+    # `high` multiplies that by every turn. `temperature: 0.8` already says this
+    # role's value is invention rather than precision. Raise it if the probes go
+    # shallow: ten tests that all probe the happy path with different literals
+    # is one test written ten times.
+    level: standard
+    model: z-ai/glm-4.6
+    temperature: 0.8
+    max_tokens: 32000
+    reasoning_effort: medium
+    enabled: true
+    fallback: check
+
+  arbiter:
+    # Routes findings; cannot delete one. Different family from the review
+    # agents, because it is judging their work and a model is a soft grader of
+    # its own priors. Low temperature: this is a classification, not a search.
+    #
+    # Above the default ceiling because it answers per finding, not per round: a
+    # disposition and a reason for every open one, and the list only grows as
+    # the rounds add to it. Sixty-five findings averaged 62% of the 16,000
+    # default, and anything it is cut off before routing defaults to a human --
+    # so a truncation here does not fail loudly, it quietly hands you the pile.
+    level: standard
+    model: qwen/qwen3.8-27b
+    temperature: 0.2
+    max_tokens: 24000
+    reasoning_effort: high
+    enabled: true
+    fallback: build
+
+  repairer:
+    # Runs through the same executor a worker does. What differs is the prompt,
+    # and that is the whole point: a repairer's instincts have to be the inverse
+    # of a builder's. Do not lower effort here for the same reason you do not
+    # lower it on `worker`: a half-applied repair costs a whole round.
+    level: standard
+    model: qwen/qwen3.8-27b
+    temperature: 0.1
+    max_tokens: 32000
+    reasoning_effort: high
+    enabled: true
+    fallback: build
+
+  simplifier:
+    # Runs once, after the repair loop converges, on the findings the arbiter
+    # routed to `simplify` -- code that is correct and written twice, an
+    # abstraction with one user, a convention the repository does not follow.
+    # No repair closes those: a repairer may not remove a thing for being
+    # unnecessary, and this is the only agent here that may.
+    #
+    # Same route as a repairer, because it is the same shape of job: read a
+    # tree, change it, account for what it did. The checks, the blind suite and
+    # every probe run again afterwards, so "behaviour did not change" is
+    # measured rather than claimed.
+    #
+    # Disable it and the findings stay open in front of a human, which is where
+    # an unfixed finding belongs -- nothing else in the run changes.
+    level: standard
+    model: qwen/qwen3.8-27b
+    temperature: 0.1
+    max_tokens: 32000
+    reasoning_effort: high
+    enabled: true
+    fallback: build
+
+  rapporteur:
+    level: deep
+    model: anthropic/claude-sonnet-4.5
+    temperature: 0.3
+    reasoning_effort: high
+    fallback: build
+
+
+# ---------------------------------------------------------------------------
+# There is deliberately no `gates:` block here.
+#
+# Gates belong to a project, because there is no sensible global default across
+# a Python service and a Node app. At gate 0 the surveyor reads a repository and
+# proposes the gates it already runs -- from the CI workflow, the Makefile, the
+# package.json scripts -- along with the environment they need. Those gates are
+# then run on an untouched checkout, and a human approves the result.
+#
+# The baseline is the point of that phase. If a project's gates are red before
+# any feature has touched it, every failure a feature produces afterwards is
+# unattributable, and the packet built from it is noise wearing the costume of
+# evidence.
+#
+# One number worth knowing when you read a proposed gate list: coverage tells
+# you which lines ran, mutation score tells you whether the tests would have
+# noticed if those lines were wrong. A suite can sit at 95% coverage and 20%
+# mutation score. If you keep one, keep that one.
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# The repair loop.
+#
+# When the review phase finds something, the factory tries to fix it before
+# it stops. Everything below is read by the orchestrator and by nothing else:
+# the models produce findings and routings, and plain code decides what that
+# means and when to stop. (INV-6)
+#
+# The rule the whole loop is built around is that it can only *add*. Every
+# finding from every round reaches the packet with its outcome attached -- a
+# repaired finding shows as repaired, never as absent. A loop that could shrink
+# the finding list would make the packet look better while making it worth less,
+# which is the one failure mode worth designing against here.
+# ---------------------------------------------------------------------------
+# Why a check is red on untouched code: a kind computed by code, then a cause
+# and fixes from the `diagnose` role, each fix tried before it is shown.
+diagnosis:
+  enabled: true
+  max_checks: 4     # red checks diagnosed per run of the checks
+  max_trials: 3     # fixes tried per check; each try is one run of the check
+  max_files: 10     # repository files a diagnosis may ask to read
+
+# Documents that say how a project's code is written -- AGENTS.md,
+# CONTRIBUTING.md, style and UX guides, skills. Found by code, approved by a
+# person, then handed to every agent that writes or judges code.
+guides:
+  budget_chars: 30000          # guide text per agent, apart from the repository digest
+  promote_after_features: 3    # features before observed conventions are drafted into AGENTS.md
+
+rework:
+  enabled: true
+
+  # Hard ceiling on repair rounds. Two, because needing a third is itself the
+  # finding: the loop has stopped fixing the code and started arguing with the
+  # reviewer, and a human should be reading why rather than paying for another
+  # round of it. `stop_reason` says "round cap reached (N); M finding(s) left
+  # unattempted" whenever this binds, so hitting it is a sentence somebody
+  # reads and not a silent ending.
+  #
+  # It also lines up with `max_attempts_per_finding` below. That is 2, so a
+  # finding raised in the first round is attempted there and once more in the
+  # second and is then escalated for good regardless -- which means a third
+  # round and beyond could only ever work on damage the repairs themselves
+  # caused. Raise them together or not at all.
+  max_rounds: 2
+
+  # Everything the loop may spend, counted from the first gate run onward: the
+  # repair rounds plus the review panels they cause to be repeated. The build
+  # lane is not in it -- that was bought before there was anything to decide.
+  # Raise it for work you expect to take a while; long runs are fine, unbounded
+  # ones are not.
+  budget_usd: 4.00
+
+  # Held back and never spendable by the loop. Without it the failure mode is a
+  # run that spends everything repairing and then cannot afford to produce a
+  # packet at all, which is strictly worse than not looping.
+  reserve_usd: 0.75
+
+  wall_clock_minutes: 90
+
+  # Repairers run concurrently with non-overlapping file ownership, so this is
+  # also how many worktrees are alive at once.
+  max_repair_units_per_round: 4
+
+  # A finding that survives this many attempts is escalated for good.
+  # "Attempted twice, still there, here is what was tried" is worth more to a
+  # human than a third attempt at the same wrong idea.
+  max_attempts_per_finding: 2
+
+  # Where the breaker's adversarial tests are written and run. They are removed
+  # again before anything commits.
+  breaker_dir: tests/breaker
+  # Empty means "use the command the breaker declared". Set it if this tool
+  # cannot be trusted to guess your runner.
+  breaker_command: ""
+  breaker_timeout_s: 900
+
+  # INV-12 -- the verification surface. A repairer that could edit these could
+  # make any finding go away without fixing anything, which turns the loop into
+  # a machine for manufacturing green. The oracle's blind tests and the
+  # breaker's probes are added to this set at run time; these are the files that
+  # decide whether tests run at all.
+  protected_globs:
+    - conftest.py
+    - "**/conftest.py"
+    - pytest.ini
+    - "**/pytest.ini"
+    - tox.ini
+    - setup.cfg
+    - pyproject.toml
+    - .coveragerc
+    - "jest.config.*"
+    - "vitest.config.*"
+    - ".mocharc.*"
+    - "karma.conf.*"
+    - phpunit.xml
+
+
+# --------------------------------------------------------------------------
+# scheduling -- whether a run has room to finish, and what to do when it does not
+#
+# A build that reaches a plan's limit does not stop at a sensible place. It
+# stops wherever it happens to be, and every agent after that point never runs
+# at all. That is not hypothetical: a run lost its entire review panel in one
+# moment, on the final pass, to a workspace that had run out -- and reported
+# `0 findings still standing`, which reads as a clean bill of health for a
+# panel that never answered.
+#
+# The alternative to refusing the work is waiting for it. A rolling window
+# resets at a known second, so "there is not enough left" and "there will be in
+# thirty-one minutes" are the same fact, and only one of them is useful.
+#
+# Nothing here is a threshold somebody picked. What a plan has left is read
+# from the plan (`meter_*` on each route above); what a run costs is observed,
+# run over run, by reading the gauge before the build and again after it. Both
+# halves have to exist before this can hold anything back, which is why it says
+# nothing at all on a fresh checkout.
+scheduling:
+
+  # Off means gate 1 never mentions the plans and a build always starts when you
+  # press the button.
+  enabled: true
+
+  # What a run needs, times this, must fit in what the plan has left.
+  #
+  # Above 1 because the draw on record is what *past* runs took and the next one
+  # is not those runs: a repair round nobody planned is exactly the thing that
+  # makes a build cost more than the last one. Lower it and more runs start that
+  # cannot finish; raise it and more runs wait for room they did not need.
+  margin: 1.25
+
+  # Past this, a reset is a fact to report rather than a time to hold a build
+  # until. A five-hour window resetting in thirty minutes is a schedule; a weekly
+  # window resetting on Sunday is a warning, and offering to hold a feature until
+  # then would be a worse answer than letting a human start it anyway.
+  max_wait_s: 21600          # six hours
+
+  # How many finished runs must have been measured before the draw on record is
+  # allowed to delay anything. One observation is an anecdote, and deferring a
+  # build on an anecdote is worse than starting one that might not finish.
+  #
+  # Until this many runs have completed, gate 1 reports what it can read and
+  # starts the build -- so a fresh checkout behaves exactly as it did, and this
+  # begins to bite on the third or fourth feature rather than the first.
+  min_observations: 2

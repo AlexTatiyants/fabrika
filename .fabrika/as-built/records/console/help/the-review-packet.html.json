@@ -1,0 +1,27 @@
+{
+ "blob": "5d09a47c71a18a8880ba15dac55e0fec38616aff",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "review packet",
+   "verdict",
+   "rapporteur",
+   "blind spot",
+   "criterion",
+   "objection"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Describes the review packet produced when a build finishes, including the code on a branch and an argument for shipping it.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

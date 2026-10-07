@@ -1,0 +1,234 @@
+/* What a run did, under the step that did it -- calls, outputs, the run as a
+   graph, the list of runs -- and the crew page's remaining bands and plan
+   review. */
+
+/* ---- the calls under each step ------------------------------------------ */
+.scall {
+  display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) 9rem 4.5rem 3.5rem 3.5rem;
+  gap: 0 .75rem; align-items: baseline; padding: .35rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent); font-size: .8rem;
+}
+.scall.head { font-size: .68rem; color: var(--ink-3); text-transform: none; border-bottom-width: 2px; }
+.scall .num { text-align: right; font-family: var(--mono); color: var(--ink-2); }
+.scall .dim { color: var(--ink-3); }
+.scall.ok .scall-out { color: var(--green, var(--green-ok)); }
+.scall.bad .scall-out { color: var(--red); }
+.scall-raw-toggle { grid-column: 2 / -1; justify-self: start; font-size: .72rem; }
+.scall-raw { grid-column: 1 / -1; margin: .3rem 0 0; padding: .5rem; font-size: .72rem;
+  white-space: pre-wrap; word-break: break-word;
+  background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.route-trouble {
+  margin: 0 0 .9rem; padding: .6rem .8rem; font-size: .82rem;
+  border-left: 3px solid var(--amber, var(--amber-line)); background: color-mix(in srgb, var(--amber-line) 8%, transparent);
+}
+@media (max-width: 720px) {
+  .scall { grid-template-columns: 3rem minmax(0, 1fr) 6rem; }
+  .scall .num { display: none; }
+}
+
+/* ---- what a turn produced, under the step that produced it ---------------
+   The row carries the headline and this carries the list behind it: every
+   check and how it came out, every probe and whether the code survived it,
+   every file the oracle wrote. Quieter than the calls table beneath it --
+   this is reading, not a ledger of purchases. */
+/* Capped, unlike the calls table under it. These rows are prose -- an
+   agent's sentence about what it found -- and a 950px line of it is not read,
+   it is skimmed. The outcome sits at the end of the measure rather than at the
+   end of the screen, where the eye has to travel to reach it. */
+.rout { margin: 0 0 1rem; max-width: 56rem; }
+.rout-h { margin: .2rem 0 .35rem; font-size: .68rem; color: var(--ink-3);
+  letter-spacing: .04em; padding-bottom: .3rem;
+  border-bottom: 2px solid var(--line-strong); }
+.rout-h b { color: var(--ink-2); font-weight: 600; }
+/* The sentence the agent itself wrote about the whole of it. Said once, in
+   plain words, before the list that elaborates on it. */
+.rout-said { margin: 0 0 .35rem; font-size: .8rem; color: var(--ink-2); line-height: 1.45; }
+/* What this kind of evidence cannot tell you, whatever the list says. A wall
+   of green with no stated limits is what teaches a reader to skim. */
+.rout-limit { margin: 0 0 .45rem; padding-left: .6rem; font-size: .75rem; line-height: 1.45;
+  color: var(--ink-3); border-left: 2px solid color-mix(in srgb, var(--ink) 12%, transparent); }
+.rout-e {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 .75rem;
+  align-items: baseline; padding: .3rem 0; font-size: .8rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.rout-t { min-width: 0; overflow-wrap: anywhere; color: var(--ink); }
+.rout-o { font-size: .72rem; color: var(--ink-3); white-space: nowrap; }
+.rout-e.t-good .rout-o { color: var(--green, var(--green-ok)); }
+.rout-e.t-bad .rout-o { color: var(--red); }
+.rout-e.t-warn .rout-o { color: var(--accent-ink); }
+/* The reason, under the thing it is about: a line, never the paragraph the
+   agent wrote -- that is what the ledger is for. */
+.rout-n { grid-column: 1 / -1; margin-top: .12rem; font-size: .74rem; line-height: 1.4;
+  color: var(--ink-3); overflow-wrap: anywhere; }
+.rout-more { margin: .35rem 0 0; font-size: .74rem; color: var(--ink-3); }
+@media (max-width: 720px) {
+  .rout-e { grid-template-columns: minmax(0, 1fr); }
+  .rout-o { justify-self: start; }
+}
+
+/* A control that reads as text: the step's call count, the raw-output toggle. */
+.linkish {
+  background: none; border: 0; padding: 0; font: inherit; color: var(--ink-2);
+  cursor: pointer; text-decoration: underline dotted; text-underline-offset: 2px;
+}
+.linkish:hover { color: var(--ink); }
+
+/* ---- the run as a graph -------------------------------------------------- */
+.rgraph {
+  --graph-main: var(--lane-build, #2e7d5b);
+  --graph-oracle: #7F77DD;
+  display: grid; position: relative;
+  grid-template-columns: 26px var(--graph-w) 3rem minmax(0, 1fr) minmax(0, 12rem) 5.5rem 4rem 4rem;
+  column-gap: 0; font-size: .8125rem;
+}
+.rg-head { display: contents; }
+.rg-head > span { grid-row: 1; font-size: .68rem; color: var(--ink-3); align-self: end;
+  padding-bottom: .3rem; border-bottom: 2px solid var(--line-strong); }
+.rg-head > span:nth-child(1) { grid-column: 1; } .rg-head > span:nth-child(2) { grid-column: 2; }
+.rg-head > span:nth-child(3) { grid-column: 3; } .rg-head > span:nth-child(4) { grid-column: 4; }
+.rg-head > span:nth-child(5) { grid-column: 5; } .rg-head > span:nth-child(6) { grid-column: 6; }
+.rg-head > span:nth-child(7) { grid-column: 7; } .rg-head > span:nth-child(8) { grid-column: 8; }
+.rg-band { grid-column: 1 / -1; background: color-mix(in srgb, var(--amber-line) 9%, transparent); z-index: 0; }
+.rg-divide { grid-column: 1 / -1; align-self: start; height: 0; z-index: 0;
+  border-top: 3px solid var(--ink-3); margin-top: -1.5px; }
+.rg-lane { grid-column: 1; display: flex; align-items: center; justify-content: center;
+  border-right: 2px solid var(--line-strong); margin: 4px 0; z-index: 1; }
+.rg-lane span { writing-mode: vertical-rl; transform: rotate(180deg); font-size: .68rem;
+  font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  white-space: nowrap; }
+.rg-lane.round { border-right-color: var(--amber, var(--amber-line)); }
+.rg-lane.round span { color: var(--accent-ink); }
+.rg-g { grid-column: 2; z-index: 1; line-height: 0; position: relative; }
+.rg-g .graph-cell { display: block; }
+.rg-g .graph-cell.between { position: absolute; top: 0; left: 0; height: 100%; }
+.rg-c { z-index: 1; align-self: stretch; display: flex; align-items: center; padding: 0 .5rem 0 0;
+  min-width: 0; }
+.rg-t { grid-column: 3; color: var(--ink-3); font-size: .72rem; }
+.rg-w { grid-column: 4; white-space: nowrap; overflow: hidden; }
+.rg-w > span { overflow: hidden; text-overflow: ellipsis; }
+.rg-what { flex: 1 1 auto; min-width: 0; padding-left: .25rem; }
+.rg-who { font-weight: 600; color: var(--ink); flex: none; }
+.rg-w.now .rg-who::after { content: ' · now'; font-weight: 400; color: var(--accent-ink, var(--amber-line)); }
+.rg-what { color: var(--ink-3); }
+.rg-what.bad, .rg-model small.bad { color: var(--red); }
+.rg-model { grid-column: 5; flex-direction: column; align-items: flex-start; justify-content: center;
+  font-size: .75rem; color: var(--ink-2); line-height: 1.25; white-space: nowrap; overflow: hidden; }
+.rg-model small { display: block; font-size: .7rem; color: var(--ink-3); }
+.rg-k { grid-column: 6; } .rg-cost { grid-column: 7; } .rg-took { grid-column: 8; }
+.rg-n { justify-content: flex-end; font-size: .75rem; color: var(--ink-2); white-space: nowrap; }
+.rg-open { grid-column: 3 / -1; z-index: 1; padding: .2rem 0 .8rem; }
+.rgraph > div:not(.rg-band):not(.rg-lane):not(.rg-divide) { border-bottom: 1px solid color-mix(in srgb, var(--ink) 6%, transparent); }
+.rgraph > .rg-g { border-bottom: 0 !important; }
+.graph-now { animation: graph-pulse 1.6s ease-in-out infinite; }
+@keyframes graph-pulse { 50% { r: 7; } }
+.rg-next { margin: .8rem 0 0 calc(26px + var(--graph-w, 60px) + 1rem); font-size: .78rem; color: var(--ink-3); }
+@media (max-width: 720px) {
+  .rgraph { grid-template-columns: 22px var(--graph-w) minmax(0, 1fr) 4rem; }
+  .rg-t, .rg-model, .rg-k, .rg-cost, .rg-head > span:nth-child(n+5) { display: none; }
+  .rg-w { grid-column: 3; } .rg-took { grid-column: 4; } .rg-head > span:nth-child(4) { grid-column: 3; }
+  .rg-open { grid-column: 3 / -1; }
+}
+
+/* ---- runs ----------------------------------------------------------------
+   The timeline and the Call Tree show one run. This line names it and links
+   every other, newest first. */
+.run-links { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem .9rem;
+  margin: 0 0 1rem; font-size: .8125rem; color: var(--ink-3); }
+.run-links b { color: var(--ink); font-weight: 600; }
+.run-links .linkish { font: inherit; color: var(--ink-2); }
+.run-sep { color: var(--ink-3); }
+
+/* A step this run took from an earlier one rather than running itself. Greyed,
+   and the row says so in words: colour alone is not a statement. */
+.rgraph .carried { opacity: .5; }
+.rgraph .rg-w.carried .rg-what { font-style: italic; }
+
+/* When a check runs, and a person's say over it. */
+.g-runs { padding: .45rem 0 .2rem; color: var(--ink-2); }
+.g-runs .linkish { margin-left: .6rem; }
+/* A level's second line: what runs the project's own tests there. */
+.q-sub { display: block; margin-top: .15rem; font-size: .8125rem; color: var(--ink-2); }
+
+/* A proposal's reason, in one sentence, on the card. */
+.p-gist { margin: 0; padding: .5rem .85rem; font-size: .8125rem; color: var(--ink); }
+.p-gist + .p-why > summary { padding-top: .2rem; }
+
+/* WHAT AN AGENT IS FOR, beside how it is configured. The table answers
+   "which model, how hot, what has it cost" and on its own never answers the
+   question a person actually arrives with. It wraps onto its own line at the width the
+   model cell gets, which is where it wants to be anyway: the name and the
+   model read as one column, the sentence as the thing under them. */
+.rr-does {
+  flex: 1 1 100%; color: var(--ink-3); font-size: .72rem; line-height: 1.35;
+  padding-right: 1rem; font-style: italic;
+}
+.role-row.head .rr-does, .role-row.open .rr-does { color: var(--ink-2); }
+
+/* The run, in the order it happens. A band head is quieter than a section
+   head and louder than a row, because it is dividing one table rather than
+   starting a new one. */
+.role-band {
+  display: flex; align-items: baseline; gap: .55rem;
+  padding: 1.5rem .45rem .45rem;
+  border-top: 2px solid var(--ink-2); border-bottom: 1px solid var(--line);
+}
+.role-band:first-of-type { border-top-width: 1px; padding-top: .35rem; }
+.role-band b {
+  font-family: var(--display); font-size: .8rem; letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.role-band span { color: var(--ink-3); font-size: .72rem; font-style: italic; }
+.s-shared { font-style: italic; }
+
+/* The lanes are cards, not the harness board. `harness-grid` reserves seven
+   rows because that board has seven; two lane cards in it would leave six
+   empty gaps standing between them and everything below. */
+.lane-grid { grid-template-rows: auto; }
+
+/* A band divides the table, so the air belongs ABOVE the rule where it
+   separates, not below it where it only pushes the label off its own line.
+   And the rule reads as a division at one pixel of a darker ink -- two is
+   a heading's weight on something that is not a heading. */
+.role-band {
+  margin-top: .9rem;
+  padding-top: .3rem;
+  border-top-width: 1px; border-top-color: var(--ink-2);
+}
+.role-band:first-of-type { margin-top: 0; }
+
+/* Plan review. Two positions side by side, the way gate 2 lays out a decision:
+   the claim once, then who says what. Paper and hairlines, no alert colours --
+   a disagreement between two agents is a question, not an error. */
+.cut-head { padding: 1.5rem 0 0; }
+.cut-head h1 { font-size: 1.5rem; line-height: 1.3; }
+.cut-head p { margin: 0; }
+/* The screen is one decision, read top to bottom; the page's usual section
+   rhythm would space it like a document and push the choice below the fold. */
+.cut .section { margin: 1.4rem 0; }
+.cut .section > .eyebrow { margin-bottom: .4rem; }
+.cut-call {
+  border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 2px; background: var(--surface);
+  padding: .8rem .9rem; margin: 0 0 .5rem;
+}
+.cut-q { margin: 0 0 .6rem; font-weight: 500; line-height: 1.45; }
+.cut-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.cut-sides p { margin: 0; font-size: .875rem; line-height: 1.55; color: var(--ink-2); }
+.cut-sides .cut-who {
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: .25rem;
+}
+.cut-where { margin: .6rem 0 0; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+.cut-note { font-size: .8125rem; margin-top: .5rem; }
+.cut-note-input {
+  width: 100%; box-sizing: border-box; margin: .9rem 0 .5rem;
+  font: inherit; font-size: .875rem; padding: .5rem .6rem;
+  border: 1px solid var(--line-strong); border-radius: 2px;
+  background: var(--surface); color: var(--ink);
+}
+.cut-acts { display: flex; flex-wrap: wrap; gap: .5rem; }
+.cut-plan summary { cursor: pointer; font-family: var(--mono); font-size: .75rem; color: var(--ink-2); }
+@media (max-width: 640px) { .cut-sides { grid-template-columns: 1fr; } }
+
+

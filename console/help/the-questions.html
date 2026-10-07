@@ -1,0 +1,23 @@
+<p class="lead">Before a spec is written, Fabrika asks you what the code can't tell it. You get one round of
+  questions: answer them, then freeze.</p>
+
+<h4>First, check its reading</h4>
+<p>At the top is <i>What it thinks you asked for</i>: the interrogator's restatement of your intent. If it's
+  wrong, press <b>That's not what I meant</b> and say what it is. That replaces its reading entirely, and every
+  question is asked again from your words (<b>Ask again from this</b>). If what the scout saw was wrong or
+  incomplete, <b>Read the codebase again</b> reads the repository from scratch, which costs more calls.</p>
+
+<h4>Answering</h4>
+<p>Each question is marked <i>blocking</i>, <i>significant</i> or <i>minor</i>. Pick one of its options, or
+  open <b>why this matters · write your own</b> to read the reasoning and type your own answer
+  (<b>Use this</b>), or take the proposed default (<b>Use the default</b>). An answered question stays in its row,
+  marked <i>settled</i>; <b>change</b> reopens it.</p>
+
+<h4>Freezing</h4>
+<p><b>Freeze the spec</b>, in the bar, closes the questions. It stays disabled until every blocking question has
+  an answer: a wrong guess on one of those throws work away rather than adjusting it. Anything else you leave
+  unanswered is carried into the spec as accepted risk, and named there. The spec writer then writes the spec from
+  your answers. See <a data-help="the-spec">The spec, and approving it</a>.</p>
+<p>If the interrogator raised nothing, read its restatement closely. If it captures what you meant, your intent
+  was tight enough to build from; if it dropped something, correct it rather than freezing.</p>
+<p>Later, the <b>questions</b> step shows what was asked and answered, read-only.</p>

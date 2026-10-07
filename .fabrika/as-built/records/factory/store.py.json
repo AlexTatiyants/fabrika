@@ -1,0 +1,170 @@
+{
+ "blob": "9ee74a704430296afccf6d657b029bb89ffb62d1",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "jsonable",
+   "_Index",
+   "_index",
+   "EvidenceStore",
+   "list_feature_ids"
+  ],
+  "domain_terms": [
+   "feature",
+   "evidence",
+   "ledger",
+   "record",
+   "exchange"
+  ],
+  "entities_defined": [
+   "_Index",
+   "EvidenceStore"
+  ],
+  "entities_read": [
+   "evidence.jsonl"
+  ],
+  "entities_written": [
+   "evidence.jsonl",
+   "prompt artifact files"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 24,
+    "name": "jsonable"
+   },
+   {
+    "calls": [],
+    "line": 37,
+    "name": "_Index"
+   },
+   {
+    "calls": [],
+    "line": 61,
+    "name": "_index"
+   },
+   {
+    "calls": [
+     "_index"
+    ],
+    "line": 99,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 121,
+    "name": "append"
+   },
+   {
+    "calls": [],
+    "line": 176,
+    "name": "__iter__"
+   },
+   {
+    "calls": [
+     "__iter__"
+    ],
+    "line": 190,
+    "name": "records"
+   },
+   {
+    "calls": [],
+    "line": 193,
+    "name": "_read"
+   },
+   {
+    "calls": [
+     "_read",
+     "_index"
+    ],
+    "line": 203,
+    "name": "all"
+   },
+   {
+    "calls": [
+     "_read",
+     "_index"
+    ],
+    "line": 206,
+    "name": "of_kinds"
+   },
+   {
+    "calls": [
+     "_read",
+     "_index"
+    ],
+    "line": 211,
+    "name": "latest"
+   },
+   {
+    "calls": [
+     "_read",
+     "_index"
+    ],
+    "line": 215,
+    "name": "current"
+   },
+   {
+    "calls": [
+     "latest"
+    ],
+    "line": 222,
+    "name": "payload"
+   },
+   {
+    "calls": [
+     "all"
+    ],
+    "line": 226,
+    "name": "payloads"
+   },
+   {
+    "calls": [
+     "_index"
+    ],
+    "line": 229,
+    "name": "has"
+   },
+   {
+    "calls": [],
+    "line": 234,
+    "name": "artifact_dir"
+   },
+   {
+    "calls": [],
+    "line": 244,
+    "name": "list_feature_ids"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "filesystem",
+   "Pydantic"
+  ],
+  "purpose": "Stores agent exchanges in append-only JSONL ledgers, one ledger per feature. Provides indexing to avoid re-reading entire files on every query, and serialization helpers for pydantic models and other complex types.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "jsonable",
+    "kind": "export",
+    "method": "",
+    "name": "jsonable"
+   },
+   {
+    "handler": "EvidenceStore",
+    "kind": "export",
+    "method": "",
+    "name": "EvidenceStore"
+   },
+   {
+    "handler": "list_feature_ids",
+    "kind": "export",
+    "method": "",
+    "name": "list_feature_ids"
+   }
+  ]
+ }
+}

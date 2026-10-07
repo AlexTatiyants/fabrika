@@ -1,0 +1,81 @@
+{
+ "blob": "87e99c986f3a909f9ae34216e39f8fdbc8cb31c5",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "dependencyTab",
+   "Dependencies"
+  ],
+  "domain_terms": [
+   "dependency",
+   "package",
+   "license",
+   "vulnerability",
+   "lockfile",
+   "ecosystem"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 24,
+    "name": "versionOf"
+   },
+   {
+    "calls": [
+     "push",
+     "forEach"
+    ],
+    "line": 27,
+    "name": "troubles"
+   },
+   {
+    "calls": [
+     "filter",
+     "includes"
+    ],
+    "line": 37,
+    "name": "dependencyTab"
+   },
+   {
+    "calls": [
+     "map"
+    ],
+    "line": 58,
+    "name": "Osv"
+   },
+   {
+    "calls": [
+     "filter",
+     "join"
+    ],
+    "line": 65,
+    "name": "Row"
+   },
+   {
+    "calls": [
+     "filter",
+     "length",
+     "map",
+     "sort",
+     "localeCompare",
+     "some"
+    ],
+    "line": 89,
+    "name": "Dependencies"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "OSV (Open Source Vulnerabilities database)"
+  ],
+  "purpose": "Component analyzing and displaying package dependencies, their licenses, known vulnerabilities from OSV, and policy violations.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

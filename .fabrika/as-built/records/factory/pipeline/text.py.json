@@ -1,0 +1,131 @@
+{
+ "blob": "7e5c249dcea786247db661588e51169c44405f69",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "PHASE_NAMES",
+   "INTAKE_PHASES",
+   "BUILD_PHASES",
+   "VERDICT_RANK",
+   "AS_BUILT_WAIT_S",
+   "reset_phases",
+   "gate_status_line",
+   "files_section",
+   "classify_claimed_path",
+   "tree_section"
+  ],
+  "domain_terms": [
+   "phases",
+   "gates",
+   "files",
+   "findings",
+   "acceptance criteria"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState",
+   "FileWrite",
+   "GateReport"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 41,
+    "name": "_env_label"
+   },
+   {
+    "calls": [],
+    "line": 47,
+    "name": "reset_phases"
+   },
+   {
+    "calls": [],
+    "line": 99,
+    "name": "gate_status_line"
+   },
+   {
+    "calls": [],
+    "line": 141,
+    "name": "files_section"
+   },
+   {
+    "calls": [],
+    "line": 169,
+    "name": "classify_claimed_path"
+   },
+   {
+    "calls": [
+     "classify_claimed_path"
+    ],
+    "line": 219,
+    "name": "tree_section"
+   },
+   {
+    "calls": [],
+    "line": 293,
+    "name": "_first_lines"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/store.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines pipeline phase names and provides text formatting helpers that assemble prompts, including status lines, file sections, and tree representations.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "PHASE_NAMES"
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "INTAKE_PHASES"
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": "BUILD_PHASES"
+   },
+   {
+    "handler": "reset_phases",
+    "kind": "export",
+    "method": "",
+    "name": "reset_phases"
+   },
+   {
+    "handler": "gate_status_line",
+    "kind": "export",
+    "method": "",
+    "name": "gate_status_line"
+   },
+   {
+    "handler": "files_section",
+    "kind": "export",
+    "method": "",
+    "name": "files_section"
+   },
+   {
+    "handler": "classify_claimed_path",
+    "kind": "export",
+    "method": "",
+    "name": "classify_claimed_path"
+   },
+   {
+    "handler": "tree_section",
+    "kind": "export",
+    "method": "",
+    "name": "tree_section"
+   }
+  ]
+ }
+}

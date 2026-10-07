@@ -1,0 +1,86 @@
+{
+ "blob": "e231dd9677c4e8a5fb8dc22f76212817fb5f3d86",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Criterion"
+  ],
+  "domain_terms": [
+   "criterion",
+   "requirement",
+   "test",
+   "evidence",
+   "file",
+   "decision",
+   "finding"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "split",
+     "map"
+    ],
+    "line": 22,
+    "name": "Code"
+   },
+   {
+    "calls": [
+     "useState",
+     "MatDot",
+     "Pill",
+     "Code",
+     "FlagsHere",
+     "Composer"
+    ],
+    "line": 34,
+    "name": "File"
+   },
+   {
+    "calls": [
+     "map",
+     "Pill"
+    ],
+    "line": 68,
+    "name": "Decisions"
+   },
+   {
+    "calls": [
+     "useState",
+     "criteriaRows",
+     "packetOf",
+     "statementOf",
+     "find",
+     "filter",
+     "map",
+     "Composer",
+     "FlagsHere",
+     "Pill",
+     "File",
+     "Decisions"
+    ],
+    "line": 100,
+    "name": "Criterion"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Screen for reviewing one requirement in detail with the code serving it, evidence from tests, findings against it, and decisions made.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "Criterion",
+    "kind": "screen",
+    "method": "",
+    "name": "/criterion/{criterion_id}"
+   }
+  ]
+ }
+}

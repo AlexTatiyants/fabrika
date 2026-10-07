@@ -1,0 +1,122 @@
+{
+ "blob": "8c568b96df80681ca38d2f784a2ebc18a1edcf55",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Evidence",
+   "RunEvidence"
+  ],
+  "domain_terms": [
+   "evidence \u2014 proof that a criterion holds",
+   "acceptance criterion \u2014 a feature requirement",
+   "gate \u2014 an automated check that passes or fails",
+   "breaker probe \u2014 test designed to find defects",
+   "blind test \u2014 acceptance test written before implementation",
+   "recording or trace \u2014 playable browser test execution"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 41,
+    "name": "Source"
+   },
+   {
+    "calls": [
+     "evidenceFor",
+     "statementOf"
+    ],
+    "line": 53,
+    "name": "Evidence"
+   },
+   {
+    "calls": [],
+    "line": 225,
+    "name": "casesIn"
+   },
+   {
+    "calls": [],
+    "line": 230,
+    "name": "plural"
+   },
+   {
+    "calls": [],
+    "line": 234,
+    "name": "Band"
+   },
+   {
+    "calls": [],
+    "line": 251,
+    "name": "Fig"
+   },
+   {
+    "calls": [],
+    "line": 267,
+    "name": "ProbeSource"
+   },
+   {
+    "calls": [],
+    "line": 304,
+    "name": "TracePlayer"
+   },
+   {
+    "calls": [],
+    "line": 377,
+    "name": "criteriaIn"
+   },
+   {
+    "calls": [
+     "criteriaIn"
+    ],
+    "line": 391,
+    "name": "criteriaNamed"
+   },
+   {
+    "calls": [],
+    "line": 403,
+    "name": "testNamed"
+   },
+   {
+    "calls": [
+     "packetOf",
+     "criteriaRows",
+     "casesIn",
+     "request",
+     "criteriaIn",
+     "criteriaNamed",
+     "statementOf"
+    ],
+    "line": 409,
+    "name": "RunEvidence"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Playwright",
+   "HTTP API backend"
+  ],
+  "purpose": "Two Preact components for displaying evidence in a test/QA system: `Evidence` shows what proves an individual acceptance criterion with provenance and limitations; `RunEvidence` shows all evidence from a test run including recordings, gate results, blind tests, breaker probes, and found issues.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/features/{featureId}/traces/{name}/player"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/features/{featureId}/traces/{name}/frames/{poster}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/features/{featureId}/traces/{name}"
+   }
+  ],
+  "ways_in": []
+ }
+}

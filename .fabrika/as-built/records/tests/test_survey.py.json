@@ -1,0 +1,883 @@
+{
+ "blob": "7112bb990aa9d43766f983a641cf11df6a7dac2e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_a_harness_is_told_what_its_runner_loaded_and_where_the_rest_is",
+   "test_guides_in_the_working_copy_are_offered_for_commit_and_never_offered_to_create",
+   "test_a_new_skill_goes_where_the_projects_skills_already_are",
+   "test_skills_are_linked_in_the_repository_only_for_people_who_use_another_tool",
+   "test_a_feature_that_changes_agents_md_design_md_or_a_skill_raises_a_blocker",
+   "test_design_md_front_matter_comes_from_tokens_the_code_defines",
+   "test_fabrika_proposes_only_what_its_evidence_supports",
+   "test_every_file_fabrika_writes_is_a_standard_convention_file",
+   "test_a_proposed_rule_cites_the_features_and_files_it_was_observed_in",
+   "test_a_reading_is_shown_the_repositorys_guides_and_design_md_gets_its_lint"
+  ],
+  "domain_terms": [
+   "repository survey",
+   "project",
+   "gates",
+   "dependencies",
+   "baseline",
+   "project surveys and proposals",
+   "checks and gates",
+   "testing tiers",
+   "environment and dockerfile",
+   "guides",
+   "guides (AGENTS.md, DESIGN.md, skills)",
+   "project rules and conventions",
+   "harness loader",
+   "guide proposals"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "ProjectRegistry",
+   "Project",
+   "Gate",
+   "EnvironmentSpec",
+   "SurveyDiff",
+   "BlindPlacement",
+   "SetupFile",
+   "TestingTier",
+   "DependencyFact",
+   "DependencyPolicy",
+   "GateReport",
+   "ProjectSurvey",
+   "ProjectState",
+   "TestingSurface",
+   "CleanupOption",
+   "ScaffoldFile",
+   "CapabilityRequest",
+   "CapabilityRuling",
+   "Recommendation"
+  ],
+  "entities_written": [
+   "Project",
+   "Gate",
+   "EnvironmentSpec",
+   "BlindPlacement",
+   "TestingTier",
+   "ProjectSurvey",
+   "SurveyDiff"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "factory.state_of",
+     "factory.store_for",
+     "factory.rework_plan",
+     "factory._dispatchable",
+     "factory.record_flag"
+    ],
+    "line": 9,
+    "name": "test_a_dispatch_cannot_choose_its_own_destination"
+   },
+   {
+    "calls": [
+     "workspace.repo_digest"
+    ],
+    "line": 40,
+    "name": "test_the_digest_spends_its_budget_on_what_defines_the_project_first"
+   },
+   {
+    "calls": [
+     "ProjectRegistry"
+    ],
+    "line": 63,
+    "name": "test_unregistering_a_project_never_touches_the_repository"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.scaffold_problems"
+    ],
+    "line": 88,
+    "name": "test_setup_belongs_in_a_test_directory_and_is_not_a_test"
+   },
+   {
+    "calls": [
+     "ProjectOnboarding.run_baseline"
+    ],
+    "line": 129,
+    "name": "test_an_incoherent_environment_fails_with_its_reason_not_a_docker_error"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.environment_notes"
+    ],
+    "line": 160,
+    "name": "test_a_command_naming_a_file_that_is_not_there_is_flagged"
+   },
+   {
+    "calls": [
+     "_survey_of_a_compose_project",
+     "ProjectOnboarding.run_survey"
+    ],
+    "line": 183,
+    "name": "test_a_survey_whose_environment_is_a_file_it_proposed_waits_for_the_file"
+   },
+   {
+    "calls": [
+     "_survey_of_a_compose_project",
+     "ProjectOnboarding.run_survey"
+    ],
+    "line": 198,
+    "name": "test_a_baseline_that_fails_does_not_undo_the_survey_before_it"
+   },
+   {
+    "calls": [
+     "_demo_project",
+     "pipeline_projects_module.watched_paths",
+     "workspace.tooling_paths"
+    ],
+    "line": 211,
+    "name": "test_a_projects_own_setup_files_are_watched_for_change"
+   },
+   {
+    "calls": [
+     "ProjectOnboarding.run_resurvey",
+     "onboarding._capability_requests"
+    ],
+    "line": 249,
+    "name": "test_what_the_verify_lane_asked_for_reaches_the_next_reading"
+   },
+   {
+    "calls": [
+     "pipeline_projects_module.unmet_capabilities"
+    ],
+    "line": 289,
+    "name": "test_criterion_ids_are_never_merged_across_features"
+   },
+   {
+    "calls": [
+     "ProjectOnboarding._baseline"
+    ],
+    "line": 307,
+    "name": "test_every_rule_is_probed_and_the_weakest_answer_wins"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.apply_survey_diff",
+     "ProjectOnboarding.run_resurvey"
+    ],
+    "line": 327,
+    "name": "test_the_only_button_a_healthy_project_has_can_carry_a_testing_reading"
+   },
+   {
+    "calls": [
+     "ProjectOnboarding._baseline",
+     "Factory._assess"
+    ],
+    "line": 358,
+    "name": "test_gate_zero_runs_its_gates_in_the_environment_a_feature_would_get"
+   },
+   {
+    "calls": [
+     "_propose_reports",
+     "_rule"
+    ],
+    "line": 393,
+    "name": "test_a_proven_command_joins_a_reading_as_one_card"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.approve",
+     "_result",
+     "_proved_placement"
+    ],
+    "line": 422,
+    "name": "test_an_optional_check_is_not_a_way_around_the_rule"
+   },
+   {
+    "calls": [
+     "_approved_project",
+     "ProjectRegistry.approval_fingerprint"
+    ],
+    "line": 451,
+    "name": "test_changing_where_blind_tests_go_invalidates_the_baseline"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.approve",
+     "_result"
+    ],
+    "line": 473,
+    "name": "test_a_project_with_a_gate_that_cannot_run_is_refused"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 491,
+    "name": "test_the_detector_never_triggers_a_survey_on_its_own"
+   },
+   {
+    "calls": [
+     "SURVEYOR.read_text",
+     "_prose"
+    ],
+    "line": 501,
+    "name": "test_a_config_file_outranks_a_gitignore_entry"
+   },
+   {
+    "calls": [
+     "SURVEYOR.read_text",
+     "_prose"
+    ],
+    "line": 520,
+    "name": "test_an_inferred_dev_dependency_is_proposed_as_scaffolding"
+   },
+   {
+    "calls": [
+     "SURVEYOR.read_text",
+     "_prose"
+    ],
+    "line": 531,
+    "name": "test_compose_is_first_when_the_suite_needs_a_service"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.environment_problems"
+    ],
+    "line": 558,
+    "name": "test_a_path_in_the_dockerfile_field_is_caught_before_the_build"
+   },
+   {
+    "calls": [
+     "SURVEYOR.read_text",
+     "_prose"
+    ],
+    "line": 576,
+    "name": "test_the_surveyor_is_told_the_checks_run_in_one_place"
+   },
+   {
+    "calls": [
+     "ProjectOnboarding._baseline"
+    ],
+    "line": 592,
+    "name": "test_a_known_bad_environment_never_reaches_docker_build"
+   },
+   {
+    "calls": [
+     "ProjectRegistry._compose_service_problems"
+    ],
+    "line": 604,
+    "name": "test_the_gates_are_not_run_inside_the_database"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.gate_problems"
+    ],
+    "line": 636,
+    "name": "test_a_metric_that_captures_nothing_is_refused"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.gate_problems"
+    ],
+    "line": 661,
+    "name": "test_a_pattern_the_tool_cannot_print_into_a_pipe_is_refused"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.gate_problems"
+    ],
+    "line": 731,
+    "name": "test_a_threshold_with_nothing_to_read_is_refused"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.gate_problems"
+    ],
+    "line": 737,
+    "name": "test_an_unparseable_metric_pattern_is_refused"
+   },
+   {
+    "calls": [
+     "ProjectRegistry.environment_problems"
+    ],
+    "line": 744,
+    "name": "test_a_gate_that_cannot_produce_a_result_blocks_the_baseline"
+   },
+   {
+    "calls": [
+     "pipeline.tree_section",
+     "Factory._recheck"
+    ],
+    "line": 756,
+    "name": "test_the_recheck_is_given_the_tree_and_not_only_the_repair_narrative"
+   },
+   {
+    "calls": [
+     "_demo_project",
+     "guide_view",
+     "guide_offers"
+    ],
+    "line": 783,
+    "name": "test_two_projects_open_at_once_do_not_empty_each_others_guides"
+   },
+   {
+    "calls": [],
+    "line": 810,
+    "name": "test_the_gate_two_screens_say_when_their_numbers_are_being_replaced"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "class_source"
+    ],
+    "line": 835,
+    "name": "test_accepting_a_reading_in_full_counts_as_having_read"
+   },
+   {
+    "calls": [
+     "pipeline.tree_section"
+    ],
+    "line": 863,
+    "name": "test_a_description_where_a_path_belonged_is_not_read_as_absence"
+   },
+   {
+    "calls": [
+     "pipeline.tree_section"
+    ],
+    "line": 878,
+    "name": "test_a_directory_is_reported_as_a_directory_and_lists_what_is_in_it"
+   },
+   {
+    "calls": [
+     "pipeline.tree_section",
+     "Factory._recheck"
+    ],
+    "line": 888,
+    "name": "test_a_breaker_probe_removed_by_design_is_not_read_as_absence"
+   },
+   {
+    "calls": [
+     "unitenv.binaries"
+    ],
+    "line": 907,
+    "name": "test_the_binaries_a_project_runs_are_derived_from_its_own_commands"
+   },
+   {
+    "calls": [
+     "_project_with_suggestions",
+     "ProjectRegistry.decline_family",
+     "ProjectRegistry.reinstate_family",
+     "_declined_suggestions"
+    ],
+    "line": 919,
+    "name": "test_a_family_gone_without_blocks_nothing_and_is_not_suggested_again"
+   },
+   {
+    "calls": [
+     "dep.parse_uv",
+     "dep.parse_requirements",
+     "dep.parse_package_lock",
+     "dep.parse_yarn",
+     "dep.parse_pnpm",
+     "dep.parse_poetry"
+    ],
+    "line": 939,
+    "name": "test_each_lockfile_says_what_is_direct_and_what_came_through_it"
+   },
+   {
+    "calls": [
+     "dep.read_inventory",
+     "dep.diff",
+     "dep.unresolved"
+    ],
+    "line": 987,
+    "name": "test_a_feature_s_dependency_changes_are_read_from_the_lockfiles"
+   },
+   {
+    "calls": [
+     "license_verdict"
+    ],
+    "line": 1002,
+    "name": "test_a_license_is_judged_by_the_choice_it_gives"
+   },
+   {
+    "calls": [
+     "_branch",
+     "dep.read_inventory",
+     "dep.diff",
+     "dep.facts_for",
+     "dep.findings",
+     "_StubLookup"
+    ],
+    "line": 1014,
+    "name": "test_each_kind_of_bad_dependency_is_its_own_finding"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "dep.project_inventory",
+     "class_source",
+     "Factory._converge"
+    ],
+    "line": 1057,
+    "name": "test_the_project_s_own_dependencies_are_read_at_baseline_and_new_advisories_marked"
+   },
+   {
+    "calls": [
+     "_project_with_suggestions",
+     "dep.refresh_inventory",
+     "dep.latest_inventory"
+    ],
+    "line": 1078,
+    "name": "test_a_dependency_reading_that_fails_never_takes_its_caller_down"
+   },
+   {
+    "calls": [
+     "hollow_tests"
+    ],
+    "line": 1101,
+    "name": "test_a_test_that_cannot_fail_is_named_for_what_it_is"
+   },
+   {
+    "calls": [
+     "_project_with_parts",
+     "proposed_parts",
+     "ProjectRegistry.rule_on_proposed_check",
+     "ProjectRegistry.proposal_state"
+    ],
+    "line": 1132,
+    "name": "test_each_part_of_a_reading_is_ruled_on_by_itself"
+   },
+   {
+    "calls": [
+     "_project_with_parts",
+     "proposed_parts"
+    ],
+    "line": 1151,
+    "name": "test_an_accepted_part_can_be_undone_and_waits_again"
+   },
+   {
+    "calls": [
+     "_project_with_parts",
+     "proposed_parts"
+    ],
+    "line": 1166,
+    "name": "test_a_part_restated_as_recorded_is_not_proposed"
+   },
+   {
+    "calls": [
+     "_project_with_parts"
+    ],
+    "line": 1174,
+    "name": "test_the_survey_tab_s_old_ruling_settles_every_part"
+   },
+   {
+    "calls": [
+     "_dockerfile_project",
+     "factory_source"
+    ],
+    "line": 1182,
+    "name": "test_a_resurvey_reads_each_checks_settings_whether_or_not_they_moved"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 1214,
+    "name": "test_the_package_list_is_measured_not_read_from_a_manifest"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 1232,
+    "name": "test_a_probe_that_runs_before_setup_finds_nothing_and_that_is_the_point"
+   },
+   {
+    "calls": [],
+    "line": 1247,
+    "name": "test_the_resurvey_can_see_whether_the_load_command_is_already_answered"
+   },
+   {
+    "calls": [
+     "unmet_capabilities"
+    ],
+    "line": 1262,
+    "name": "test_a_request_a_human_has_answered_is_not_asked_again_forever"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source",
+     "scaffolding_state"
+    ],
+    "line": 1327,
+    "name": "test_a_proposal_that_changes_an_existing_file_can_be_accepted"
+   },
+   {
+    "calls": [
+     "app_js",
+     "factory_source"
+    ],
+    "line": 1409,
+    "name": "test_the_page_never_says_a_check_is_unrun_about_something_that_is_not_a_check"
+   },
+   {
+    "calls": [],
+    "line": 1438,
+    "name": "test_a_later_reading_can_change_what_a_first_reading_recorded"
+   },
+   {
+    "calls": [],
+    "line": 1485,
+    "name": "test_a_rereading_that_changes_any_field_of_a_check_is_not_dropped_as_identical"
+   },
+   {
+    "calls": [
+     "_work",
+     "_check",
+     "_turn"
+    ],
+    "line": 1500,
+    "name": "test_a_turn_says_which_checks_it_ran_and_not_only_how_many"
+   },
+   {
+    "calls": [
+     "_work",
+     "_turn"
+    ],
+    "line": 1532,
+    "name": "test_a_probe_the_code_survived_is_never_reported_as_a_pass"
+   },
+   {
+    "calls": [
+     "_resumed_sandbox"
+    ],
+    "line": 1559,
+    "name": "test_the_repository_before_this_work_is_read_from_the_base_commit"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 1581,
+    "name": "test_a_re_reading_with_no_suggestions_leaves_none"
+   },
+   {
+    "calls": [
+     "strip_unchanged"
+    ],
+    "line": 1612,
+    "name": "test_a_reading_that_fills_in_which_checks_run_a_level_is_not_dropped"
+   },
+   {
+    "calls": [
+     "strip_unchanged",
+     "tier_shape"
+    ],
+    "line": 1639,
+    "name": "test_the_tier_comparison_has_no_blind_spot"
+   },
+   {
+    "calls": [
+     "tier_shape"
+    ],
+    "line": 1679,
+    "name": "test_a_tier_says_who_cleans_up_and_offers_fixes_when_nobody_reliably_does"
+   },
+   {
+    "calls": [
+     "cleanup_option_problems",
+     "is_setup_path"
+    ],
+    "line": 1711,
+    "name": "test_a_test_helper_in_a_support_folder_is_setup_and_an_unwritable_fix_is_never_offered"
+   },
+   {
+    "calls": [
+     "strip_unchanged",
+     "chosen_cleanup",
+     "cleanup_option_problems",
+     "factory_source"
+    ],
+    "line": 1741,
+    "name": "test_a_chosen_fix_is_applied_whole_files_first"
+   },
+   {
+    "calls": [
+     "_warm_project"
+    ],
+    "line": 1794,
+    "name": "test_a_check_that_fails_offline_for_want_of_a_fetch_is_warmed_and_measured_again"
+   },
+   {
+    "calls": [
+     "_warm_project"
+    ],
+    "line": 1823,
+    "name": "test_a_check_red_for_its_own_reasons_is_not_remembered_as_needing_the_network"
+   },
+   {
+    "calls": [
+     "_dockerfile_project",
+     "_commit",
+     "dockerfile_state"
+    ],
+    "line": 1835,
+    "name": "test_the_repositorys_committed_dockerfile_is_the_one_used_and_never_stored"
+   },
+   {
+    "calls": [
+     "_dockerfile_project"
+    ],
+    "line": 1868,
+    "name": "test_moving_the_dockerfile_in_writes_and_commits_it_and_never_overwrites_your_edit"
+   },
+   {
+    "calls": [
+     "_dockerfile_project",
+     "factory_source"
+    ],
+    "line": 1890,
+    "name": "test_accepting_a_new_projects_checks_moves_its_dockerfile_into_the_repository"
+   },
+   {
+    "calls": [
+     "class_source"
+    ],
+    "line": 1917,
+    "name": "test_a_reading_records_what_it_cost"
+   },
+   {
+    "calls": [
+     "_own_dockerfile_project",
+     "dockerfile_state"
+    ],
+    "line": 1938,
+    "name": "test_a_stage_of_the_projects_own_dockerfile_is_built_from_and_never_stored"
+   },
+   {
+    "calls": [],
+    "line": 1958,
+    "name": "test_only_the_built_stage_is_judged_and_a_missing_one_is_said"
+   },
+   {
+    "calls": [
+     "_dockerfile_project",
+     "own_image_files"
+    ],
+    "line": 1978,
+    "name": "test_a_resurvey_is_shown_the_projects_own_image_while_fabrika_writes_one"
+   },
+   {
+    "calls": [
+     "_web_service"
+    ],
+    "line": 2001,
+    "name": "test_a_declared_preview_must_open_a_service_that_exists"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 2021,
+    "name": "test_every_baseline_that_is_recorded_first_sets_aside_what_needs_docker"
+   },
+   {
+    "calls": [
+     "_diagnosed_project"
+    ],
+    "line": 2029,
+    "name": "test_a_fix_never_writes_over_a_file_you_changed"
+   },
+   {
+    "calls": [
+     "factory_source"
+    ],
+    "line": 2039,
+    "name": "test_the_baseline_classifies_and_diagnoses_what_it_measured"
+   },
+   {
+    "calls": [],
+    "line": 2050,
+    "name": "test_a_version_is_read_past_a_runner_s_own_status_lines"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "guides.found",
+     "guides.select",
+     "guides.render"
+    ],
+    "line": 2068,
+    "name": "test_the_verify_lane_is_handed_testing_sections_and_nothing_inferred"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "guides.found",
+     "guides.digest"
+    ],
+    "line": 2087,
+    "name": "test_guides_are_the_standard_files_and_what_agents_md_points_to"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "guides.found",
+     "guides.select"
+    ],
+    "line": 2102,
+    "name": "test_each_role_with_no_harness_is_handed_the_files_that_cover_its_work"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "guides.found",
+     "guides.select",
+     "guides.render"
+    ],
+    "line": 2119,
+    "name": "test_a_partly_delivered_guide_is_said_to_be_partial"
+   },
+   {
+    "calls": [
+     "guides.section"
+    ],
+    "line": 2133,
+    "name": "test_the_section_puts_guides_before_what_was_inferred"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "guides.Reads",
+     "guides.bridge",
+     "guides.unbridge",
+     "_git_status"
+    ],
+    "line": 2146,
+    "name": "test_each_runner_is_bridged_to_the_rules_it_does_not_read_in_the_checkout_only"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "guides.found",
+     "guides.Reads",
+     "guides.harness_note",
+     "guides.bridge"
+    ],
+    "line": 2189,
+    "name": "test_a_harness_is_told_what_its_runner_loaded_and_where_the_rest_is"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "guides.working_guides",
+     "guides.offers",
+     "ProjectRegistry"
+    ],
+    "line": 2208,
+    "name": "test_guides_in_the_working_copy_are_offered_for_commit_and_never_offered_to_create"
+   },
+   {
+    "calls": [
+     "skills_home"
+    ],
+    "line": 2254,
+    "name": "test_a_new_skill_goes_where_the_projects_skills_already_are"
+   },
+   {
+    "calls": [
+     "_repo_with_one_commit",
+     "guides.offers",
+     "ProjectRegistry",
+     "guides.bridge"
+    ],
+    "line": 2267,
+    "name": "test_skills_are_linked_in_the_repository_only_for_people_who_use_another_tool"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "check_guides_changed",
+     "pipeline.Factory._converge"
+    ],
+    "line": 2293,
+    "name": "test_a_feature_that_changes_agents_md_design_md_or_a_skill_raises_a_blocker"
+   },
+   {
+    "calls": [
+     "guides.design_md",
+     "guides.DESIGN_SECTIONS"
+    ],
+    "line": 2323,
+    "name": "test_design_md_front_matter_comes_from_tokens_the_code_defines"
+   },
+   {
+    "calls": [
+     "guides.offers",
+     "guides.DESIGN_LINE"
+    ],
+    "line": 2348,
+    "name": "test_fabrika_proposes_only_what_its_evidence_supports"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "ProjectRegistry"
+    ],
+    "line": 2375,
+    "name": "test_every_file_fabrika_writes_is_a_standard_convention_file"
+   },
+   {
+    "calls": [
+     "_guide_repo",
+     "ProjectRegistry",
+     "ProjectOnboarding._offer_guide_draft"
+    ],
+    "line": 2406,
+    "name": "test_a_proposed_rule_cites_the_features_and_files_it_was_observed_in"
+   },
+   {
+    "calls": [
+     "factory_source",
+     "ProjectRegistry",
+     "_guide_repo"
+    ],
+    "line": 2444,
+    "name": "test_a_reading_is_shown_the_repositorys_guides_and_design_md_gets_its_lint"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py",
+   "factory/projects.py",
+   "factory/onboarding.py",
+   "factory/schemas.py",
+   "factory/config.py",
+   "factory/workspace.py",
+   "factory/server/readouts.py",
+   "factory/pipeline/factory/base.py",
+   "factory/llm.py",
+   "factory/guides.py",
+   "factory/pipeline/__init__.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "Git",
+   "PyPI",
+   "npm",
+   "file system",
+   "git",
+   "pytest"
+  ],
+  "purpose": "Tests for repository surveying, project onboarding, gates/checks configuration, dependency analysis, and related project factory workflows.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "",
+    "kind": "command",
+    "method": "",
+    "name": "pytest tests/test_survey.py"
+   }
+  ]
+ }
+}

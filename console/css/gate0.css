@@ -1,0 +1,158 @@
+/* Gate 0's base layer: a decision about the gates, with everything else on
+   the page as reference beside it. */
+
+/* --------------------------------------------------------------------------
+   Gate 0.
+
+   The page is a decision, and the decision is about the gates. Everything else
+   on it is reference, so everything else is a column or a disclosure. The gate
+   list is one list: as two -- definitions, then results -- it would mean
+   reading the same five rows twice to assemble one fact about each, and cost
+   more height than the rest of the page combined.
+   -------------------------------------------------------------------------- */
+
+/* The one sentence the page exists to deliver. It runs the full width, so it
+   is sized like the headline it is -- at 1.0625rem across 1280px the measure
+   would be twice what anyone can track back to the next line. */
+.p-verdict {
+  font-family: var(--display); font-size: clamp(1.1875rem, 0.95rem + 1vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.32; letter-spacing: -0.015em;
+  margin: 1.6rem 0 1.5rem;
+}
+.p-verdict.bad { color: var(--red); }
+
+/* THE RULING.
+
+   What the run means for the decision, as an object rather than a sentence in
+   a stack of them. As a sentence it is shrunk to 1.0625rem -- display face,
+   600, -0.015em tracking, at body size, which is a headline's typography
+   wearing a paragraph's scale -- and pulled against the grey block below it,
+   so that the one sentence a reader needs lands on line three of four.
+
+   The lamp is the only coloured element. A tinted top edge over a coloured
+   lamp over a tinted ground is one fact said three times, and the world's rule
+   is that a lamp is lit by the line's state and nothing else is. */
+.ruling {
+  display: grid; grid-template-columns: 1.35rem 1fr; gap: .1rem .8rem;
+  background: var(--surface); border: 1px solid var(--line);
+  padding: .95rem 1.1rem 1rem; margin: 1.5rem 0 1.6rem;
+}
+/* Amber is the colour that means a person is required, so the ground carries
+   it too: this is the one state where the block is asking for something. */
+.ruling.act { background: var(--accent-wash); border-color: var(--amber-edge); }
+.r-lamp { grid-row: 1 / span 2; padding-top: .12rem; color: var(--ink-3); }
+.r-lamp .ic { width: 19px; height: 19px; }
+.ruling.ok .r-lamp { color: var(--lamp-green); }
+.ruling.act .r-lamp { color: var(--accent); }
+/* The ruling itself, in the board's own silkscreen legend. Set apart from the
+   reason by face, case and tracking rather than by size, so it reads as a
+   stamp on the plate instead of one more heading in a column of them. */
+.r-legend {
+  margin: 0; font: 600 1.0625rem/1.15 var(--cond);
+  letter-spacing: .13em; text-transform: uppercase; color: var(--ink);
+}
+.r-why {
+  margin: .45rem 0 0;
+  font-size: .9375rem; line-height: 1.55; color: var(--ink-2);
+}
+.r-why b { color: var(--ink); font-weight: 600; }
+
+.gline { border-bottom: 1px solid var(--line); }
+.gline > summary {
+  display: grid; grid-template-columns: 1.1rem minmax(9rem, auto) 1fr auto;
+  gap: .7rem; align-items: baseline; padding: .5rem .25rem;
+  cursor: pointer; list-style: none;
+}
+.gline > summary::-webkit-details-marker { display: none; }
+.gline > summary:hover { background: var(--surface); }
+.gline[data-empty] > summary { cursor: default; }
+.gline[data-empty] > summary:hover { background: none; }
+
+.g-mark {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-3); padding-top: .18rem;
+}
+.g-mark .ic { color: inherit; }
+.gline.passed > summary .g-mark { color: var(--ink-3); }
+.gline.failed > summary .g-mark,
+.gline.failed > summary .g-name { color: var(--red); }
+/* Named `unrunnable`, not `cannot`: a bare `.cannot` rule already exists for
+   another component and would give every one of these rows its box and accent
+   bar. */
+.gline.unrunnable > summary .g-mark,
+.gline.unrunnable > summary .g-name { color: var(--amber); }
+.gline.muted-row > summary .g-name { color: var(--ink-3); font-weight: 400; }
+
+.g-name { font-family: var(--display); font-weight: 600; font-size: .9375rem; }
+.g-cmd {
+  font-size: .75rem; color: var(--ink-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.g-meta { font-size: .75rem; color: var(--ink-3); white-space: nowrap; }
+
+.g-out {
+  margin: 0 0 .6rem 1.8rem; padding: .6rem .7rem; background: var(--surface-sunk);
+  border-radius: 3px; font-size: .7rem; line-height: 1.45;
+  max-height: 24rem; overflow: auto; white-space: pre;
+}
+.g-nest { margin-left: 1.8rem; border-top: 1px solid var(--line); }
+.g-nest .gline:last-child { border-bottom: none; }
+
+/* The exits from a check that could not run. Aligned with the output above it,
+   because the output is the evidence these three answer. Only an unrunnable row
+   has them: a check that ran and failed needs nothing done to it, and the
+   absence of controls beside it is the message. */
+.g-act {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .55rem;
+  margin: 0 0 .7rem 1.8rem;
+}
+.g-act .small { flex-basis: 100%; margin: .1rem 0 0; }
+.g-drop { margin: 0 0 .8rem 1.8rem; }
+@media (max-width: 40rem) {
+  .g-act, .g-drop { margin-left: 0; }
+}
+
+/* Reference, one panel at a time. Columns keep the page short only by keeping
+   every entry short; a panel has the whole width and can show the thing itself. */
+.ptabs { display: flex; gap: 1.4rem; border-bottom: 1px solid var(--line); }
+.ptab {
+  appearance: none; background: none; border: 0; padding: 0 0 .55rem;
+  margin-bottom: -1px; cursor: pointer;
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3);
+  border-bottom: 1px solid transparent;
+}
+.ptab:hover { color: var(--ink-2); }
+.ptab.on { color: var(--ink); border-bottom-color: var(--ink); }
+.ptab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.ppanel { padding-top: 1.1rem; }
+.facts-list { margin: 0; }
+.fr {
+  display: grid; grid-template-columns: 11rem 1fr; gap: .4rem 1.5rem;
+  padding: .5rem 0; border-bottom: 1px solid var(--line);
+}
+.fr:last-child { border-bottom: 0; }
+.fr > dt {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3); padding-top: .12rem;
+}
+.fr > dd { margin: 0; font-size: .875rem; color: var(--ink-2); overflow-wrap: anywhere; }
+.fr > dd p { margin: 0; line-height: 1.55; }
+.fr > dd .warn { color: var(--amber); }
+.fr .disclosure-list li:first-child { border-top: 0; padding-top: 0; }
+.fr .disclosure-list li { padding-right: 0; }
+.cmd-list { margin: 0; padding-left: 1.1rem; }
+.objection .who { display: flex; align-items: center; gap: .4rem; }
+.cmd-list li { font-size: .8125rem; padding: .1rem 0; }
+
+@media (max-width: 720px) {
+  .fr { grid-template-columns: 1fr; gap: .15rem; }
+}
+
+@media (max-width: 720px) {
+  .gline > summary { grid-template-columns: 1.1rem 1fr; gap: .4rem .7rem; }
+  .g-cmd, .g-meta { grid-column: 2; white-space: normal; }
+}
+

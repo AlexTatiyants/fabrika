@@ -1,0 +1,97 @@
+{
+ "blob": "3195b2424e405f0f3a5cedaae4ca32cb879f7ed3",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "this_process",
+   "HarnessBlocked",
+   "owner_is_alive",
+   "is_orphaned"
+  ],
+  "domain_terms": [
+   "process ownership",
+   "feature",
+   "harness",
+   "orphaned build"
+  ],
+  "entities_defined": [
+   "HarnessBlocked"
+  ],
+  "entities_read": [
+   "FeatureState",
+   "GateReport"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "getpid",
+     "open",
+     "read",
+     "rsplit",
+     "split",
+     "run",
+     "stdout"
+    ],
+    "line": 10,
+    "name": "this_process"
+   },
+   {
+    "calls": [
+     "splitlines",
+     "startswith",
+     "strip",
+     "rstrip"
+    ],
+    "line": 36,
+    "name": "_blocked_reason"
+   },
+   {
+    "calls": [],
+    "line": 49,
+    "name": "HarnessBlocked"
+   },
+   {
+    "calls": [
+     "partition",
+     "int",
+     "kill",
+     "this_process",
+     "_pid_started"
+    ],
+    "line": 60,
+    "name": "owner_is_alive"
+   },
+   {
+    "calls": [
+     "open",
+     "read",
+     "rsplit",
+     "split",
+     "run"
+    ],
+    "line": 85,
+    "name": "_pid_started"
+   },
+   {
+    "calls": [
+     "owner_is_alive"
+    ],
+    "line": 100,
+    "name": "is_orphaned"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "operating system"
+  ],
+  "purpose": "Determines process ownership of features and whether the owning process is still alive, identifying orphaned feature builds.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

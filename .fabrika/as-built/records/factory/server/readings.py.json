@@ -1,0 +1,98 @@
+{
+ "blob": "cc8f5530081409d17b01c407d5fc5dd4756fe986",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "cleanup",
+   "baseline",
+   "re-survey",
+   "testing tier",
+   "environment step"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 23,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "proposed_scaffolding",
+     "cleanup_option_problems",
+     "registry"
+    ],
+    "line": 30,
+    "name": "apply_cleanup"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "onboarding"
+    ],
+    "line": 76,
+    "name": "rerun_baseline"
+   },
+   {
+    "calls": [
+     "onboarding"
+    ],
+    "line": 79,
+    "name": "run"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "onboarding"
+    ],
+    "line": 89,
+    "name": "resurvey_project"
+   },
+   {
+    "calls": [
+     "onboarding"
+    ],
+    "line": 92,
+    "name": "survey"
+   }
+  ],
+  "imports": [
+   "factory/projects.py",
+   "factory/workspace.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Handles cleanup fixes applied from the current reading, re-running baseline checks, and re-surveying the project.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "apply_cleanup",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/cleanup"
+   },
+   {
+    "handler": "rerun_baseline",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/baseline"
+   },
+   {
+    "handler": "resurvey_project",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/resurvey"
+   }
+  ]
+ }
+}

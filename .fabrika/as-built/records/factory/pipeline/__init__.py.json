@@ -1,0 +1,51 @@
+{
+ "blob": "947d1d026b9823bef1ac0b94f03dad8ad3f6ad63",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "phase",
+   "orchestrator",
+   "check",
+   "verdict"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [
+   "factory/pipeline/text.py",
+   "factory/pipeline/trace.py",
+   "factory/pipeline/flags.py",
+   "factory/pipeline/records.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/protection.py",
+   "factory/pipeline/ledger.py",
+   "factory/pipeline/probes.py",
+   "factory/pipeline/repairs.py",
+   "factory/pipeline/ownership.py",
+   "factory/pipeline/checks/gate_results.py",
+   "factory/pipeline/checks/agents.py",
+   "factory/pipeline/checks/seams.py",
+   "factory/pipeline/checks/repo.py",
+   "factory/pipeline/checks/cut.py",
+   "factory/pipeline/checks/blind.py",
+   "factory/pipeline/packet.py",
+   "factory/pipeline/recordings.py",
+   "factory/pipeline/helpers.py",
+   "factory/pipeline/factory/__init__.py",
+   "factory/containers.py",
+   "factory/gates.py",
+   "factory/projects.py",
+   "factory/schemas.py",
+   "factory/workspace.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "The pipeline orchestrator: re-exports pure functions and checks from subpackages so all pipeline functions are accessible via `from factory.pipeline import X`, and documents that plain code decides phase transitions while models work inside phases.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

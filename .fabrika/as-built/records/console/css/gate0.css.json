@@ -1,0 +1,45 @@
+{
+ "blob": "0d8a0770e2768a5eeb636278f8aa807d3dc6f4ee",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "p-verdict",
+   "ruling",
+   "r-lamp",
+   "r-legend",
+   "r-why",
+   "gline",
+   "g-mark",
+   "g-name",
+   "g-cmd",
+   "g-meta",
+   "g-out",
+   "g-nest",
+   "g-act",
+   "ptabs",
+   "ptab",
+   "ppanel",
+   "facts-list",
+   "fr"
+  ],
+  "domain_terms": [
+   "gate",
+   "ruling",
+   "verdict",
+   "lamp",
+   "check result"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles Gate 0's base decision layer displaying gates with their results and reference information in columns and disclosures.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

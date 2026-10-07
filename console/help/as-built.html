@@ -1,0 +1,44 @@
+<p class="lead">The as-built is a plain-language account of your codebase as it stands: what it is, how its parts
+  fit together, and what it does. It's read from every file, so you can learn a repository cold, or check it
+  before reviewing a feature.</p>
+
+<h4>How it's made</h4>
+<p>Fabrika reads each file once. Small files go up to ten to a call, large ones alone and in parts, on the
+  model the crew page gives the reader. What the reader reports is checked against the code: a function counts
+  only if it is at the line it was given, and a link between files is confirmed only where the code makes it.
+  Numbers and links are computed from the repository. Names and summaries are written by a model from what each
+  file contains.</p>
+
+<h4>Where it lives</h4>
+<p>It's committed to your repository, under <code>.fabrika/as-built/</code>, so anyone can read it there
+  without Fabrika. It records the commit it describes. Fabrika never edits your own files, and that folder is
+  ignored when deciding whether the reading is current.</p>
+
+<h4>Reading it again</h4>
+<p>The button in the header says what it will do: <b>Read the repository</b> the first time, <b>Refresh</b>
+  when your code has moved on, <b>Read again</b> when nothing has. After the first reading, only the files that
+  changed since are read. The header shows <b>Out of date</b> when the checked-out commit is ahead of the
+  reading; press it to see which files changed.</p>
+<ul>
+  <li>A reading on a plan with usage windows pauses itself before the window is full, and keeps what it
+    read. <b>Carry on reading</b> reads only what's left.</li>
+  <li>If the as-built folder has edits that aren't committed, a new reading won't start until you commit or
+    discard them.</li>
+  <li>A reading runs on the server, so you can leave the page while it works.</li>
+</ul>
+
+<h4>The pages</h4>
+<ul>
+  <li><b>Overview</b>: the summary, six tiles (subsystems, capabilities, code, tests, links, coverage),
+    what's worth knowing, where to start reading, and the files nearly everything uses. <i>Coverage</i> says how
+    many files were read and what wasn't: dependencies, build output, binaries, and anything that couldn't be
+    read. <i>Tests</i> is the share of the code that some test imports or calls, not a coverage tool's number.</li>
+  <li><b>Architecture</b>: what runs where. See <a data-help="as-built-architecture">Architecture</a>.</li>
+  <li><b>System</b>: the parts, and what depends on what. See <a data-help="as-built-system">The system
+    map</a>.</li>
+  <li><b>Capabilities</b>: what a person can do with it. See <a data-help="as-built-capabilities">Capabilities</a>.</li>
+</ul>
+
+<h4>How far to trust it</h4>
+<p>A dashed link, or one marked <i>reported, not confirmed</i>, is one the reader said it saw and the code
+  didn't prove. Treat it as a lead. Generated files are marked: they're read for the picture, not for review.</p>

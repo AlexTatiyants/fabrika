@@ -1,0 +1,26 @@
+{
+ "blob": "589864887dd144539eda7590424b5fc73377cc33",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "duplication",
+   "abstraction",
+   "finding",
+   "simplification",
+   "blast radius"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Guidance for the simplifier agent role, which removes unnecessary code \u2014 duplicated implementations, single-use abstractions, and convention breaks \u2014 based on specific findings without changing behavior.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

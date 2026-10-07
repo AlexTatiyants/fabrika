@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fabrika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- The stylesheet, one file per area, in load order: a later file
+     overrides an earlier one, so this order is part of the design. -->
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/base.css">
+<link rel="stylesheet" href="/static/css/screens.css">
+<link rel="stylesheet" href="/static/css/crew.css">
+<link rel="stylesheet" href="/static/css/agent-config.css">
+<link rel="stylesheet" href="/static/css/folds-toast.css">
+<link rel="stylesheet" href="/static/css/gate0.css">
+<link rel="stylesheet" href="/static/css/rework.css">
+<link rel="stylesheet" href="/static/css/gate2.css">
+<link rel="stylesheet" href="/static/css/gate1.css">
+<link rel="stylesheet" href="/static/css/start.css">
+<link rel="stylesheet" href="/static/css/reskin-board.css">
+<link rel="stylesheet" href="/static/css/reskin-shell.css">
+<link rel="stylesheet" href="/static/css/gate0-steps.css">
+<link rel="stylesheet" href="/static/css/review.css">
+<link rel="stylesheet" href="/static/css/yard.css">
+<link rel="stylesheet" href="/static/css/runs-crew.css">
+<link rel="stylesheet" href="/static/css/project.css">
+<link rel="stylesheet" href="/static/css/asbuilt.css">
+<link rel="stylesheet" href="/static/css/setup.css">
+<script>
+ /* The scheme, before the first paint -- read here rather than in app/header.js so
+    the console never shows one scheme and then swaps to another. Its only
+    home is this browser: a scheme is a property of the person looking and of
+    the screen they are looking at, not of the factory or the run, so a second
+    machine is entitled to a different answer. Nothing is stored until the
+    picker is used; with nothing stored, the console opens as it always has. */
+ try {
+   var s = localStorage.getItem('fabrika:scheme');
+   if (s === 'day' || s === 'night') document.documentElement.dataset.theme = s;
+ } catch (e) { /* a private window has no storage, and that is not an error */ }
+</script>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- One sprite, stroked in currentColor, so an icon is whatever colour the
+       thing it sits in already is.
+
+       The `i-` symbols below were drawn for this console at 16x16. The `i-l-`
+       ones are vendored verbatim from Lucide (https://lucide.dev), ISC
+       licensed, Copyright (c) 2026 Lucide Icons and Contributors. They keep
+       their native 24x24 geometry and carry the stroke weight that matches
+       this sprite at that scale: 1.4/16 is the same ratio as 2.1/24. Adding
+       another is a copy of the path data from lucide/icons/<name>.svg, a
+       viewBox of 24, and stroke-width 2.1 -- no build step, no dependency, and
+       nothing fetched at load time. -->
+  <svg class="sprite" aria-hidden="true" focusable="false"><defs>
+    <symbol id="i-practice" viewBox="0 0 16 16">
+      <rect x="2" y="3.5" width="12" height="9" rx="1"/><path d="M8 3.5v9"/></symbol>
+    <symbol id="i-touches" viewBox="0 0 16 16">
+      <path d="M8 2.4 13.8 5.5 8 8.6 2.2 5.5z"/><path d="M2.8 8.5 8 11.3l5.2-2.8"/></symbol>
+    <symbol id="i-mustdo" viewBox="0 0 16 16">
+      <rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/>
+      <path d="M5.2 8.2 7.2 10.2 11 5.8"/></symbol>
+    <symbol id="i-stops" viewBox="0 0 16 16">
+      <path d="M5.6 3.2H3.2v9.6h2.4"/><path d="M10.4 3.2h2.4v9.6h-2.4"/></symbol>
+    <symbol id="i-wrong" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="5.9"/>
+      <path d="M6.25 6.35a1.75 1.75 0 1 1 2.3 1.66c-.42.15-.62.5-.62.93v.28"/>
+      <circle cx="8" cy="11.5" r=".65" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-decided" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="5.9"/><path d="M8 4.7V8l2.4 1.6"/></symbol>
+    <symbol id="i-data" viewBox="0 0 16 16">
+      <rect x="2.4" y="3.2" width="11.2" height="9.6" rx="1"/>
+      <path d="M2.4 6.4h11.2"/><path d="M6.6 6.4v6.4"/></symbol>
+    <symbol id="i-iface" viewBox="0 0 16 16">
+      <path d="M3 6h8"/><path d="M8.7 3.7 11 6 8.7 8.3"/>
+      <path d="M13 10H5"/><path d="M7.3 12.3 5 10l2.3-2.3"/></symbol>
+    <symbol id="i-surface" viewBox="0 0 16 16">
+      <rect x="2.4" y="3.2" width="11.2" height="9.6" rx="1"/><path d="M2.4 6.2h11.2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 16 16">
+      <rect x="3.4" y="7.3" width="9.2" height="6.1" rx="1.2"/>
+      <path d="M5.7 7.3V5.5a2.3 2.3 0 0 1 4.6 0v1.8"/></symbol>
+
+    <!-- Lucide, verbatim. The four states a check can be in, and one alert. -->
+    <symbol id="i-l-check" viewBox="0 0 24 24" stroke-width="2.1">
+      <path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-l-x" viewBox="0 0 24 24" stroke-width="2.1">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-l-circle-slash" viewBox="0 0 24 24" stroke-width="2.1">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="9" x2="15" y1="15" y2="9"/></symbol>
+    <symbol id="i-l-circle" viewBox="0 0 24 24" stroke-width="2.1">
+      <circle cx="12" cy="12" r="10"/></symbol>
+    <symbol id="i-l-circle-check" viewBox="0 0 24 24" stroke-width="2.1">
+      <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-l-circle-alert" viewBox="0 0 24 24" stroke-width="2.1">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" x2="12" y1="8" y2="12"/>
+      <line x1="12" x2="12.01" y1="16" y2="16"/></symbol>
+    <symbol id="i-l-info" viewBox="0 0 24 24" stroke-width="2.1">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 16v-4"/>
+      <path d="M12 8h.01"/></symbol>
+
+    <!-- Lucide, verbatim. The two halves of one toggle: four corners pushed
+         out to the edges, and four corners folded back in. -->
+    <symbol id="i-l-maximize" viewBox="0 0 24 24" stroke-width="2.1">
+      <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+      <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+      <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+      <path d="M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="i-l-minimize" viewBox="0 0 24 24" stroke-width="2.1">
+      <path d="M8 3v3a2 2 0 0 1-2 2H3"/>
+      <path d="M21 8h-3a2 2 0 0 1-2-2V3"/>
+      <path d="M3 16h3a2 2 0 0 1 2 2v3"/>
+      <path d="M16 21v-3a2 2 0 0 1 2-2h3"/></symbol>
+
+    <!-- Lucide, verbatim. The three screens that are a place rather than a
+         thing: the yard where the projects are kept, the crew who stand at
+         the stations, and the control room the two of them report to. A
+         page's mark, not a row's -- they are the only symbols here drawn at
+         the size of a heading. -->
+    <symbol id="i-l-warehouse" viewBox="0 0 24 24" stroke-width="2.1">
+      <path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/>
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/>
+      <path d="M6 13h12"/>
+      <path d="M6 17h12"/></symbol>
+    <symbol id="i-l-hard-hat" viewBox="0 0 24 24" stroke-width="2.1">
+      <path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/>
+      <path d="M14 6a6 6 0 0 1 6 6v3"/>
+      <path d="M4 15v-3a6 6 0 0 1 6-6"/>
+      <rect x="2" y="15" width="20" height="4" rx="1"/></symbol>
+    <symbol id="i-l-sliders" viewBox="0 0 24 24" stroke-width="2.1">
+      <line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/>
+      <line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/>
+      <line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/>
+      <line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/>
+      <line x1="16" x2="16" y1="18" y2="22"/></symbol>
+
+    <!-- Lucide chart-column-increasing, verbatim. Four bars behind one press:
+         the header's figures are a reading of the run, not the verdict, and
+         the verdict is what the header is for. -->
+    <symbol id="i-l-chart" viewBox="0 0 24 24" stroke-width="2.1">
+      <path d="M13 17V9"/>
+      <path d="M18 17V5"/>
+      <path d="M8 17v-3"/>
+      <path d="M3 3v16a2 2 0 0 0 2 2h16"/></symbol>
+    <!-- The as-built's overview: one per kind of finding, and its sections. -->
+    <symbol id="i-l-layers" viewBox="0 0 24 24" stroke-width="2.1"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
+    <symbol id="i-l-arrow-left-right" viewBox="0 0 24 24" stroke-width="2.1"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></symbol>
+    <symbol id="i-l-play" viewBox="0 0 24 24" stroke-width="2.1"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+    <symbol id="i-l-unplug" viewBox="0 0 24 24" stroke-width="2.1"><path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/></symbol>
+    <symbol id="i-l-ghost" viewBox="0 0 24 24" stroke-width="2.1"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></symbol>
+    <symbol id="i-l-braces" viewBox="0 0 24 24" stroke-width="2.1"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></symbol>
+    <symbol id="i-l-gauge" viewBox="0 0 24 24" stroke-width="2.1"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+    <symbol id="i-l-package" viewBox="0 0 24 24" stroke-width="2.1"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/></symbol>
+    <symbol id="i-l-flask" viewBox="0 0 24 24" stroke-width="2.1"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></symbol>
+    <symbol id="i-l-scissors" viewBox="0 0 24 24" stroke-width="2.1"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol>
+    <symbol id="i-l-circle-help" viewBox="0 0 24 24" stroke-width="2.1"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-l-book-open" viewBox="0 0 24 24" stroke-width="2.1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-l-share" viewBox="0 0 24 24" stroke-width="2.1"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></symbol>
+    <symbol id="i-l-lightbulb" viewBox="0 0 24 24" stroke-width="2.1"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+    <symbol id="i-l-file-text" viewBox="0 0 24 24" stroke-width="2.1"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+    <symbol id="i-l-globe" viewBox="0 0 24 24" stroke-width="2.1"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-l-zap" viewBox="0 0 24 24" stroke-width="2.1"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+    <symbol id="i-l-eye" viewBox="0 0 24 24" stroke-width="2.1"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol>
+  </defs></svg>
+
+  <aside class="panel" id="panel" aria-label="Active work">
+    <a class="wordmark" href="#/" aria-label="Fabrika — the yard">
+      <img src="/static/fabrika-logo.png" alt="Fabrika" width="760" height="200">
+    </a>
+    <div class="panel-status" id="panel-status" hidden></div>
+    <div class="panel-search">
+      <input type="search" id="panel-search" placeholder="search the floor…"
+             aria-label="Search projects and features" autocomplete="off">
+    </div>
+    <div class="panel-filters" id="panel-filters" role="group" aria-label="Filter by state">
+      <button type="button" class="pfilter on" data-filter="all">All</button>
+      <button type="button" class="pfilter" data-filter="needs">Needs you</button>
+      <button type="button" class="pfilter" data-filter="building">Building</button>
+      <button type="button" class="pfilter" data-filter="idle">Idle</button>
+    </div>
+    <nav class="panel-body" id="panel-body"></nav>
+    <div class="panel-mark" aria-hidden="true"></div>
+  </aside>
+  <div class="panel-scrim" id="panel-scrim" hidden></div>
+
+  <div id="stale-bar" hidden></div>
+  <div id="offline-bar" hidden></div>
+
+  <header class="masthead"><div class="mast-in">
+    <button class="panel-toggle" id="panel-toggle" aria-controls="panel"
+            aria-expanded="true" aria-label="Hide active work" title="Active work — [">
+      <span class="wordmark-mark" aria-hidden="true"></span>
+      <span class="pt-chev" aria-hidden="true">‹</span>
+    </button>
+    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+    <div class="mast-right">
+      <span id="mast-nav"></span>
+    </div>
+  </div></header>
+
+  <!-- The feature bar lives outside #main because #main is a mount point: the
+       screens in ui/ own their own DOM and clear it, and the bar is chrome that
+       has to survive that. Vanilla screens still build their own inside #main
+       and this host stays empty for them. -->
+  <div id="featurebar"></div>
+
+  <main id="main" tabindex="-1"></main>
+
+  <!-- The run is the one thing on this page that changes without you touching
+       it, and without a live region of its own -- the toast being the only
+       other one -- a build finishing, a gate going red, or a question arriving
+       would be silent to anyone not watching the screen. -->
+  <div id="live" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="toasts" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- The role sheet lives outside #main on purpose. That subtree is rebuilt
+       from a string every four seconds, and an editor somebody is typing in
+       cannot be rebuilt under them. -->
+  <div id="sheet-host"></div>
+
+  <script src="/static/vendor/codemirror.js"></script>
+  <script src="/static/asbuilt.js"></script>
+  <script src="/static/app/vocab.js"></script>
+  <script src="/static/app/state.js"></script>
+  <script src="/static/app/header.js"></script>
+  <script src="/static/app/steps.js"></script>
+  <script src="/static/app/util.js"></script>
+  <script src="/static/app/rail.js"></script>
+  <script src="/static/app/agents.js"></script>
+  <script src="/static/app/routes.js"></script>
+  <script src="/static/app/agent-config.js"></script>
+  <script src="/static/app/control-room.js"></script>
+  <script src="/static/app/setup.js"></script>
+  <script src="/static/app/readings.js"></script>
+  <script src="/static/app/yard.js"></script>
+  <script src="/static/app/project.js"></script>
+  <script src="/static/app/project-questions.js"></script>
+  <script src="/static/app/guides.js"></script>
+  <script src="/static/app/history.js"></script>
+  <script src="/static/app/help.js"></script>
+  <script src="/static/app/project-screen.js"></script>
+  <script src="/static/app/intake.js"></script>
+  <script src="/static/app/running.js"></script>
+  <script src="/static/app/ledger.js"></script>
+  <script src="/static/app/review.js"></script>
+  <script src="/static/app/render.js"></script>
+  <script src="/static/app/data.js"></script>
+  <script src="/static/app/interaction.js"></script>
+  <script src="/static/app/sheet.js"></script>
+  <script src="/static/app/actions.js"></script>
+  <script src="/static/app/boot.js"></script>
+</body>
+</html>

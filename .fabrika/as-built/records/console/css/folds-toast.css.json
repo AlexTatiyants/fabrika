@@ -1,0 +1,40 @@
+{
+ "blob": "b980b6d8c637f16b67bb6277c15499da0bd604b2",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "editor-presets",
+   "editor-chip",
+   "log-row",
+   "log-detail",
+   "fold",
+   "sec-fold",
+   "q-row",
+   "q-head",
+   "q-line",
+   "standing",
+   "toast",
+   "toasts",
+   "chip"
+  ],
+  "domain_terms": [
+   "editor configuration",
+   "activity ledger",
+   "collapsible sections",
+   "build questions and checks",
+   "toast notifications"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles UI components for the console interface, including editor configuration presets, activity ledger display, collapsible sections (folds), build verification questions and checks, toast notifications, and responsive layouts for narrow viewports.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

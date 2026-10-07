@@ -1,0 +1,29 @@
+{
+ "blob": "3b126f3c74f690f6e623d3423c53818e296da5ec",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "brain",
+   "gate",
+   "packet",
+   "capability",
+   "feature run",
+   "criteria"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [
+   "Google Fonts"
+  ],
+  "purpose": "Design note proposing a per-project knowledge base (brain) system that persistently captures domain constraints, decisions, invariants, and domain terminology generated during the factory's processing gates, making it accessible to developers and the factory for future decisions.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

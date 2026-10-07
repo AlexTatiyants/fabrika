@@ -1,0 +1,61 @@
+{
+ "blob": "f3c84c966c385990289b0524e17ddb685a960f86",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "EXAMPLE_SUFFIXES",
+   "declared",
+   "dotenv",
+   "example_for",
+   "resolve"
+  ],
+  "domain_terms": [
+   "environment file",
+   "compose service",
+   "dotenv"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "declared"
+   },
+   {
+    "calls": [],
+    "line": 39,
+    "name": "dotenv"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "example_for"
+   },
+   {
+    "calls": [],
+    "line": 69,
+    "name": "_environment_keys"
+   },
+   {
+    "calls": [
+     "declared",
+     "example_for",
+     "dotenv",
+     "_environment_keys"
+    ],
+    "line": 78,
+    "name": "resolve"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Substitutes missing .env files in Docker Compose services with their .env.example equivalents, so builds can run from clean checkouts without requiring secrets in the repository.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

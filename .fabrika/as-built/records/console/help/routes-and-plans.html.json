@@ -1,0 +1,28 @@
+{
+ "blob": "a7918d56b7f1cd27bb82dbf5ffb955706d8db401",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "route",
+   "account",
+   "harness",
+   "API key",
+   "provider",
+   "model",
+   "subscription"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation describing how routes direct agent calls to accounts and harnesses, with two provider types (API keys and subscriptions), and how to choose models and manage plan usage.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

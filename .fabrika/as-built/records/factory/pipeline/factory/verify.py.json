@@ -1,0 +1,168 @@
+{
+ "blob": "8c6efe6cfd84c4ae3d981413eeb4c1eea81dfdaf",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "VerifyLaneMixin"
+  ],
+  "domain_terms": [
+   "verify lane",
+   "oracle suite",
+   "blind test authoring",
+   "acceptance criterion",
+   "probe",
+   "repair round"
+  ],
+  "entities_defined": [
+   "VerifyLaneMixin"
+  ],
+  "entities_read": [
+   "FeatureState",
+   "Spec",
+   "OracleSuite",
+   "GateReport",
+   "OracleAccount",
+   "FileWrite",
+   "WorkUnit"
+  ],
+  "entities_written": [
+   "EvidenceStore",
+   "FindingLedger"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "blind_write_targets",
+     "runner_naming",
+     "BaseTree",
+     "_author_files",
+     "unit_env",
+     "env_recorder",
+     "_account_for",
+     "assemble_oracle_suite",
+     "usable_suite"
+    ],
+    "line": 50,
+    "name": "_author_blind_suite"
+   },
+   {
+    "calls": [
+     "blind_write_targets"
+    ],
+    "line": 252,
+    "name": "_breaker_targets"
+   },
+   {
+    "calls": [
+     "blind_write_targets"
+    ],
+    "line": 267,
+    "name": "_breaker_regression_targets"
+   },
+   {
+    "calls": [],
+    "line": 290,
+    "name": "_breaker_own_dirs"
+   },
+   {
+    "calls": [],
+    "line": 308,
+    "name": "_probe_home"
+   },
+   {
+    "calls": [
+     "pick_checks",
+     "measure_unit",
+     "SendBack"
+    ],
+    "line": 331,
+    "name": "_send_back_for"
+   },
+   {
+    "calls": [
+     "read_inventory",
+     "_git_lines",
+     "diff",
+     "facts_for",
+     "findings",
+     "unresolved",
+     "safe_join"
+    ],
+    "line": 354,
+    "name": "_restate_dependencies"
+   },
+   {
+    "calls": [
+     "check_new_quality_findings",
+     "check_patch_coverage",
+     "_slug"
+    ],
+    "line": 401,
+    "name": "_restate_patch_quality"
+   },
+   {
+    "calls": [
+     "_own_blind_dirs",
+     "_breaker_own_dirs",
+     "is_protected"
+    ],
+    "line": 422,
+    "name": "_repairable"
+   },
+   {
+    "calls": [
+     "blind_write_targets"
+    ],
+    "line": 430,
+    "name": "_own_blind_dirs"
+   },
+   {
+    "calls": [
+     "check_oracle_discards",
+     "oracle_files",
+     "safe_join"
+    ],
+    "line": 444,
+    "name": "_drop_broken_suite"
+   },
+   {
+    "calls": [
+     "tested_spec",
+     "verify_context",
+     "testing_context",
+     "_phase",
+     "harness_authoring",
+     "_author_blind_suite",
+     "_oracle_guides",
+     "_answered_by"
+    ],
+    "line": 484,
+    "name": "_verify_lane"
+   }
+  ],
+  "imports": [
+   "factory/dependencies.py",
+   "factory/sendback.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/protection.py",
+   "factory/pipeline/ledger.py",
+   "factory/pipeline/checks/repo.py",
+   "factory/pipeline/checks/blind.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "a model provider",
+   "git"
+  ],
+  "purpose": "Implements the verify lane mixin, which orchestrates the authoring of independent test suites without access to the implementation (INV-1). Handles oracle suite creation, probe placement, dependency tracking, and patch quality assessment across repair rounds.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

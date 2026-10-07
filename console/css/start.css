@@ -1,0 +1,188 @@
+/* Starting a feature, the one screen where you write rather than rule; then the
+   run band, the packet's sections and the discard control that follow it. */
+
+/* --------------------------------------------------------------------------
+   Starting a feature.
+
+   The one screen in this tool where you write rather than rule, so the input is
+   drawn as paper rather than as a control: white, full width, no border, and a
+   cursor that blinks until you use it. Everything else on the screen appears
+   only once there is something to send.
+   -------------------------------------------------------------------------- */
+
+.start { padding-bottom: 4rem; }
+.compose { padding: 3.5rem 0 0; }
+.compose > .eyebrow { margin-bottom: 1.1rem; }
+
+.field {
+  position: relative; min-height: 6.4rem;
+  padding: 1.15rem 1.3rem; border-radius: var(--radius);
+  background: var(--surface-lift);
+}
+.field textarea {
+  display: block; width: 100%; min-height: 6.4rem; resize: none; padding: 0; margin: 0;
+  font-family: var(--body); font-size: 1.25rem; line-height: 1.55; color: var(--ink);
+  background: transparent; border: 0; outline: none; overflow: hidden;
+}
+/* The ghost below is a prompt, not a cursor -- this screen draws no substitute
+   caret -- so the real one stays on. Hiding it would leave a click into the
+   box with no answer at all until the first keystroke. */
+
+.ghost {
+  position: absolute; inset: 1.15rem 1.3rem; pointer-events: none;
+  font-size: 1.25rem; line-height: 1.55; display: flex; align-items: baseline;
+}
+.prompt { color: var(--ink-3); }
+
+.hint { margin: 1.4rem 0 0; font-size: .875rem; color: var(--ink-3); line-height: 1.6; }
+.hint b { color: var(--ink-2); font-weight: 600; }
+
+.after { margin-top: 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.after input {
+  width: 22rem; max-width: 100%; padding: .4rem .6rem; font: inherit; font-size: .875rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.kbd { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); }
+
+.drift {
+  margin-top: 1.4rem; padding: .7rem .85rem; border-radius: var(--radius);
+  background: var(--amber-wash); border: 1px solid var(--amber);
+}
+.drift p { margin: 0; font-size: .8125rem; color: var(--ink); line-height: 1.5; }
+.drift label {
+  display: flex; align-items: center; gap: .4rem; margin-top: .5rem;
+  font-size: .8125rem; color: var(--amber); cursor: pointer;
+}
+
+.after-note { margin-top: 1.6rem; font-size: .8125rem; color: var(--ink-3); line-height: 1.55; }
+
+.fl-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: .75rem;
+  border-bottom: 1px solid var(--line); padding-bottom: .35rem; margin: 3rem 0 0;
+}
+.fl-head h2 { margin: 0; }
+.fl-count { font-size: .75rem; color: var(--ink-3); }
+
+.feat-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) 11rem 6rem;
+  gap: .9rem; align-items: baseline; padding: .7rem .25rem;
+  border-bottom: 1px solid var(--line); text-decoration: none; color: inherit;
+}
+.feat-row:hover { background: var(--surface); }
+.feat-row .title { font-size: .9375rem; }
+.feat-row .fid { font-size: .6875rem; color: var(--line-strong); margin-left: .5rem; }
+.feat-row .when { font-size: .75rem; color: var(--ink-3); text-align: right; }
+
+@media (max-width: 720px) {
+  .feat-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .feat-row .when { grid-column: 1 / -1; text-align: left; }
+}
+
+/* ---- the run band -------------------------------------------------------
+   A legend, not a dashboard: what looked at this branch, for how long, at what
+   cost. Hairlines rather than cards, because six boxed tiles would outweigh the
+   findings they are supposed to qualify. */
+.run-band { margin: 1.25rem 0 0; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--surface); }
+.rb-row { display: grid; grid-template-columns: repeat(6, 1fr); }
+.rb-cell { padding: .7rem .9rem; border-right: 1px solid var(--line); }
+.rb-cell:last-child { border-right: 0; }
+.rb-cell b { display: block; font-size: 1.0625rem; font-weight: 600; letter-spacing: -.01em; }
+.rb-cell span { display: block; margin-top: .1rem; font-size: .6875rem; color: var(--ink-2); }
+.rb-of { display: inline !important; margin: 0 !important; font-size: 1rem !important;
+  color: var(--ink-3) !important; font-weight: 400; }
+.rb-split { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
+.rb-half { padding: .8rem .9rem; }
+.rb-half + .rb-half { border-left: 1px solid var(--line); }
+.rb-half h3 { margin: 0 0 .5rem; font-size: .75rem; font-weight: 600; color: var(--ink);
+  letter-spacing: .01em; }
+.rb-list { list-style: none; margin: 0; padding: 0; }
+.rb-list li { display: flex; align-items: baseline; gap: .5rem; padding: .28rem 0;
+  border-bottom: 1px solid var(--line); font-size: .8125rem; }
+.rb-list li:last-child { border-bottom: 0; }
+.rb-name { font-weight: 500; color: var(--ink); }
+.rb-what { color: var(--ink-2); font-size: .75rem; }
+.rb-count { margin-left: auto; color: var(--ink-2); font-size: .75rem; white-space: nowrap; }
+.rb-note { margin: .5rem 0 0; font-size: .6875rem; color: var(--ink-2); line-height: 1.5; }
+
+/* ---- packet sections ---------------------------------------------------- */
+.pk-h { margin: 0; font-size: 1rem; font-weight: 600; letter-spacing: -.01em; }
+.pk-sub { margin: .3rem 0 .8rem; font-size: .75rem; color: var(--ink-2); line-height: 1.55; }
+
+/* A band of findings that share an outcome. Shut when settled: "13 repaired" is
+   the whole of what a reader needs until they want one of them. */
+.fg { border: 1px solid var(--line); border-radius: 6px; background: var(--surface);
+  margin-bottom: .6rem; }
+.fg[open] { background: transparent; }
+.fg-head { display: flex; align-items: baseline; gap: .6rem; padding: .6rem .8rem;
+  cursor: pointer; list-style: none; }
+.fg-head::-webkit-details-marker { display: none; }
+.fg-head::before { content: "›"; display: inline-block; color: var(--ink-3);
+  transition: transform .15s ease; }
+.fg[open] > .fg-head::before { transform: rotate(90deg); }
+.fg-title { font-weight: 600; font-size: .875rem; }
+.fg-count { margin-left: auto; font-size: .75rem; color: var(--ink-2); }
+.fg-sub { padding: 0 .8rem; }
+.fg > .finding, .fg > details { margin: 0 .8rem .6rem; }
+
+@media (max-width: 860px) {
+  .rb-row { grid-template-columns: repeat(3, 1fr); }
+  .rb-cell:nth-child(3) { border-right: 0; }
+  .rb-cell:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
+  .rb-split { grid-template-columns: 1fr; }
+  .rb-half + .rb-half { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ---- discard ------------------------------------------------------------
+   The one control in the console that destroys a record. It stays quiet until
+   it is armed: red on a resting row would make the rail read as dangerous, and
+   a rail you are wary of is a rail you stop using. */
+.pf-discard { border: 0; background: none; padding: 0; cursor: pointer; font: inherit;
+  opacity: 0; }
+.panel-feature:hover .pf-discard, .pf-discard:focus-visible { opacity: .55; }
+.pf-discard:hover { opacity: 1; color: var(--red); background: var(--red-wash); }
+/* Armed, it floats over the right of its own row rather than taking a column.
+   The rail is 165px wide: a confirm that participates in the layout pushes the
+   stage line onto a second row, and a row that jumps as you arm it is a row you
+   misclick. */
+.panel-feature { position: relative; }
+.pf-discard[data-armed="1"] {
+  position: absolute; right: calc(var(--gutter) - 6px); top: 50%;
+  transform: translateY(-50%); z-index: 2;
+  opacity: 1; width: auto; height: 18px; padding: 0 .4rem; color: var(--red);
+  background: var(--red-wash); box-shadow: 0 0 0 3px var(--red-wash);
+  font-size: .625rem; letter-spacing: .01em; white-space: nowrap;
+}
+.pf-discard[data-armed="1"] svg { display: none; }
+.act-discard[data-armed="1"], .act-discard[data-armed="1"]:hover:not(:disabled) {
+  color: var(--red); border-color: var(--red); background: var(--red-wash); font-weight: 500;
+}
+
+/* A control mid-call. Not a spinner: the button itself is the status, so the
+   thing you pressed is the thing that tells you it is still going. */
+.btn-working, .btn-working:disabled { opacity: 1; color: var(--ink-2); border-style: dashed; }
+.rs-none { margin-top: 1rem; }
+.rs-block { margin-top: 1rem; }
+/* Width is set with the rest of this block's summary styling, below. */
+/* The card's own verb, under the evidence for it. */
+.rec-act { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+  margin-top: .7rem; padding-top: .7rem; border-top: 1px solid var(--line); }
+.rs-ruled { margin: 1rem 0 0; max-width: 74ch; }
+
+/* A run that reports itself only through the progress stream. The strip is the
+   page's answer to "is anything happening"; the ring is the only motion in the
+   console, and it is here because a still page is what the question was. */
+.running-strip {
+  display: flex; gap: .8rem; align-items: flex-start; margin: 1.25rem 0 0;
+  padding: .8rem .9rem; border: 1px solid var(--accent); border-radius: 6px;
+  background: var(--accent-wash); font-size: .8125rem; line-height: 1.55; color: var(--ink-2);
+}
+.running-strip b { color: var(--accent-ink); }
+.spin {
+  flex: none; width: 13px; height: 13px; margin-top: .15rem; border-radius: 50%;
+  border: 2px solid var(--accent); border-top-color: transparent;
+  animation: spin 720ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation-duration: 2.4s; } }
+

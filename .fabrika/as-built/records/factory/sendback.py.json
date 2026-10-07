@@ -1,0 +1,79 @@
+{
+ "blob": "d69e8418a83de106da089c9929df9aa445c449cc",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "SendBack",
+   "changed_new_lines",
+   "measure_unit",
+   "send_back_brief",
+   "runs_on_files",
+   "pick_checks"
+  ],
+  "domain_terms": [
+   "worker",
+   "test coverage",
+   "mutation",
+   "hollow test"
+  ],
+  "entities_defined": [
+   "SendBack"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 47,
+    "name": "changed_new_lines"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "_ranges"
+   },
+   {
+    "calls": [],
+    "line": 75,
+    "name": "_read"
+   },
+   {
+    "calls": [
+     "hollow_tests",
+     "changed_new_lines",
+     "run_gate",
+     "_read"
+    ],
+    "line": 82,
+    "name": "measure_unit"
+   },
+   {
+    "calls": [],
+    "line": 156,
+    "name": "send_back_brief"
+   },
+   {
+    "calls": [],
+    "line": 172,
+    "name": "runs_on_files"
+   },
+   {
+    "calls": [],
+    "line": 179,
+    "name": "pick_checks"
+   }
+  ],
+  "imports": [
+   "factory/gates.py",
+   "factory/schemas.py",
+   "factory/testquality.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Measures a worker's code by running its tests, identifies uncovered lines, untested mutations, and hollow tests, then formats findings to send back to the worker for revision.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

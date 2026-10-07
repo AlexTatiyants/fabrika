@@ -1,0 +1,110 @@
+{
+ "blob": "f920f12c2357727ba24c60180f770e01d5578483",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "goOffline",
+   "waitForServer",
+   "comeBack",
+   "paintOfflineBar",
+   "subscribe"
+  ],
+  "domain_terms": [
+   "server",
+   "offline",
+   "event stream",
+   "progress"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state.offline",
+   "state.loadError",
+   "state.projectError",
+   "state.projectRun",
+   "state.id",
+   "state.asBuilt",
+   "state.project"
+  ],
+  "entities_written": [
+   "state.offline",
+   "state.loadError",
+   "state.projectError",
+   "state.projectRun",
+   "state.config"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "paintOfflineBar",
+     "waitForServer"
+    ],
+    "line": 22,
+    "name": "goOffline"
+   },
+   {
+    "calls": [
+     "clearTimeout",
+     "setTimeout"
+    ],
+    "line": 30,
+    "name": "waitForServer"
+   },
+   {
+    "calls": [
+     "clearTimeout",
+     "paintOfflineBar"
+    ],
+    "line": 46,
+    "name": "comeBack"
+   },
+   {
+    "calls": [
+     "icon"
+    ],
+    "line": 55,
+    "name": "paintOfflineBar"
+   },
+   {
+    "calls": [
+     "asBuiltEvent",
+     "refresh",
+     "refreshProject"
+    ],
+    "line": 70,
+    "name": "subscribe"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Manages the progress stream, detects server disconnection, reconnects when the server returns, subscribes to events, and loads initial page route and config.",
+  "routes_called": [
+   {
+    "method": "GET",
+    "path": "/api/version"
+   },
+   {
+    "method": "GET",
+    "path": "/api/events"
+   },
+   {
+    "method": "GET",
+    "path": "/api/setup/brief"
+   },
+   {
+    "method": "GET",
+    "path": "/api/config"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": "window.hashchange"
+   }
+  ]
+ }
+}

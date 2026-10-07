@@ -1,0 +1,31 @@
+<p class="lead">Some agents exist to disagree with another, and two models from the same vendor agreeing is one
+  blind spot rendered twice. Fabrika checks that each such pair stays on different model families, today and on
+  the day a route runs out.</p>
+
+<h4>The pairs</h4>
+<ul>
+  <li>the <span class="mono">oracle</span>, the <span class="mono">reviewer</span> and the
+    <span class="mono">breaker</span> must differ from the <span class="mono">worker</span>;</li>
+  <li>the <span class="mono">arbiter</span> from the <span class="mono">reviewer</span>;</li>
+  <li>the <span class="mono">spec_checker</span> from the <span class="mono">spec_writer</span>;</li>
+  <li>the <span class="mono">plan_checker</span> from the <span class="mono">architect</span>.</li>
+</ul>
+<p>A family is the route, when an agent names one: two agents on one subscription talk to the same vendor whatever
+  model each picked. Otherwise it's the vendor at the front of the model id. It's coarse on purpose, there to catch
+  every agent ending up on one model.</p>
+<p>A pair that shares a family is reported, never refused: running everything on one family for a while is a
+  legitimate thing to do. What mustn't happen is that it becomes true without anyone saying so. The crew page warns,
+  and every packet built that way carries a finding saying its reviewers share a family with the work they
+  challenge.</p>
+
+<h4>Fallback lanes</h4>
+<p>When an agent's route refuses a call, at its usage limit or out of credit, the agent can move to a fallback
+  instead of stopping the run: one hop, to another route and model. Fallbacks are named lanes in
+  <span class="mono">factory.yaml</span>, and having two is the point. The agents that build land in one and the
+  agents that check land in the other, so the pairs above stay apart on the worst day as well as a good one. An
+  agent with no fallback stops the run when its route says no.</p>
+<p>The crew page's <b>Fallback lanes</b> section shows each lane, its route and model, and the agents on it, and
+  says whether any pair would stop disagreeing once a fallback is taken. A fallback taken during a run is noted in
+  that run's packet.</p>
+<p>Not the same thing: the <i>fallbacks</i> switch in an agent's sheet is whether a provider that serves a model from
+  several hosts may move the call to another host.</p>

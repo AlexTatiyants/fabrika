@@ -1,0 +1,26 @@
+{
+ "blob": "355ca641da727b18f7b6e71ceb1749ae1e377675",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "fallback lanes",
+   "agent pairs",
+   "model families",
+   "independence",
+   "routes"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation explaining model family independence requirements for agent pairs and fallback lanes to prevent blind spots from model agreement.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

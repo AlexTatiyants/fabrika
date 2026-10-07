@@ -1,0 +1,96 @@
+{
+ "blob": "ea7cde18691519465101ad9e12080ffaebf0077e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "event stream",
+   "configuration",
+   "console"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "configuration"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "independence_problems",
+     "StaticFiles"
+    ],
+    "line": 19,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "hub.stream",
+     "StreamingResponse"
+    ],
+    "line": 28,
+    "name": "events"
+   },
+   {
+    "calls": [
+     "independence_problems"
+    ],
+    "line": 36,
+    "name": "config_summary"
+   },
+   {
+    "calls": [],
+    "line": 64,
+    "name": "no_console_cache"
+   },
+   {
+    "calls": [
+     "FileResponse",
+     "HTTPException"
+    ],
+    "line": 76,
+    "name": "index"
+   },
+   {
+    "calls": [
+     "JSONResponse"
+    ],
+    "line": 83,
+    "name": "unhandled"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "file system"
+  ],
+  "purpose": "Serves the event stream, configuration summary, console HTML and static files, and provides a global error handler.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "events",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/events"
+   },
+   {
+    "handler": "config_summary",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/config"
+   },
+   {
+    "handler": "index",
+    "kind": "route",
+    "method": "GET",
+    "name": "/"
+   }
+  ]
+ }
+}

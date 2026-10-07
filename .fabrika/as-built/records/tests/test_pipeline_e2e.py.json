@@ -1,0 +1,1072 @@
+{
+ "blob": "0ac243a89e4caf8bd3d35bfe2c3bd94a6201636f",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "_fails_only",
+   "StubLLM",
+   "make_repo",
+   "make_config",
+   "ready_project",
+   "factory",
+   "test_a_full_run_reaches_a_packet",
+   "test_a_failing_phase_records_itself_and_stops",
+   "test_two_features_in_one_project_cannot_touch_each_other",
+   "test_two_projects_keep_separate_ledgers_and_sandboxes",
+   "test_a_feature_cannot_start_in_a_project_that_is_not_ready",
+   "test_accepting_a_feature_drops_the_checkout_and_keeps_the_branch",
+   "test_an_added_review_agent_contributes_findings_to_the_packet",
+   "test_no_review_agents_configured_is_not_a_failure",
+   "test_a_feature_mid_intake_is_not_reported_as_awaiting_you",
+   "test_a_failed_intake_is_recorded_rather_than_left_running",
+   "test_a_correction_replaces_the_reading_and_reaches_the_spec_writer",
+   "test_a_correction_is_recorded_before_the_agent_is_asked",
+   "test_rerunning_intake_replaces_the_scout_report",
+   "test_intake_cannot_be_rerun_once_gate_one_has_closed",
+   "test_the_plan_costs_nothing_to_ask_for",
+   "test_a_dirty_working_tree_is_refused_before_anything_is_spent",
+   "test_the_override_is_explicit_and_recorded",
+   "test_a_clean_tree_is_not_obstructed",
+   "test_discarding_a_feature_keeps_the_branch",
+   "test_discarding_can_take_the_branch_too_when_asked",
+   "test_a_running_feature_cannot_be_discarded",
+   "test_a_feature_whose_run_died_can_be_discarded",
+   "test_a_feature_recorded_before_ownership_existed_is_not_locked_forever",
+   "test_the_store_still_exposes_no_way_to_erase_one_record",
+   "test_commits_on_another_branch_count_as_drift",
+   "test_answers_are_recorded_before_the_spec_writer_runs",
+   "test_a_failed_spec_writer_does_not_take_the_answers_with_it",
+   "BreakingStubLLM",
+   "test_a_repair_round_that_makes_the_gates_worse_is_reverted",
+   "test_a_gate_this_feature_broke_is_told_apart_from_one_it_inherited",
+   "test_the_base_comparison_is_cached_on_the_project",
+   "test_a_feature_runs_the_environment_setup_before_its_gates",
+   "test_a_runner_that_cannot_carry_setup_gets_it_again_every_round",
+   "test_an_arbiter_that_skips_findings_is_asked_again_with_their_ids",
+   "test_the_recheck_agent_is_shown_the_file_and_not_only_the_repair_summary",
+   "test_a_repair_round_that_edited_nothing_is_not_charged_to_the_findings",
+   "test_the_repair_loop_can_fail_without_taking_the_packet_with_it",
+   "test_what_a_repairer_was_handed_is_kept_like_any_other_prompt",
+   "test_revalidation_keeps_the_build_and_starts_the_verdict_pass_from_zero",
+   "test_a_resumed_build_does_not_write_its_old_files_over_newer_ones",
+   "test_a_resumed_build_finishes_the_panel_it_interrupted",
+   "test_the_review_panel_reads_the_branch_not_the_agents_account_of_it",
+   "test_a_rebuild_keeps_the_frozen_spec_and_replaces_everything_under_it",
+   "test_a_rebuild_returns_the_branch_to_its_base_by_default",
+   "test_a_rebuild_refuses_before_the_spec_is_frozen",
+   "test_a_rebuild_does_not_inherit_the_lights_of_the_run_it_replaced",
+   "test_reset_phases_touches_only_what_it_is_given",
+   "test_the_integrator_s_seam_check_runs_as_a_gate_and_a_resume_keeps_it",
+   "CheckerStubLLM",
+   "checker_factory",
+   "test_the_spec_checker_improves_the_spec_and_shows_only_the_disagreement",
+   "test_a_revision_that_changed_nothing_is_not_taken_on_its_word",
+   "test_a_failing_spec_checker_does_not_cost_the_spec",
+   "test_a_quiet_cut_goes_straight_to_the_workers",
+   "test_a_disputed_cut_stops_before_any_worker_is_paid",
+   "test_a_measured_problem_stops_the_cut_even_when_the_checker_is_quiet",
+   "test_building_as_one_piece_is_arithmetic_not_an_agent",
+   "test_keeping_the_cut_carries_the_objection_into_the_packet",
+   "test_siding_with_the_checker_re_cuts_once",
+   "test_back_to_the_spec_gets_a_fresh_cut_on_the_next_approval",
+   "test_a_ruling_needs_a_cut_waiting_for_one",
+   "test_a_proposed_alternative_reaches_the_architect_as_the_ruling",
+   "test_a_seam_check_failing_in_a_workers_file_is_repaired_in_that_file",
+   "test_a_blind_test_that_does_not_clean_up_is_found_and_sent_to_the_oracle",
+   "AsBuiltStubLLM",
+   "test_a_review_says_what_the_feature_changed_in_the_system"
+  ],
+  "domain_terms": [
+   "feature",
+   "packet",
+   "phase",
+   "gate",
+   "finding",
+   "repair",
+   "project",
+   "specification",
+   "plan",
+   "build"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "Feature",
+   "Project",
+   "Specification",
+   "Plan",
+   "Packet",
+   "Gate"
+  ],
+  "entities_written": [
+   "Feature",
+   "Specification",
+   "Packet"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 63,
+    "name": "_fails_only"
+   },
+   {
+    "calls": [],
+    "line": 210,
+    "name": "StubLLM"
+   },
+   {
+    "calls": [],
+    "line": 213,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 220,
+    "name": "ask"
+   },
+   {
+    "calls": [],
+    "line": 280,
+    "name": "usage_report"
+   },
+   {
+    "calls": [],
+    "line": 284,
+    "name": "coverage"
+   },
+   {
+    "calls": [],
+    "line": 300,
+    "name": "make_repo"
+   },
+   {
+    "calls": [
+     "Config",
+     "RoleConfig",
+     "PathsConfig",
+     "PipelineConfig",
+     "ReworkConfig"
+    ],
+    "line": 322,
+    "name": "make_config"
+   },
+   {
+    "calls": [
+     "ProjectRegistry"
+    ],
+    "line": 354,
+    "name": "ready_project"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ready_project",
+     "Factory",
+     "StubLLM"
+    ],
+    "line": 385,
+    "name": "factory"
+   },
+   {
+    "calls": [],
+    "line": 395,
+    "name": "test_a_full_run_reaches_a_packet"
+   },
+   {
+    "calls": [],
+    "line": 533,
+    "name": "test_a_failing_phase_records_itself_and_stops"
+   },
+   {
+    "calls": [
+     "Factory",
+     "StubLLM"
+    ],
+    "line": 564,
+    "name": "test_two_features_in_one_project_cannot_touch_each_other"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ready_project",
+     "Factory",
+     "StubLLM"
+    ],
+    "line": 592,
+    "name": "test_two_projects_keep_separate_ledgers_and_sandboxes"
+   },
+   {
+    "calls": [
+     "ProjectError",
+     "Factory",
+     "StubLLM"
+    ],
+    "line": 615,
+    "name": "test_a_feature_cannot_start_in_a_project_that_is_not_ready"
+   },
+   {
+    "calls": [],
+    "line": 631,
+    "name": "test_accepting_a_feature_drops_the_checkout_and_keeps_the_branch"
+   },
+   {
+    "calls": [
+     "RoleConfig",
+     "Factory"
+    ],
+    "line": 650,
+    "name": "test_an_added_review_agent_contributes_findings_to_the_packet"
+   },
+   {
+    "calls": [
+     "Factory",
+     "StubLLM"
+    ],
+    "line": 692,
+    "name": "test_no_review_agents_configured_is_not_a_failure"
+   },
+   {
+    "calls": [],
+    "line": 721,
+    "name": "test_a_feature_mid_intake_is_not_reported_as_awaiting_you"
+   },
+   {
+    "calls": [],
+    "line": 737,
+    "name": "test_a_failed_intake_is_recorded_rather_than_left_running"
+   },
+   {
+    "calls": [],
+    "line": 758,
+    "name": "test_a_correction_replaces_the_reading_and_reaches_the_spec_writer"
+   },
+   {
+    "calls": [],
+    "line": 799,
+    "name": "test_a_correction_is_recorded_before_the_agent_is_asked"
+   },
+   {
+    "calls": [],
+    "line": 820,
+    "name": "test_rerunning_intake_replaces_the_scout_report"
+   },
+   {
+    "calls": [
+     "ProjectError"
+    ],
+    "line": 846,
+    "name": "test_intake_cannot_be_rerun_once_gate_one_has_closed"
+   },
+   {
+    "calls": [],
+    "line": 860,
+    "name": "test_the_plan_costs_nothing_to_ask_for"
+   },
+   {
+    "calls": [
+     "ProjectError"
+    ],
+    "line": 874,
+    "name": "test_a_dirty_working_tree_is_refused_before_anything_is_spent"
+   },
+   {
+    "calls": [],
+    "line": 895,
+    "name": "test_the_override_is_explicit_and_recorded"
+   },
+   {
+    "calls": [],
+    "line": 909,
+    "name": "test_a_clean_tree_is_not_obstructed"
+   },
+   {
+    "calls": [],
+    "line": 917,
+    "name": "test_discarding_a_feature_keeps_the_branch"
+   },
+   {
+    "calls": [],
+    "line": 945,
+    "name": "test_discarding_can_take_the_branch_too_when_asked"
+   },
+   {
+    "calls": [
+     "ProjectError"
+    ],
+    "line": 958,
+    "name": "test_a_running_feature_cannot_be_discarded"
+   },
+   {
+    "calls": [
+     "is_orphaned"
+    ],
+    "line": 975,
+    "name": "test_a_feature_whose_run_died_can_be_discarded"
+   },
+   {
+    "calls": [
+     "is_orphaned",
+     "owner_is_alive"
+    ],
+    "line": 1000,
+    "name": "test_a_feature_recorded_before_ownership_existed_is_not_locked_forever"
+   },
+   {
+    "calls": [
+     "EvidenceStore"
+    ],
+    "line": 1018,
+    "name": "test_the_store_still_exposes_no_way_to_erase_one_record"
+   },
+   {
+    "calls": [
+     "ProjectError"
+    ],
+    "line": 1028,
+    "name": "test_commits_on_another_branch_count_as_drift"
+   },
+   {
+    "calls": [],
+    "line": 1065,
+    "name": "test_answers_are_recorded_before_the_spec_writer_runs"
+   },
+   {
+    "calls": [],
+    "line": 1089,
+    "name": "test_a_failed_spec_writer_does_not_take_the_answers_with_it"
+   },
+   {
+    "calls": [],
+    "line": 1116,
+    "name": "BreakingStubLLM"
+   },
+   {
+    "calls": [
+     "WorkerOutput",
+     "Decision",
+     "SelfDisclosure"
+    ],
+    "line": 1119,
+    "name": "ask"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ProjectRegistry",
+     "Gate",
+     "GateReport",
+     "GateResult",
+     "BreakingStubLLM",
+     "Factory"
+    ],
+    "line": 1131,
+    "name": "test_a_repair_round_that_makes_the_gates_worse_is_reverted"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ProjectRegistry",
+     "Gate",
+     "GateReport",
+     "GateResult",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build"
+    ],
+    "line": 1197,
+    "name": "test_a_gate_this_feature_broke_is_told_apart_from_one_it_inherited"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ProjectRegistry",
+     "Gate",
+     "GateReport",
+     "GateResult",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "records"
+    ],
+    "line": 1236,
+    "name": "test_the_base_comparison_is_cached_on_the_project"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ProjectRegistry",
+     "EnvironmentSpec",
+     "Gate",
+     "GateReport",
+     "GateResult",
+     "BlindPlacement",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "state_of",
+     "records"
+    ],
+    "line": 1265,
+    "name": "test_a_feature_runs_the_environment_setup_before_its_gates"
+   },
+   {
+    "calls": [
+     "Fresh",
+     "LocalRunner",
+     "fresh_runner_for",
+     "make_repo",
+     "make_config",
+     "ProjectRegistry",
+     "EnvironmentSpec",
+     "Gate",
+     "GateReport",
+     "GateResult",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "records"
+    ],
+    "line": 1335,
+    "name": "test_a_runner_that_cannot_carry_setup_gets_it_again_every_round"
+   },
+   {
+    "calls": [
+     "LocalRunner"
+    ],
+    "line": 1348,
+    "name": "Fresh"
+   },
+   {
+    "calls": [
+     "Fresh"
+    ],
+    "line": 1353,
+    "name": "fresh_runner_for"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "records"
+    ],
+    "line": 1390,
+    "name": "test_an_arbiter_that_skips_findings_is_asked_again_with_their_ids"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build"
+    ],
+    "line": 1427,
+    "name": "test_the_recheck_agent_is_shown_the_file_and_not_only_the_repair_summary"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "silent_repairer",
+     "store_for",
+     "records",
+     "WorkerOutput",
+     "SelfDisclosure"
+    ],
+    "line": 1455,
+    "name": "test_a_repair_round_that_edited_nothing_is_not_charged_to_the_findings"
+   },
+   {
+    "calls": [
+     "WorkerOutput",
+     "SelfDisclosure",
+     "run"
+    ],
+    "line": 1467,
+    "name": "silent_repairer"
+   },
+   {
+    "calls": [
+     "dead_round",
+     "LLMError",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "records"
+    ],
+    "line": 1504,
+    "name": "test_the_repair_loop_can_fail_without_taking_the_packet_with_it"
+   },
+   {
+    "calls": [
+     "LLMError"
+    ],
+    "line": 1516,
+    "name": "dead_round"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "records"
+    ],
+    "line": 1537,
+    "name": "test_what_a_repairer_was_handed_is_kept_like_any_other_prompt"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "revalidate",
+     "store_for",
+     "state_of",
+     "records"
+    ],
+    "line": 1559,
+    "name": "test_revalidation_keeps_the_build_and_starts_the_verdict_pass_from_zero"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "open_sandbox",
+     "state_of",
+     "store_for",
+     "revalidate"
+    ],
+    "line": 1607,
+    "name": "test_a_resumed_build_does_not_write_its_old_files_over_newer_ones"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "killed",
+     "review_roles",
+     "run_build",
+     "store_for",
+     "records"
+    ],
+    "line": 1639,
+    "name": "test_a_resumed_build_finishes_the_panel_it_interrupted"
+   },
+   {
+    "calls": [],
+    "line": 1660,
+    "name": "killed"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "open_sandbox",
+     "state_of",
+     "store_for",
+     "revalidate"
+    ],
+    "line": 1690,
+    "name": "test_the_review_panel_reads_the_branch_not_the_agents_account_of_it"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ready_project",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "state_of",
+     "rebuild",
+     "records"
+    ],
+    "line": 1719,
+    "name": "test_a_rebuild_keeps_the_frozen_spec_and_replaces_everything_under_it"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ready_project",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "state_of",
+     "open_sandbox",
+     "rebuild"
+    ],
+    "line": 1769,
+    "name": "test_a_rebuild_returns_the_branch_to_its_base_by_default"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ready_project",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "rebuild",
+     "ProjectError"
+    ],
+    "line": 1799,
+    "name": "test_a_rebuild_refuses_before_the_spec_is_frozen"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "ready_project",
+     "Factory",
+     "StubLLM",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "state_of",
+     "rebuild",
+     "pipeline",
+     "capture"
+    ],
+    "line": 1813,
+    "name": "test_a_rebuild_does_not_inherit_the_lights_of_the_run_it_replaced"
+   },
+   {
+    "calls": [],
+    "line": 1840,
+    "name": "capture"
+   },
+   {
+    "calls": [
+     "FeatureState",
+     "PhaseState",
+     "reset_phases",
+     "pipeline"
+    ],
+    "line": 1865,
+    "name": "test_reset_phases_touches_only_what_it_is_given"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "open_sandbox",
+     "state_of",
+     "revalidate",
+     "records"
+    ],
+    "line": 1883,
+    "name": "test_the_integrator_s_seam_check_runs_as_a_gate_and_a_resume_keeps_it"
+   },
+   {
+    "calls": [
+     "StubLLM"
+    ],
+    "line": 1931,
+    "name": "CheckerStubLLM"
+   },
+   {
+    "calls": [
+     "CheckReport",
+     "SpecRevision",
+     "ObjectionAnswer",
+     "PlanRevision"
+    ],
+    "line": 1950,
+    "name": "CheckerStubLLM.ask"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "RoleConfig",
+     "ready_project",
+     "Factory",
+     "StubLLM"
+    ],
+    "line": 1977,
+    "name": "checker_factory"
+   },
+   {
+    "calls": [
+     "CheckObjection"
+    ],
+    "line": 1987,
+    "name": "_objection"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec"
+    ],
+    "line": 1992,
+    "name": "_to_spec_review"
+   },
+   {
+    "calls": [
+     "revise",
+     "CheckerStubLLM",
+     "_objection",
+     "_to_spec_review",
+     "checker_factory",
+     "Spec",
+     "verify_context",
+     "store_for",
+     "state_of"
+    ],
+    "line": 1998,
+    "name": "test_the_spec_checker_improves_the_spec_and_shows_only_the_disagreement"
+   },
+   {
+    "calls": [
+     "SpecRevision",
+     "ObjectionAnswer"
+    ],
+    "line": 1999,
+    "name": "revise"
+   },
+   {
+    "calls": [
+     "CheckerStubLLM",
+     "_objection",
+     "SpecRevision",
+     "ObjectionAnswer",
+     "checker_factory",
+     "_to_spec_review"
+    ],
+    "line": 2037,
+    "name": "test_a_revision_that_changed_nothing_is_not_taken_on_its_word"
+   },
+   {
+    "calls": [
+     "Broken",
+     "checker_factory",
+     "_to_spec_review"
+    ],
+    "line": 2049,
+    "name": "test_a_failing_spec_checker_does_not_cost_the_spec"
+   },
+   {
+    "calls": [
+     "CheckerStubLLM"
+    ],
+    "line": 2050,
+    "name": "Broken"
+   },
+   {
+    "calls": [],
+    "line": 2052,
+    "name": "Broken.ask"
+   },
+   {
+    "calls": [
+     "run_build"
+    ],
+    "line": 2062,
+    "name": "_build"
+   },
+   {
+    "calls": [
+     "CheckerStubLLM",
+     "checker_factory",
+     "_to_spec_review",
+     "_build",
+     "approve_spec",
+     "store_for",
+     "state_of"
+    ],
+    "line": 2066,
+    "name": "test_a_quiet_cut_goes_straight_to_the_workers"
+   },
+   {
+    "calls": [
+     "CheckerStubLLM",
+     "_objection",
+     "PlanRevision",
+     "ObjectionAnswer",
+     "checker_factory",
+     "_to_spec_review",
+     "approve_spec"
+    ],
+    "line": 2082,
+    "name": "_disputed"
+   },
+   {
+    "calls": [
+     "_disputed",
+     "_build",
+     "store_for",
+     "state_of"
+    ],
+    "line": 2097,
+    "name": "test_a_disputed_cut_stops_before_any_worker_is_paid"
+   },
+   {
+    "calls": [
+     "CANNED",
+     "CheckerStubLLM",
+     "checker_factory",
+     "_to_spec_review",
+     "_build",
+     "approve_spec",
+     "store_for"
+    ],
+    "line": 2114,
+    "name": "test_a_measured_problem_stops_the_cut_even_when_the_checker_is_quiet"
+   },
+   {
+    "calls": [
+     "_disputed",
+     "_build",
+     "approve_spec",
+     "rule_on_cut",
+     "store_for"
+    ],
+    "line": 2129,
+    "name": "test_building_as_one_piece_is_arithmetic_not_an_agent"
+   },
+   {
+    "calls": [
+     "_disputed",
+     "_build",
+     "rule_on_cut"
+    ],
+    "line": 2146,
+    "name": "test_keeping_the_cut_carries_the_objection_into_the_packet"
+   },
+   {
+    "calls": [
+     "merge_units",
+     "CANNED",
+     "_disputed",
+     "_build",
+     "rule_on_cut",
+     "store_for",
+     "state_of"
+    ],
+    "line": 2158,
+    "name": "test_siding_with_the_checker_re_cuts_once"
+   },
+   {
+    "calls": [
+     "_disputed",
+     "_build",
+     "rule_on_cut",
+     "approve_spec"
+    ],
+    "line": 2169,
+    "name": "test_back_to_the_spec_gets_a_fresh_cut_on_the_next_approval"
+   },
+   {
+    "calls": [
+     "CheckerStubLLM",
+     "checker_factory",
+     "_to_spec_review",
+     "rule_on_cut",
+     "ProjectError"
+    ],
+    "line": 2182,
+    "name": "test_a_ruling_needs_a_cut_waiting_for_one"
+   },
+   {
+    "calls": [
+     "merge_units",
+     "CANNED",
+     "_disputed",
+     "_build",
+     "spy",
+     "rule_on_cut",
+     "ProjectError"
+    ],
+    "line": 2190,
+    "name": "test_a_proposed_alternative_reaches_the_architect_as_the_ruling"
+   },
+   {
+    "calls": [],
+    "line": 2197,
+    "name": "spy"
+   },
+   {
+    "calls": [
+     "TestFileCommand",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "ArbiterReport",
+     "FindingDisposition",
+     "routes_the_seam",
+     "store_for",
+     "records"
+    ],
+    "line": 2213,
+    "name": "test_a_seam_check_failing_in_a_workers_file_is_repaired_in_that_file"
+   },
+   {
+    "calls": [
+     "ArbiterReport",
+     "FindingDisposition"
+    ],
+    "line": 2234,
+    "name": "routes_the_seam"
+   },
+   {
+    "calls": [
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "oracle_problems",
+     "GateReport",
+     "OracleSuite",
+     "TestFile",
+     "store_for",
+     "records"
+    ],
+    "line": 2261,
+    "name": "test_a_blind_test_that_does_not_clean_up_is_found_and_sent_to_the_oracle"
+   },
+   {
+    "calls": [
+     "StubLLM"
+    ],
+    "line": 2316,
+    "name": "AsBuiltStubLLM"
+   },
+   {
+    "calls": [
+     "FileRecord",
+     "GroupNaming",
+     "NamedGroup",
+     "CapabilityMap",
+     "SystemAccount"
+    ],
+    "line": 2320,
+    "name": "AsBuiltStubLLM.ask"
+   },
+   {
+    "calls": [
+     "make_repo",
+     "make_config",
+     "RoleConfig",
+     "ready_project",
+     "Factory",
+     "AsBuiltStubLLM",
+     "create_feature",
+     "run_intake",
+     "finalize_spec",
+     "approve_spec",
+     "run_build",
+     "store_for",
+     "state_of",
+     "open_sandbox"
+    ],
+    "line": 2340,
+    "name": "test_a_review_says_what_the_feature_changed_in_the_system"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/pipeline/__init__.py",
+   "factory/projects.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/gates.py",
+   "factory/workspace.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "git",
+   "Git",
+   "the local filesystem"
+  ],
+  "purpose": "End-to-end tests of a software factory pipeline with fully-stubbed model calls, verifying isolation between builder and verifier lanes, feature sandbox isolation, repair workflows, and the append-only evidence store during a full feature development cycle.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "",
+    "kind": "route",
+    "method": "",
+    "name": ""
+   },
+   {
+    "handler": "",
+    "kind": "command",
+    "method": "",
+    "name": ""
+   },
+   {
+    "handler": "",
+    "kind": "job",
+    "method": "",
+    "name": ""
+   },
+   {
+    "handler": "",
+    "kind": "screen",
+    "method": "",
+    "name": ""
+   },
+   {
+    "handler": "",
+    "kind": "export",
+    "method": "",
+    "name": ""
+   },
+   {
+    "handler": "",
+    "kind": "event",
+    "method": "",
+    "name": ""
+   }
+  ]
+ }
+}

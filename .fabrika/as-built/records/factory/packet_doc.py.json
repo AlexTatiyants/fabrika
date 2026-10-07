@@ -1,0 +1,158 @@
+{
+ "blob": "79387ec535106dc3b013f0aa565b0c7d39072f83",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "packet_markdown",
+   "spec_markdown"
+  ],
+  "domain_terms": [
+   "review packet",
+   "specification",
+   "findings",
+   "acceptance criteria",
+   "repair loop",
+   "materiality"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "Packet",
+   "Finding",
+   "FindingRecord",
+   "Spec",
+   "Decision",
+   "TraceRow",
+   "MaterialityItem",
+   "UnclaimedFile"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 59,
+    "name": "_esc"
+   },
+   {
+    "calls": [],
+    "line": 70,
+    "name": "_one_line"
+   },
+   {
+    "calls": [],
+    "line": 75,
+    "name": "_section"
+   },
+   {
+    "calls": [],
+    "line": 79,
+    "name": "_lines"
+   },
+   {
+    "calls": [],
+    "line": 91,
+    "name": "_stat_rows"
+   },
+   {
+    "calls": [
+     "_esc",
+     "_one_line"
+    ],
+    "line": 131,
+    "name": "_findings_table"
+   },
+   {
+    "calls": [
+     "_esc",
+     "_one_line"
+    ],
+    "line": 153,
+    "name": "_finding_detail"
+   },
+   {
+    "calls": [
+     "_esc",
+     "_one_line"
+    ],
+    "line": 196,
+    "name": "_decisions"
+   },
+   {
+    "calls": [
+     "_esc",
+     "_one_line"
+    ],
+    "line": 222,
+    "name": "_trace"
+   },
+   {
+    "calls": [
+     "_lines",
+     "_esc",
+     "_one_line"
+    ],
+    "line": 237,
+    "name": "_materiality"
+   },
+   {
+    "calls": [
+     "_lines",
+     "_esc",
+     "_one_line"
+    ],
+    "line": 247,
+    "name": "_unclaimed"
+   },
+   {
+    "calls": [],
+    "line": 256,
+    "name": "_rework"
+   },
+   {
+    "calls": [
+     "_section",
+     "_stat_rows",
+     "_decisions",
+     "_findings_table",
+     "_finding_detail",
+     "_trace",
+     "_unclaimed",
+     "_materiality",
+     "_rework"
+    ],
+    "line": 290,
+    "name": "packet_markdown"
+   },
+   {
+    "calls": [
+     "_section",
+     "_one_line"
+    ],
+    "line": 428,
+    "name": "spec_markdown"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders review packets and frozen specifications as Markdown documents for people ruling on the work outside the factory console. Every number and finding is copied from packet records, not summarized or elided.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "packet_markdown",
+    "kind": "export",
+    "method": "",
+    "name": "packet_markdown"
+   },
+   {
+    "handler": "spec_markdown",
+    "kind": "export",
+    "method": "",
+    "name": "spec_markdown"
+   }
+  ]
+ }
+}

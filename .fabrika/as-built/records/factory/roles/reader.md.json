@@ -1,0 +1,27 @@
+{
+ "blob": "bf607a218a936edede202abd581c3a44430c5656",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "import",
+   "function",
+   "route",
+   "entity",
+   "ways_in",
+   "repository map"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Role definition for an agent that reads one file of a repository and reports what it contains\u2014functions, imports, entities, routes\u2014so that multiple readers can collectively map the repository.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

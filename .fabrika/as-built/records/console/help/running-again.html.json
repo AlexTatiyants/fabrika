@@ -1,0 +1,29 @@
+{
+ "blob": "2ae21618b4d3db7cd557897cfa74e0e1881d9bc2",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "packet",
+   "build",
+   "verify",
+   "resume",
+   "discard",
+   "branch",
+   "ledger",
+   "budget"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation describing how to re-run a feature: verify again (re-test), build again (reset and rebuild), resume a stopped build, or discard the feature entirely.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

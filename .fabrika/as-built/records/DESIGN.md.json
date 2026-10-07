@@ -1,0 +1,29 @@
+{
+ "blob": "899f0bc23241769e8ad98df7910e9440ffde2808",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "andon board",
+   "station lamps",
+   "board and floor grounds",
+   "stop bar and verdict band",
+   "rework return rail",
+   "lane and crew"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [
+   "Google Fonts"
+  ],
+  "purpose": "Design specification for Fabrika, the console UI for a software production line. Defines the visual language\u2014two grounds (enamelled board and painted floor), lamp states, color tokens, typography hierarchy, layout grid, components, and design principles to keep data separable from glance.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

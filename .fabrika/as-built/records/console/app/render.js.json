@@ -1,0 +1,237 @@
+{
+ "blob": "a4c11c27a950c3d275249f76488505f497866a71",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "stepScreen",
+   "intentScreen",
+   "scoutScreen",
+   "render",
+   "renderScreens",
+   "syncHeader",
+   "mountedView",
+   "gate2Active",
+   "gate2Props",
+   "barAction",
+   "setBar",
+   "renderFeatureBar",
+   "mountGate2",
+   "releaseGate2",
+   "watchSections",
+   "managePolling",
+   "pollTick",
+   "GATE2_VIEWS",
+   "FAST_POLL_MS",
+   "SLOW_POLL_MS"
+  ],
+  "domain_terms": [
+   "project",
+   "feature",
+   "stage",
+   "packet",
+   "gate",
+   "spec",
+   "scout"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "STEPS.find",
+     "featureBar",
+     "esc",
+     "currentStep",
+     "intentScreen",
+     "scoutScreen",
+     "intakeRunningScreen",
+     "specScreen",
+     "failedScreen",
+     "runningScreen",
+     "reviewScreen"
+    ],
+    "line": 11,
+    "name": "stepScreen"
+   },
+   {
+    "calls": [
+     "featureBar",
+     "esc",
+     "rel"
+    ],
+    "line": 42,
+    "name": "intentScreen"
+   },
+   {
+    "calls": [
+     "featureBar",
+     "esc",
+     "rel",
+     "digestNote",
+     "driftNote"
+    ],
+    "line": 76,
+    "name": "scoutScreen"
+   },
+   {
+    "calls": [
+     "paintOfflineBar",
+     "renderScreens",
+     "paintBusy",
+     "syncSheet"
+    ],
+    "line": 150,
+    "name": "render"
+   },
+   {
+    "calls": [
+     "paintStaleBar",
+     "gate2Active",
+     "releaseGate2",
+     "setBar",
+     "setupScreen",
+     "rolesScreen",
+     "agentConfigScreen",
+     "controlRoomScreen",
+     "helpScreen",
+     "yardScreen",
+     "notFoundScreen",
+     "logScreen",
+     "projectLogScreen",
+     "projectScreen",
+     "reviewScreen",
+     "stepScreen",
+     "intakeRunningScreen",
+     "planningScreen",
+     "specScreen",
+     "cutReviewScreen",
+     "runningScreen",
+     "failedScreen",
+     "watchSections",
+     "renderPanel",
+     "renderCrumbs",
+     "syncHeader",
+     "managePolling",
+     "startDraft",
+     "mountGate2"
+    ],
+    "line": 157,
+    "name": "renderScreens"
+   },
+   {
+    "calls": [
+     "syncToggle",
+     "syncFocus"
+    ],
+    "line": 336,
+    "name": "syncHeader"
+   },
+   {
+    "calls": [],
+    "line": 355,
+    "name": "mountedView"
+   },
+   {
+    "calls": [
+     "mountedView"
+    ],
+    "line": 393,
+    "name": "gate2Active"
+   },
+   {
+    "calls": [
+     "featureHref",
+     "focusOn",
+     "runSummary",
+     "rel",
+     "browsing",
+     "refresh"
+    ],
+    "line": 409,
+    "name": "gate2Props"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 500,
+    "name": "barAction"
+   },
+   {
+    "calls": [],
+    "line": 521,
+    "name": "setBar"
+   },
+   {
+    "calls": [
+     "mountedView",
+     "projectBar",
+     "esc",
+     "setBar",
+     "featureBar",
+     "featureHref"
+    ],
+    "line": 529,
+    "name": "renderFeatureBar"
+   },
+   {
+    "calls": [
+     "gate2Active",
+     "esc"
+    ],
+    "line": 567,
+    "name": "mountGate2"
+   },
+   {
+    "calls": [],
+    "line": 584,
+    "name": "releaseGate2"
+   },
+   {
+    "calls": [],
+    "line": 590,
+    "name": "watchSections"
+   },
+   {
+    "calls": [
+     "setInterval",
+     "clearInterval"
+    ],
+    "line": 620,
+    "name": "managePolling"
+   },
+   {
+    "calls": [
+     "suRefresh",
+     "refresh",
+     "refreshProject"
+    ],
+    "line": 660,
+    "name": "pollTick"
+   }
+  ],
+  "imports": [
+   "console/ui/index.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the browser DOM",
+   "IntersectionObserver API"
+  ],
+  "purpose": "Renders the console's screens based on project stage and hash route, manages the feature bar, mounts the Gate 2 review component, and controls polling for real-time updates.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "render",
+    "kind": "export",
+    "method": "",
+    "name": "render"
+   }
+  ]
+ }
+}

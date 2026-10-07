@@ -1,0 +1,34 @@
+{
+ "blob": "169fedb20c679e1e5de43ce18a9f2e4e4648c182",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "review packet",
+   "feature specification",
+   "pipeline phases",
+   "repair loop",
+   "verification lane",
+   "evidence store",
+   "worktree and sandbox"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [
+   "docs/agents.md",
+   "docs/gates.md",
+   "docs/isolation.md",
+   "docs/testing.md",
+   "docs/seeing-the-running-app.html"
+  ],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Describes the architecture of Fabrika, an automated code review pipeline where model agents coordinate deterministic steps from a feature specification to a structured review packet that a human audits.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

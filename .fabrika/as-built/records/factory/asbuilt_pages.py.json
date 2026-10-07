@@ -1,0 +1,177 @@
+{
+ "blob": "cb394c1044a60aaa2401343640a8fcbde2b7b42e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "render",
+   "_Links",
+   "_slug",
+   "_n",
+   "_esc",
+   "_stamp",
+   "_nodes",
+   "_deps",
+   "_mermaid",
+   "_mid",
+   "_architecture",
+   "_system",
+   "_subsystem",
+   "_reach_rows",
+   "_capability",
+   "_file",
+   "GENERATED"
+  ],
+  "domain_terms": [
+   "subsystem",
+   "capability",
+   "as-built architecture",
+   "file",
+   "Mermaid diagram"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FileRecord"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 27,
+    "name": "_slug"
+   },
+   {
+    "calls": [],
+    "line": 31,
+    "name": "_n"
+   },
+   {
+    "calls": [],
+    "line": 35,
+    "name": "_esc"
+   },
+   {
+    "calls": [],
+    "line": 39,
+    "name": "_Links"
+   },
+   {
+    "calls": [
+     "_slug"
+    ],
+    "line": 42,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 56,
+    "name": "file"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "rel"
+   },
+   {
+    "calls": [
+     "_system",
+     "_subsystem",
+     "_capability",
+     "_file"
+    ],
+    "line": 64,
+    "name": "render"
+   },
+   {
+    "calls": [],
+    "line": 91,
+    "name": "_stamp"
+   },
+   {
+    "calls": [],
+    "line": 95,
+    "name": "_nodes"
+   },
+   {
+    "calls": [
+     "_nodes"
+    ],
+    "line": 99,
+    "name": "_deps"
+   },
+   {
+    "calls": [
+     "_deps",
+     "_mid"
+    ],
+    "line": 109,
+    "name": "_mermaid"
+   },
+   {
+    "calls": [],
+    "line": 185,
+    "name": "_mid"
+   },
+   {
+    "calls": [
+     "_mid"
+    ],
+    "line": 127,
+    "name": "_architecture"
+   },
+   {
+    "calls": [
+     "_nodes",
+     "_stamp",
+     "_architecture",
+     "_mermaid"
+    ],
+    "line": 189,
+    "name": "_system"
+   },
+   {
+    "calls": [
+     "_nodes",
+     "_stamp",
+     "_deps"
+    ],
+    "line": 258,
+    "name": "_subsystem"
+   },
+   {
+    "calls": [],
+    "line": 303,
+    "name": "_reach_rows"
+   },
+   {
+    "calls": [
+     "_reach_rows"
+    ],
+    "line": 317,
+    "name": "_capability"
+   },
+   {
+    "calls": [],
+    "line": 341,
+    "name": "_file"
+   }
+  ],
+  "imports": [
+   "factory/asbuilt_graph.py",
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Generates Markdown pages and JSON data files documenting the as-built system architecture. Converts the reading computed by `asbuilt_graph` into a set of linked documentation pages organized by system, subsystem, capability, and file, plus data in JSON formats for consumption by the web console.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "render",
+    "kind": "export",
+    "method": "",
+    "name": "render"
+   }
+  ]
+ }
+}

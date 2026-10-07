@@ -1,0 +1,259 @@
+{
+ "blob": "c9be2e90068403cbafbea01aba6405175d8a6a1c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "WindowReading",
+   "read_windows",
+   "read_credits",
+   "read_limit",
+   "read_from_disk",
+   "DrawStore",
+   "MeterStore",
+   "use_mirror",
+   "sidecar_dir",
+   "mirror_home",
+   "prune_mirror"
+  ],
+  "domain_terms": [
+   "meter",
+   "window",
+   "gauge",
+   "route",
+   "sidecar"
+  ],
+  "entities_defined": [
+   "WindowReading"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 49,
+    "name": "WindowReading"
+   },
+   {
+    "calls": [],
+    "line": 63,
+    "name": "label"
+   },
+   {
+    "calls": [],
+    "line": 84,
+    "name": "seconds_to_reset"
+   },
+   {
+    "calls": [],
+    "line": 88,
+    "name": "stale"
+   },
+   {
+    "calls": [],
+    "line": 98,
+    "name": "as_dict"
+   },
+   {
+    "calls": [
+     "_windows_in",
+     "_sidecar_records",
+     "_record_time"
+    ],
+    "line": 111,
+    "name": "read_windows"
+   },
+   {
+    "calls": [
+     "_dotted"
+    ],
+    "line": 151,
+    "name": "_record_time"
+   },
+   {
+    "calls": [],
+    "line": 180,
+    "name": "_dotted"
+   },
+   {
+    "calls": [],
+    "line": 200,
+    "name": "use_mirror"
+   },
+   {
+    "calls": [],
+    "line": 206,
+    "name": "sidecar_dir"
+   },
+   {
+    "calls": [],
+    "line": 221,
+    "name": "mirror_home"
+   },
+   {
+    "calls": [
+     "mirror_home"
+    ],
+    "line": 227,
+    "name": "prune_mirror"
+   },
+   {
+    "calls": [
+     "mirror_home"
+    ],
+    "line": 243,
+    "name": "_sidecar_patterns"
+   },
+   {
+    "calls": [
+     "_dotted",
+     "_sidecar_patterns"
+    ],
+    "line": 251,
+    "name": "_sidecar_records"
+   },
+   {
+    "calls": [
+     "_dotted"
+    ],
+    "line": 309,
+    "name": "_windows_in"
+   },
+   {
+    "calls": [
+     "_dotted",
+     "_sidecar_records"
+    ],
+    "line": 358,
+    "name": "read_credits"
+   },
+   {
+    "calls": [
+     "_sidecar_records",
+     "_dotted",
+     "_record_time"
+    ],
+    "line": 389,
+    "name": "read_limit"
+   },
+   {
+    "calls": [
+     "_sidecar_records",
+     "_windows_in",
+     "_record_time",
+     "_dotted"
+    ],
+    "line": 421,
+    "name": "read_from_disk"
+   },
+   {
+    "calls": [],
+    "line": 454,
+    "name": "DrawStore"
+   },
+   {
+    "calls": [],
+    "line": 473,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 476,
+    "name": "all"
+   },
+   {
+    "calls": [
+     "all"
+    ],
+    "line": 488,
+    "name": "expected"
+   },
+   {
+    "calls": [
+     "all"
+    ],
+    "line": 495,
+    "name": "observations"
+   },
+   {
+    "calls": [
+     "write_atomic"
+    ],
+    "line": 498,
+    "name": "record"
+   },
+   {
+    "calls": [],
+    "line": 521,
+    "name": "MeterStore"
+   },
+   {
+    "calls": [],
+    "line": 531,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 536,
+    "name": "all"
+   },
+   {
+    "calls": [
+     "all"
+    ],
+    "line": 559,
+    "name": "latest"
+   },
+   {
+    "calls": [
+     "latest"
+    ],
+    "line": 562,
+    "name": "worst"
+   },
+   {
+    "calls": [],
+    "line": 571,
+    "name": "limit"
+   },
+   {
+    "calls": [
+     "_write"
+    ],
+    "line": 580,
+    "name": "record_limit"
+   },
+   {
+    "calls": [],
+    "line": 602,
+    "name": "credits"
+   },
+   {
+    "calls": [
+     "_write"
+    ],
+    "line": 613,
+    "name": "record"
+   },
+   {
+    "calls": [
+     "write_atomic"
+    ],
+    "line": 634,
+    "name": "_write"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/files.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the local filesystem"
+  ],
+  "purpose": "Reads and stores utilization measurements of rolling-window API rate limits, reading current gauges from external tools and maintaining a historical record on disk for reserve capacity planning.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

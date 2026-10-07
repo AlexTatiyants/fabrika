@@ -1,0 +1,23 @@
+{
+ "blob": "df2b3406de41bf3c38e0269f76a4cf3743688d11",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "check",
+   "finding"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Package for checks: facts about a run computed from what happened, each returned as findings, without model calls.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,806 @@
+{
+ "blob": "9f1f990b487beab39b810c8d5ec85664e4584a3e",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_a_df_that_cannot_be_read_never_stops_a_run",
+   "test_the_sweep_reclaims_superseded_harness_layers_and_keeps_the_live_one",
+   "test_an_agent_inside_the_container_is_given_no_shims_and_told_so",
+   "test_the_breaker_is_asked_what_correct_code_does_and_may_say_it_cannot",
+   "test_a_per_file_run_says_which_file_was_killed_and_what_each_one_cost",
+   "test_agents_that_write_tests_are_told_where_the_services_are",
+   "test_a_stray_report_is_swept_after_the_run_wherever_it_landed",
+   "test_gate_zero_measures_whether_a_tiers_tests_clean_up",
+   "test_setup_runs_a_warmed_check_once_online_and_its_outcome_is_not_setup_s",
+   "test_the_doorway_carries_bytes_inward_and_nothing_else",
+   "test_a_full_disk_is_named_rather_than_left_as_a_traceback",
+   "test_a_tests_check_is_red_when_a_test_fails_whatever_its_number_reads",
+   "test_a_diagnosis_is_reused_while_nothing_it_read_changed"
+  ],
+  "domain_terms": [
+   "gate (check/verification step)",
+   "service (containerized dependency)",
+   "placement (where acceptance tests are written)",
+   "blind tests (acceptance tests)",
+   "coverage (code coverage metrics)",
+   "mutation (mutation testing report)",
+   "gate",
+   "probe",
+   "tier",
+   "harness",
+   "doorway",
+   "disk"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "factory_source",
+     "strip_prose",
+     "gates"
+    ],
+    "line": 14,
+    "name": "test_gates_never_invoke_a_model"
+   },
+   {
+    "calls": [
+     "gates",
+     "_reported",
+     "pipeline"
+    ],
+    "line": 21,
+    "name": "test_a_blind_suite_run_as_one_command_cannot_attribute_anything"
+   },
+   {
+    "calls": [
+     "_result",
+     "gates"
+    ],
+    "line": 35,
+    "name": "test_a_gate_that_ran_and_failed_is_told_apart_from_one_that_never_ran"
+   },
+   {
+    "calls": [
+     "strip_prose",
+     "factory_source"
+    ],
+    "line": 55,
+    "name": "test_nothing_in_the_orchestrator_recognises_a_test_runner"
+   },
+   {
+    "calls": [
+     "_rule",
+     "gates"
+    ],
+    "line": 82,
+    "name": "test_running_one_file_at_a_time_is_the_whole_attribution_mechanism"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 97,
+    "name": "Stub"
+   },
+   {
+    "calls": [
+     "gates",
+     "code_without_prose"
+    ],
+    "line": 129,
+    "name": "test_a_ports_freeness_is_asked_about_on_the_wildcard_not_on_loopback"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service"
+    ],
+    "line": 166,
+    "name": "test_a_services_port_reaches_the_commands_that_have_to_agree_about_it"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service"
+    ],
+    "line": 196,
+    "name": "test_every_command_in_a_session_is_told_where_each_service_is"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service"
+    ],
+    "line": 220,
+    "name": "test_a_service_that_loses_the_race_for_its_port_is_given_another"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 229,
+    "name": "Contended"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service",
+     "_rule"
+    ],
+    "line": 261,
+    "name": "test_the_harness_owns_the_service_lifecycle_not_the_command_string"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service"
+    ],
+    "line": 309,
+    "name": "test_services_come_down_even_when_the_tests_blow_up"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service"
+    ],
+    "line": 327,
+    "name": "test_a_service_that_never_comes_up_blocks_everything_after_it"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service"
+    ],
+    "line": 347,
+    "name": "test_a_failed_preparation_stops_before_a_single_test_runs"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates"
+    ],
+    "line": 367,
+    "name": "test_a_project_with_no_services_opens_no_session"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 382,
+    "name": "test_whether_a_runner_fails_on_nothing_is_measured_not_assumed"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 393,
+    "name": "Stub"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 417,
+    "name": "Dead"
+   },
+   {
+    "calls": [
+     "gates",
+     "_tier_surface",
+     "_tier",
+     "_placement",
+     "_rule"
+    ],
+    "line": 427,
+    "name": "test_usable_is_measured_not_taken_on_trust"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 444,
+    "name": "Runner"
+   },
+   {
+    "calls": [
+     "gates",
+     "_tier_surface",
+     "_tier",
+     "_placement",
+     "_rule",
+     "_PlacementRunner"
+    ],
+    "line": 488,
+    "name": "test_a_usable_tier_with_no_canary_is_not_proved"
+   },
+   {
+    "calls": [
+     "gates",
+     "_tier_surface",
+     "_tier",
+     "_placement",
+     "_rule",
+     "_PlacementRunner"
+    ],
+    "line": 502,
+    "name": "test_a_tier_is_only_proved_where_a_blind_test_would_actually_live"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_PlacementRunner"
+    ],
+    "line": 527,
+    "name": "test_placement_is_measured_not_assumed"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule"
+    ],
+    "line": 561,
+    "name": "test_a_placement_where_subdirectories_do_not_work_is_recorded_as_flat"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 575,
+    "name": "FlatOnly"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_ReportingRunner"
+    ],
+    "line": 602,
+    "name": "test_how_this_runner_names_a_test_is_measured_not_assumed"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_ReportingRunner"
+    ],
+    "line": 645,
+    "name": "test_a_reporting_command_that_writes_no_report_is_said_out_loud"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_ReportingRunner"
+    ],
+    "line": 667,
+    "name": "test_the_naming_measurement_costs_nothing_where_it_cannot_be_taken"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_ReportingRunner"
+    ],
+    "line": 690,
+    "name": "test_a_rule_with_no_reporting_command_is_said_at_repo_ready"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_PlacementRunner"
+    ],
+    "line": 705,
+    "name": "test_placement_that_the_projects_config_does_not_reach_is_refused"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_PlacementRunner"
+    ],
+    "line": 725,
+    "name": "test_placement_that_exits_zero_over_a_file_it_never_collected_is_refused"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_PlacementRunner"
+    ],
+    "line": 747,
+    "name": "test_placement_no_command_claims_is_refused_before_anything_runs"
+   },
+   {
+    "calls": [
+     "gates",
+     "_placement",
+     "_rule",
+     "_PlacementRunner"
+    ],
+    "line": 762,
+    "name": "test_placement_outside_the_repository_is_refused"
+   },
+   {
+    "calls": [
+     "gates",
+     "_result"
+    ],
+    "line": 772,
+    "name": "test_an_optional_gate_that_could_not_run_does_not_block"
+   },
+   {
+    "calls": [
+     "GateConfig",
+     "gates"
+    ],
+    "line": 780,
+    "name": "test_a_ceiling_makes_a_failing_count_green_and_a_regression_red"
+   },
+   {
+    "calls": [
+     "GateConfig",
+     "gates"
+    ],
+    "line": 792,
+    "name": "run"
+   },
+   {
+    "calls": [
+     "GateConfig",
+     "gates"
+    ],
+    "line": 809,
+    "name": "test_an_unread_metric_with_no_bound_falls_back_to_the_exit_code"
+   },
+   {
+    "calls": [
+     "GateConfig",
+     "gates"
+    ],
+    "line": 824,
+    "name": "run"
+   },
+   {
+    "calls": [
+     "gates",
+     "Gate"
+    ],
+    "line": 841,
+    "name": "test_setup_installs_survive_into_the_gates"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 849,
+    "name": "FakeRunner"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 888,
+    "name": "test_a_runner_without_sessions_still_works"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 895,
+    "name": "test_a_session_that_could_not_open_is_reported_once"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 899,
+    "name": "Broken"
+   },
+   {
+    "calls": [
+     "SimpleNamespace",
+     "containers",
+     "EnvironmentSpec",
+     "gates",
+     "unitenv",
+     "Config"
+    ],
+    "line": 913,
+    "name": "test_a_stack_that_did_not_start_is_one_failure_with_its_own_words"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 923,
+    "name": "Stalled"
+   },
+   {
+    "calls": [],
+    "line": 939,
+    "name": "fake_runner_for"
+   },
+   {
+    "calls": [
+     "unitenv",
+     "Config"
+    ],
+    "line": 945,
+    "name": "open_it"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 966,
+    "name": "fake_run"
+   },
+   {
+    "calls": [
+     "inspect",
+     "pipeline",
+     "gates"
+    ],
+    "line": 979,
+    "name": "test_only_the_oracles_asserting_files_are_run_one_at_a_time"
+   },
+   {
+    "calls": [
+     "Path",
+     "unitenv",
+     "subprocess"
+    ],
+    "line": 1011,
+    "name": "test_shims_map_the_directory_the_agent_is_standing_in"
+   },
+   {
+    "calls": [
+     "gates",
+     "_sarif"
+    ],
+    "line": 1038,
+    "name": "test_a_sarif_report_is_read_by_line_and_a_missing_one_is_not_a_clean_result"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 1056,
+    "name": "test_coverage_is_read_by_line_from_each_of_the_three_formats"
+   },
+   {
+    "calls": [
+     "gates"
+    ],
+    "line": 1080,
+    "name": "test_a_mutation_report_names_each_change_no_test_caught"
+   },
+   {
+    "calls": [
+     "inspect",
+     "gates",
+     "PurePosixPath"
+    ],
+    "line": 1096,
+    "name": "test_a_test_report_is_named_on_the_side_that_writes_it"
+   },
+   {
+    "calls": [],
+    "line": 1118,
+    "name": "Contained"
+   },
+   {
+    "calls": [
+     "inspect",
+     "gates",
+     "unitenv"
+    ],
+    "line": 1133,
+    "name": "test_an_authoring_agent_gets_a_container_even_with_no_services_declared"
+   },
+   {
+    "calls": [
+     "_SessionRunner",
+     "gates",
+     "_service"
+    ],
+    "line": 1165,
+    "name": "test_the_disk_is_measured_before_anything_is_stood_up"
+   },
+   {
+    "calls": [
+     "_free_space_mb",
+     "free"
+    ],
+    "line": 1196,
+    "name": "test_a_df_that_cannot_be_read_never_stops_a_run"
+   },
+   {
+    "calls": [
+     "Execution"
+    ],
+    "line": 1201,
+    "name": "free"
+   },
+   {
+    "calls": [
+     "sweep_images"
+    ],
+    "line": 1214,
+    "name": "test_the_sweep_reclaims_superseded_harness_layers_and_keeps_the_live_one"
+   },
+   {
+    "calls": [
+     "Execution"
+    ],
+    "line": 1230,
+    "name": "fake_run"
+   },
+   {
+    "calls": [
+     "unit_environment",
+     "_inside_note",
+     "_note"
+    ],
+    "line": 1249,
+    "name": "test_an_agent_inside_the_container_is_given_no_shims_and_told_so"
+   },
+   {
+    "calls": [],
+    "line": 1277,
+    "name": "test_the_breaker_is_asked_what_correct_code_does_and_may_say_it_cannot"
+   },
+   {
+    "calls": [
+     "TestFileCommand",
+     "run_per_file"
+    ],
+    "line": 1310,
+    "name": "test_a_per_file_run_says_which_file_was_killed_and_what_each_one_cost"
+   },
+   {
+    "calls": [],
+    "line": 1319,
+    "name": "_Slow"
+   },
+   {
+    "calls": [
+     "Execution"
+    ],
+    "line": 1323,
+    "name": "execute"
+   },
+   {
+    "calls": [
+     "_services_note",
+     "unit_environment"
+    ],
+    "line": 1346,
+    "name": "test_agents_that_write_tests_are_told_where_the_services_are"
+   },
+   {
+    "calls": [
+     "sweep_reports",
+     "run_per_file"
+    ],
+    "line": 1358,
+    "name": "test_a_stray_report_is_swept_after_the_run_wherever_it_landed"
+   },
+   {
+    "calls": [
+     "probe"
+    ],
+    "line": 1373,
+    "name": "test_gate_zero_measures_whether_a_tiers_tests_clean_up"
+   },
+   {
+    "calls": [
+     "probe_testing"
+    ],
+    "line": 1381,
+    "name": "probe"
+   },
+   {
+    "calls": [],
+    "line": 1386,
+    "name": "Runner"
+   },
+   {
+    "calls": [
+     "Execution"
+    ],
+    "line": 1389,
+    "name": "execute"
+   },
+   {
+    "calls": [
+     "run_setup"
+    ],
+    "line": 1413,
+    "name": "test_setup_runs_a_warmed_check_once_online_and_its_outcome_is_not_setup_s"
+   },
+   {
+    "calls": [
+     "_handler",
+     "serve",
+     "go"
+    ],
+    "line": 1440,
+    "name": "test_the_doorway_carries_bytes_inward_and_nothing_else"
+   },
+   {
+    "calls": [],
+    "line": 1448,
+    "name": "free"
+   },
+   {
+    "calls": [
+     "_handler",
+     "serve",
+     "echo"
+    ],
+    "line": 1453,
+    "name": "go"
+   },
+   {
+    "calls": [],
+    "line": 1454,
+    "name": "echo"
+   },
+   {
+    "calls": [
+     "disk_full_problem"
+    ],
+    "line": 1493,
+    "name": "test_a_full_disk_is_named_rather_than_left_as_a_traceback"
+   },
+   {
+    "calls": [
+     "run"
+    ],
+    "line": 1505,
+    "name": "test_a_tests_check_is_red_when_a_test_fails_whatever_its_number_reads"
+   },
+   {
+    "calls": [
+     "Gate",
+     "run_gate"
+    ],
+    "line": 1514,
+    "name": "run"
+   },
+   {
+    "calls": [
+     "fingerprint",
+     "_floor_gate",
+     "GateResult"
+    ],
+    "line": 1523,
+    "name": "test_a_diagnosis_is_reused_while_nothing_it_read_changed"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py",
+   "factory/gates.py",
+   "factory/pipeline/__init__.py",
+   "factory/config.py",
+   "factory/containers.py",
+   "factory/schemas.py",
+   "factory/unitenv.py",
+   "factory/doorway.py",
+   "factory/diagnosis.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "Docker containers",
+   "test runners (pytest, jest, vitest, etc.)",
+   "Docker",
+   "the local filesystem",
+   "network sockets"
+  ],
+  "purpose": "Tests for gate execution orchestration, service lifecycle management, placement validation, and report parsing (SARIF, coverage, mutations).",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "test_a_df_that_cannot_be_read_never_stops_a_run",
+    "kind": "command",
+    "method": "",
+    "name": "test_a_df_that_cannot_be_read_never_stops_a_run"
+   },
+   {
+    "handler": "test_the_sweep_reclaims_superseded_harness_layers_and_keeps_the_live_one",
+    "kind": "command",
+    "method": "",
+    "name": "test_the_sweep_reclaims_superseded_harness_layers_and_keeps_the_live_one"
+   },
+   {
+    "handler": "test_an_agent_inside_the_container_is_given_no_shims_and_told_so",
+    "kind": "command",
+    "method": "",
+    "name": "test_an_agent_inside_the_container_is_given_no_shims_and_told_so"
+   },
+   {
+    "handler": "test_the_breaker_is_asked_what_correct_code_does_and_may_say_it_cannot",
+    "kind": "command",
+    "method": "",
+    "name": "test_the_breaker_is_asked_what_correct_code_does_and_may_say_it_cannot"
+   },
+   {
+    "handler": "test_a_per_file_run_says_which_file_was_killed_and_what_each_one_cost",
+    "kind": "command",
+    "method": "",
+    "name": "test_a_per_file_run_says_which_file_was_killed_and_what_each_one_cost"
+   },
+   {
+    "handler": "test_agents_that_write_tests_are_told_where_the_services_are",
+    "kind": "command",
+    "method": "",
+    "name": "test_agents_that_write_tests_are_told_where_the_services_are"
+   },
+   {
+    "handler": "test_a_stray_report_is_swept_after_the_run_wherever_it_landed",
+    "kind": "command",
+    "method": "",
+    "name": "test_a_stray_report_is_swept_after_the_run_wherever_it_landed"
+   },
+   {
+    "handler": "test_gate_zero_measures_whether_a_tiers_tests_clean_up",
+    "kind": "command",
+    "method": "",
+    "name": "test_gate_zero_measures_whether_a_tiers_tests_clean_up"
+   },
+   {
+    "handler": "test_setup_runs_a_warmed_check_once_online_and_its_outcome_is_not_setup_s",
+    "kind": "command",
+    "method": "",
+    "name": "test_setup_runs_a_warmed_check_once_online_and_its_outcome_is_not_setup_s"
+   },
+   {
+    "handler": "test_the_doorway_carries_bytes_inward_and_nothing_else",
+    "kind": "command",
+    "method": "",
+    "name": "test_the_doorway_carries_bytes_inward_and_nothing_else"
+   },
+   {
+    "handler": "test_a_full_disk_is_named_rather_than_left_as_a_traceback",
+    "kind": "command",
+    "method": "",
+    "name": "test_a_full_disk_is_named_rather_than_left_as_a_traceback"
+   },
+   {
+    "handler": "test_a_tests_check_is_red_when_a_test_fails_whatever_its_number_reads",
+    "kind": "command",
+    "method": "",
+    "name": "test_a_tests_check_is_red_when_a_test_fails_whatever_its_number_reads"
+   },
+   {
+    "handler": "test_a_diagnosis_is_reused_while_nothing_it_read_changed",
+    "kind": "command",
+    "method": "",
+    "name": "test_a_diagnosis_is_reused_while_nothing_it_read_changed"
+   }
+  ]
+ }
+}

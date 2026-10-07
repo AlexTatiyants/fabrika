@@ -1,0 +1,28 @@
+{
+ "blob": "1a70554d6352c5052f81833bb885751308c9fec5",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "worktree",
+   "sealed container",
+   "egress proxy",
+   "container network",
+   "image"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [
+   "Docker"
+  ],
+  "purpose": "Documents how isolation is achieved through git worktrees for files and sealed containers for execution, including the egress proxy that lets containers reach the internet but not private networks.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

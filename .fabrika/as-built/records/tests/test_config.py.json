@@ -1,0 +1,620 @@
+{
+ "blob": "727e9e054db90690f446628fa79f5f171a19c865",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_a_session_in_the_container_execs_into_it_rather_than_running_here",
+   "test_the_default_route_can_author_in_a_container_too",
+   "test_a_fallback_session_runs_where_its_own_route_says",
+   "test_security_is_an_angle_on_two_agents_not_an_agent_of_its_own",
+   "test_there_is_one_reviewer_and_it_does_not_share_the_builder_s_priors",
+   "test_a_config_naming_the_planner_is_refused_with_the_new_name",
+   "test_each_checker_is_on_a_different_family_from_what_it_reads",
+   "test_every_test_writer_is_told_to_leave_the_world_as_it_found_it",
+   "test_a_companion_service_serves_the_worktree_not_the_checkout",
+   "test_a_role_s_reasoning_level_reaches_a_command_line_route",
+   "test_every_route_that_writes_code_says_what_its_harness_reads",
+   "_staff",
+   "test_a_level_becomes_the_model_its_side_runs_on",
+   "test_a_model_written_on_a_levelled_role_is_a_pin_and_wins",
+   "test_without_staffing_a_level_changes_nothing",
+   "test_the_example_suggests_a_level_for_every_role_and_completes_every_preset",
+   "test_writing_the_crew_keeps_every_comment",
+   "test_saving_a_levelled_agent_from_the_crew_sheet_does_not_pin_it",
+   "test_a_builder_cannot_be_moved_to_the_checkers_side",
+   "test_a_crew_that_cannot_run_is_refused_and_the_file_is_left_alone"
+  ],
+  "domain_terms": [
+   "agent role",
+   "route/provider",
+   "LLM model",
+   "gate/check",
+   "configuration",
+   "route (execution path for an agent)",
+   "role (agent job/position in factory)",
+   "level (performance tier assigned to a role)",
+   "staffing (crew configuration and role assignment)",
+   "session (execution context in container or on host)",
+   "provider (LLM service provider)"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "Config",
+   "RoleConfig",
+   "RouteConfig",
+   "GateConfig",
+   "Project",
+   "DrawStore",
+   "Route",
+   "Role"
+  ],
+  "entities_written": [
+   "Config",
+   "RoleConfig",
+   "RouteConfig",
+   "DrawStore",
+   "Project"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "gates.run_gate"
+    ],
+    "line": 9,
+    "name": "test_a_gate_metric_below_its_threshold_fails"
+   },
+   {
+    "calls": [
+     "write_role",
+     "writable_config_path"
+    ],
+    "line": 18,
+    "name": "test_editing_a_role_never_writes_to_the_shipped_example"
+   },
+   {
+    "calls": [
+     "write_role"
+    ],
+    "line": 34,
+    "name": "test_editing_a_role_preserves_every_comment"
+   },
+   {
+    "calls": [
+     "delete_role",
+     "write_role"
+    ],
+    "line": 51,
+    "name": "test_only_pipeline_roles_are_undeletable"
+   },
+   {
+    "calls": [
+     "write_role"
+    ],
+    "line": 72,
+    "name": "test_v6_still_holds_after_an_edit"
+   },
+   {
+    "calls": [
+     "write_role",
+     "delete_role"
+    ],
+    "line": 82,
+    "name": "test_a_new_agent_lands_inside_the_roles_block"
+   },
+   {
+    "calls": [
+     "LLM"
+    ],
+    "line": 115,
+    "name": "test_changing_the_key_drops_the_cached_client"
+   },
+   {
+    "calls": [
+     "LLM"
+    ],
+    "line": 139,
+    "name": "test_a_call_refused_for_want_of_a_key_says_where_the_key_goes"
+   },
+   {
+    "calls": [
+     "harness_model",
+     "load_config"
+    ],
+    "line": 172,
+    "name": "test_the_harness_runs_the_worker_role_s_model_not_a_second_copy_of_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM"
+    ],
+    "line": 205,
+    "name": "test_the_harness_is_handed_the_key_and_never_asked_to_find_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "DockerRunner"
+    ],
+    "line": 248,
+    "name": "test_a_container_user_with_no_home_cannot_run_npm"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ComposeRunner"
+    ],
+    "line": 267,
+    "name": "test_published_ports_are_replaced_not_appended"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ComposeRunner"
+    ],
+    "line": 290,
+    "name": "test_a_missing_env_file_is_met_from_its_example_and_names_are_freed"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ComposeRunner"
+    ],
+    "line": 328,
+    "name": "test_a_stack_that_failed_to_start_is_still_torn_down"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ComposeRunner"
+    ],
+    "line": 357,
+    "name": "test_concurrent_gates_bring_the_stack_up_once"
+   },
+   {
+    "calls": [
+     "ProjectRegistry",
+     "load_config"
+    ],
+    "line": 396,
+    "name": "test_a_survey_that_has_begun_is_not_shown_as_the_one_that_failed"
+   },
+   {
+    "calls": [
+     "_expand"
+    ],
+    "line": 420,
+    "name": "test_env_expansion_skips_shell_commands_and_nothing_else"
+   },
+   {
+    "calls": [
+     "DrawStore",
+     "load_config",
+     "write_credential"
+    ],
+    "line": 461,
+    "name": "test_a_settings_file_is_never_found_empty_while_it_is_rewritten"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 501,
+    "name": "test_the_driver_is_wired_into_the_configured_command"
+   },
+   {
+    "calls": [
+     "check_destructive_writes"
+    ],
+    "line": 519,
+    "name": "test_an_extraction_refactor_is_not_reported"
+   },
+   {
+    "calls": [
+     "check_destructive_writes"
+    ],
+    "line": 537,
+    "name": "test_a_small_file_and_a_new_file_are_left_alone"
+   },
+   {
+    "calls": [
+     "check_destructive_writes"
+    ],
+    "line": 549,
+    "name": "test_the_detector_asks_where_the_lines_went_not_how_many_there_are"
+   },
+   {
+    "calls": [
+     "load_config",
+     "independence_problems",
+     "landing_family"
+    ],
+    "line": 571,
+    "name": "test_two_lanes_keep_the_crew_apart_on_the_day_both_routes_run_out"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 611,
+    "name": "test_a_resolved_lane_keeps_the_name_a_person_chose"
+   },
+   {
+    "calls": [
+     "load_config",
+     "independence_problems"
+    ],
+    "line": 635,
+    "name": "test_a_fallback_that_lands_on_the_family_it_argues_with_says_so_at_rest"
+   },
+   {
+    "calls": [
+     "load_config",
+     "independence_problems"
+    ],
+    "line": 668,
+    "name": "test_the_breaker_attacks_once_and_its_probes_are_re_run_for_ever"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 710,
+    "name": "test_test_writers_have_room_for_their_accounting_call"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor",
+     "LLM"
+    ],
+    "line": 723,
+    "name": "test_a_session_that_wrote_nothing_does_not_bench_a_working_route"
+   },
+   {
+    "calls": [],
+    "line": 767,
+    "name": "test_a_config_that_never_heard_of_routes_still_has_one"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 780,
+    "name": "test_a_role_pointed_at_an_unconfigured_route_is_refused_at_load"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 796,
+    "name": "test_the_shipped_codex_route_reads_its_events_as_jsonl"
+   },
+   {
+    "calls": [],
+    "line": 808,
+    "name": "test_a_route_knows_what_it_can_and_cannot_serve"
+   },
+   {
+    "calls": [],
+    "line": 821,
+    "name": "test_a_role_that_writes_files_cannot_be_pointed_at_a_completion_only_route"
+   },
+   {
+    "calls": [],
+    "line": 836,
+    "name": "test_a_disconnected_route_is_refused_before_it_is_used"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 847,
+    "name": "test_the_shipped_routes_declare_what_they_can_actually_do"
+   },
+   {
+    "calls": [],
+    "line": 865,
+    "name": "test_a_route_that_cannot_hold_an_answer_to_a_schema_is_refused_up_front"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 887,
+    "name": "test_the_shipped_claude_route_switches_tools_off"
+   },
+   {
+    "calls": [
+     "load_config",
+     "write_role"
+    ],
+    "line": 911,
+    "name": "test_a_roles_route_survives_a_console_edit"
+   },
+   {
+    "calls": [
+     "RouteMonitor",
+     "LLM",
+     "sync_default_route"
+    ],
+    "line": 930,
+    "name": "test_an_api_route_reports_its_key_without_asking_the_network"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 946,
+    "name": "test_the_key_reaches_the_default_route_after_it_is_loaded"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 957,
+    "name": "test_every_cli_route_tells_a_human_how_to_connect_it"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 974,
+    "name": "test_the_shipped_models_are_tiers_or_real_ids_and_never_invented"
+   },
+   {
+    "calls": [],
+    "line": 1008,
+    "name": "test_a_role_may_name_no_model_where_the_route_supplies_one"
+   },
+   {
+    "calls": [],
+    "line": 1019,
+    "name": "test_a_role_naming_no_model_on_a_route_that_cannot_choose_is_refused"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1032,
+    "name": "test_all_four_tiers_are_offered"
+   },
+   {
+    "calls": [
+     "load_config",
+     "session_model"
+    ],
+    "line": 1046,
+    "name": "test_a_routed_session_is_not_given_another_provider_s_model_prefix"
+   },
+   {
+    "calls": [
+     "LLM"
+    ],
+    "line": 1070,
+    "name": "test_a_routed_session_books_its_spend_against_the_right_meter"
+   },
+   {
+    "calls": [
+     "load_config",
+     "check_budget_coverage"
+    ],
+    "line": 1093,
+    "name": "test_a_fully_billed_run_raises_no_such_finding"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1100,
+    "name": "test_the_metered_route_streams_because_the_gauge_only_appears_there"
+   },
+   {
+    "calls": [
+     "load_config",
+     "independence_problems"
+    ],
+    "line": 1112,
+    "name": "test_the_shipped_assignment_satisfies_its_own_independence_rules"
+   },
+   {
+    "calls": [
+     "check_independence"
+    ],
+    "line": 1123,
+    "name": "test_an_agent_sharing_priors_with_what_it_doubts_is_a_finding"
+   },
+   {
+    "calls": [
+     "model_family",
+     "independence_problems"
+    ],
+    "line": 1139,
+    "name": "test_a_route_counts_as_a_family_because_a_tier_is_not_independence"
+   },
+   {
+    "calls": [],
+    "line": 1154,
+    "name": "test_the_oracle_is_held_to_the_rule_the_config_never_wrote_down"
+   },
+   {
+    "calls": [
+     "_executor",
+     "_container_route",
+     "_Prepared",
+     "asyncio.run"
+    ],
+    "line": 1164,
+    "name": "test_a_session_in_the_container_execs_into_it_rather_than_running_here"
+   },
+   {
+    "calls": [
+     "load_config",
+     "CommandExecutor"
+    ],
+    "line": 1209,
+    "name": "test_the_default_route_can_author_in_a_container_too"
+   },
+   {
+    "calls": [
+     "_executor",
+     "_container_route",
+     "_Prepared",
+     "asyncio.run",
+     "inspect.getsource"
+    ],
+    "line": 1232,
+    "name": "test_a_fallback_session_runs_where_its_own_route_says"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1272,
+    "name": "test_security_is_an_angle_on_two_agents_not_an_agent_of_its_own"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1308,
+    "name": "test_there_is_one_reviewer_and_it_does_not_share_the_builder_s_priors"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1339,
+    "name": "test_a_config_naming_the_planner_is_refused_with_the_new_name"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1347,
+    "name": "test_each_checker_is_on_a_different_family_from_what_it_reads"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1363,
+    "name": "test_every_test_writer_is_told_to_leave_the_world_as_it_found_it"
+   },
+   {
+    "calls": [
+     "load_config",
+     "ComposeRunner"
+    ],
+    "line": 1386,
+    "name": "test_a_companion_service_serves_the_worktree_not_the_checkout"
+   },
+   {
+    "calls": [
+     "_route_cfg",
+     "asyncio.run",
+     "LLM",
+     "load_config",
+     "factory_source"
+    ],
+    "line": 1429,
+    "name": "test_a_role_s_reasoning_level_reaches_a_command_line_route"
+   },
+   {
+    "calls": [
+     "load_config",
+     "factory_source"
+    ],
+    "line": 1458,
+    "name": "test_every_route_that_writes_code_says_what_its_harness_reads"
+   },
+   {
+    "calls": [
+     "staffing_suggestions",
+     "write_staffing"
+    ],
+    "line": 1477,
+    "name": "_staff"
+   },
+   {
+    "calls": [
+     "_staff"
+    ],
+    "line": 1490,
+    "name": "test_a_level_becomes_the_model_its_side_runs_on"
+   },
+   {
+    "calls": [
+     "_staff"
+    ],
+    "line": 1508,
+    "name": "test_a_model_written_on_a_levelled_role_is_a_pin_and_wins"
+   },
+   {
+    "calls": [
+     "load_config"
+    ],
+    "line": 1523,
+    "name": "test_without_staffing_a_level_changes_nothing"
+   },
+   {
+    "calls": [
+     "load_config",
+     "staffing_suggestions"
+    ],
+    "line": 1536,
+    "name": "test_the_example_suggests_a_level_for_every_role_and_completes_every_preset"
+   },
+   {
+    "calls": [
+     "_staff"
+    ],
+    "line": 1550,
+    "name": "test_writing_the_crew_keeps_every_comment"
+   },
+   {
+    "calls": [
+     "_staff",
+     "write_role"
+    ],
+    "line": 1565,
+    "name": "test_saving_a_levelled_agent_from_the_crew_sheet_does_not_pin_it"
+   },
+   {
+    "calls": [
+     "_staff"
+    ],
+    "line": 1585,
+    "name": "test_a_builder_cannot_be_moved_to_the_checkers_side"
+   },
+   {
+    "calls": [
+     "_staff"
+    ],
+    "line": 1598,
+    "name": "test_a_crew_that_cannot_run_is_refused_and_the_file_is_left_alone"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py",
+   "factory/config.py",
+   "factory/executors.py",
+   "factory/containers.py",
+   "factory/schemas.py",
+   "factory/llm.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "httpx",
+   "Docker",
+   "subprocess/git",
+   "filesystem"
+  ],
+  "purpose": "Tests configuration management for roles, routes, models, and factory.yaml\u2014including role editing, route configuration, agent independence, container setup, and LLM provider integration.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

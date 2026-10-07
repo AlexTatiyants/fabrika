@@ -1,0 +1,429 @@
+{
+ "blob": "0b907d698e1023439bbf3b993dab97ef62220501",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "AsBuiltError",
+   "RecordCache",
+   "Reading",
+   "AsBuiltReader",
+   "ProjectAsBuilt",
+   "sources_at",
+   "changed_since",
+   "load_committed",
+   "source_view",
+   "load_file",
+   "status",
+   "commit_into_repo",
+   "feature_reading",
+   "latest_feature_reading"
+  ],
+  "domain_terms": [
+   "as-built documentation",
+   "reading",
+   "file record",
+   "subsystem",
+   "capability"
+  ],
+  "entities_defined": [
+   "Source",
+   "FileRecord",
+   "AsBuilt",
+   "ArchitectureAccount",
+   "CapabilityMap",
+   "GroupNaming",
+   "SystemAccount"
+  ],
+  "entities_read": [
+   "FileRecord",
+   "AsBuilt"
+  ],
+  "entities_written": [
+   "FileRecord",
+   "AsBuilt"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 91,
+    "name": "AsBuiltError"
+   },
+   {
+    "calls": [],
+    "line": 95,
+    "name": "_Stopped"
+   },
+   {
+    "calls": [],
+    "line": 99,
+    "name": "_now"
+   },
+   {
+    "calls": [
+     "git.run"
+    ],
+    "line": 108,
+    "name": "_git"
+   },
+   {
+    "calls": [
+     "_kept"
+    ],
+    "line": 117,
+    "name": "_skipped_why"
+   },
+   {
+    "calls": [
+     "_git",
+     "_skipped_why"
+    ],
+    "line": 129,
+    "name": "sources_at"
+   },
+   {
+    "calls": [
+     "is_repo",
+     "_git",
+     "_skipped_why"
+    ],
+    "line": 176,
+    "name": "changed_since"
+   },
+   {
+    "calls": [],
+    "line": 200,
+    "name": "chunks_of"
+   },
+   {
+    "calls": [],
+    "line": 230,
+    "name": "numbered"
+   },
+   {
+    "calls": [],
+    "line": 234,
+    "name": "tree_for"
+   },
+   {
+    "calls": [
+     "chunks_of"
+    ],
+    "line": 244,
+    "name": "batches_of"
+   },
+   {
+    "calls": [],
+    "line": 286,
+    "name": "evident_definitions"
+   },
+   {
+    "calls": [],
+    "line": 322,
+    "name": "is_manifest"
+   },
+   {
+    "calls": [
+     "is_manifest"
+    ],
+    "line": 328,
+    "name": "declares_entries"
+   },
+   {
+    "calls": [
+     "evident_definitions",
+     "is_manifest",
+     "declares_entries"
+    ],
+    "line": 336,
+    "name": "thin_answer"
+   },
+   {
+    "calls": [],
+    "line": 353,
+    "name": "tree_for_many"
+   },
+   {
+    "calls": [
+     "numbered"
+    ],
+    "line": 367,
+    "name": "batch_prompt"
+   },
+   {
+    "calls": [
+     "numbered"
+    ],
+    "line": 377,
+    "name": "reader_prompt"
+   },
+   {
+    "calls": [],
+    "line": 386,
+    "name": "merge_records"
+   },
+   {
+    "calls": [],
+    "line": 410,
+    "name": "RecordCache"
+   },
+   {
+    "calls": [],
+    "line": 421,
+    "name": "RecordCache._file"
+   },
+   {
+    "calls": [],
+    "line": 424,
+    "name": "RecordCache.get"
+   },
+   {
+    "calls": [],
+    "line": 433,
+    "name": "RecordCache.put"
+   },
+   {
+    "calls": [],
+    "line": 440,
+    "name": "reader_contract"
+   },
+   {
+    "calls": [],
+    "line": 450,
+    "name": "Reading"
+   },
+   {
+    "calls": [],
+    "line": 464,
+    "name": "AsBuiltReader"
+   },
+   {
+    "calls": [],
+    "line": 467,
+    "name": "AsBuiltReader.__init__"
+   },
+   {
+    "calls": [],
+    "line": 479,
+    "name": "AsBuiltReader._flight"
+   },
+   {
+    "calls": [],
+    "line": 485,
+    "name": "AsBuiltReader._emit"
+   },
+   {
+    "calls": [],
+    "line": 492,
+    "name": "AsBuiltReader._cost"
+   },
+   {
+    "calls": [
+     "is_repo",
+     "head_sha",
+     "sources_at",
+     "_records",
+     "build",
+     "_describe",
+     "_total_cost"
+    ],
+    "line": 500,
+    "name": "AsBuiltReader.read"
+   },
+   {
+    "calls": [
+     "reader_contract",
+     "batches_of"
+    ],
+    "line": 522,
+    "name": "AsBuiltReader._records"
+   },
+   {
+    "calls": [
+     "_cost"
+    ],
+    "line": 656,
+    "name": "AsBuiltReader._ask_cartographer"
+   },
+   {
+    "calls": [
+     "apply_names",
+     "carry_capabilities",
+     "apply_capabilities",
+     "carry_architecture",
+     "apply_architecture",
+     "assign_codes",
+     "apply_account"
+    ],
+    "line": 665,
+    "name": "AsBuiltReader._describe"
+   },
+   {
+    "calls": [],
+    "line": 768,
+    "name": "AsBuiltReader._total_cost"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 793,
+    "name": "load_committed"
+   },
+   {
+    "calls": [
+     "head_sha",
+     "sources_at"
+    ],
+    "line": 840,
+    "name": "cache_coverage"
+   },
+   {
+    "calls": [
+     "_git",
+     "load_committed",
+     "source_notes"
+    ],
+    "line": 864,
+    "name": "source_view"
+   },
+   {
+    "calls": [],
+    "line": 902,
+    "name": "load_file"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 910,
+    "name": "uncommitted_as_built"
+   },
+   {
+    "calls": [
+     "render"
+    ],
+    "line": 920,
+    "name": "write_into"
+   },
+   {
+    "calls": [
+     "uncommitted_as_built",
+     "write_into",
+     "commit_paths"
+    ],
+    "line": 936,
+    "name": "commit_into_repo"
+   },
+   {
+    "calls": [
+     "load_committed",
+     "changed_since"
+    ],
+    "line": 963,
+    "name": "status"
+   },
+   {
+    "calls": [],
+    "line": 979,
+    "name": "ProjectAsBuilt"
+   },
+   {
+    "calls": [],
+    "line": 1001,
+    "name": "ProjectAsBuilt.__init__"
+   },
+   {
+    "calls": [
+     "_now"
+    ],
+    "line": 1006,
+    "name": "ProjectAsBuilt._emitter"
+   },
+   {
+    "calls": [
+     "RecordCache",
+     "reader_contract"
+    ],
+    "line": 1020,
+    "name": "ProjectAsBuilt._reader"
+   },
+   {
+    "calls": [],
+    "line": 1026,
+    "name": "ProjectAsBuilt.busy"
+   },
+   {
+    "calls": [],
+    "line": 1029,
+    "name": "ProjectAsBuilt._finish"
+   },
+   {
+    "calls": [
+     "busy",
+     "load_committed",
+     "_reader",
+     "commit_into_repo"
+    ],
+    "line": 1040,
+    "name": "ProjectAsBuilt.refresh"
+   },
+   {
+    "calls": [
+     "load_committed",
+     "latest_feature_reading",
+     "_reader"
+    ],
+    "line": 1070,
+    "name": "ProjectAsBuilt.read_for_feature"
+   },
+   {
+    "calls": [],
+    "line": 1106,
+    "name": "_role_of"
+   },
+   {
+    "calls": [
+     "_public"
+    ],
+    "line": 1111,
+    "name": "now_running"
+   },
+   {
+    "calls": [],
+    "line": 1121,
+    "name": "_public"
+   },
+   {
+    "calls": [
+     "load_file"
+    ],
+    "line": 1127,
+    "name": "feature_reading"
+   },
+   {
+    "calls": [
+     "load_file"
+    ],
+    "line": 1138,
+    "name": "latest_feature_reading"
+   }
+  ],
+  "imports": [
+   "factory/asbuilt_graph.py",
+   "factory/llm.py",
+   "factory/schemas.py",
+   "factory/git.py",
+   "factory/workspace.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git",
+   "LLM provider"
+  ],
+  "purpose": "Reads a repository at a specific commit using LLM agents to analyze files and build an 'as-built' document describing code structure, relationships, and capabilities.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

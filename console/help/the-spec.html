@@ -1,0 +1,30 @@
+<p class="lead">The spec is the contract a build is held to: everything the feature must do, and where it
+  stops. You read it, then approve it or send it back. Approving starts the build.</p>
+
+<h4>How it's written</h4>
+<p>The spec writer turns your intent and answers into a spec. The spec checker reads the draft the way the blind
+  test writer will, and objects wherever a criterion can't be tested or misses what you said. The feature shows
+  <i>writing the spec</i> while they work, then <i>awaiting freeze</i> when it's yours to read.</p>
+
+<h4>Reading it</h4>
+<ul>
+  <li><b>In practice</b>: what it's like today, and once this ships.</li>
+  <li><b>What it touches</b>: the data, interfaces and screens it changes, checked later against what the workers
+    actually build.</li>
+  <li><b>What it must do</b>: the acceptance criteria, the complete promise. Each is tagged with the lowest test
+    level it can be checked at; one Fabrika won't test in this project is tagged <i>you check</i>. See
+    <a data-help="test-levels">Test levels</a>.</li>
+  <li><b>Where it stops</b>: what it's deliberately not doing, and what it must respect.</li>
+  <li><b>What could be wrong</b>: what it assumes, what nobody decided, and anything that cannot be undone, such
+    as a dropped column.</li>
+  <li><b>How this was decided</b>: your answers and corrections.</li>
+</ul>
+
+<h4>Your ruling</h4>
+<p><b>Send it back</b> if it has something wrong: say what, and the interrogator asks again from your correction
+  and the spec is rewritten. Nothing has been built yet.</p>
+<p><b>Approve &amp; build</b> starts the build. There's no further input until it produces a packet, unless the
+  architect and the plan checker disagree about how to cut the work (see <a data-help="plan-review">Plan
+  review</a>). If a subscription the run needs is near the end of its usage window, you're offered
+  <b>Freeze &amp; start</b> at the reset time, with <b>Start anyway</b> beside it. See
+  <a data-help="waiting-for-a-plan-window">Builds that wait for a plan window</a>.</p>

@@ -1,0 +1,27 @@
+{
+ "blob": "98b2e010453a03e42627b643048d5040b4dc2328",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "repair loop",
+   "arbiter",
+   "repairer",
+   "simplifier",
+   "rapporteur",
+   "finding"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Documents how Fabrika iteratively fixes issues found during review within bounded rounds and budget limits.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

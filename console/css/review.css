@@ -1,0 +1,970 @@
+/* Reading mode, which folds the chrome away for the spec and gate 2; then gate 2
+   on one control, at its own measure, one file at a time, the work map and
+   the worklist. The fallback lanes close it. */
+
+/* ------------------------------------------------------------ reading mode
+
+   The spec is the one screen on this console that is a document rather than a
+   control panel: nine sections read top to bottom before a decision. Around it
+   sit a rail of other work, a board carrying the title, the sixteen lamps and
+   the steps -- all of which answer "where am I", which is not a question you
+   have while reading. Folded away, the window is the document and nothing
+   else.
+
+   The control belongs to the document, not to the console, so it sits at the
+   top right of the column rather than in the header -- and it is the only
+   thing in the column that stays put, sticky at the top, because the way out
+   has to be reachable from the fortieth criterion and not only from the title.
+
+   A zero-height row: the button hangs out of it, so the document's own first
+   margin is the one you see and nothing is pushed down to make room. That works
+   in the spec because the contents rail leaves a 190px gutter for the button to
+   hover in once the page is scrolled. */
+.doc-tools {
+  position: sticky; top: 10px; z-index: 6;
+  height: 0; display: flex; justify-content: flex-end;
+}
+
+/* Gate 2 has no such gutter -- its column runs the full measure and there are
+   pills and counts out at the right edge of it. So on this side the row takes
+   real space at the top, and sits just outside the measure, in the page's own
+   margin, where there is nothing to cover.
+
+   "Outside the measure" is a wider box, not a negative margin. A negative
+   margin walks out of the column whether or not there is anywhere to walk to,
+   and on a window between about 1240 and 1400 with the rail in there is not:
+   the column is already as wide as the page allows, and the button goes off
+   the right-hand edge and takes a horizontal scrollbar with it. A max-width
+   cannot do that. It gives the button two 44px shoulders where the room exists
+   and collapses to the column where it does not. */
+.wrap.doc-tools {
+  height: auto; padding-top: 10px;
+  max-width: calc(1080px + 88px);
+  position: static;
+}
+
+/* And it may only hover once those shoulders are real -- otherwise a pinned
+   button is sitting on the text it is pinned over. The room is `main` minus its
+   two gutters, less whatever the rail is taking: 1168px of column plus
+   shoulders needs 1216px of window with the rail out, 1454px with it in.
+   Reading mode always has it out. */
+@media (min-width: 1216px) {
+  body.reading .wrap.doc-tools,
+  body[data-rail="off"] .wrap.doc-tools { position: sticky; top: 10px; }
+}
+@media (min-width: 1454px) {
+  .wrap.doc-tools { position: sticky; top: 10px; }
+}
+
+.focus-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; flex: none; padding: 0;
+  background: var(--paper); border: 1px solid transparent; border-radius: 3px;
+  color: var(--ink-3); cursor: pointer;
+}
+.focus-toggle .ic { width: 15px; height: 15px; color: inherit; }
+.focus-toggle:hover { color: var(--ink); border-color: var(--line-strong); }
+.focus-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+body.reading { padding-left: 0; }
+body.reading .panel { transform: translateX(-100%); }
+body.reading .panel-scrim { display: none; }
+body.reading .masthead,
+body.reading .board,
+body.reading #featurebar,
+body.reading .plan-warn { display: none; }
+body.reading .toasts { left: 50%; }
+
+/* The document keeps its own top margin instead of the board's, and the two
+   things that would hang off the masthead's height hang off nothing.
+
+   That margin is the column's own 1.9rem -- see `.wrap.doc-wrap` -- not a
+   second one on top of it. Nothing more is reserved for the fold control,
+   which hangs out of a zero-height row and needs no room at all: a further
+   2.75rem for it would stack with the margin into 74px of empty paper above
+   the first word. What this sets is the gap between the window's edge and the
+   paper, which is all it has to be. */
+body.reading main { padding-top: 10px; }
+body.reading .toc { top: 3.25rem; }
+body.reading .doc-sec,
+body.reading .doc-sec .sec-head { scroll-margin-top: 1.5rem; }
+
+/* Where the contents rail is dropped for room, the document spans the whole
+   column and there is no gutter left for a button to hover in -- so it stops
+   hovering and scrolls away with everything else. Esc is still the way out. */
+@media (max-width: 1100px) {
+  .doc-wrap > .doc-tools { position: static; }
+}
+
+/* ==========================================================================
+   GATE 2, ON ONE CONTROL
+
+   Six tabs over one packet. The verdict band belongs to none of them, so it
+   sits above; the strip beneath it is the only navigation the review has.
+   ========================================================================== */
+
+/* The band is the bar you already waited under. While the line was running,
+   where it had got to was said on enamelled steel -- a plate with the word
+   stamped on it, the sentence set beside it -- and the packet is that same
+   line still talking, so it says its verdict in the same voice rather than in
+   a second one invented for the last screen.
+
+   Three answers, three grounds: green ships, a light warm green ships once
+   you have ruled, red does not ship. The light one carries dark lettering and
+   the other two white, so each band sets its own ink once as `--vb-ink`.
+   "Ships, with rulings" has a ground of its own: sharing one with "do not
+   ship" would make a packet that must not go out look like one waiting on two
+   clicks. The plate still says the answer in words, for a reader the colours are lost on. */
+.v-band { border-top: 4px solid; --vb-ink: var(--v-band-ink); }
+.v-band-ship    { background: var(--v-band-ship);    border-top-color: var(--v-band-ship-rule); }
+.v-band-rulings { background: var(--v-band-rulings); border-top-color: var(--v-band-rulings-rule);
+  --vb-ink: var(--v-band-rulings-ink); }
+.v-band-stop    { background: var(--v-band-stop);    border-top-color: var(--v-band-stop-rule); }
+.v-in { display: flex; gap: 1.35rem; align-items: flex-start; padding: 1.15rem 0 1rem; }
+.v-word {
+  flex: none; font: 700 13px/1 var(--cond); letter-spacing: .24em; text-transform: uppercase;
+  border: 2px solid currentColor; padding: 9px 12px 8px; margin-top: 3px; white-space: nowrap;
+}
+.v-band .v-word { color: var(--vb-ink); }
+.v-in .verdict-headline { margin: 0; flex: 1 1 auto; font-family: var(--body);
+  font-size: 18px; font-weight: 300; line-height: 1.45; letter-spacing: 0;
+  color: var(--vb-ink); max-width: 78ch; }
+/* The two marks on this band that were drawn for paper: `--accent` is ink, and
+   ink laid on enamel is a mark you cannot see. The dagger is the whole of the
+   caveat that a figure behind this verdict was discounted, and the outline is
+   the whole of where the keyboard is. */
+.v-band .vs-btn:focus-visible, .v-band .focus-toggle:focus-visible {
+  outline-color: var(--vb-ink); }
+.v-band .vs-btn-disc { color: var(--vb-ink); }
+
+/* ---------------------------------------------------------------- the stats
+
+   Six figures run across the header in a row under the verdict would make a
+   header that says six things at once, and so says none of them. They are
+   behind a press, laid out as a sheet -- which they could never be in a row, and
+   which is what a column of figures with names beside them wants to be.
+
+   The button keeps the dagger when any of them is discounted: a caveat that
+   goes away when the panel closes is a caveat that was never made. */
+/* The header's two controls, on one line and at one height. As siblings in
+   the band's flex row, each carrying its own top offset -- 10px from
+   `.doc-tools`, 2px from here -- they would sit eight pixels apart, and land
+   on separate rows entirely when the band stacks at narrow widths. One row
+   owns both, and neither offsets itself. */
+.v-tools { display: flex; align-items: center; gap: .3rem; flex: none;
+  align-self: flex-start; margin-left: auto; }
+/* And at one weight. Both are drawn for paper -- a grey chip, ink lettering --
+   and neither survives being moved onto the enamel, so on this band they are
+   lettering alone until pointed at, and the same lettering as each other. */
+.v-tools .vs-btn, .v-tools .focus-toggle { background: none; color: color-mix(in srgb, var(--vb-ink) 85%, transparent);
+  border-color: transparent; }
+.v-tools .vs-btn:hover, .v-tools .focus-toggle:hover,
+.v-tools .vs-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--vb-ink) 14%, transparent); color: var(--vb-ink);
+  border-color: color-mix(in srgb, var(--vb-ink) 35%, transparent); }
+.vs { position: relative; flex: none; }
+.vs-btn {
+  display: inline-flex; align-items: center; gap: .35rem;
+  height: 28px; padding: 0 .5rem; flex: none;
+  background: var(--paper); border: 1px solid transparent; border-radius: 3px;
+  color: var(--ink-3); cursor: pointer;
+  font-family: var(--cond); font-size: var(--t-label); font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.vs-btn .ic { width: 14px; height: 14px; color: inherit; }
+.vs-btn:hover, .vs-btn[aria-expanded="true"] { color: var(--ink); border-color: var(--line-strong); }
+.vs-btn[aria-expanded="true"] { background: var(--surface); }
+.vs-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.vs-btn-w { line-height: 1; }
+.vs-btn-disc { color: var(--amber); font-family: var(--mono); font-size: var(--t-small);
+  line-height: 1; align-self: flex-start; margin-top: 5px; }
+
+.vs-sheet {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 40; min-width: 22rem;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(24, 26, 22, .16);
+  padding: .5rem 0 0;
+}
+/* Figure, name, note: three columns, so twenty-one lines up under six and a
+   reader compares down a column instead of hunting along a sentence. */
+.vs-row { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr) auto; gap: .6rem;
+  align-items: baseline; padding: .3rem .9rem; font-size: var(--t-small); color: var(--ink-2); }
+/* A sentence rather than a figure and a label: the unmeasured spend needs a
+   clause, not a number, and a number is what the two columns are for. */
+.vs-wide { grid-template-columns: 1fr; }
+.vs-wide .vs-lab { font-size: var(--t-meta); color: var(--ink-3); line-height: 1.5; }
+.vs-n { font-family: var(--cond); font-size: 1.0625rem; font-weight: 700; color: var(--ink);
+  text-align: right; white-space: nowrap; }
+.vs-n.vs-bad { color: var(--red); }
+.vs-of { font-family: var(--body); font-size: var(--t-meta); font-weight: 400; color: var(--ink-3); }
+.vs-lab { color: var(--ink-2); }
+.vs-note { font-size: var(--t-meta); color: var(--ink-3); white-space: nowrap; }
+
+.vs-panel { margin-top: .45rem; padding: .55rem .9rem .65rem;
+  border-top: 1px solid var(--line); background: var(--surface-sunk);
+  border-radius: 0 0 var(--radius) var(--radius);
+  font-size: var(--t-small); color: var(--ink-2); }
+.vs-panel-lab { display: block; font-family: var(--cond); font-size: var(--t-label);
+  font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3);
+  margin-bottom: .2rem; }
+.vs-panel-who b { font-size: var(--t-small); font-weight: 500; color: var(--ink); }
+.vs-panel-note { display: block; font-size: var(--t-meta); color: var(--ink-3); margin-top: .15rem; }
+.vs-panel-more { display: inline-block; margin-top: .4rem; color: var(--accent-ink); }
+
+.disc {
+  appearance: none; background: none; border: 0; padding: 0 0 0 .1rem; cursor: pointer;
+  color: var(--amber); font-family: var(--mono); font-size: var(--t-small); line-height: 1;
+  vertical-align: super;
+}
+.disc:hover { color: var(--red); }
+
+.tabstrip { position: sticky; top: 0; z-index: 20; background: var(--paper);
+  border-bottom: 1px solid var(--line-strong); }
+.tabs { display: flex; gap: 0; overflow-x: auto; }
+.tab {
+  display: flex; align-items: baseline; gap: .45rem; white-space: nowrap;
+  padding: .66rem .85rem .5rem; text-decoration: none;
+  border-bottom: 3px solid transparent; color: var(--ink-2);
+  font-family: var(--cond); font-size: var(--t-body); font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.tab:hover { color: var(--ink); background: var(--surface); }
+.tab[aria-selected="true"] { color: var(--ink); background: var(--surface);
+  border-bottom-color: var(--lane-review); }
+.tab-n { font-size: var(--t-meta); letter-spacing: 0; color: var(--ink-3); font-weight: 400; }
+.tab-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); align-self: center; }
+.tab-dot-amber { background: var(--lamp-amber); }
+
+/* --------------------------------------------------------------- the row
+
+   Findings, criteria and blind spots are the same object: a claim, how bad it
+   is, and what became of it. Twenty-four at six lines each is a page nobody
+   finishes, and the ordering that matters is invisible inside it. */
+
+.drow { background: var(--surface); border-bottom: 1px solid var(--line); }
+.drow:last-child { border-bottom: 0; }
+.drow > summary {
+  display: grid; grid-template-columns: 1rem 3.3rem 5.6rem minmax(0, 1fr) auto;
+  gap: .55rem; align-items: baseline; cursor: pointer; list-style: none;
+  padding: .42rem .8rem .42rem .45rem; border-left: 3px solid transparent;
+}
+.drow > summary::-webkit-details-marker { display: none; }
+.drow > summary:hover { background: var(--surface-lift); }
+.drow-blocker > summary { border-left-color: var(--red); }
+.drow-major > summary { border-left-color: var(--amber); }
+.drow-chev { color: var(--ink-3); font-family: var(--mono); font-size: var(--t-small);
+  transition: transform .15s ease; }
+.drow[open] > summary .drow-chev { transform: rotate(90deg); }
+.drow-id { font-size: var(--t-meta); color: var(--ink-3); }
+.drow-t { font-size: var(--t-body); font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drow[open] .drow-t { white-space: normal; font-weight: 600; }
+.drow-meta { font-size: var(--t-label); color: var(--ink-3); text-align: right; white-space: nowrap; }
+.drow-corr { color: var(--accent-ink); }
+.drow-body { padding: .1rem .8rem .8rem 1.6rem; }
+.drow-body p { margin: .45rem 0 0; font-size: var(--t-body); color: var(--ink-2); line-height: 1.55; }
+.drow-body p b { color: var(--ink); font-weight: 600; }
+.drow-body ul { margin: .3rem 0 0; padding-left: 1.1rem; font-size: var(--t-body); color: var(--ink-2); }
+
+.f-ev { margin: .5rem 0 0; padding: .35rem .6rem; background: var(--surface-lift);
+  border-left: 2px solid var(--line-strong); font-family: var(--mono); font-size: var(--t-meta);
+  color: var(--ink-2); overflow-x: auto; white-space: pre-wrap; }
+.f-foot { margin-top: .6rem; padding-top: .45rem; border-top: 1px dashed var(--line);
+  display: flex; gap: .4rem .9rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3); }
+.f-foot b { color: var(--ink-2); font-weight: 500; }
+.f-restated { margin-top: .7rem; padding: .5rem .7rem; background: var(--accent-wash);
+  border: 1px solid var(--amber-edge); border-radius: var(--radius); }
+/* The same agent wording one defect several ways is a fact about the panel,
+   not a second opinion. Quieter than the block above it for that reason. */
+.f-restated-quiet { border-left-color: var(--line); opacity: .82; }
+.f-restated p { margin: .2rem 0 0; font-size: var(--t-small); }
+.cav-disc { color: var(--accent-ink); }
+
+.fg { border: 1px solid var(--line); border-radius: 6px; background: var(--surface);
+  margin-bottom: .7rem; }
+.fg[open] { background: transparent; }
+.fg-head { display: flex; align-items: baseline; gap: .6rem; padding: .6rem .8rem;
+  cursor: pointer; list-style: none; }
+.fg-head::-webkit-details-marker { display: none; }
+.fg-head::before { content: "›"; color: var(--ink-3); transition: transform .15s ease; }
+.fg[open] > .fg-head::before { transform: rotate(90deg); }
+.fg-title { font-family: var(--cond); font-size: var(--t-head); font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; }
+.fg-count { margin-left: auto; font-size: var(--t-small); color: var(--ink-2); }
+.fg-sub { margin: 0 .8rem .7rem; font-size: var(--t-small); color: var(--ink-2); line-height: 1.55; }
+.fg-rows { border-top: 1px solid var(--line); }
+
+
+.block + .block { margin-top: 2.2rem; }
+.block:first-child { padding-top: 1.5rem; }
+.sec-h { font-family: var(--cond); font-size: var(--t-sec); font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; margin: 0; }
+.sec-sub { margin: .3rem 0 .9rem; font-size: var(--t-body); color: var(--ink-2); line-height: 1.6; }
+
+.conceded-block { padding: .6rem .8rem; border-bottom: 1px solid var(--line); }
+.conceded-block:last-child { border-bottom: 0; }
+.conceded-line { margin: .25rem 0 0; font-size: var(--t-body); color: var(--ink-2); }
+.conceded-line .ok { color: var(--green); margin-right: .3rem; }
+
+/* ------------------------------------------------------------- the files */
+
+.mat-legend { display: flex; gap: .9rem; flex-wrap: wrap; margin-top: .45rem;
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3); }
+
+.files { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+
+/* --------------------------------------------------------------- the diff */
+
+.diff { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-lift);
+  overflow: hidden; }
+.diff-bar { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  padding: .38rem .6rem; background: var(--surface-sunk); border-bottom: 1px solid var(--line);
+  font-size: var(--t-meta); color: var(--ink-2); }
+.diff-note { margin-left: auto; }
+.diff-wait { margin: 0; padding: .6rem .7rem; font-size: var(--t-small); color: var(--ink-3); }
+.diff-foot { padding: .45rem .7rem; background: var(--surface-sunk); border-top: 1px solid var(--line);
+  font-size: var(--t-small); font-style: italic; color: var(--ink-3); }
+.diff-scroll { overflow-x: auto; max-height: 30rem; }
+.diff-rows { min-width: 100%; width: max-content; }
+.dl { display: grid; grid-template-columns: 3.4em 3.4em minmax(0, 1fr);
+  font-family: var(--mono); font-size: var(--t-meta); line-height: 1.7; }
+.dl-no { padding: 0 .45rem; color: var(--line-strong); text-align: right; user-select: none;
+  border-right: 1px solid var(--line); }
+.dl-txt { padding: 0 .6rem; white-space: pre; }
+.dl-add { background: var(--green-wash); }
+.dl-add .dl-txt { color: var(--green-ink); }
+.dl-add .dl-no { border-right-color: var(--green-edge); }
+.dl-rem { background: var(--red-wash); }
+.dl-rem .dl-txt { color: var(--red-ink); }
+.dl-rem .dl-no { border-right-color: var(--red-edge); }
+.dl-hunk { padding: .28rem .6rem; color: var(--ink-3); background: var(--surface-sunk);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  font-family: var(--mono); font-size: var(--t-meta); white-space: pre; }
+
+/* ------------------------------------------------------------- the rounds */
+
+/* A row is a round; it opens onto the units that round dispatched. */
+.rd { background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); margin-bottom: .45rem; }
+.rd > summary { display: grid; grid-template-columns: 8rem 11rem minmax(0, 1fr);
+  gap: .7rem; align-items: baseline; padding: .55rem .85rem; cursor: pointer;
+  list-style: none; }
+.rd > summary::-webkit-details-marker { display: none; }
+.rd > summary:hover { background: var(--surface-lift); }
+.rd-n { font-family: var(--cond); font-size: var(--t-meta); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em; }
+.rd-r { font-size: var(--t-small); color: var(--green); }
+.rd-w { font-size: var(--t-small); color: var(--ink-2); }
+.rd-rev { background: var(--red-wash); }
+.rd-rev .rd-n, .rd-rev .rd-r { color: var(--red); }
+/* The round that did not happen. Dashed, because it is the absence of one. */
+.rd-stop { border-style: dashed; }
+.rd-stop .rd-n, .rd-stop .rd-r { color: var(--red); }
+
+.rd-body { padding: 0 .85rem .6rem; }
+.rd-unit { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: .7rem;
+  padding: .55rem 0; border-top: 1px dashed var(--line); }
+.rd-unit-id { font-size: var(--t-meta); color: var(--ink-3); }
+.rd-unit-f { font-size: var(--t-small); }
+.rd-unit-s { margin: .25rem 0 0; font-size: var(--t-body); line-height: 1.55;
+  color: var(--ink-2); }
+.rd-unit-m { margin-top: .3rem; font-family: var(--mono); font-size: var(--t-meta);
+  color: var(--ink-3); }
+/* The finding a unit closed, in the words it was raised in -- an id alone
+   sends a reader to another tab to find out what was fixed. */
+.rd-unit-fin { margin: .3rem 0 0; font-size: var(--t-small); color: var(--ink-2); }
+.rd-unit-dec { margin-top: .5rem; }
+
+@media (max-width: 860px) {
+  .drow-meta { grid-column: 2 / -1; text-align: left; white-space: normal; }
+  .v-in { flex-direction: column; gap: .5rem; }
+  .vs-sheet { left: 0; right: auto; min-width: 0; width: max-content; max-width: 100%; }
+}
+
+/* ==========================================================================
+   THE REVIEW'S OWN MEASURE
+
+   Everything above is written for a 1080px column, which is right for a
+   document and wrong for this: six tabs over a table of files, a table of
+   findings, and a diff with two gutters. At 1080 on a wide screen the prose
+   wraps at 78 characters and the diff scrolls sideways inside a third of
+   the window, which is a lot of vertical space spent on nothing.
+   ========================================================================== */
+
+.g2 .wrap { max-width: 1600px; }
+
+/* The measures set for a 720px column, undone here rather than deleted: the
+   same classes are still read at that width on the spec and the ledger. */
+.g2 .sec-sub, .g2 .pk-sub, .g2 .fg-sub,
+.g2 .drow-body p, .g2 .verdict-headline { max-width: none; }
+
+/* The header is one object. `.doc-tools` is a zero-height sticky strip, and
+   `body.reading main` reserves 2.75rem above it for a button that here sits
+   in the band -- so in reading mode the first thing on the screen would be
+   that reserved room, empty. */
+.g2 .v-in { align-items: flex-start; }
+.g2 .v-in .verdict-headline { flex: 1 1 auto; }
+body.reading main:has(.g2) { padding-top: 0; }
+main:has(.g2) > .wrap:first-child { margin-top: 0; }
+
+/* An id is `undelivered-1` or `adversary-12`, not `F-3`. A fixed 3.3rem
+   track would break every one of them across two lines and leave the row two
+   lines tall, which is the whole thing this row exists not to be. */
+.drow > summary { grid-template-columns: 1rem auto auto minmax(0, 1fr) auto; }
+.drow-id { white-space: nowrap; }
+/* A grid item stretches to its track unless told otherwise, so every severity
+   pill was as wide as the widest word in the column. */
+.drow > summary > .pill { justify-self: start; }
+
+@media (max-width: 1000px) {
+  .drow > summary { grid-template-columns: 1rem auto auto minmax(0, 1fr); }
+}
+
+/* The header is the window's width, not the column's.
+
+   `main` sits inside a gutter and the band inside that, so the review would
+   open with a white strip floating in the middle of a grey one. The band and the
+   tabs belong to the window: they cancel the gutter they sit in and put it
+   back as padding, which is what the feature bar above them already does. */
+.g2 .v-band, .g2 .tabstrip {
+  margin-left: calc(-1 * var(--gutter));
+  margin-right: calc(-1 * var(--gutter));
+}
+.g2 .v-band > .wrap, .g2 .tabstrip > .wrap {
+  max-width: none; padding-left: var(--gutter); padding-right: var(--gutter);
+}
+
+/* The panel line: the last row of the header, and the quietest.
+
+   It answers "how much is this verdict worth" before you have opened
+   anything, which is the only reason it is above the tabs rather than in
+   Objections beside the findings it explains. */
+/* Nothing follows the verdict line in the band, so the line carries
+   the band's bottom padding itself. */
+.g2 .v-in { padding-bottom: .95rem; }
+
+/* ------------------------------------------ inside one criterion, expanded
+
+   Two symmetrical columns of files -- what implements it, what tests it --
+   and then, full width below them, what was said against it. The objections
+   do not belong in the right-hand column under the heading "Evidence it
+   works", which is the opposite of what they are. */
+
+/* ------------------------------------------------------- what they said
+
+   One line per disclosure, banded by kind. The unit that said it sits in a
+   gutter, so forty of them line up and the text starts at one left edge --
+   and the text is set in the reading face, because these are sentences a
+   person has to weigh, not output to scan. */
+.disc-row {
+  display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); gap: .7rem;
+  padding: .4rem .8rem; border-bottom: 1px solid var(--line); align-items: baseline;
+}
+.disc-row:last-child { border-bottom: 0; }
+.disc-unit { font-size: var(--t-meta); color: var(--ink-3); }
+.disc-text { margin: 0; font-size: var(--t-body); color: var(--ink-2); line-height: 1.55; }
+
+/* The decision cards are the console's own, so only the two things this tab
+   adds need saying: they sit in a band when already ruled, and the label
+   column is the one the rest of the console uses. */
+.fg-rows-pad { padding: 0 .8rem .3rem; }
+.g2 .decision dl { font-size: var(--t-body); }
+.g2 .decision dt { font-size: var(--t-meta); }
+.g2 .decision .d-title { font-size: var(--t-head); }
+
+/* A decision's body: the same label column the console's own card uses, here
+   inside a row that starts collapsed. */
+.d-dl {
+  display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: .3rem .9rem;
+  margin: .5rem 0 0; font-size: var(--t-body);
+}
+.d-dl dt {
+  font-family: var(--mono); font-size: var(--t-meta); letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-3); padding-top: .15rem;
+}
+.d-dl dd { margin: 0; color: var(--ink-2); line-height: 1.55; }
+.d-dl dd ul { margin: 0; padding-left: 1.05rem; }
+.d-dl dd li { margin-bottom: .25rem; }
+@media (max-width: 900px) {
+  .d-dl { grid-template-columns: 1fr; gap: .1rem; }
+  .d-dl dt { padding-top: .5rem; }
+}
+
+/* A ruling, where the thing being ruled on is. */
+.d-rule {
+  display: flex; gap: .45rem; align-items: center; flex-wrap: wrap;
+  margin-top: .8rem; padding-top: .6rem; border-top: 1px dashed var(--line);
+}
+.d-rule-note { font-size: var(--t-small); color: var(--ink-3); }
+
+/* A band that is shut because what it holds is somebody else's working
+   material rather than the reader's. Quieter than the bands that are shut
+   only because they are settled. */
+.fg-quiet { background: transparent; border-style: dashed; }
+.fg-quiet > .fg-head .fg-title { font-weight: 500; color: var(--ink-2); }
+.fg-quiet[open] { background: var(--surface); border-style: solid; }
+
+/* ==========================================================================
+   ONE FILE, AND EVERYTHING THAT BEARS ON IT
+
+   The sibling of the criterion screen. The diff is the page and the rest is a
+   rail beside it: a reviewer asks "what was this written for" and "who
+   objected to it" *while* reading the code, so the context stays in view and
+   the code gets the width. With both in one column, a four-hundred-line diff
+   would push every objection about it a screen and a half below the thing it
+   objects to.
+   ========================================================================== */
+
+/* Two families of mark. Circles and ticks are a criterion's result, diamonds
+   are a file's class, and the shape answers which column before the colour is
+   read -- which is also the channel some readers do not have. */
+.mk { flex: none; width: 1em; text-align: center; line-height: 1;
+  font-family: var(--body); font-size: var(--t-body); }
+.mk-verified { color: var(--green); }
+.mk-failing  { color: var(--red); }
+.mk-untested { color: var(--amber); }
+.mk-novel    { color: var(--mat-novel); }
+.mk-boiler   { color: var(--mat-conventional); }
+
+.filebar { background: var(--surface); border-bottom: 1px solid var(--line);
+  margin-left: calc(-1 * var(--gutter)); margin-right: calc(-1 * var(--gutter)); }
+.filebar-in { max-width: none; padding: .75rem var(--gutter) .55rem;
+  display: flex; align-items: center; gap: .5rem .9rem; flex-wrap: wrap; }
+.fb-path { font-size: var(--t-sec); word-break: break-all; }
+.fb-n { font-size: var(--t-small); }
+.fb-n .add { color: var(--green); }
+.fb-n .rem { color: var(--red); }
+.fb-acts { margin-left: auto; display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
+.fb-step { font-size: var(--t-meta); color: var(--ink-3); }
+.fb-why { max-width: none; padding: 0 var(--gutter) .75rem; margin: 0;
+  font-size: var(--t-body); color: var(--ink-2); font-style: italic; line-height: 1.5; }
+.btn.is-off { opacity: .35; pointer-events: none; }
+
+.fv-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1.3rem;
+  align-items: start; padding: 1.2rem 0 3rem; }
+
+/* Sticky, because the rail answers questions asked mid-read. */
+.fv-rail { position: sticky; top: .6rem; display: flex; flex-direction: column; gap: .7rem;
+  max-height: calc(100vh - 1.2rem); overflow-y: auto; }
+.fv-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.fv-card > summary { display: flex; align-items: baseline; gap: .5rem; padding: .5rem .7rem;
+  cursor: pointer; list-style: none; }
+.fv-card > summary::-webkit-details-marker { display: none; }
+.fv-card > summary::before { content: "›"; color: var(--ink-3); transition: transform .15s ease; }
+.fv-card[open] > summary::before { transform: rotate(90deg); }
+.fv-card-t { font-family: var(--cond); font-size: var(--t-small); font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; }
+.fv-card-n { margin-left: auto; font-size: var(--t-meta); color: var(--ink-3); }
+.fv-card-b { padding: 0 .7rem .6rem; }
+.fv-card-sub { margin: 0 0 .5rem; font-size: var(--t-small); color: var(--ink-3); line-height: 1.5; }
+
+/* Thirteen criteria in a 340px rail is a list nobody reads; as chips it is a
+   glance, and the chip goes back to the criterion for the rest. */
+.fv-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.fv-chip { display: inline-flex; align-items: center; gap: .25rem; text-decoration: none;
+  padding: .16rem .38rem .12rem; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface-lift); font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-2); }
+.fv-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+
+.fv-item { padding: .45rem 0; border-top: 1px solid var(--surface-sunk); }
+.fv-item:first-child { border-top: 0; }
+.fv-item-h { display: flex; align-items: baseline; gap: .35rem; flex-wrap: wrap; }
+.fv-item-id { font-size: var(--t-meta); color: var(--ink-3); }
+.fv-item-t { font-size: var(--t-small); font-weight: 500; line-height: 1.45; flex: 1 1 100%; }
+.fv-item-w { margin: .2rem 0 0; font-size: var(--t-small); color: var(--ink-2); line-height: 1.5; }
+.fv-item-w b { color: var(--ink); font-weight: 600; }
+.fv-item-acts { display: flex; gap: .35rem; margin-top: .45rem; }
+.fv-disc { margin: 0; padding: .4rem 0; border-top: 1px solid var(--surface-sunk);
+  font-size: var(--t-small); color: var(--ink-2); line-height: 1.5; }
+.fv-disc:first-child { border-top: 0; }
+
+@media (max-width: 1080px) {
+  .fv-body { grid-template-columns: 1fr; }
+  .fv-rail { position: static; max-height: none; }
+}
+
+/* ==========================================================================
+   THE WORK MAP — what was asked for, and what was built
+
+   Ninety-seven links over forty-one rows on a single packet, and one file
+   answering to thirteen criteria. So the gutter answers a question rather
+   than showing what it knows: a state's sheaf, one row's strand, or every
+   objection. Never everything because it exists.
+   ========================================================================== */
+
+.wm-gaps { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+  border-radius: var(--radius); margin: 0 0 1.1rem; }
+.wm-gap { background: var(--surface); padding: .6rem .8rem .65rem; cursor: pointer;
+  border: 0; border-top: 3px solid transparent; text-align: left; font: inherit;
+  color: inherit; display: block; width: 100%; }
+.wm-gap:hover { background: var(--surface-lift); }
+.wm-gap.on { background: var(--surface-lift); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.wm-gap-top { display: flex; align-items: baseline; gap: .45rem; }
+.wm-gap-n { font-family: var(--cond); font-size: 1.625rem; font-weight: 700; line-height: 1; }
+.wm-gap-unit { font-size: var(--t-meta); color: var(--ink-3); }
+.wm-gap-tag { margin-left: auto; font-family: var(--cond); font-size: var(--t-label);
+  font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.wm-gap-w { font-size: var(--t-small); color: var(--ink-2); line-height: 1.4; display: block;
+  margin-top: .3rem; }
+.wm-gap-w b { font-weight: 600; color: var(--ink); }
+
+/* Colour is the kind, not the size. A zero under `best` is not good news. */
+.wm-gap-good  { border-top-color: var(--green); }
+.wm-gap-maybe { border-top-color: var(--lane-plan-ink); }
+.wm-gap-bad   { border-top-color: var(--red); }
+.wm-gap-odd   { border-top-color: var(--lane-review-ink); }
+.wm-gap-good  .wm-gap-n, .wm-gap-good  .wm-gap-tag { color: var(--green); }
+.wm-gap-maybe .wm-gap-n, .wm-gap-maybe .wm-gap-tag { color: var(--lane-plan-ink); }
+.wm-gap-bad   .wm-gap-n, .wm-gap-bad   .wm-gap-tag { color: var(--red); }
+.wm-gap-odd   .wm-gap-n, .wm-gap-odd   .wm-gap-tag { color: var(--lane-review-ink); }
+
+/* Objections are a different question from whether a thing was built, so a
+   separate control rather than a fifth state. */
+.wm-overlay-row { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin: 0 0 1rem; }
+.wm-overlay-btn { font-family: var(--cond); font-size: var(--t-small); font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; padding: .3rem .6rem .26rem;
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.wm-overlay-btn:hover { background: var(--surface-lift); color: var(--ink); }
+.wm-overlay-btn.on { background: var(--panel); border-color: var(--panel); color: var(--board-ink); }
+.wm-overlay-note { font-size: var(--t-small); color: var(--ink-3); }
+
+.wm-board { position: relative; display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px minmax(0, 1fr);
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.wm-col { min-width: 0; }
+.wm-head { display: flex; align-items: baseline; gap: .5rem; padding: .5rem .7rem;
+  background: var(--surface-sunk); border-bottom: 1px solid var(--line); }
+.wm-head h3 { margin: 0; font-family: var(--cond); font-size: var(--t-head); font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; }
+.wm-head .dim { margin-left: auto; font-size: var(--t-meta); }
+/* The count a reader is actually deciding against: how many files they have to
+   open. The other number is context for it. */
+.wm-need { color: var(--accent-ink); }
+.wm-gutter { border-left: 1px solid var(--line); border-right: 1px solid var(--line);
+  background: var(--surface-sunk); position: relative; }
+.wm-gutter-head { background: var(--surface-sunk); justify-content: center; }
+.wm-gutter-head .dim { margin: 0; }
+.wm-wires { position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; overflow: visible; }
+
+/* `--line-strong` at half opacity on a gutter two shades off white is drawn,
+   and invisible. A line nobody can see is the same as no
+   line, and this whole tab is the lines. */
+.wm-wire { fill: none; stroke-linecap: round; }
+.wm-wire-plain { stroke: var(--ink-3); }
+.wm-wire-selected { stroke: var(--accent); }
+.wm-wire-blocker { stroke: var(--red); }
+.wm-wire-major { stroke: var(--amber); }
+.wm-wire-minor, .wm-wire-nit { stroke: var(--ink-3); }
+
+/* A key beside the thing it explains. One strip under the board would mix
+   three vocabularies, and each would be read against the wrong column. */
+.wm-key { display: flex; gap: .4rem .9rem; flex-wrap: wrap; padding: .45rem .7rem;
+  background: var(--surface-lift); border-bottom: 1px solid var(--line);
+  font-size: var(--t-meta); color: var(--ink-3); }
+.wm-key span { display: inline-flex; align-items: center; gap: .3rem; }
+.wm-key b { font-weight: 500; color: var(--ink-2); }
+
+.wm-node { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: .5rem;
+  align-items: center; padding: .3rem .7rem; border-bottom: 1px solid var(--surface-sunk);
+  cursor: pointer; border-left: 3px solid transparent; font-size: var(--t-small); }
+.wm-node:hover { background: var(--surface-lift); }
+.wm-node.sel { background: var(--accent-wash); border-left-color: var(--accent); }
+.wm-node.lit { background: var(--surface-lift); }
+.wm-node.off { opacity: .26; }
+.wm-node-id { font-size: var(--t-meta); color: var(--ink-3); }
+.wm-node-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-node-r { display: flex; align-items: center; gap: .35rem; }
+.wm-node-n { font-size: var(--t-meta); color: var(--ink-3); }
+.wm-node-n .add { color: var(--green); }
+.wm-node-n .rem { color: var(--red); }
+
+/* On the row, not in the panel underneath it: the board is six hundred pixels
+   tall, so a reader who clicks the third row gets their answer four hundred
+   pixels below the fold and never sees it. */
+.wm-open { display: inline-flex; align-items: center; gap: .2rem; flex: none;
+  font-family: var(--cond); font-size: var(--t-label); font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; text-decoration: none;
+  color: var(--ink-3); opacity: .5; white-space: nowrap;
+  padding: .1rem .3rem; border-radius: var(--radius); border: 1px solid transparent; }
+.wm-node:hover .wm-open, .wm-node.sel .wm-open { opacity: 1; color: var(--accent-ink);
+  border-color: var(--amber-edge); background: var(--accent-wash); }
+
+.wm-marks { display: inline-flex; gap: 2px; }
+.wm-mark { width: 5px; height: 11px; border-radius: 1px; background: var(--line-strong); }
+.wm-mark-blocker { background: var(--red); }
+.wm-mark-major { background: var(--amber); }
+/* Minor and nit are still marks -- a row with three of them has been looked at
+   three times -- but they are the colour of a tick, not of an alarm. */
+.wm-mark-minor, .wm-mark-nit { background: var(--line-strong); }
+
+/* The boilerplate, folded. The bar is the sentence. */
+.wm-fold { display: flex; align-items: baseline; gap: .5rem; width: 100%; cursor: pointer;
+  padding: .45rem .7rem; border: 0; border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line); background: var(--surface-sunk);
+  text-align: left; font: inherit; color: var(--ink-2); }
+.wm-fold:hover { background: var(--surface-lift); }
+.wm-fold-w { font-family: var(--cond); font-size: var(--t-small); font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; }
+.wm-fold-n { font-size: var(--t-meta); color: var(--ink-3); }
+.wm-fold-c { margin-left: auto; font-size: var(--t-meta); color: var(--accent-ink); }
+
+/* The adversary's best case, above the bands rather than inside them: it is a
+   claim about the whole change, and every band under it is a group of claims
+   about parts of one. */
+.fd-worst { border: 1px solid var(--line-strong); border-left: 3px solid var(--red);
+  border-radius: var(--radius); background: var(--surface);
+  padding: .8rem 1rem .85rem; margin: 0 0 1.1rem; }
+.fd-worst .eyebrow { color: var(--red); margin-bottom: .35rem; }
+.fd-worst p { margin: 0; font-size: var(--t-body); line-height: 1.6; }
+
+.wm-tofull { margin: 1.2rem 0 0; font-size: var(--t-small); color: var(--ink-3); }
+
+.wm-legend { display: flex; gap: .5rem 1.3rem; flex-wrap: wrap; margin-top: .8rem;
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3); }
+.wm-legend span { display: inline-flex; align-items: center; gap: .3rem; }
+.wm-legend-lab { font-family: var(--cond); font-size: var(--t-label); font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; }
+.wm-swatch { width: 16px; height: 2px; }
+.wm-swatch-plain { background: var(--ink-3); }
+.wm-swatch-blocker { background: var(--red); }
+.wm-swatch-major { background: var(--amber); }
+
+.wm-reader { margin-top: 1.2rem; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); padding: .85rem 1rem; }
+.wm-reader h3 { margin: 0; font-family: var(--cond); font-size: var(--t-head); font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; }
+.wm-reader-head { display: flex; align-items: baseline; gap: .7rem; flex-wrap: wrap; }
+.wm-reader-acts { margin-left: auto; display: flex; gap: .4rem; flex-wrap: wrap; }
+.wm-reader-sub { margin: .3rem 0 .7rem; font-size: var(--t-body); color: var(--ink-2);
+  line-height: 1.55; }
+.wm-reader-cols { display: grid; grid-template-columns: minmax(0,1fr) 1px minmax(0,1fr);
+  gap: 0 1.4rem; }
+.wm-reader-cols::before { content: ""; grid-column: 2; background: var(--line); }
+.wm-reader-cols > :first-child { grid-column: 1; }
+.wm-reader-cols > :last-child { grid-column: 3; }
+/* The reason goes under the path, not beside it. A sixty-character path in a
+   flex row leaves the reason a four-word column and turns a one-line entry into
+   eight -- the shape that can stand a file row 237px tall. Objection rows have
+   no `.dim`, so they stay on one line. */
+.wm-rrow { display: flex; flex-wrap: wrap; gap: .2rem .5rem; align-items: baseline;
+  padding: .3rem 0; font-size: var(--t-small); }
+.wm-rrow .mono { font-size: var(--t-meta); }
+.wm-rrow .dim { flex: 1 1 100%; padding-left: 1.15rem; font-style: italic;
+  font-size: var(--t-meta); line-height: 1.5; }
+/* A path is not a heading in the way a state is, so it keeps the typeface it
+   has everywhere else and only borrows the size. */
+.wm-reader-path { font-family: var(--mono) !important; text-transform: none !important;
+  letter-spacing: 0 !important; font-size: var(--t-body) !important; }
+/* The ids in a state, run together: a list of twenty-one on separate rows is a
+   second board, and the board is already above it. */
+.wm-idlist { margin: 0; font-size: var(--t-small); color: var(--ink-2);
+  line-height: 1.8; word-spacing: .2rem; }
+
+@media (max-width: 1100px) {
+  .wm-board { grid-template-columns: 1fr; }
+  .wm-gutter { display: none; }
+  .wm-reader-cols { grid-template-columns: 1fr; }
+  .wm-reader-cols::before { display: none; }
+  .wm-reader-cols > :last-child { grid-column: 1; margin-top: .8rem; }
+  .wm-node { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .wm-open { grid-column: 2 / -1; justify-self: start; }
+}
+
+/* ==========================================================================
+   THE WORKLIST — what this run will not decide for itself.
+
+   Every other screen in the review presents a record. This one presents work,
+   and the difference shows in one place: it is the only count in the console
+   that goes down.
+
+   All `wl-` prefixed. `.call`, `.act`, `.note`, `.q` and `.said` are all
+   plausible and all either taken or too general to take.
+   ========================================================================== */
+
+.wl-rule { display:flex; gap:.6rem; align-items:baseline; flex-wrap:wrap;
+  margin:0 0 1.1rem; padding:.5rem .8rem; font-size:var(--t-small); color:var(--ink-2);
+  background:var(--surface-sunk); border:1px solid var(--line); border-radius:var(--radius); }
+.wl-rule .eyebrow { flex:none; }
+.wl-rule b { font-weight:600; color:var(--ink); }
+
+/* THE STANDING LINE. One line says it -- not a sub-heading over a bordered
+   band holding a 1.6rem `0`, the words `left to rule on`, a full-width bar, a
+   note reading `4 of 4 ruled` and the attention budget, which is four sayings
+   of one fact under a tab strip already reading `0 of 4`. The bar is that
+   line's own bottom rule: three pixels, no height of its own. 36px, not 109. */
+.wl-stand { position:relative; display:flex; align-items:baseline; gap:.8rem;
+  flex-wrap:wrap; margin:0 0 1.1rem; padding:1rem 0 .45rem;
+  border-bottom:3px solid var(--surface-sunk); }
+/* The lead sentence is this line's left half, so it gives up its own margins
+   and still starts where every other tab's does. */
+.wl-stand .tab-lead { margin:0; }
+.wl-stand::after { content:""; position:absolute; left:0; bottom:-3px; height:3px;
+  width:var(--done, 0%); background:var(--green); transition:width .18s; }
+.wl-stand-n { margin-left:auto; font-size:var(--t-small); color:var(--ink-2);
+  white-space:nowrap; }
+.wl-stand-n b { font-family:var(--cond); font-size:var(--t-head); font-weight:700;
+  color:var(--ink); }
+.wl-stand-done b { color:var(--green); }
+.wl-stand-bud { font-size:var(--t-meta); color:var(--ink-3); white-space:nowrap; }
+
+/* FIVE COLUMNS THAT HOLD STILL. As four chips of different widths
+   right-aligned as a group, the marks on a row would make what YOU ruled and
+   what the ARBITER ruled the same kind of object, starting at a different x
+   on every row, and no column could be read down. 39px a row, not 55. */
+.wl-list { border-top:1px solid var(--line); }
+.wl-call { background:var(--surface); border-bottom:1px solid var(--line); }
+.wl-call[open] { background:var(--surface-lift); }
+.wl-done { opacity:.62; }
+
+.wl-head { display:grid; gap:.55rem;
+  grid-template-columns:.85rem 4.4rem minmax(0,1fr) 8.6rem 7.6rem;
+  align-items:baseline; padding:.44rem .8rem .44rem .5rem;
+  border-left:3px solid var(--line-strong); cursor:pointer; list-style:none; }
+.wl-head::-webkit-details-marker { display:none; }
+.wl-head:hover { background:var(--surface-lift); }
+.wl-blocker > .wl-head { border-left-color:var(--red); }
+.wl-major   > .wl-head { border-left-color:var(--amber); }
+.wl-chev { color:var(--ink-3); transition:transform .12s; display:inline-block;
+  font-family:var(--mono); font-size:var(--t-small); line-height:1; }
+.wl-call[open] > .wl-head .wl-chev { transform:rotate(90deg); }
+/* Severity as a word in the hue its border already carries. The border scans,
+   the word names, and the lamp rule says a hue never carries a meaning alone
+   -- but neither of them needs to be a filled box to do it. */
+.wl-sev { font-family:var(--cond); font-size:var(--t-label); font-weight:700;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); }
+.wl-blocker .wl-sev { color:var(--red); }
+.wl-major   .wl-sev { color:var(--amber); }
+.wl-t { font-size:var(--t-body); font-weight:500; line-height:1.45; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wl-call[open] .wl-t { white-space:normal; font-weight:600; }
+.wl-x { font-size:var(--t-meta); color:var(--ink-3); margin-left:.45rem; }
+/* History: what was already done about this before it reached you. Quiet and
+   unboxed, because it is not a thing you did. */
+.wl-was { font-size:var(--t-small); color:var(--ink-3); text-align:right;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wl-was-stood { color:var(--red); }
+/* Yours: the only filled object on the row. */
+.wl-mine { text-align:right; }
+
+.wl-body { padding:.15rem .8rem .3rem 6.5rem; }
+/* Label in a gutter, words in a column: six quotations from six authors line
+   up on one left edge and the reader stops re-finding where the text starts. */
+.wl-q { display:grid; grid-template-columns:7.5rem minmax(0,1fr); gap:.5rem .7rem;
+  padding:.34rem 0; border-top:1px solid var(--surface-sunk); align-items:baseline; }
+.wl-q:first-child { border-top:0; }
+.wl-who { font-family:var(--cond); font-size:var(--t-label); font-weight:700;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--ink-3); padding-top:.15rem; }
+.wl-said { margin:0; font-size:var(--t-small); color:var(--ink-2); line-height:1.55;
+  white-space:pre-wrap; }
+/* Italic and quoted means: these are exactly that author's words, and this
+   screen has not touched them. */
+.wl-verbatim { font-style:italic; }
+.wl-verbatim::before { content:"\201C"; }
+.wl-verbatim::after { content:"\201D"; }
+
+/* The arbiter's account, read first and set apart: everything under it is the
+   evidence it already weighed, not a second opinion to compare it against. */
+.wl-q-lead { padding-bottom:.6rem; }
+.wl-q-lead .wl-who { color:var(--accent-ink); }
+.wl-q-lead .wl-said { font-size:var(--t-body); color:var(--ink); line-height:1.6; }
+
+.wl-sib { margin:.1rem 0 0; padding:0; list-style:none; font-size:var(--t-small); }
+.wl-sib li { padding:.12rem 0; color:var(--ink-2); }
+.wl-sib .mono { color:var(--ink-3); font-size:var(--t-meta); margin-right:.45rem; }
+
+.wl-meta { display:flex; gap:.3rem 1rem; flex-wrap:wrap; align-items:center;
+  padding:.1rem .8rem .5rem 6.5rem;
+  font-family:var(--mono); font-size:var(--t-meta); color:var(--ink-3); }
+.wl-meta a { color:var(--accent-ink); }
+/* Six agents finding one defect is corroboration, and corroboration is
+   evidence. One tick per reader, coloured by role. */
+.wl-roles { display:inline-flex; gap:2px; }
+.wl-role { width:5px; height:11px; border-radius:1px; background:var(--line-strong); }
+.wl-role-adversary { background:var(--lane-review-ink); }
+.wl-role-reviewer  { background:var(--lane-plan-ink); }
+.wl-role-breaker   { background:var(--green); }
+.wl-role-computed  { background:var(--ink-3); }
+
+.wl-note-row { padding:.1rem .8rem .55rem 6.5rem; }
+.wl-note { display:block; width:100%; font:inherit; font-size:var(--t-small);
+  padding:.3rem .45rem; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--surface-lift); color:var(--ink); }
+/* The two choices, in the ruling column of the summary row -- so a row you
+   have already read is ruled without reopening it, and the column reads down
+   as your own progress: empty, then filled. */
+.wl-acts { display:flex; gap:.25rem; justify-content:flex-end; }
+.wl-act { font-family:var(--cond); font-size:var(--t-label); font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; padding:.18rem .4rem .12rem;
+  background:var(--surface); border:1px solid var(--line-strong);
+  border-radius:2px; color:var(--ink-2); cursor:pointer; }
+.wl-act:hover { background:var(--surface-lift); color:var(--ink); border-color:var(--ink-3); }
+.wl-act[disabled] { opacity:.5; cursor:not-allowed; }
+
+/* The same gutter the quotations above it use, so `YOUR NOTE` lines up under
+   `THE ARBITER` and the file basenames rather than starting somewhere of its
+   own. Every other line in this body says whose words it carries. */
+.wl-ruled { display:grid; grid-template-columns:7.5rem minmax(0,1fr) auto;
+  gap:.5rem .7rem; align-items:baseline;
+  padding:.34rem .8rem .55rem 6.5rem; border-top:1px solid var(--surface-sunk);
+  font-size:var(--t-small); color:var(--ink-2); }
+.wl-ruled .wl-who { padding-top:.15rem; }
+.wl-ruled-t { min-width:0; line-height:1.55; }
+.wl-ruled-go { color:var(--accent-ink); white-space:nowrap; font-size:var(--t-meta); }
+
+.wl-exit .rw-route { margin:0; }
+
+@media (max-width: 860px) {
+  .wl-q, .wl-ruled { grid-template-columns:1fr; gap:.1rem; }
+  .wl-body, .wl-meta, .wl-note-row, .wl-ruled { padding-left:.8rem; }
+  .wl-head { grid-template-columns:.85rem 4.4rem minmax(0,1fr); row-gap:.25rem; }
+  .wl-was, .wl-mine { grid-column:2 / -1; text-align:left; }
+  .wl-acts { justify-content:flex-start; }
+  .rw-filed-row { grid-template-columns:6.2rem minmax(0,1fr); }
+  .rw-on { grid-column:2; }
+  .rw-route-foot { flex-direction:column; }
+}
+/* The arbiter returning nothing is not a category of finding, it is a fact
+   about this run, so it is said once at the top rather than made the shape of
+   the list underneath. */
+.wl-rule-warn { border-left:3px solid var(--amber); background:var(--amber-wash); }
+/* Waiting on a person is not the same event as a run in flight, and a strip
+   saying the second in both cases would contradict the station lamp two inches
+   below it, which says "questions · you". Amber, because it is a thing to do
+   rather than a thing to watch. */
+.is-waiting .superseded-strip { border-left:3px solid var(--accent); background:var(--accent-wash); }
+
+/* ==========================================================================
+   FALLBACK LANES — where each camp of agents goes when its route says no.
+
+   Beside the harnesses, because it is the same question asked about a
+   different day. A fallback is chosen at rest and taken at 2am: the moment a
+   route reaches its ceiling is the moment nobody is reading, so the only place
+   it can be looked at is in advance.
+   ========================================================================== */
+.rr-fb { font-size: var(--t-meta); color: var(--ink-3); text-align: right; }
+
+.lane-card { border: 1px solid var(--line); border-left: 3px solid var(--lane-plan-ink);
+  border-radius: var(--radius); background: var(--surface); padding: .6rem .75rem; }
+.lane-head { display: flex; align-items: baseline; gap: .5rem; }
+.lane-head b { font-family: var(--cond); font-size: var(--t-head); font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; }
+.lane-head .dim { margin-left: auto; font-size: var(--t-meta); }
+.lane-model { font-size: var(--t-small); color: var(--ink); margin: .2rem 0 .35rem; }
+.lane-note { margin: 0 0 .4rem; font-size: var(--t-small); color: var(--ink-2); line-height: 1.5; }
+.lane-who { margin: 0; font-size: var(--t-meta); color: var(--ink-3); }
+
+/* Green is not decoration here. The claim is that the split survives the day
+   both routes run out, and that is the only day it matters. */
+.lane-ok { margin: .7rem 0 0; padding: .5rem .7rem; font-size: var(--t-small);
+  color: var(--ink-2); background: var(--green-wash);
+  border-left: 3px solid var(--green); border-radius: var(--radius); }
+.lane-warn { margin: .7rem 0 0; padding: .55rem .8rem; font-size: var(--t-small);
+  color: var(--ink-2); background: var(--amber-wash);
+  border-left: 3px solid var(--amber); border-radius: var(--radius); }
+.lane-warn b { display: block; margin-bottom: .3rem; color: var(--ink); }
+.lane-warn ul { margin: 0; padding-left: 1.1rem; }
+.lane-warn li { margin: .25rem 0; line-height: 1.5; }
+

@@ -1,0 +1,198 @@
+{
+ "blob": "78f0235c49a21841eb4c27d8300c0fc58a33c2d5",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "state_path",
+   "read_state",
+   "write_state",
+   "Jobs",
+   "check_machine",
+   "can_start_docker",
+   "start_docker",
+   "install_route",
+   "route_takes_key",
+   "connected_routes",
+   "harness_tag",
+   "harness_ready",
+   "build_harness",
+   "crew_plan",
+   "staff",
+   "crew_summary"
+  ],
+  "domain_terms": [
+   "crew staffing",
+   "harness",
+   "model route",
+   "commissioning check",
+   "feature limits"
+  ],
+  "entities_defined": [
+   "Jobs"
+  ],
+  "entities_read": [],
+  "entities_written": [
+   "setup.json"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 58,
+    "name": "state_path"
+   },
+   {
+    "calls": [],
+    "line": 62,
+    "name": "read_state"
+   },
+   {
+    "calls": [
+     "read_state",
+     "write_atomic"
+    ],
+    "line": 73,
+    "name": "write_state"
+   },
+   {
+    "calls": [],
+    "line": 83,
+    "name": "Jobs"
+   },
+   {
+    "calls": [],
+    "line": 91,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 95,
+    "name": "running"
+   },
+   {
+    "calls": [],
+    "line": 98,
+    "name": "start"
+   },
+   {
+    "calls": [],
+    "line": 122,
+    "name": "get"
+   },
+   {
+    "calls": [],
+    "line": 125,
+    "name": "as_dict"
+   },
+   {
+    "calls": [],
+    "line": 128,
+    "name": "any_running"
+   },
+   {
+    "calls": [
+     "kill"
+    ],
+    "line": 134,
+    "name": "_run"
+   },
+   {
+    "calls": [
+     "docker_available",
+     "docker_disk",
+     "self_test"
+    ],
+    "line": 148,
+    "name": "check_machine"
+   },
+   {
+    "calls": [],
+    "line": 171,
+    "name": "can_start_docker"
+   },
+   {
+    "calls": [
+     "_run",
+     "docker_available"
+    ],
+    "line": 176,
+    "name": "start_docker"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 193,
+    "name": "install_route"
+   },
+   {
+    "calls": [],
+    "line": 208,
+    "name": "route_takes_key"
+   },
+   {
+    "calls": [],
+    "line": 213,
+    "name": "connected_routes"
+   },
+   {
+    "calls": [
+     "harness_image_tag"
+    ],
+    "line": 237,
+    "name": "harness_tag"
+   },
+   {
+    "calls": [
+     "image_exists"
+    ],
+    "line": 245,
+    "name": "harness_ready"
+   },
+   {
+    "calls": [
+     "harness_image"
+    ],
+    "line": 249,
+    "name": "build_harness"
+   },
+   {
+    "calls": [
+     "staffing_suggestions"
+    ],
+    "line": 255,
+    "name": "crew_plan"
+   },
+   {
+    "calls": [
+     "crew_plan",
+     "write_staffing"
+    ],
+    "line": 281,
+    "name": "staff"
+   },
+   {
+    "calls": [
+     "independence_problems"
+    ],
+    "line": 286,
+    "name": "crew_summary"
+   }
+  ],
+  "imports": [
+   "factory/containers.py",
+   "factory/egress.py",
+   "factory/procs.py",
+   "factory/config.py",
+   "factory/files.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker"
+  ],
+  "purpose": "Measures five commissioning requirements before any build runs: Docker availability and disk space, the egress path, at least one connected account, built harnesses for each route, staffed crew, and confirmed feature limits. Runs slow checks as background jobs and reports them to the setup screen.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

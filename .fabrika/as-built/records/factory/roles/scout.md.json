@@ -1,0 +1,26 @@
+{
+ "blob": "d395d0669cbdc1372e3e0f38526a4fe11fbf3507",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "duplication detection",
+   "observed conventions",
+   "repository guides",
+   "symbol index",
+   "intent"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Guidance for the scout agent role, which reads a repository before any work is decided to report what already exists, what conventions are observed, and where risks of breakage lie.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

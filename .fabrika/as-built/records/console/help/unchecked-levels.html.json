@@ -1,0 +1,26 @@
+{
+ "blob": "1753bd5e77a60641372c8d65f05873119a5145df",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "test level",
+   "criterion",
+   "test runner",
+   "blind test",
+   "verdict"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Explains when test levels cannot be automatically checked and users must manually verify those criteria during review.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,128 @@
+{
+ "blob": "3ddab8a3df78dc7a2881e6cbe3ccc391c5605d5b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "CutMixin"
+  ],
+  "domain_terms": [
+   "architect plan",
+   "cut review",
+   "units",
+   "seams",
+   "objection",
+   "ruling"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState",
+   "Plan",
+   "Spec",
+   "CheckObjection",
+   "CheckReport",
+   "PlanRevision"
+  ],
+  "entities_written": [
+   "plan",
+   "plan_check",
+   "cut_review",
+   "cut_ruling"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "spec_text"
+    ],
+    "line": 30,
+    "name": "_architect_prompt"
+   },
+   {
+    "calls": [
+     "_save",
+     "_emit"
+    ],
+    "line": 35,
+    "name": "_stop_at_cut"
+   },
+   {
+    "calls": [
+     "_phase",
+     "llm.ask",
+     "store.append",
+     "_guidance",
+     "reused",
+     "_check_plan",
+     "pending_ruling",
+     "cut_open",
+     "_apply_ruling"
+    ],
+    "line": 42,
+    "name": "_cut"
+   },
+   {
+    "calls": [
+     "_phase",
+     "llm.ask",
+     "anchored_objections",
+     "settle_objections",
+     "store.append",
+     "units_changed",
+     "cut_facts",
+     "_stop_at_cut",
+     "objection_block"
+    ],
+    "line": 74,
+    "name": "_check_plan"
+   },
+   {
+    "calls": [
+     "pending_ruling",
+     "merge_units",
+     "_phase",
+     "llm.ask",
+     "store.append",
+     "cut_facts",
+     "_stop_at_cut"
+    ],
+    "line": 158,
+    "name": "_apply_ruling"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "store.append",
+     "_save",
+     "_emit"
+    ],
+    "line": 227,
+    "name": "rule_on_cut"
+   }
+  ],
+  "imports": [
+   "factory/projects.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/ownership.py",
+   "factory/pipeline/checks/cut.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "a model provider"
+  ],
+  "purpose": "Manages the architect's plan (the cut), validates it through a plan checker, and applies human rulings when plan review requires intervention.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "rule_on_cut",
+    "kind": "export",
+    "method": "",
+    "name": "rule_on_cut"
+   }
+  ]
+ }
+}

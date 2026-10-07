@@ -1,0 +1,76 @@
+{
+ "blob": "a1b9e1f54ca3a91cee51b84ad5b290540f4f562d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "current_record",
+   "current_payload",
+   "irreversible_changes",
+   "promoted_this_pass",
+   "resume_round",
+   "recorded_attempt",
+   "guides_held"
+  ],
+  "domain_terms": [
+   "evidence ledger",
+   "spec",
+   "findings",
+   "repair rounds",
+   "breaker probes"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "Spec"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 12,
+    "name": "current_record"
+   },
+   {
+    "calls": [
+     "current_record"
+    ],
+    "line": 34,
+    "name": "current_payload"
+   },
+   {
+    "calls": [],
+    "line": 54,
+    "name": "irreversible_changes"
+   },
+   {
+    "calls": [],
+    "line": 77,
+    "name": "promoted_this_pass"
+   },
+   {
+    "calls": [],
+    "line": 98,
+    "name": "resume_round"
+   },
+   {
+    "calls": [],
+    "line": 118,
+    "name": "recorded_attempt"
+   },
+   {
+    "calls": [],
+    "line": 192,
+    "name": "guides_held"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Queries the append-only evidence ledger to retrieve current state, prior attempts, and the history of spec and repair decisions.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

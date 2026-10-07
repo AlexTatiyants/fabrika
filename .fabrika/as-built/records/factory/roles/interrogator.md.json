@@ -1,0 +1,27 @@
+{
+ "blob": "53afcefcb25ac4dcee32b3f9d18afb78b076006b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "intent",
+   "specification",
+   "question",
+   "ambiguity",
+   "criterion",
+   "behaviour"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Role definition for an agent that asks the human questions needed to specify work before any worker starts, hunting for ambiguities in boundaries, failure semantics, authority, visibility, and data lifecycle.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "blob": "64c001901dc4322eaf72411239668f8240d49bcb",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "subsystem",
+   "system map",
+   "product",
+   "support",
+   "file"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Documents the system map view of the as-built report: how subsystems are grouped and connected, reading the map, product vs. support subsystems, and viewing file details and subsystem pages.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

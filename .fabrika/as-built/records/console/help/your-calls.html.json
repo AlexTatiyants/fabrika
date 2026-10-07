@@ -1,0 +1,26 @@
+{
+ "blob": "27b32d45f036cb142f6e844b4111f56a037ebd09",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "decision",
+   "call",
+   "objection",
+   "repair loop",
+   "dismissal"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation explaining how to review and categorize decisions awaiting judgment in the review console.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

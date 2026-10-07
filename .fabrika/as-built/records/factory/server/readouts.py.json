@@ -1,0 +1,256 @@
+{
+ "blob": "01394e8582881c88da3e5875d8e8f984b31fdf34",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "READOUT_KINDS",
+   "READOUT_CAP",
+   "step_readout",
+   "readouts_for"
+  ],
+  "domain_terms": [
+   "readout",
+   "station",
+   "ledger",
+   "turn",
+   "criteria",
+   "findings"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "step records",
+   "scout records",
+   "interrogation records",
+   "spec records",
+   "plan records",
+   "worker records",
+   "gate results",
+   "review records",
+   "repair records"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 53,
+    "name": "_words"
+   },
+   {
+    "calls": [],
+    "line": 64,
+    "name": "_first_plain_line"
+   },
+   {
+    "calls": [
+     "_words"
+    ],
+    "line": 88,
+    "name": "_entry"
+   },
+   {
+    "calls": [],
+    "line": 106,
+    "name": "_section"
+   },
+   {
+    "calls": [],
+    "line": 123,
+    "name": "_last"
+   },
+   {
+    "calls": [
+     "_entry"
+    ],
+    "line": 128,
+    "name": "_paths"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 140,
+    "name": "_readout_scout"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 153,
+    "name": "_readout_interrogator"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 166,
+    "name": "_readout_spec_writer"
+   },
+   {
+    "calls": [
+     "_entry"
+    ],
+    "line": 186,
+    "name": "_objection_rows"
+   },
+   {
+    "calls": [
+     "_last",
+     "_objection_rows",
+     "_section"
+    ],
+    "line": 201,
+    "name": "_readout_spec_checker"
+   },
+   {
+    "calls": [
+     "_last",
+     "_objection_rows",
+     "_entry",
+     "_section"
+    ],
+    "line": 208,
+    "name": "_readout_plan_checker"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 227,
+    "name": "_readout_architect"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 245,
+    "name": "_readout_oracle"
+   },
+   {
+    "calls": [
+     "_paths",
+     "_entry",
+     "_section"
+    ],
+    "line": 263,
+    "name": "_units_readout"
+   },
+   {
+    "calls": [
+     "_last",
+     "_section",
+     "_paths",
+     "_entry"
+    ],
+    "line": 283,
+    "name": "_readout_integrator"
+   },
+   {
+    "calls": [
+     "gate_outcome",
+     "is_green"
+    ],
+    "line": 296,
+    "name": "_gate_words"
+   },
+   {
+    "calls": [
+     "_gate_words",
+     "_entry",
+     "_section"
+    ],
+    "line": 313,
+    "name": "_readout_gates"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 377,
+    "name": "_readout_breaker"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 402,
+    "name": "_readout_qa"
+   },
+   {
+    "calls": [
+     "_entry",
+     "_section"
+    ],
+    "line": 416,
+    "name": "_readout_review"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 460,
+    "name": "_readout_arbiter"
+   },
+   {
+    "calls": [
+     "_last",
+     "_entry",
+     "_section"
+    ],
+    "line": 477,
+    "name": "_readout_repair_plan"
+   },
+   {
+    "calls": [],
+    "line": 514,
+    "name": "step_readout"
+   },
+   {
+    "calls": [
+     "step_readout"
+    ],
+    "line": 539,
+    "name": "readouts_for"
+   }
+  ],
+  "imports": [
+   "factory/gates.py",
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Transforms work records from the ledger into condensed \"readouts\" \u2014 one-screen summaries of what each station produced, suitable for the console UI and small enough to travel with the call tree log.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "step_readout",
+    "kind": "export",
+    "method": "",
+    "name": "step_readout"
+   },
+   {
+    "handler": "readouts_for",
+    "kind": "export",
+    "method": "",
+    "name": "readouts_for"
+   }
+  ]
+ }
+}

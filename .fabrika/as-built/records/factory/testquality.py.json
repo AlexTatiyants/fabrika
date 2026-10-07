@@ -1,0 +1,60 @@
+{
+ "blob": "76693c8f3c226c2501d6bb065fd9c3564ea2aebc",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "hollow_tests"
+  ],
+  "domain_terms": [
+   "hollow test",
+   "assertion",
+   "test case",
+   "check"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "_python",
+     "_script"
+    ],
+    "line": 30,
+    "name": "hollow_tests"
+   },
+   {
+    "calls": [],
+    "line": 40,
+    "name": "_decorated"
+   },
+   {
+    "calls": [
+     "_decorated"
+    ],
+    "line": 47,
+    "name": "_python"
+   },
+   {
+    "calls": [],
+    "line": 90,
+    "name": "_script"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Detects test quality issues by analyzing source code without execution\u2014finds hollow tests (assertions on constants, no assertions at all, switched-off tests, silently caught exceptions).",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "hollow_tests",
+    "kind": "export",
+    "method": "",
+    "name": "hollow_tests"
+   }
+  ]
+ }
+}

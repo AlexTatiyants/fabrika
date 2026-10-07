@@ -1,0 +1,396 @@
+{
+ "blob": "f0693ecd93db4b4c83eaeddc20a3c44918f8c9a0",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "AGENT_FILES",
+   "DESIGN_PATH",
+   "AGENTS_PATH",
+   "CLAUDE_PATH",
+   "SKILL_DIRS",
+   "SKILL_DIR_CHOICES",
+   "TEXT_SUFFIXES",
+   "SKIP_PARTS",
+   "DESIGN_LINE",
+   "LAYER_WORDS",
+   "LAYER_ORDER",
+   "TESTING_ONLY",
+   "FILE_SCOPED",
+   "UI_SUFFIXES",
+   "PRECEDENCE",
+   "Reads",
+   "Bridge",
+   "tracked",
+   "read_at",
+   "digest",
+   "detect",
+   "references",
+   "skill_description",
+   "found",
+   "applies",
+   "touches_ui",
+   "select",
+   "testing_sections",
+   "render",
+   "section",
+   "harness_note",
+   "skills_home",
+   "skill_clashes",
+   "index",
+   "verify_citations",
+   "edited",
+   "PROTECTED_GLOBS",
+   "has_ui",
+   "design_tokens",
+   "design_front_matter",
+   "design_md",
+   "agents_md",
+   "claude_md",
+   "mentions_design",
+   "working_guides",
+   "offers",
+   "STYLE_CATEGORIES",
+   "DESIGN_LINT_COMMAND"
+  ],
+  "domain_terms": [
+   "guides",
+   "agents",
+   "harness",
+   "skills",
+   "roles"
+  ],
+  "entities_defined": [
+   "Reads",
+   "Bridge"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "git.run"
+    ],
+    "line": 97,
+    "name": "_git"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 101,
+    "name": "tracked"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 107,
+    "name": "read_at"
+   },
+   {
+    "calls": [],
+    "line": 113,
+    "name": "digest"
+   },
+   {
+    "calls": [],
+    "line": 117,
+    "name": "_skipped"
+   },
+   {
+    "calls": [],
+    "line": 121,
+    "name": "_skill"
+   },
+   {
+    "calls": [
+     "_skipped"
+    ],
+    "line": 135,
+    "name": "detect"
+   },
+   {
+    "calls": [],
+    "line": 157,
+    "name": "references"
+   },
+   {
+    "calls": [],
+    "line": 174,
+    "name": "skill_description"
+   },
+   {
+    "calls": [
+     "tracked",
+     "detect",
+     "read_at",
+     "references",
+     "_skipped"
+    ],
+    "line": 186,
+    "name": "found"
+   },
+   {
+    "calls": [],
+    "line": 219,
+    "name": "_order"
+   },
+   {
+    "calls": [],
+    "line": 226,
+    "name": "applies"
+   },
+   {
+    "calls": [],
+    "line": 234,
+    "name": "touches_ui"
+   },
+   {
+    "calls": [],
+    "line": 238,
+    "name": "_only_imports"
+   },
+   {
+    "calls": [
+     "applies",
+     "touches_ui"
+    ],
+    "line": 245,
+    "name": "select"
+   },
+   {
+    "calls": [],
+    "line": 280,
+    "name": "_sections"
+   },
+   {
+    "calls": [
+     "_sections"
+    ],
+    "line": 299,
+    "name": "testing_sections"
+   },
+   {
+    "calls": [],
+    "line": 315,
+    "name": "_headings"
+   },
+   {
+    "calls": [
+     "read_at",
+     "tracked",
+     "references",
+     "_headings",
+     "digest"
+    ],
+    "line": 319,
+    "name": "render"
+   },
+   {
+    "calls": [],
+    "line": 381,
+    "name": "section"
+   },
+   {
+    "calls": [
+     "_git"
+    ],
+    "line": 445,
+    "name": "_tracked"
+   },
+   {
+    "calls": [
+     "_inline"
+    ],
+    "line": 450,
+    "name": "_inline"
+   },
+   {
+    "calls": [
+     "_tracked"
+    ],
+    "line": 468,
+    "name": "bridge"
+   },
+   {
+    "calls": [],
+    "line": 536,
+    "name": "unbridge"
+   },
+   {
+    "calls": [],
+    "line": 553,
+    "name": "_loaded"
+   },
+   {
+    "calls": [
+     "applies",
+     "touches_ui",
+     "_loaded"
+    ],
+    "line": 566,
+    "name": "harness_note"
+   },
+   {
+    "calls": [
+     "_skill",
+     "_n"
+    ],
+    "line": 604,
+    "name": "skills_home"
+   },
+   {
+    "calls": [],
+    "line": 619,
+    "name": "skill_clashes"
+   },
+   {
+    "calls": [],
+    "line": 628,
+    "name": "index"
+   },
+   {
+    "calls": [],
+    "line": 646,
+    "name": "_norm"
+   },
+   {
+    "calls": [],
+    "line": 650,
+    "name": "_capped"
+   },
+   {
+    "calls": [
+     "_norm",
+     "_capped"
+    ],
+    "line": 657,
+    "name": "verify_citations"
+   },
+   {
+    "calls": [],
+    "line": 688,
+    "name": "edited"
+   },
+   {
+    "calls": [
+     "_skipped"
+    ],
+    "line": 710,
+    "name": "has_ui"
+   },
+   {
+    "calls": [
+     "_skipped"
+    ],
+    "line": 719,
+    "name": "design_tokens"
+   },
+   {
+    "calls": [],
+    "line": 761,
+    "name": "_token_key"
+   },
+   {
+    "calls": [],
+    "line": 769,
+    "name": "_yaml_scalar"
+   },
+   {
+    "calls": [
+     "_token_key"
+    ],
+    "line": 775,
+    "name": "design_front_matter"
+   },
+   {
+    "calls": [
+     "_yaml"
+    ],
+    "line": 821,
+    "name": "_yaml"
+   },
+   {
+    "calls": [
+     "design_front_matter",
+     "_yaml"
+    ],
+    "line": 840,
+    "name": "design_md"
+   },
+   {
+    "calls": [],
+    "line": 857,
+    "name": "_as_run_by_hand"
+   },
+   {
+    "calls": [
+     "_as_run_by_hand"
+    ],
+    "line": 864,
+    "name": "agents_md"
+   },
+   {
+    "calls": [],
+    "line": 880,
+    "name": "claude_md"
+   },
+   {
+    "calls": [],
+    "line": 885,
+    "name": "_n"
+   },
+   {
+    "calls": [],
+    "line": 889,
+    "name": "mentions_design"
+   },
+   {
+    "calls": [
+     "_git",
+     "edited",
+     "tracked",
+     "references",
+     "digest"
+    ],
+    "line": 893,
+    "name": "working_guides"
+   },
+   {
+    "calls": [
+     "_offers",
+     "digest",
+     "_n"
+    ],
+    "line": 925,
+    "name": "offers"
+   },
+   {
+    "calls": [
+     "has_ui",
+     "design_md",
+     "mentions_design",
+     "agents_md",
+     "claude_md",
+     "_n"
+    ],
+    "line": 958,
+    "name": "_offers"
+   }
+  ],
+  "imports": [
+   "factory/git.py",
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git (the local git checkout)",
+   "filesystem"
+  ],
+  "purpose": "Reads and manages guides\u2014the repository's AGENTS.md, CLAUDE.md, DESIGN.md, and skill files\u2014that instruct coding agents how to write code. Detects which guides bind at a given commit, delivers the relevant ones to agents within token budgets, and bridges guides to checkouts so runners that don't read all folders still see the rules.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

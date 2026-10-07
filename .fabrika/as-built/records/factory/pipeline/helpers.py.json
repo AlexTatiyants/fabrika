@@ -1,0 +1,60 @@
+{
+ "blob": "26001e3ba58a32bcf9d620b13d401461d61fe8f9",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "_dedupe_writes",
+   "_round_unit_id",
+   "_renumber_decisions"
+  ],
+  "domain_terms": [
+   "file write",
+   "deduplication",
+   "unit",
+   "decision",
+   "namespace"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FileWrite",
+   "WorkerOutput",
+   "IntegrationReport",
+   "Decision"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "len"
+    ],
+    "line": 17,
+    "name": "_dedupe_writes"
+   },
+   {
+    "calls": [
+     "strip",
+     "fullmatch"
+    ],
+    "line": 30,
+    "name": "_round_unit_id"
+   },
+   {
+    "calls": [
+     "model_copy"
+    ],
+    "line": 46,
+    "name": "_renumber_decisions"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Small utilities for the orchestrator to process worker outputs, including deduplication, unit renaming, and decision namespacing.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

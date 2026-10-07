@@ -1,0 +1,140 @@
+{
+ "blob": "e311ed7355dcf36116903009ed6b82b911197f5d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "check_setup",
+   "check_unit_environments",
+   "check_agent_failures",
+   "AGENT_FAILURES",
+   "HEADROOM_TIGHT",
+   "check_headroom",
+   "observed_draw",
+   "check_route_fallbacks",
+   "check_environment_overrides",
+   "check_unit_delivery",
+   "check_independence",
+   "check_budget_coverage",
+   "check_harness_delivery",
+   "check_write_collisions"
+  ],
+  "domain_terms": [
+   "agents",
+   "findings",
+   "gates",
+   "plans",
+   "routes",
+   "units"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "EvidenceStore"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 16,
+    "name": "check_setup"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 50,
+    "name": "check_unit_environments"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 151,
+    "name": "check_agent_failures"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 221,
+    "name": "check_headroom"
+   },
+   {
+    "calls": [],
+    "line": 305,
+    "name": "observed_draw"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 360,
+    "name": "check_route_fallbacks"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 413,
+    "name": "check_environment_overrides"
+   },
+   {
+    "calls": [],
+    "line": 490,
+    "name": "_gap_line"
+   },
+   {
+    "calls": [
+     "Finding",
+     "_gap_line"
+    ],
+    "line": 505,
+    "name": "check_unit_delivery"
+   },
+   {
+    "calls": [
+     "independence_problems",
+     "Finding",
+     "model_family"
+    ],
+    "line": 588,
+    "name": "check_independence"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 625,
+    "name": "check_budget_coverage"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 676,
+    "name": "check_harness_delivery"
+   },
+   {
+    "calls": [
+     "Finding"
+    ],
+    "line": 745,
+    "name": "check_write_collisions"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/executors.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Verification checks on agent runs and environments: missing agents, failed setups, exhausted budgets, delivery gaps, and configuration problems. Returns findings to report on the quality and completeness of the verification pipeline.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

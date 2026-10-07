@@ -1,0 +1,112 @@
+{
+ "blob": "59d0d725413043519f049e28057ee71151abae93",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "criterion_files",
+   "disclaimed_criteria",
+   "compute_trace",
+   "change_size",
+   "compute_unclaimed",
+   "DiffStat"
+  ],
+  "domain_terms": [
+   "acceptance criteria",
+   "traceability",
+   "files",
+   "workers",
+   "decisions",
+   "tests"
+  ],
+  "entities_defined": [
+   "DiffStat"
+  ],
+  "entities_read": [
+   "Decision",
+   "FileWrite",
+   "IntegrationReport",
+   "OracleSuite",
+   "Plan",
+   "Spec",
+   "TraceRow",
+   "UnclaimedFile",
+   "WorkerOutput"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "disclaimed_criteria"
+    ],
+    "line": 28,
+    "name": "criterion_files"
+   },
+   {
+    "calls": [],
+    "line": 100,
+    "name": "disclaimed_criteria"
+   },
+   {
+    "calls": [
+     "criterion_files"
+    ],
+    "line": 119,
+    "name": "compute_trace"
+   },
+   {
+    "calls": [],
+    "line": 172,
+    "name": "change_size"
+   },
+   {
+    "calls": [
+     "criterion_files",
+     "change_size"
+    ],
+    "line": 194,
+    "name": "compute_unclaimed"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Computes traceability in two directions: which files implement which acceptance criteria, and which files are not accounted for by any criterion.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "criterion_files",
+    "kind": "export",
+    "method": "",
+    "name": "criterion_files"
+   },
+   {
+    "handler": "disclaimed_criteria",
+    "kind": "export",
+    "method": "",
+    "name": "disclaimed_criteria"
+   },
+   {
+    "handler": "compute_trace",
+    "kind": "export",
+    "method": "",
+    "name": "compute_trace"
+   },
+   {
+    "handler": "change_size",
+    "kind": "export",
+    "method": "",
+    "name": "change_size"
+   },
+   {
+    "handler": "compute_unclaimed",
+    "kind": "export",
+    "method": "",
+    "name": "compute_unclaimed"
+   }
+  ]
+ }
+}

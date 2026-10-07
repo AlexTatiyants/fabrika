@@ -1,0 +1,27 @@
+<p class="lead">A feature's stage is what you can do with it next, and the console opens the screen that stage
+  needs. These are the words on the rail and in a project's feature list.</p>
+
+<h4>The stages</h4>
+<ul>
+  <li><i>intake</i>: the scout and the interrogator are reading the repository.</li>
+  <li><i>awaiting answers</i>: the questions are waiting on you.</li>
+  <li><i>writing the spec</i>: the spec writer and the spec checker are at work.</li>
+  <li><i>awaiting freeze</i>: the spec is written, and waits for you to approve it or send it back.</li>
+  <li><i>awaiting plan review</i>: the architect and the plan checker disagree about the cut, and you rule.</li>
+  <li><i>waiting for the plan</i>: approved, and held until a subscription's usage window resets.</li>
+  <li><i>building</i>: the build and its review are running. Nothing is needed from you.</li>
+  <li><i>awaiting verdict</i>: a packet is ready for your ruling.</li>
+  <li><i>accepted</i> or <i>rejected</i>: you've ruled. Everything stays on the record.</li>
+  <li><i>failed</i>: a station stopped the line. It can be resumed.</li>
+</ul>
+<p>A stage that waits on you is drawn in the accent colour, and the rail's <b>Needs you</b> filter shows only
+  those. A packet waiting on you also says which way it leans: <i>ready</i>, <i>rulings</i>, <i>do not ship</i>
+  or <i>reject</i>.</p>
+
+<h4>The steps</h4>
+<p>Under a feature's name is a row of steps: <b>intent</b> · <b>scout</b> · <b>questions</b> · <b>spec</b> ·
+  <b>build</b> · <b>review</b>, and then <b>runs</b>. The stage decides where you land, not what you may look at:
+  any step whose work exists can be opened. A step the feature has moved past is read as it was, and nothing on
+  it can be changed. The step that owes you something says what, such as <i>questions · you</i>.</p>
+<p><b>runs</b> is every run of the feature, the first build, each verify again and each repair round, as a
+  timeline and a call tree. See <a data-help="watching-the-build">Watching the build</a>.</p>

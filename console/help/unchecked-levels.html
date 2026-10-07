@@ -1,0 +1,27 @@
+<p class="lead">When a test level has no test runner, or its tests can't clean up after themselves, Fabrika
+  doesn't check criteria at that level. You check them by hand when you review.</p>
+
+<h4>Why skip rather than try</h4>
+<p>Tests that can't run cleanly fail for reasons that have nothing to do with the code: another test's
+  leftovers, a missing runner. A failure like that looks exactly like a broken feature, so it would cost you
+  time and tell you nothing. Fabrika leaves those criteria to you instead.</p>
+
+<h4>Where you'll see it</h4>
+<ul>
+  <li><b>The project page</b> says how many levels are checked, and which aren't, at the top and on each
+    level's row.</li>
+  <li><b>The spec</b> says, above the criteria, how many won't be checked by Fabrika, and tags each one
+    <i>you check</i>. Freezing the spec agrees to that.</li>
+  <li><b>Review</b> starts with <i>Check these yourself</i>: each criterion with how to check it. Mark it
+    <i>works</i> or <i>doesn't</i>. <i>Doesn't</i> becomes an ordinary call you can send for repair.</li>
+  <li><b>The verdict</b> is never a plain <i>Ships</i> while criteria went untested. At best it's <i>Ships,
+    with rulings</i>, and the headline says what's left for you to check.</li>
+</ul>
+
+<h4>What still runs</h4>
+<p>Everything else: your project's own checks, including any existing test suite at that level, and every
+  criterion at the levels Fabrika can test.</p>
+
+<h4>Changing it</h4>
+<p>Set up the missing level (see <a data-help="changing-your-repository">When Fabrika asks you to change your
+  repository</a>) and re-survey. The next feature is checked at that level too.</p>

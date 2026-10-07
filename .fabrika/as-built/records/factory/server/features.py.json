@@ -1,0 +1,110 @@
+{
+ "blob": "7696695ae22e5d1f09222c60ccbb7bda25b443a4",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "features",
+   "projects",
+   "specifications",
+   "phases",
+   "corrections",
+   "reviews"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 25,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "Factory"
+    ],
+    "line": 40,
+    "name": "all_features"
+   },
+   {
+    "calls": [],
+    "line": 49,
+    "name": "list_features"
+   },
+   {
+    "calls": [],
+    "line": 53,
+    "name": "create_feature"
+   },
+   {
+    "calls": [],
+    "line": 69,
+    "name": "intake"
+   },
+   {
+    "calls": [
+     "FeatureState",
+     "is_orphaned",
+     "PHASE_NAMES",
+     "current_payload",
+     "current_record",
+     "unchecked_levels",
+     "_system_change_view",
+     "Sandbox"
+    ],
+    "line": 79,
+    "name": "get_feature"
+   }
+  ],
+  "imports": [
+   "factory/pipeline/__init__.py",
+   "factory/projects.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/workspace.py",
+   "factory/server/as_built.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "the local file system"
+  ],
+  "purpose": "Registers HTTP endpoints for querying and creating features, providing comprehensive state information for the review interface.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "all_features",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/features"
+   },
+   {
+    "handler": "list_features",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features"
+   },
+   {
+    "handler": "create_feature",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/features"
+   },
+   {
+    "handler": "get_feature",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}"
+   }
+  ]
+ }
+}

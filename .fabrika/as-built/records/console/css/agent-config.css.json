@@ -1,0 +1,40 @@
+{
+ "blob": "c537700fc038d248ed32a3a976c9a2a70b930d99",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ac-crumb",
+   "ac-entry",
+   "ac-sides",
+   "ac-side",
+   "ac-prov",
+   "ac-checks",
+   "ac-levels",
+   "ac-board",
+   "ac-cell",
+   "ac-chip",
+   "ac-selbar",
+   "ac-changes"
+  ],
+  "domain_terms": [
+   "agent",
+   "configuration",
+   "team structure",
+   "assignment level",
+   "provider",
+   "board"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the agent configuration interface showing the team structure, assignment levels, and the board displaying who sits where and what writes would change.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

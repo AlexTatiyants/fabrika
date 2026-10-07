@@ -1,0 +1,55 @@
+{
+ "blob": "d4deb477f114a2bfb4db2ebd814453383aeda7c5",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "protected_paths",
+   "project_files_in",
+   "is_protected"
+  ],
+  "domain_terms": [
+   "verification surface",
+   "protected paths",
+   "blind tests",
+   "breaker tests"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "is_seam_check"
+    ],
+    "line": 16,
+    "name": "protected_paths"
+   },
+   {
+    "calls": [],
+    "line": 73,
+    "name": "project_files_in"
+   },
+   {
+    "calls": [
+     "is_seam_check"
+    ],
+    "line": 99,
+    "name": "is_protected"
+   }
+  ],
+  "imports": [
+   "factory/config.py",
+   "factory/workspace.py",
+   "factory/pipeline/checks/seams.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "git"
+  ],
+  "purpose": "Identifies which files in a repository are protected from repair modifications, including test directories and verification artifacts.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

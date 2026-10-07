@@ -1,0 +1,28 @@
+{
+ "blob": "323995e6c1f35114814fcc3df24d935a2ab4fa08",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "project",
+   "checks",
+   "test level",
+   "guide",
+   "environment",
+   "as-built",
+   "survey"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation describing the project management page structure, its tabs, and editing options.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

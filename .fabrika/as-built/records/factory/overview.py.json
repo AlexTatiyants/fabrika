@@ -1,0 +1,86 @@
+{
+ "blob": "d940a9a878c9acd302067d5d0f435aba631877a4",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "WAITING_ON_YOU",
+   "IN_FLIGHT",
+   "FINISHED",
+   "awaiting_ruling",
+   "cluster_findings",
+   "calls_left",
+   "spend",
+   "behind_main",
+   "feature_summary",
+   "order_waiting"
+  ],
+  "domain_terms": [
+   "feature",
+   "verdict",
+   "ruling",
+   "call",
+   "check"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 36,
+    "name": "awaiting_ruling"
+   },
+   {
+    "calls": [],
+    "line": 49,
+    "name": "cluster_findings"
+   },
+   {
+    "calls": [
+     "_get"
+    ],
+    "line": 74,
+    "name": "calls_left"
+   },
+   {
+    "calls": [],
+    "line": 93,
+    "name": "spend"
+   },
+   {
+    "calls": [
+     "git.out"
+    ],
+    "line": 134,
+    "name": "behind_main"
+   },
+   {
+    "calls": [
+     "spend"
+    ],
+    "line": 148,
+    "name": "feature_summary"
+   },
+   {
+    "calls": [],
+    "line": 175,
+    "name": "order_waiting"
+   },
+   {
+    "calls": [],
+    "line": 181,
+    "name": "_get"
+   }
+  ],
+  "imports": [
+   "factory/git.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Computes a project overview at a glance \u2014 every feature needing attention and how close each is \u2014 from the record without asking models.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

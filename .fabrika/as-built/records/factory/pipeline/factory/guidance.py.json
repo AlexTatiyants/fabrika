@@ -1,0 +1,117 @@
+{
+ "blob": "24520563123ba3240f7ce5961b0c9b7116ed3690",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "GuidanceMixin"
+  ],
+  "domain_terms": [
+   "guide",
+   "convention",
+   "role",
+   "base commit",
+   "scout"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState",
+   "Finding",
+   "ScoutReport"
+  ],
+  "entities_written": [
+   "guides_delivered"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "config.role_prompt"
+    ],
+    "line": 16,
+    "name": "role_prompt"
+   },
+   {
+    "calls": [],
+    "line": 19,
+    "name": "_base_of"
+   },
+   {
+    "calls": [
+     "guide_lib.found"
+    ],
+    "line": 23,
+    "name": "_guides_at"
+   },
+   {
+    "calls": [
+     "guide_lib.verify_citations",
+     "guide_lib.read_at",
+     "ScoutReport.model_validate"
+    ],
+    "line": 35,
+    "name": "_verify_citations"
+   },
+   {
+    "calls": [
+     "_guidance"
+    ],
+    "line": 50,
+    "name": "_oracle_guides"
+   },
+   {
+    "calls": [
+     "ScoutReport.model_validate"
+    ],
+    "line": 57,
+    "name": "_inferred"
+   },
+   {
+    "calls": [
+     "_guide_text",
+     "_inferred",
+     "guide_lib.section",
+     "store.append"
+    ],
+    "line": 63,
+    "name": "_guidance"
+   },
+   {
+    "calls": [
+     "guide_lib.select",
+     "guide_lib.render"
+    ],
+    "line": 85,
+    "name": "_guide_text"
+   },
+   {
+    "calls": [
+     "_guide_text",
+     "_inferred",
+     "guide_lib.section"
+    ],
+    "line": 96,
+    "name": "_unit_guidance"
+   },
+   {
+    "calls": [
+     "store.append"
+    ],
+    "line": 118,
+    "name": "_guides_recorder"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/guides.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the local git checkout"
+  ],
+  "purpose": "Loads and delivers repository guides and prompts to agents, caching guides by commit and selecting relevant ones based on role and affected files.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

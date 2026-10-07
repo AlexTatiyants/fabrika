@@ -1,0 +1,147 @@
+{
+ "blob": "da9dcbc5b2eed5b723cfbfc5018ec57aefa2cd2b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ACTIVE",
+   "previewOf",
+   "livePreview",
+   "minutes",
+   "call",
+   "asked",
+   "watchers",
+   "announce",
+   "useAsked",
+   "usePreviewActions",
+   "short",
+   "bare",
+   "PreviewInline",
+   "PreviewButton"
+  ],
+  "domain_terms": [
+   "preview",
+   "running app",
+   "branch",
+   "feature"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "preview",
+   "state"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 18,
+    "name": "previewOf"
+   },
+   {
+    "calls": [
+     "previewOf"
+    ],
+    "line": 21,
+    "name": "livePreview"
+   },
+   {
+    "calls": [],
+    "line": 26,
+    "name": "minutes"
+   },
+   {
+    "calls": [
+     "request"
+    ],
+    "line": 31,
+    "name": "call"
+   },
+   {
+    "calls": [],
+    "line": 44,
+    "name": "useAsked"
+   },
+   {
+    "calls": [
+     "previewOf",
+     "useAsked",
+     "base",
+     "call"
+    ],
+    "line": 59,
+    "name": "usePreviewActions"
+   },
+   {
+    "calls": [],
+    "line": 79,
+    "name": "short"
+   },
+   {
+    "calls": [],
+    "line": 80,
+    "name": "bare"
+   },
+   {
+    "calls": [
+     "previewOf",
+     "usePreviewActions",
+     "livePreview"
+    ],
+    "line": 88,
+    "name": "PreviewInline"
+   },
+   {
+    "calls": [
+     "previewOf",
+     "usePreviewActions",
+     "livePreview"
+    ],
+    "line": 137,
+    "name": "PreviewButton"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Manages starting and opening the running feature branch in a browser for review, showing status and errors.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/projects/{project_id}/features/{feature_id}/preview"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/projects/{project_id}/features/{feature_id}/preview"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "previewOf",
+    "kind": "export",
+    "method": "",
+    "name": "previewOf"
+   },
+   {
+    "handler": "livePreview",
+    "kind": "export",
+    "method": "",
+    "name": "livePreview"
+   },
+   {
+    "handler": "PreviewInline",
+    "kind": "export",
+    "method": "",
+    "name": "PreviewInline"
+   },
+   {
+    "handler": "PreviewButton",
+    "kind": "export",
+    "method": "",
+    "name": "PreviewButton"
+   }
+  ]
+ }
+}

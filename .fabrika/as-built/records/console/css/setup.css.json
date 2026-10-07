@@ -1,0 +1,39 @@
+{
+ "blob": "9120f70e1c39e28e33f27d4fd5082717008c13c6",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "su-board",
+   "su-stn",
+   "su-strip",
+   "su-floor",
+   "su-row",
+   "su-mark",
+   "su-remedy",
+   "su-teams",
+   "su-prov",
+   "su-limit",
+   "su-aside"
+  ],
+  "domain_terms": [
+   "commissioning board",
+   "station",
+   "lamp indicator",
+   "crew team",
+   "harness",
+   "provider"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the setup commissioning board (with status lamps and measurements), station sheet, configuration fields, harness details, and crew team selectors.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

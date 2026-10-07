@@ -1,0 +1,87 @@
+{
+ "blob": "62620c7511b753a749a7f2b78b3c683fcd1a7301",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "agentOf",
+   "Finding",
+   "Band",
+   "latestByRole",
+   "Conceded",
+   "Findings"
+  ],
+  "domain_terms": [
+   "finding",
+   "repair loop",
+   "agent",
+   "objection",
+   "concession"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "reviews",
+   "findings"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 30,
+    "name": "agentOf"
+   },
+   {
+    "calls": [
+     "OUTCOME",
+     "outcomeOf",
+     "Row",
+     "SEVERITY_PILL"
+    ],
+    "line": 36,
+    "name": "Finding"
+   },
+   {
+    "calls": [],
+    "line": 128,
+    "name": "Band"
+   },
+   {
+    "calls": [],
+    "line": 171,
+    "name": "latestByRole"
+   },
+   {
+    "calls": [],
+    "line": 184,
+    "name": "Conceded"
+   },
+   {
+    "calls": [
+     "findingsWithRecords",
+     "isRestatement",
+     "bandsOf",
+     "packetOf",
+     "Composer"
+    ],
+    "line": 225,
+    "name": "Findings"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Displays all objections raised about a code change, organized by outcome category, including security findings and what the repair loop did about each.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "Findings",
+    "kind": "export",
+    "method": "",
+    "name": "Findings"
+   }
+  ]
+ }
+}

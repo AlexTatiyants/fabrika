@@ -1,0 +1,28 @@
+{
+ "blob": "4ef2da4eaf332aeec1e1ffd1800397a37378b3e5",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "survey",
+   "repository",
+   "manifest",
+   "test",
+   "check",
+   "environment",
+   "test runner"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Help documentation explaining the survey that reads a repository to understand its build, test, and deployment processes, and the checks, test levels, and environment it proposes.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

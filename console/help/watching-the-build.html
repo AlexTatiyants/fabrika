@@ -1,0 +1,39 @@
+<p class="lead">Once you approve the spec, the build runs to the end without you. Watch it or leave: it runs on
+  the server, and the feature comes back <i>awaiting verdict</i> with a review packet.</p>
+
+<h4>What runs</h4>
+<ul>
+  <li><b>Build</b>: the architect cuts the spec into units and the plan checker reads the cut; workers build the
+    units in parallel; the integrator joins them and tests the seams between them.</li>
+  <li><b>Verify</b>, at the same time: the oracle writes acceptance tests from the spec alone, never seeing the
+    code. The two lanes can't see each other.</li>
+  <li><b>Validate</b>: your project's checks run (<span class="mono">checks</span>); code, not an agent, runs the
+    blind tests one file at a time (<span class="mono">qa</span>); a check that failed is run again at the commit
+    the feature started from (<span class="mono">attribution</span>); the breaker attacks the result and proves
+    each break with a failing test.</li>
+  <li><b>Review</b>: the review panel reads the change, the arbiter decides what happens to each finding, repairers
+    fix what's routed for repair in bounded rounds, the simplifier removes what's correct but written twice, and
+    the rapporteur assembles the packet.</li>
+</ul>
+
+<h4>The line</h4>
+<p>Under the feature's name is a row of lamps, one per station, grouped <i>spec</i>, <i>build</i>,
+  <i>validate</i> and <i>review</i>. Point at one for what it's doing. White and blinking is <i>working now</i>,
+  green <i>passed downstream</i>, red <i>stopped the line</i>, and dark is <i>waiting</i> (or, on a line that has
+  stopped, <i>not reached</i>). On a finished run, a station that had nothing to do says so. <code>\</code> folds the
+  lamps into a row of dots.</p>
+<p>The rework rail under the lamps says whether the repair loop ran. While it does, the line is labelled
+  <i>First pass</i> or <i>Repair round</i> 1, 2 and so on, and lamps from an earlier pass are dimmed. See
+  <a data-help="the-repair-loop">Repairs and the repair loop</a>.</p>
+
+<h4>The build screen</h4>
+<p>The <b>build</b> step, and <b>runs</b> beside it, show every run of the feature: a <b>Timeline</b> of what ran
+  when (its clock skips the stretches where nothing was running, mostly waits for you; <b>show wait time</b>
+  puts them back), and the <b>Call Tree</b>, every
+  agent's turn in order, branching where work ran in parallel, with each call it made. The band at the top says
+  what's spent of what's spendable. Every prompt and response, raw, is in the feature's ledger.</p>
+
+<h4>When it stops</h4>
+<p>If a station fails, or the process running the build goes away, the line says it stopped and offers
+  <b>Resume the run</b>, which re-runs only what stopped. See <a data-help="running-again">Verify again, build
+  again, resume, discard</a>.</p>

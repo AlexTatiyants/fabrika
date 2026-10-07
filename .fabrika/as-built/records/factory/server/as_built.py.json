@@ -1,0 +1,118 @@
+{
+ "blob": "8438a235b8606a880a2d283b8b73465a3496fe34",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "_system_change_view",
+   "register"
+  ],
+  "domain_terms": [
+   "as-built",
+   "reading",
+   "project"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "ProjectAsBuilt"
+  ],
+  "entities_written": [
+   "ProjectAsBuilt"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "SystemChange"
+    ],
+    "line": 19,
+    "name": "_system_change_view"
+   },
+   {
+    "calls": [],
+    "line": 29,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "ProjectAsBuilt"
+    ],
+    "line": 41,
+    "name": "as_built"
+   },
+   {
+    "calls": [
+     "asbuilt",
+     "ProjectAsBuilt"
+    ],
+    "line": 45,
+    "name": "as_built_status"
+   },
+   {
+    "calls": [
+     "asbuilt"
+    ],
+    "line": 66,
+    "name": "as_built_graph"
+   },
+   {
+    "calls": [
+     "asbuilt"
+    ],
+    "line": 75,
+    "name": "as_built_source"
+   },
+   {
+    "calls": [
+     "ProjectAsBuilt",
+     "asbuilt"
+    ],
+    "line": 88,
+    "name": "refresh_as_built"
+   },
+   {
+    "calls": [
+     "ProjectAsBuilt",
+     "as_built"
+    ],
+    "line": 100,
+    "name": "run"
+   }
+  ],
+  "imports": [
+   "factory/asbuilt.py",
+   "factory/asbuilt_graph.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Registers API routes for viewing and refreshing the as-built (committed codebase description), including its status, graph representation, and source files.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "as_built_status",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/as-built"
+   },
+   {
+    "handler": "as_built_graph",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/as-built/graph"
+   },
+   {
+    "handler": "as_built_source",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/as-built/source"
+   },
+   {
+    "handler": "refresh_as_built",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/as-built/refresh"
+   }
+  ]
+ }
+}

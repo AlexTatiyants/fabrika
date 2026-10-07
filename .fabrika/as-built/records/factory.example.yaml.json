@@ -1,0 +1,42 @@
+{
+ "blob": "4af9c5ecd755b75611241278852b08703b15476c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "agent role",
+   "feature",
+   "spec",
+   "packet",
+   "route",
+   "gate",
+   "finding",
+   "repair rounds",
+   "findings",
+   "breaker tests",
+   "run budget",
+   "scheduling"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "config",
+  "launches": [
+   "factory/harnesses/openhands_driver.py",
+   "factory/harnesses/npm_launcher.sh"
+  ],
+  "outside": [
+   "OpenRouter API",
+   "Claude Code",
+   "Codex",
+   "Gemini CLI",
+   "Docker"
+  ],
+  "purpose": "Central configuration file for the software factory system, declaring all LLM routes, agent role assignments, pipeline settings, and system parameters. This is the single source of model naming in the project.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

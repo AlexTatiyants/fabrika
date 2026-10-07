@@ -1,0 +1,26 @@
+<p class="lead">Checks are the commands your repository already runs against its code, such as linters,
+  type checkers and test suites. Fabrika runs them on every feature it builds.</p>
+
+<h4>Where they come from</h4>
+<p>The survey reads your repository (its scripts, config and CI) and lists the commands it already uses.
+  Fabrika doesn't invent checks your project doesn't run. Where one is missing, it may suggest one, and you
+  decide whether to add it.</p>
+
+<h4>What they're for</h4>
+<p>A check that passed before a feature and fails after it is a regression, and the feature is held to it. So
+  checks keep a feature from breaking what already worked, and from ignoring the patterns your code already
+  follows. A check that fails on a feature is run again at the commit the feature started from, so the packet
+  says whether the feature caused the failure or inherited it.</p>
+
+<h4>Run checks</h4>
+<p><b>Run checks</b> on the project page runs every check on an untouched checkout of the branch features
+  start from, in the project's environment. No model is called. It proves the commands work at all.</p>
+
+<h4>When a check is red</h4>
+<p>A check that can't run at all (its tool is missing, or the command never starts) reports nothing, and
+  <b>Accept checks</b> stays disabled while it's on the list. <b>Edit the command</b>, or take it off.</p>
+<p>A check that runs and fails on untouched code has three ways out: get it passing in your repository; hold it
+  at today's number, if it prints one (<b>Hold it at</b> the reading, so it's green now and red on the next
+  regression); or press <b>Not for this project</b> and give a reason, which is kept. Once you've accepted the
+  checks, a red one is <i>parked</i>: still run when you run the checks, but left out of what judges a feature
+  until it passes. At least one check has to pass for the project to be accepted.</p>

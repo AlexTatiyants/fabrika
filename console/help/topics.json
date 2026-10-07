@@ -1,0 +1,199 @@
+{
+  "groups": [
+    {
+      "title": "Getting started",
+      "topics": [
+        {
+          "slug": "how-fabrika-works",
+          "title": "How Fabrika works"
+        },
+        {
+          "slug": "adding-a-project",
+          "title": "Adding a project"
+        },
+        {
+          "slug": "the-provider-key",
+          "title": "The provider key"
+        },
+        {
+          "slug": "control-room",
+          "title": "The control room"
+        }
+      ]
+    },
+    {
+      "title": "A feature",
+      "topics": [
+        {
+          "slug": "writing-the-intent",
+          "title": "Starting a feature"
+        },
+        {
+          "slug": "the-questions",
+          "title": "The questions"
+        },
+        {
+          "slug": "the-spec",
+          "title": "The spec, and approving it"
+        },
+        {
+          "slug": "plan-review",
+          "title": "Plan review"
+        },
+        {
+          "slug": "waiting-for-a-plan-window",
+          "title": "Builds that wait for a plan window"
+        },
+        {
+          "slug": "watching-the-build",
+          "title": "Watching the build"
+        },
+        {
+          "slug": "stages",
+          "title": "Stages and steps"
+        }
+      ]
+    },
+    {
+      "title": "Reviewing",
+      "topics": [
+        {
+          "slug": "the-review-packet",
+          "title": "The review packet"
+        },
+        {
+          "slug": "your-calls",
+          "title": "Your calls"
+        },
+        {
+          "slug": "reading-the-work",
+          "title": "The work map, a criterion, a file"
+        },
+        {
+          "slug": "evidence",
+          "title": "Evidence and dependencies"
+        },
+        {
+          "slug": "objections",
+          "title": "Objections and blind spots"
+        },
+        {
+          "slug": "the-repair-loop",
+          "title": "Repairs and the repair loop"
+        },
+        {
+          "slug": "ruling-on-a-packet",
+          "title": "Ruling on the packet"
+        },
+        {
+          "slug": "running-again",
+          "title": "Verify again, build again, resume, discard"
+        }
+      ]
+    },
+    {
+      "title": "Checking the work",
+      "topics": [
+        {
+          "slug": "checking-the-work",
+          "title": "How Fabrika checks its work"
+        },
+        {
+          "slug": "test-levels",
+          "title": "Test levels: unit, integration, user"
+        },
+        {
+          "slug": "setup-and-cleanup",
+          "title": "Setting up and cleaning up"
+        },
+        {
+          "slug": "changing-your-repository",
+          "title": "When Fabrika asks you to change your repository"
+        },
+        {
+          "slug": "unchecked-levels",
+          "title": "When a level isn't checked"
+        },
+        {
+          "slug": "running-the-app",
+          "title": "Opening the app at review"
+        },
+        {
+          "slug": "checks",
+          "title": "Checks"
+        }
+      ]
+    },
+    {
+      "title": "Your project",
+      "topics": [
+        {
+          "slug": "your-project",
+          "title": "The project page"
+        },
+        {
+          "slug": "survey",
+          "title": "The survey"
+        },
+        {
+          "slug": "environment",
+          "title": "The environment"
+        },
+        {
+          "slug": "guides",
+          "title": "Guides"
+        },
+        {
+          "slug": "history",
+          "title": "History"
+        }
+      ]
+    },
+    {
+      "title": "The crew",
+      "topics": [
+        {
+          "slug": "the-crew",
+          "title": "The crew"
+        },
+        {
+          "slug": "agent-configuration",
+          "title": "Agent configuration"
+        },
+        {
+          "slug": "routes-and-plans",
+          "title": "Routes, models and plan limits"
+        },
+        {
+          "slug": "fallbacks-and-independence",
+          "title": "Fallbacks and the independence rule"
+        },
+        {
+          "slug": "network-proxy",
+          "title": "The network proxy"
+        }
+      ]
+    },
+    {
+      "title": "The as-built",
+      "topics": [
+        {
+          "slug": "as-built",
+          "title": "The as-built"
+        },
+        {
+          "slug": "as-built-architecture",
+          "title": "Architecture"
+        },
+        {
+          "slug": "as-built-system",
+          "title": "The system map"
+        },
+        {
+          "slug": "as-built-capabilities",
+          "title": "Capabilities"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+ "blob": "3e971810fa0042de1b8df35bec5ee4d1f7591bda",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "HISTORY_FILTERS",
+   "historyTags",
+   "readingCost",
+   "historyEvent",
+   "historySection",
+   "overviewSection",
+   "helperRow",
+   "recBlock",
+   "testsTab",
+   "pendingScaffolding",
+   "scaffoldBlocked",
+   "LEVEL_WHAT"
+  ],
+  "domain_terms": [
+   "ledger\u2014project's audit log of timestamped events",
+   "feature\u2014a work item or story",
+   "project\u2014repository or codebase",
+   "checks\u2014automated test verification runs",
+   "test level\u2014unit, integration, or user tier",
+   "survey\u2014analysis of project state and cleanup"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "historyTags"
+   },
+   {
+    "calls": [
+     "usd"
+    ],
+    "line": 27,
+    "name": "readingCost"
+   },
+   {
+    "calls": [
+     "esc",
+     "featureHref",
+     "rel"
+    ],
+    "line": 33,
+    "name": "historyEvent"
+   },
+   {
+    "calls": [
+     "sectionHead",
+     "readingCost",
+     "historyTags",
+     "historyEvent"
+    ],
+    "line": 71,
+    "name": "historySection"
+   },
+   {
+    "calls": [
+     "liveRecommendations",
+     "todoSection",
+     "undecidedLevels",
+     "surveyWaiting",
+     "waitingChanges",
+     "movesDockerfile",
+     "guideView",
+     "guideProposals",
+     "coverageState",
+     "rel",
+     "overviewTile",
+     "waitingRow",
+     "esc",
+     "costTile"
+    ],
+    "line": 115,
+    "name": "overviewSection"
+   },
+   {
+    "calls": [
+     "esc",
+     "scaffoldBlocked"
+    ],
+    "line": 240,
+    "name": "helperRow"
+   },
+   {
+    "calls": [
+     "esc",
+     "recTodo"
+    ],
+    "line": 255,
+    "name": "recBlock"
+   },
+   {
+    "calls": [
+     "sectionHead",
+     "partsBlock",
+     "liveRecommendations",
+     "todoSection",
+     "partsWaiting",
+     "cleanupBy",
+     "runnerNames",
+     "pendingScaffolding",
+     "recBlock",
+     "helperRow",
+     "cleanupChoice",
+     "declinedRecommendations"
+    ],
+    "line": 259,
+    "name": "testsTab"
+   },
+   {
+    "calls": [],
+    "line": 376,
+    "name": "pendingScaffolding"
+   },
+   {
+    "calls": [],
+    "line": 387,
+    "name": "scaffoldBlocked"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the history, overview, and tests tabs for a project. Displays the ledger as timestamped events grouped by day, with filtering options; shows project status tiles and test tier information with cleanup options and helper files.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "historySection",
+    "kind": "screen",
+    "method": "",
+    "name": "history tab"
+   },
+   {
+    "handler": "overviewSection",
+    "kind": "screen",
+    "method": "",
+    "name": "overview tab"
+   },
+   {
+    "handler": "testsTab",
+    "kind": "screen",
+    "method": "",
+    "name": "tests tab"
+   }
+  ]
+ }
+}

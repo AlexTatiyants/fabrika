@@ -1,0 +1,684 @@
+/* The crew page's base layer: roles, the route cards with their lamps, and
+   the sheet a role's prompt opens into. */
+
+/* ------------------------------------------------------------------ roles */
+
+.roles-top { padding: 1.5rem 0 .5rem; }
+.dia-scroll { overflow-x: auto; margin: .4rem 0 .2rem; }
+.dia { display: block; width: 100%; min-width: 660px; height: auto; }
+.dia-agent { cursor: pointer; }
+.dia-agent:hover rect { stroke: var(--ink); }
+.dia-agent.open rect { stroke: var(--ink); stroke-width: 2; }
+
+.dia-key {
+  display: flex; gap: 1.1rem; flex-wrap: wrap;
+  font-size: .625rem; letter-spacing: .06em; color: var(--ink-3);
+  margin: .1rem 0 0;
+}
+.dia-key span { display: inline-flex; align-items: center; gap: .35rem; }
+.dia-key i { width: 14px; height: 9px; border-radius: 2px; display: inline-block; }
+.k-agent { background: var(--surface); border: 1px solid var(--line-strong); }
+.k-build { background: var(--surface); border: 1.5px solid var(--team-build); }
+.k-check { background: var(--surface); border: 1.5px solid var(--team-check); }
+.k-step  { background: var(--paper); border: 1px dashed var(--line-strong); }
+.k-gate  { background: var(--accent-wash); border: 1px solid var(--accent); }
+
+/* ------------------------------------------------------------------ routes
+
+   One card per harness. The lamp is the console's existing language for the
+   state of the line, and it has four positions here rather than two: lit is
+   connected, amber is "installed, nobody has signed in", red is broken, dark is
+   not installed. An unchecked route shows amber too -- never red, because a
+   human who sees a failure they did not cause goes looking for a problem that
+   is not there. */
+
+.harness-grid {
+  display: grid; gap: .75rem;
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  grid-template-rows: repeat(7, auto);
+}
+.hcard {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: .85rem .95rem;
+  display: grid; grid-row: span 7; grid-template-rows: subgrid;
+  row-gap: .55rem; align-content: start; min-width: 0;
+}
+/* No slot may widen the card: a long word from a tool wraps inside it. */
+.hcard > * { min-width: 0; }
+.hnote { overflow-wrap: anywhere; }
+.hcard.off { background: var(--surface-sunk); border-style: dashed; }
+.hcard.on  { border-color: var(--line-strong); }
+.hcard.open { grid-column: 1 / -1; }
+/* The nameplate. The version sits under the name rather than beside it:
+   sharing a line, a longer version pushes a two-word name into a wrap and then
+   wraps after it -- one card's head 48px against 24px for the rest. Given the
+   line to itself the name fits at every width this grid produces.
+   A name is an identity and a version is a machine fact, and this world already
+   sets those in different faces. Stacked, that is a nameplate; side by side it
+   is a collision. */
+.hhead {
+  display: grid; grid-template-columns: auto 1fr;
+  column-gap: .5rem; row-gap: .1rem; align-items: center;
+}
+.hhead .lamp { grid-row: 1; }
+.lamp {
+  width: 8px; height: 8px; border-radius: 50%; flex: none; align-self: center;
+  background: var(--lamp-off); box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
+}
+.lamp.lit  { background: var(--lamp-green); box-shadow: 0 0 5px color-mix(in srgb, var(--lamp-green) 75%, transparent); }
+.lamp.warn { background: var(--lamp-amber); box-shadow: 0 0 5px color-mix(in srgb, var(--lamp-amber) 70%, transparent); }
+.lamp.bad  { background: var(--lamp-red);   box-shadow: 0 0 5px color-mix(in srgb, var(--lamp-red) 70%, transparent); }
+.hname {
+  font-family: var(--display); font-size: 1rem; font-weight: 600;
+  grid-column: 2; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.hver {
+  font-size: .6875rem; color: var(--ink-3); grid-column: 2;
+  font-family: var(--mono); letter-spacing: .02em; line-height: 1.1;
+}
+.hauth {
+  margin: 0; font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.hauth b { color: var(--accent-ink); font-weight: 500; }
+.hnote { margin: 0; font-size: .8125rem; color: var(--ink-2); line-height: 1.45; }
+/* No negative margin. One here would be an exception to the card's single gap,
+   and one on `.hwhen-meter` a second in the other direction -- three spacings
+   where there should be one. Both timestamps sit inside their own slot and
+   take the rhythm from it. */
+.hwhen {
+  margin: 0; font-family: var(--mono); font-size: .625rem;
+  letter-spacing: .04em; color: var(--ink-3);
+}
+/* The crew page arrives in parts; a part still on its way says what it is
+   waiting for, with the same pulse the rest of the console uses for work. */
+.crew-pending { margin: .25rem 0 .5rem; font-size: .75rem; }
+.crew-loading { padding: 2rem 0; }
+.crew-loading ul { list-style: none; margin: .75rem 0 0; padding: 0; font-size: .8125rem;
+  color: var(--ink-3); display: flex; flex-direction: column; gap: .3rem; }
+.crew-loading li.done { color: var(--ink-2); }
+
+/* The way out: one card, the plain line beside its lamp, and what went through
+   it under that. Refused targets are the only red text; they are the thing the
+   card is for. */
+.egress { display: flex; flex-direction: column; gap: .6rem; }
+.eg-intro { margin: 0; font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
+.eg-intro .mono { font-size: .75rem; }
+.eg-head { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.eg-line { margin: 0; flex: 1 1 18rem; font-size: .9375rem; color: var(--ink); }
+.eg-act { display: flex; gap: .4rem; }
+.eg-note { margin: 0; font-size: .8125rem; color: var(--ink-2); line-height: 1.45; }
+.eg-facts { margin: 0; font-size: .6875rem; letter-spacing: .03em; color: var(--ink-3); }
+.eg-dests { display: flex; flex-wrap: wrap; gap: .35rem; }
+.eg-dest {
+  font-size: .6875rem; color: var(--ink-2); background: var(--surface-sunk);
+  border: 1px solid var(--line); border-radius: 999px; padding: .1rem .5rem;
+}
+.eg-dest b { font-weight: 500; color: var(--ink-3); margin-left: .2rem; }
+.eg-label {
+  margin: .25rem 0 0; font-family: var(--mono); font-size: .625rem;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.eg-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.eg-row {
+  display: grid; grid-template-columns: 5.5rem minmax(0, 1fr) auto; gap: .15rem .75rem;
+  padding: .45rem 0; border-top: 1px solid var(--line); font-size: .8125rem;
+}
+.eg-row:first-child { border-top: 0; }
+.eg-when { font-size: .6875rem; color: var(--ink-3); }
+.eg-who { min-width: 0; overflow-wrap: anywhere; }
+.eg-who .mono { font-size: .6875rem; }
+.eg-target { font-size: .75rem; }
+.eg-bad { color: var(--lamp-red); }
+.eg-why { grid-column: 2 / -1; font-size: .75rem; color: var(--ink-3); }
+.eg-failed summary { cursor: pointer; font-size: .8125rem; color: var(--ink-2); }
+@media (max-width: 560px) {
+  .eg-row { grid-template-columns: 1fr; }
+  .eg-why { grid-column: 1; }
+}
+
+/* The plan's own gauge. Two windows, and the tighter one is what constrains a
+   run -- 11% of a week and 96% of five hours is nearly out of room, so the
+   colour follows each bar rather than an average. */
+.hwins { display: flex; flex-direction: column; gap: .25rem; }
+.hwin {
+  display: grid; grid-template-columns: 4.5rem 1fr auto; gap: .45rem;
+  align-items: center;
+  font-family: var(--mono); font-size: .625rem; color: var(--ink-3);
+}
+.hwin-name { letter-spacing: .04em; text-transform: uppercase; }
+.hwin-track {
+  height: 4px; border-radius: 2px; background: var(--surface-sunk);
+  border: 1px solid var(--line); overflow: hidden;
+}
+.hwin-fill { display: block; height: 100%; background: var(--ink-3); }
+.hwin.warm  .hwin-fill { background: var(--accent); }
+.hwin.warm  .hwin-num  { color: var(--accent-ink); }
+.hwin.tight .hwin-fill { background: var(--red); }
+.hwin.tight .hwin-num  { color: var(--red); font-weight: 500; }
+.hwin-num { white-space: nowrap; }
+/* A window whose reset has passed. The track is drawn empty rather than filled
+   to a stale number, and dashed so it reads as "not measured" rather than as
+   "measured at zero" -- which is the same distinction the cap pills make. */
+.hwin.stale { opacity: .75; grid-template-columns: 4.5rem .9rem 1fr; }
+/* A stub rather than a full track: there is no fill to draw, and at a narrow
+   column the words are what has to fit. The stub still says the row is a gauge
+   and not a label -- an unread window, not a missing one. */
+.hwin.stale .hwin-track { border-style: dashed; background: transparent; }
+.hwin.stale .hwin-num { font-style: italic; white-space: normal; }
+.hwhen-meter { margin: 0; }
+
+/* The consequence and the check timestamp are one slot: two halves of the same
+   statement about the last time anybody asked. */
+.hsay { display: flex; flex-direction: column; gap: .25rem; }
+
+/* A slot with nothing to report still says which slot it is. */
+.hslot-empty {
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .04em;
+  color: var(--ink-3); opacity: .85;
+}
+
+/* Plain sentences rather than two rows of pills, in the same face and colour
+   as the card's other machine facts. */
+.hcrew {
+  margin: 0; font-family: var(--mono); font-size: .625rem;
+  letter-spacing: .04em; color: var(--ink-3); line-height: 1.5;
+}
+.hcrew b { color: var(--ink); font-weight: 500; }
+
+/* What gate 1 says before the button is pressed. Sits under the bar it belongs
+   to, in the reading voice rather than as an alert box: this is a fact about
+   the plans, and the choice it informs is already in the two buttons above. */
+.plan-warn {
+  margin: .5rem 0 0; padding: .5rem .7rem;
+  font-family: var(--mono); font-size: .6875rem; line-height: 1.55;
+  color: var(--accent-ink); background: var(--surface-sunk);
+  border: 1px solid var(--line-strong); border-radius: 2px;
+}
+.plan-warn-soft { color: var(--ink-3); }
+
+/* The confirmation that stops. Reserved for a control that cannot be undone by
+   pressing the same button again -- a modal for anything less is an
+   interruption charging rent. Drawn as a card off the board rather than a
+   system alert: same paper, same rules, one hairline and no shadow theatre. */
+.confirm {
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  background: var(--surface); color: var(--ink);
+  padding: 0; max-width: 30rem; width: calc(100% - 2rem);
+  box-shadow: 0 12px 28px rgba(23, 26, 23, .22);
+}
+.confirm::backdrop { background: rgba(23, 26, 23, .42); }
+.confirm-body { display: flex; flex-direction: column; gap: .55rem; padding: 1rem 1.1rem 1.1rem; }
+.confirm-title {
+  font-family: var(--display); font-size: 1.0625rem; font-weight: 600;
+  margin: 0; letter-spacing: .01em;
+}
+.confirm-what { margin: 0; font-size: .8125rem; line-height: 1.5; color: var(--ink-2); }
+.confirm-warn {
+  margin: 0; padding: .5rem .7rem; font-size: .8125rem; line-height: 1.45; font-weight: 600;
+  color: var(--red-ink-deep); background: var(--red-wash);
+  border: 1px solid var(--red-edge); border-radius: 2px;
+}
+/* What survives, set apart from what goes. A reader deciding whether to press
+   this needs both, and running them together reads as one long warning. */
+.confirm-keeps {
+  margin: 0; font-family: var(--mono); font-size: .625rem; line-height: 1.6;
+  letter-spacing: .03em; color: var(--ink-3);
+  border-left: 1px solid var(--line-strong); padding-left: .6rem;
+}
+.confirm-act { display: flex; gap: .4rem; justify-content: flex-end; margin-top: .35rem; }
+.btn-danger {
+  background: var(--red); border-color: var(--red); color: var(--board-ink-hi);
+}
+.btn-danger:hover { background: var(--red-deep); border-color: var(--red-deep); }
+.hmodelslot { display: flex; flex-direction: column; gap: .3rem; align-content: start; }
+.hmore {
+  font: inherit; color: var(--ink-2); background: none; border: 0;
+  border-bottom: 1px dotted var(--line-strong); padding: 0; cursor: pointer;
+}
+.hmore:hover { color: var(--ink); }
+
+.hmodels {
+  display: flex; flex-wrap: wrap; gap: .25rem;
+  align-content: start; align-items: start;
+}
+.pill {
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .03em;
+  padding: .1rem .4rem; border-radius: 2px;
+  background: var(--surface-sunk); border: 1px solid var(--line); color: var(--ink-2);
+}
+.hcard.on .pill { background: var(--surface-lift); }
+/* The model that answers when a role names none. A rule under the word rather
+   than a badge beside it: the list is already dense, and the mark has to read
+   as an annotation of one entry, not as another entry. */
+.pill.is-default {
+  border-color: var(--line-strong); color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--ink-3);
+}
+.hact { display: flex; gap: .4rem; margin-top: auto; padding-top: .15rem; }
+
+/* ---- accounts ------------------------------------------------------------
+   The row above the harnesses, and the same construction: one grid, every card
+   the same slots, aligned by subgrid. Six rather than seven -- head, state,
+   plan, what it last said, who spends it, actions -- because an account has no
+   version and no model list. Those belong to the program, which has its own
+   card.
+   The split is the point. A plan window is a fact about a subscription, not
+   about a CLI: reinstalling Claude Code does not reset a five-hour window, and
+   a workspace out of credit is not a broken binary. Drawn on one card, the
+   second of those would put a red lamp on a program that is working. */
+.account-grid {
+  display: grid; gap: .75rem;
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  grid-template-rows: repeat(6, auto);
+  margin-bottom: 1.1rem;
+}
+.acard {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: .85rem .95rem;
+  display: grid; grid-row: span 6; grid-template-rows: subgrid;
+  row-gap: .55rem; align-content: start; min-width: 0;
+}
+.acard > * { min-width: 0; }
+.acard.on { border-color: var(--line-strong); }
+/* Amber, not red. Nothing is broken: a window reopens on a clock and a balance
+   reopens when somebody pays, and the card says which and when. */
+.acard.limited { border-color: var(--accent); background: var(--accent-wash); }
+
+/* What the account last said, kept after it stops being true. A refusal is an
+   event with a time, and at 9am "it stopped at 10:14 for want of credit" is the
+   most useful line on the card even though the hold expired hours ago. */
+.hevent {
+  margin: 0; font-family: var(--mono); font-size: .625rem; line-height: 1.5;
+  color: var(--ink-3); border-left: 2px solid var(--line-strong); padding-left: .55rem;
+}
+.hevent b { color: var(--ink-2); font-weight: 500; }
+.hevent.live { border-left-color: var(--accent); color: var(--accent-ink); }
+.hevent.live b { color: var(--accent-ink); font-weight: 600; }
+
+/* The line between the two rows, drawn on the harness card: which account this
+   program spends, and that account's lamp, so a green program on an amber
+   account cannot be mistaken for a green one. */
+.huses {
+  margin: 0; display: inline-flex; align-items: center; gap: .35rem; width: fit-content;
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .03em; color: var(--ink-2);
+  background: var(--surface-sunk); border: 1px solid var(--line);
+  border-radius: 2px; padding: .18rem .4rem;
+}
+.huses .lamp { width: 6px; height: 6px; }
+
+/* What to run, and where to run it. None of these tools can be signed into from
+   a web page -- each authenticates through a browser handshake that ends with a
+   paste into a terminal -- so the console's job is to make that one line
+   impossible to get wrong. */
+.hsetup {
+  border-top: 1px solid var(--line); padding-top: .6rem;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+.hcopy {
+  display: flex; align-items: center; gap: .5rem;
+  background: var(--panel); border-radius: var(--radius); padding: .4rem .55rem;
+}
+.hcopy code { color: var(--board-ink); font-size: .8125rem; flex: 1 1 auto; overflow-x: auto; }
+/* On the dark strip the ordinary quiet button is grey ink on near-black. This
+   is the one control on the card that has to be pressed, so it gets the panel's
+   own contrast rather than the floor's. */
+.hcopy .btn {
+  flex: none; background: var(--panel-3); border-color: var(--rail); color: var(--paper);
+}
+.hcopy .btn:hover:not(:disabled) { background: var(--rail); border-color: var(--paper); color: var(--ink-reversed); }
+.hsteps {
+  margin: 0; padding-left: 1.15rem; font-size: .8125rem;
+  color: var(--ink-2); line-height: 1.55;
+}
+.hsteps li { margin: .15rem 0; }
+
+/* The route a row's call actually takes. The model id alone cannot say whether
+   it is the copy metered against a plan or the one billed per token. */
+.route-chip {
+  font-family: var(--mono); font-size: .5625rem; letter-spacing: .05em;
+  text-transform: uppercase; padding: .05rem .3rem; border-radius: 2px;
+  flex: none; color: var(--ink-3);
+  border: 1px solid var(--line); background: var(--surface-sunk);
+}
+.route-chip.bad {
+  color: var(--accent-ink); border-color: var(--accent); background: var(--accent-wash);
+}
+
+.role-row {
+  display: grid; width: 100%;
+  grid-template-columns: 5.75rem minmax(0, 1fr) 3.75rem 3rem 3.5rem 3rem 5.25rem 3.25rem;
+  gap: .5rem; align-items: baseline; text-align: left;
+  padding: .38rem .45rem;
+  background: none; border: 0; border-bottom: 1px solid var(--line);
+  cursor: pointer; font: inherit; color: inherit;
+}
+.role-row:hover { background: var(--surface); }
+/* The open row has no detail panel welded to its underside -- the
+   sheet is a separate thing over the board -- so it keeps its own bottom rule
+   and says "this is the one that is open" with the accent instead. */
+.role-row.open { background: var(--surface); box-shadow: inset 2px 0 0 var(--accent); }
+.role-row.off { opacity: .5; }
+.role-row.head {
+  cursor: default; padding-bottom: .3rem;
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.role-row.head:hover { background: none; }
+
+.rr-name { font-family: var(--display); font-size: .875rem; font-weight: 600; }
+.rr-model {
+  font-size: .75rem; color: var(--ink-2);
+  display: flex; align-items: baseline; gap: .4rem; min-width: 0; flex-wrap: wrap;
+}
+.rr-model .m { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rr-num { font-size: .75rem; color: var(--ink-3); text-align: right; }
+.rr-chev { font-family: var(--mono); font-size: .8125rem; color: var(--ink-3); text-align: right; }
+.rr-warn {
+  margin: 0; padding: .3rem .45rem;
+  border-bottom: 1px solid var(--line);
+  font-size: .75rem; color: var(--red); background: var(--red-wash);
+}
+
+/* ------------------------------------------------------------- the sheet
+
+   A role's prompt is the reason anybody opens a role. A fourteen-row
+   textarea underneath seven config controls would show 2% of the surveyor's
+   six hundred and fifty lines and put the document last in line for whatever
+   height the furniture left over.
+
+   So the row does not expand; it opens. The sheet takes the content
+   area -- a hair inset on three sides, open to the bottom edge -- and the
+   board stays behind it, dimmed and unscrolled. That last inch of board is
+   the point of not going full-bleed: it says what you are on top of, and
+   Escape puts you back on the row you pressed.
+
+   TYPE. These prompts are prose. They are read the way any six hundred lines
+   of argument are read, and a monospace face -- which exists so that a column
+   of code lines up -- makes that work harder for nothing: no column in this
+   document needs to line up except the tables and the fenced commands, and
+   those say so in their own syntax. So the document is set in the console's
+   body face at reading size, and the monospace is spent only where it buys
+   something: code, fences, tables.
+   -------------------------------------------------------------------------- */
+
+.sheet-scrim {
+  position: fixed; inset: var(--sheet-top, var(--mast-h)) 0 0 var(--panel-w); z-index: 19;
+  background: rgba(23, 26, 23, .30);
+  animation: sheet-fade .12s ease-out;
+}
+/* The rail is a fixture you can put away, and when it is away the floor is
+   wider: anything anchored past the panel has to stop being anchored past it. */
+body[data-rail="off"] .sheet-scrim { left: 0; }
+.sheet {
+  position: fixed; z-index: 20;
+  /* `--sheet-top` is measured, not assumed: the masthead is one bar most days
+     and two when the stale-code strip is up, and a sheet that guessed would
+     either cover the navigation or float below a gap. */
+  top: calc(var(--sheet-top, var(--mast-h)) + 12px);
+  left: calc(var(--panel-w) + var(--sheet-gap)); right: var(--sheet-gap); bottom: 0;
+  display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto;
+  background: var(--surface);
+  border: 1px solid var(--line-strong); border-bottom: none;
+  box-shadow: 0 22px 60px rgba(23, 26, 23, .34);
+  animation: sheet-rise .14s ease-out;
+}
+body[data-rail="off"] .sheet { left: var(--sheet-gap); }
+
+@keyframes sheet-fade { from { opacity: 0; } }
+@keyframes sheet-rise { from { opacity: 0; transform: translateY(10px); } }
+
+.sheet-top {
+  display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+  padding: .7rem .85rem .65rem; border-bottom: 1px solid var(--line);
+}
+.sheet-top .s-name {
+  font-family: var(--display); font-size: 1.3125rem; font-weight: 600; line-height: 1;
+}
+.sheet-top .s-kind {
+  font-family: var(--mono); font-size: var(--t-label); letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3); border: 1px solid var(--line);
+  padding: .15rem .35rem;
+}
+.sheet-top .s-sp { flex: 1 1 auto; }
+.sheet-top .s-path { font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3); }
+.sheet-warn { color: var(--red); }
+
+/* The rail wraps. Scrolling sideways would hide half the settings behind a
+   gesture and put a scrollbar across the top of the document. Six short
+   facts are allowed to take two lines on a narrow window. */
+.sheet-rail {
+  display: flex; align-items: center; gap: .3rem .35rem; flex-wrap: wrap;
+  padding: .45rem .85rem; border-bottom: 1px solid var(--line);
+  background: var(--surface-sunk);
+}
+.sheet-rail .s-spend {
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3);
+  margin-left: auto; padding-left: .5rem;
+}
+
+/* One slot, two occupants. The chip is sized by its own text; the field that
+   replaces it is pinned to the width the chip was measured at on the press. */
+.cfg { position: relative; flex: none; background: none; border: none; padding: 0;
+  font: inherit; }
+.cfg > .cfg-chip {
+  display: flex; align-items: baseline; gap: .35rem; width: 100%;
+  font: inherit; text-align: left; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: .28rem .45rem; color: var(--ink-2);
+}
+.cfg > .cfg-chip:hover, .cfg:hover > .cfg-chip { border-color: var(--line-strong); }
+.cfg > .cfg-chip .k {
+  font-family: var(--display); font-size: var(--t-label); font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); flex: none;
+}
+.cfg > .cfg-chip .v {
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink);
+  white-space: nowrap;
+}
+.cfg.dirty > .cfg-chip .v::after {
+  content: ""; display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent); margin-left: .3rem; vertical-align: 1px;
+}
+.cfg > .answer-field {
+  display: none; width: 100%;
+  font-family: var(--mono); font-size: var(--t-meta); padding: .28rem .4rem;
+}
+.cfg.editing > .cfg-chip { display: none; }
+.cfg.editing > .answer-field { display: block; }
+
+.cfg-flag { cursor: pointer; }
+.cfg-flag > .cfg-chip .v { color: var(--ink-3); }
+.cfg-flag.on > .cfg-chip .v { color: var(--ink); }
+.cfg-flag.on > .cfg-chip { border-color: var(--line-strong); }
+
+/* --- the outline ---------------------------------------------------------
+   A contents list is read, so it is set like something read: the body face,
+   sentence case, hierarchy carried by size and indent rather than by a
+   monospace grid that would make every heading look like a filename. */
+
+.sheet-body { display: grid; grid-template-columns: 216px minmax(0, 1fr); min-height: 0; }
+.sheet-body > * { min-height: 0; }
+.sheet-outline {
+  border-right: 1px solid var(--line); background: var(--surface-sunk);
+  overflow-y: auto; overscroll-behavior: contain; padding: .85rem 0 1.5rem;
+}
+.sheet-outline .o-cap {
+  font-family: var(--display); font-size: var(--t-label); font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3);
+  padding: 0 1rem .5rem; margin: 0;
+}
+.sheet-outline button {
+  display: block; width: 100%; text-align: left; background: none; border: none;
+  border-left: 2px solid transparent; cursor: pointer;
+  font-family: var(--body); font-size: var(--t-small); line-height: 1.4;
+  color: var(--ink-2); padding: .3rem 1rem .3rem .875rem;
+}
+.sheet-outline button:hover { color: var(--ink); background: var(--surface); }
+.sheet-outline button.on {
+  color: var(--ink); background: var(--surface); border-left-color: var(--accent);
+  font-weight: 500;
+}
+.sheet-outline button.o-l1 {
+  font-family: var(--display); font-size: var(--t-head); font-weight: 600;
+  color: var(--ink); padding-top: .2rem;
+}
+.sheet-outline button.o-l2 { font-weight: 500; color: var(--ink); }
+.sheet-outline button.o-l3 { padding-left: 1.5rem; font-size: var(--t-small); }
+.sheet-outline button.o-l4 { padding-left: 2.1rem; color: var(--ink-3); }
+.sheet-outline .o-none { padding: 0 1rem; font-size: var(--t-small); color: var(--ink-3); }
+
+/* --- the editor ----------------------------------------------------------
+   CodeMirror draws the document. Everything here is the console's own type
+   and colour applied to its classes; nothing about its layout is themed,
+   because its layout is the one thing it must be left to do. */
+
+/* `.sheet-edit` is a plain block with a height the grid above it has already
+   settled, and the editor fills it. This is CodeMirror's own recipe and the
+   only one that holds: a grid whose row is sized by its contents, holding a
+   child asking for the height of that row, resolves in the document's
+   favour -- the editor grows to the full twenty-two thousand pixels of the
+   prompt, the sheet grows with it, and the scrollbar ends up past the bottom
+   of the window where nobody can reach it.
+   (Positioning the editor absolutely does not work either: its own base theme
+   sets `position: relative !important`.) */
+.sheet-edit { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+.sheet-edit .cm-editor { height: 100%; max-height: 100%; background: var(--surface); }
+.sheet-edit .cm-editor.cm-focused { outline: none; }
+.sheet-edit .cm-scroller {
+  font-family: var(--body); line-height: 1.7;
+  overflow-y: auto; overscroll-behavior: contain; padding: .5rem 0 3rem;
+}
+.sheet-edit .cm-content {
+  font-family: var(--body); font-size: .9375rem; color: var(--ink);
+  padding: .4rem 0; caret-color: var(--accent);
+  /* These files are hard-wrapped at eighty columns. Set narrower than that and
+     every source line wraps a second time, which reads as ragged nonsense
+     rather than as prose; 44rem is the width at which an eighty-column line of
+     Plex Sans lands on one line and a paragraph keeps the shape its author
+     gave it. */
+  max-width: 44rem;
+  margin-inline: 1.6rem;
+}
+.sheet-edit .cm-line { padding: 0 .2rem 0 0; }
+.sheet-edit .cm-activeLine { background: color-mix(in srgb, var(--accent) 5.5%, transparent); }
+.sheet-edit .cm-cursor { border-left-color: var(--accent); border-left-width: 2px; }
+.sheet-edit .cm-selectionBackground,
+.sheet-edit .cm-editor ::selection { background: var(--sel); }
+.sheet-edit .cm-focused .cm-selectionBackground { background: var(--sel-focus); }
+.sheet-edit .cm-placeholder { color: var(--ink-3); font-style: italic; }
+.sheet-edit .cm-selectionMatch { background: var(--accent-wash); }
+
+/* Headings, in the face this console letters every other heading with. */
+.sheet-edit .md-h1, .sheet-edit .md-h2, .sheet-edit .md-h3, .sheet-edit .md-h4 {
+  font-family: var(--display); font-weight: 600; color: var(--ink);
+  letter-spacing: -.005em; line-height: 1.2;
+}
+.sheet-edit .md-h1 { font-size: 1.65rem; }
+.sheet-edit .md-h2 { font-size: 1.3rem; }
+.sheet-edit .md-h3 { font-size: 1.08rem; }
+.sheet-edit .md-h4 {
+  font-size: .9375rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-2);
+}
+.sheet-edit .md-strong { font-weight: 600; color: var(--ink); }
+.sheet-edit .md-em { font-style: italic; }
+.sheet-edit .md-strike { text-decoration: line-through; color: var(--ink-3); }
+.sheet-edit .md-link { color: var(--accent-ink); }
+.sheet-edit .md-url { color: var(--ink-3); }
+.sheet-edit .md-quote { color: var(--ink-2); font-style: italic; }
+.sheet-edit .md-rule { color: var(--line-strong); }
+
+/* The markers themselves, on the line the caret is on -- everywhere else they
+   are decorated away. Dim, because they are punctuation for the machine. */
+.sheet-edit .md-mark {
+  color: var(--line-strong); font-family: var(--mono-prose); font-size: .8125rem;
+  font-weight: 400; letter-spacing: 0; text-transform: none;
+}
+
+/* Monospace where monospace earns it, and nowhere else. */
+.sheet-edit .md-code {
+  font-family: var(--mono-prose); font-size: .8125rem;
+  background: var(--surface-sunk); padding: .05em .28em; border-radius: var(--radius);
+  color: var(--ink);
+}
+.sheet-edit .cm-line-code,
+.sheet-edit .cm-line-table {
+  font-family: var(--mono-prose); font-size: .78125rem; line-height: 1.55;
+  background: var(--surface-sunk);
+}
+.sheet-edit .cm-line-code { padding-left: .7rem; box-shadow: inset 2px 0 0 var(--line); }
+/* Table rows wrap like every other line. Holding them on one line with
+   `white-space: pre` gives each row its own horizontal scrollbar and puts a
+   third one under the whole document -- three scrollbars to read a table that
+   fits. At this size a row of one of these tables fits the measure anyway. */
+.sheet-edit .cm-line-table { padding-left: .7rem; box-shadow: inset 2px 0 0 var(--line); }
+.sheet-edit .cm-line-code .md-code,
+.sheet-edit .cm-line-table .md-code { background: none; padding: 0; }
+/* Front matter is set as code, and a code line has no headings in it. */
+.sheet-edit .cm-line-code :is(.md-h1, .md-h2, .md-h3, .md-h4, .md-mark, .md-rule) {
+  font: inherit; color: inherit; letter-spacing: 0; text-transform: none;
+}
+
+.sheet-foot {
+  display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+  padding: .45rem .85rem; border-top: 1px solid var(--line); background: var(--surface-sunk);
+  font-family: var(--mono); font-size: var(--t-meta); color: var(--ink-3);
+}
+.sheet-foot .s-sp { flex: 1 1 auto; }
+.sheet-foot .s-state { display: inline-flex; align-items: center; gap: .3rem; }
+.sheet-foot .s-state.s-dirty { color: var(--accent-ink); }
+.sheet-foot .s-state.s-dirty::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--lamp-amber);
+}
+.sheet-foot kbd {
+  font-family: var(--mono); font-size: var(--t-label); border: 1px solid var(--line-strong);
+  padding: .05rem .25rem; color: var(--ink-3);
+}
+
+/* If the vendored editor is missing, the prompt is still editable. */
+.prompt-fallback {
+  width: 100%; height: 100%; resize: none; border: none; background: var(--surface);
+  padding: .9rem 1.1rem; font-family: var(--mono-prose); font-size: .8125rem;
+  line-height: 1.62;
+}
+
+body.sheet-open { overflow: hidden; }
+
+@media (max-width: 1023px) {
+  /* Below this the panel is a drawer rather than a fixture, so nothing is
+     anchored past it whatever `data-rail` says. */
+  :root { --sheet-gap: 14px; }
+  .sheet { left: var(--sheet-gap); }
+  .sheet-scrim { left: 0; }
+}
+@media (max-width: 860px) {
+  .sheet-body { grid-template-columns: minmax(0, 1fr); }
+  .sheet-outline { display: none; }
+}
+@media (max-width: 760px) {
+  .sheet { left: 0; right: 0; top: var(--sheet-top, var(--mast-h)); border-inline: none; }
+  .sheet-edit .cm-content { margin-inline: 1rem; }
+}
+
+.role-grid { display: flex; flex-wrap: wrap; gap: .45rem .8rem; align-items: center; margin-bottom: .45rem; }
+.role-grid.add-agent { margin-top: .6rem; }
+
+.roles-foot { margin-top: 1.5rem; }
+
+@media (max-width: 640px) {
+  .role-row { grid-template-columns: minmax(0, 1fr) 3rem 4rem 1.25rem; }
+  .role-row .rr-model { grid-column: 1 / -1; }
+  /* The length of the prompt is the first thing to go when there is no room:
+     it is context for a decision, not the decision. Counted from five because
+     `words` sits third and `effort` is the other column this hides. */
+  .role-row .rr-words { display: none; }
+  .role-row span:nth-child(5) { display: none; }
+}
+
+.card.needs-key { border-left: 3px solid var(--accent); }
+.test-ok  { color: var(--green); }
+.test-bad { color: var(--red); }
+.provider-line { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+

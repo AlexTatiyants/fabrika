@@ -1,0 +1,113 @@
+{
+ "blob": "e06ebfbc63900ff90ca7de964f3e98a5910d391d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "trace",
+   "recording",
+   "browser run",
+   "frame",
+   "walkthrough",
+   "criterion"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "trace recordings",
+   "trace manifests",
+   "recording metadata"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "current_recordings",
+     "safe_join"
+    ],
+    "line": 17,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "current_recordings"
+    ],
+    "line": 21,
+    "name": "list_traces"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "safe_join",
+     "PathEscape",
+     "HTTPException"
+    ],
+    "line": 86,
+    "name": "get_trace_player"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "safe_join",
+     "PathEscape",
+     "HTTPException",
+     "FileResponse"
+    ],
+    "line": 111,
+    "name": "get_trace_frame"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "safe_join",
+     "PathEscape",
+     "HTTPException",
+     "FileResponse"
+    ],
+    "line": 124,
+    "name": "get_trace"
+   }
+  ],
+  "imports": [
+   "factory/pipeline/__init__.py",
+   "factory/workspace.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "file system"
+  ],
+  "purpose": "Serves recordings of browser test runs: listing available traces, serving walkthrough frames and manifests, and downloading trace archives.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "list_traces",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/traces"
+   },
+   {
+    "handler": "get_trace_player",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/traces/{name}/player"
+   },
+   {
+    "handler": "get_trace_frame",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/traces/{name}/frames/{frame}"
+   },
+   {
+    "handler": "get_trace",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/projects/{project_id}/features/{feature_id}/traces/{name}"
+   }
+  ]
+ }
+}

@@ -1,0 +1,151 @@
+{
+ "blob": "c03e22379c5585118d9a31ad8b5d78eae3f94967",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "check_oracle_discards",
+   "blind_summary",
+   "check_blind_attribution",
+   "available_fixtures",
+   "unmet_setup",
+   "promised_setup",
+   "check_spec_testability",
+   "check_blind_suite_missing",
+   "browser_ran",
+   "current_recordings",
+   "check_trace_coverage",
+   "check_recording_coverage",
+   "check_blind_tags",
+   "check_oracle_requirements",
+   "check_blind_suite_loads"
+  ],
+  "domain_terms": [
+   "blind test suite",
+   "acceptance criteria",
+   "test fixtures",
+   "test levels",
+   "test recordings",
+   "oracle"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "TestSummary",
+   "Finding",
+   "GateReport",
+   "GateResult",
+   "OracleSuite",
+   "Spec",
+   "EvidenceStore",
+   "TestingSurface"
+  ],
+  "entities_written": [
+   "Finding"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 18,
+    "name": "check_oracle_discards"
+   },
+   {
+    "calls": [],
+    "line": 104,
+    "name": "blind_summary"
+   },
+   {
+    "calls": [],
+    "line": 123,
+    "name": "check_blind_attribution"
+   },
+   {
+    "calls": [
+     "_leading_name"
+    ],
+    "line": 192,
+    "name": "available_fixtures"
+   },
+   {
+    "calls": [],
+    "line": 211,
+    "name": "_leading_name"
+   },
+   {
+    "calls": [
+     "available_fixtures",
+     "_leading_name"
+    ],
+    "line": 223,
+    "name": "unmet_setup"
+   },
+   {
+    "calls": [
+     "_leading_name"
+    ],
+    "line": 268,
+    "name": "promised_setup"
+   },
+   {
+    "calls": [
+     "unmet_setup",
+     "available_fixtures",
+     "promised_setup"
+    ],
+    "line": 292,
+    "name": "check_spec_testability"
+   },
+   {
+    "calls": [],
+    "line": 534,
+    "name": "check_blind_suite_missing"
+   },
+   {
+    "calls": [],
+    "line": 589,
+    "name": "browser_ran"
+   },
+   {
+    "calls": [],
+    "line": 612,
+    "name": "current_recordings"
+   },
+   {
+    "calls": [],
+    "line": 650,
+    "name": "check_trace_coverage"
+   },
+   {
+    "calls": [],
+    "line": 719,
+    "name": "check_recording_coverage"
+   },
+   {
+    "calls": [],
+    "line": 789,
+    "name": "check_blind_tags"
+   },
+   {
+    "calls": [],
+    "line": 833,
+    "name": "check_oracle_requirements"
+   },
+   {
+    "calls": [],
+    "line": 908,
+    "name": "check_blind_suite_loads"
+   }
+  ],
+  "imports": [
+   "factory/gates.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/pipeline/oracle_suite.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Checks on the blind suite \u2014 verifying what it proved, what setup was available, what it recorded, whether it loaded at all. Used by the verification pipeline to validate test coverage and detect gaps in testing infrastructure before the spec is frozen.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

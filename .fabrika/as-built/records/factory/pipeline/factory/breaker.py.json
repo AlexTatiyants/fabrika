@@ -1,0 +1,93 @@
+{
+ "blob": "18ae692578ba36636313a4476ffd0983ce61334d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "BreakerMixin"
+  ],
+  "domain_terms": [
+   "breaker probe",
+   "regression test",
+   "demonstration test",
+   "probe promotion"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "BreakerReport",
+   "BreakerSuite",
+   "BreakerTest",
+   "FeatureState",
+   "Spec",
+   "EvidenceStore",
+   "Sandbox"
+  ],
+  "entities_written": [
+   "BreakerReport",
+   "BreakerSuite"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 38,
+    "name": "BreakerMixin"
+   },
+   {
+    "calls": [
+     "repo_digest",
+     "tree_section",
+     "spec_text",
+     "Worktree",
+     "uncommitted_paths",
+     "harness_unstarted",
+     "assemble_breaker_suite"
+    ],
+    "line": 41,
+    "name": "_author_probes"
+   },
+   {
+    "calls": [
+     "BreakerReport",
+     "BreakerSuite",
+     "TestFileCommand",
+     "FileWrite",
+     "run_per_file",
+     "probe_budget",
+     "safe_join",
+     "promoted_this_pass"
+    ],
+    "line": 201,
+    "name": "_run_breaker"
+   },
+   {
+    "calls": [
+     "run_per_file",
+     "probe_budget"
+    ],
+    "line": 540,
+    "name": "_promote_probes"
+   }
+  ],
+  "imports": [
+   "factory/gates.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/records.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/probes.py",
+   "factory/executors.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the local file system",
+   "a model provider"
+  ],
+  "purpose": "Implements the breaker, which writes and runs adversarial tests (probes) against finished code to find defects, and determines which regression probes should be retained in the project's test suite.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

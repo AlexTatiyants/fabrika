@@ -1,0 +1,87 @@
+{
+ "blob": "744e693216c90b87d7e675aef0067cdeffb405b2",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "projectChecks",
+   "STAGE_LAMP",
+   "projectLamp",
+   "projectFlag",
+   "yardRow",
+   "keyNote",
+   "yardFirstRun",
+   "yardScreen"
+  ],
+  "domain_terms": [
+   "projects",
+   "checks",
+   "yard",
+   "environment",
+   "features"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "projectChecks"
+   },
+   {
+    "calls": [
+     "projectChecks",
+     "unrunnableGates"
+    ],
+    "line": 42,
+    "name": "projectLamp"
+   },
+   {
+    "calls": [],
+    "line": 56,
+    "name": "projectFlag"
+   },
+   {
+    "calls": [
+     "projectLamp",
+     "projectChecks",
+     "esc"
+    ],
+    "line": 67,
+    "name": "yardRow"
+   },
+   {
+    "calls": [],
+    "line": 103,
+    "name": "keyNote"
+   },
+   {
+    "calls": [
+     "icon"
+    ],
+    "line": 114,
+    "name": "yardFirstRun"
+   },
+   {
+    "calls": [
+     "yardRow",
+     "keyNote",
+     "icon"
+    ],
+    "line": 156,
+    "name": "yardScreen"
+   }
+  ],
+  "imports": [
+   "console/app/util.js",
+   "console/app/state.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the yard screen showing all registered projects with their health status from checks, and provides an interface for adding new projects.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

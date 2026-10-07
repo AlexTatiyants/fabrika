@@ -1,0 +1,85 @@
+{
+ "blob": "07389a5551de3811ea1a475669019bb27ec3f34d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Reverted",
+   "Unit",
+   "Round",
+   "Stopped",
+   "Repairs"
+  ],
+  "domain_terms": [
+   "repair round",
+   "finding",
+   "unit",
+   "decision",
+   "outcome"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "rulings",
+   "rework"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 28,
+    "name": "Reverted"
+   },
+   {
+    "calls": [
+     "Decision",
+     "Disclosures"
+    ],
+    "line": 39,
+    "name": "Unit"
+   },
+   {
+    "calls": [
+     "Reverted",
+     "Unit"
+    ],
+    "line": 68,
+    "name": "Round"
+   },
+   {
+    "calls": [],
+    "line": 126,
+    "name": "Stopped"
+   },
+   {
+    "calls": [
+     "packetOf",
+     "findingsWithRecords",
+     "isRestatement",
+     "outcomeOf",
+     "repairAccount",
+     "Decision",
+     "Disclosures"
+    ],
+    "line": 150,
+    "name": "Repairs"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js",
+   "console/ui/account.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Displays what each repair round changed, findings it closed, and decisions the repair loop made.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "Repairs",
+    "kind": "export",
+    "method": "",
+    "name": "Repairs"
+   }
+  ]
+ }
+}

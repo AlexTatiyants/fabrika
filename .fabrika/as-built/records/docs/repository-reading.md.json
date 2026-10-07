@@ -1,0 +1,26 @@
+{
+ "blob": "3ec12a796190eb122ec1bdc0f6145552791118dc",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "scout",
+   "as-built",
+   "digest",
+   "symbol index",
+   "slicing"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Explains two types of repository reading: the scout reads for agents on partial slices of the codebase, while the as-built reads for humans and keeps a standing verified record of the whole system.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

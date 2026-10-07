@@ -1,0 +1,54 @@
+{
+ "blob": "9dbf9987ae06fe287cfbcfc7e1f7ddc250bb633b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   ".doc-wrap",
+   ".narrow",
+   ".doc",
+   ".scout-cols",
+   ".ac-row",
+   ".ac-detail",
+   ".toc",
+   ".phase-list",
+   ".dot",
+   ".verdict-strip",
+   ".stat-row",
+   ".materiality",
+   ".mat-bar",
+   ".finding",
+   ".decision",
+   ".objection",
+   ".ppanel",
+   ".field",
+   ".answer-field",
+   ".gate-result"
+  ],
+  "domain_terms": [
+   "gate result",
+   "criteria",
+   "finding",
+   "materiality",
+   "decision",
+   "phase"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 295,
+    "name": "pulse"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Styles the core screens of a code review console\u2014the specification document view, execution/running display, and review findings page\u2014plus shared form fields used throughout.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "blob": "4a178919626faf9df8bf837520aba2e5c620765f",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "test suite",
+   "invariant",
+   "gate",
+   "harness",
+   "oracle"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Documents the twelve-hundred-test suite covering the invariants and properties that make the system worth running, explaining what each test file covers and what the suite cannot test.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

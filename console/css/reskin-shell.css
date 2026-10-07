@@ -1,0 +1,749 @@
+/* The andon re-skin, second half: one shell, one header row, the scheme picker,
+   the folded line, one button grammar, the lanes in their colours, and the
+   test-level cards. Written as overrides of the files loaded before it. */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ONE SHELL
+   The masthead is the board's own top row -- same surface, one nav, one
+   vocabulary. As a separate light strip it would carry a second copy of the
+   board's navigation: the same destinations twice, under different names,
+   within sixty pixels of each other.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root { --panel-w: 238px; }        /* 10% narrower than base.css's 264px */
+
+.masthead {
+  height: auto; min-height: 40px;
+  padding: 12px var(--gutter) 10px;
+  background: var(--panel);
+  border-bottom: 0;
+}
+.masthead .crumbs { display: none; }   /* the board carries the title */
+.mast-right { gap: 1rem; }
+
+.masthead .panel-toggle {
+  border: 0; background: none; padding: 0 4px 0 0; color: var(--board-ink-4);
+}
+.masthead .panel-toggle:hover { border: 0; color: var(--board-ink-hi); }
+.masthead .panel-toggle .wordmark-mark { display: none; }
+.masthead .pt-chev { color: inherit; font-size: 13px; }
+
+/* the destinations, in the world's own words. Sized a shade under 12.5px --
+   "control room" and, once a project is open, the seam and its "project"
+   heading are real width in a row that would otherwise hold only a few one-
+   and two-word links. */
+#mast-nav { display: flex; align-items: center; }
+#mast-nav a {
+  font: 400 11px/1 var(--mono); color: var(--board-ink-3); text-decoration: none;
+  padding-bottom: 2px; border-bottom: 1px solid transparent;
+}
+#mast-nav a:hover { color: var(--board-ink-hi); border-bottom-color: var(--rail); }
+#mast-nav a.on { color: var(--board-ink); }
+#mast-nav .sep { color: var(--board-rule); padding: 0 6px; font: 400 11px/1 var(--mono); }
+
+/* ── the rail: its own shade, so only the board is the prominent black ───── */
+.panel { background: var(--panel-2); border-right: 1px solid var(--board-seam); }
+.panel > .wordmark { padding: 18px var(--gutter) 16px; border-bottom-color: var(--panel-3); }
+.panel > .wordmark img { display: block; width: 170px; height: auto; margin: auto;}
+.panel-feature:hover { background: var(--panel-3); }
+.panel-feature.current { background: var(--panel-3); }
+/* The favicon, signed at the foot of the rail. A cutout -- the bolt is a hole,
+   not white -- so it takes the rail's ink in every scheme and the rail itself
+   shows through the bolt. */
+.panel-mark {
+  flex: none; height: 22px; margin: 12px auto 16px; aspect-ratio: 1;
+  background: var(--board-ink-3); opacity: .35;
+  -webkit-mask: url(/static/fabrika-mark.png) center / contain no-repeat;
+          mask: url(/static/fabrika-mark.png) center / contain no-repeat;
+}
+
+/* ── the floor runs to the bottom; only the board is dark ───────────────── */
+body { background: var(--paper); }
+main { background: var(--paper); min-height: 60vh; }
+
+/* ── the board sits directly under the masthead, same surface ───────────── */
+.board { border-bottom: 5px solid var(--panel-3); }
+.board > .hall { padding-top: 0; }
+
+/* ── the capability nameplate ──────────────────────────────────────────────
+   Gate 0 approves the line, not five separate things, so the line gets one
+   plate with one spec. A stamp -- not a lamp -- says whether it is fit to
+   build on. Five stamps: certified, not certified, out of calibration
+   (a check that cannot execute reports on nothing), unproven, stale. */
+.nameplate {
+  display: flex; align-items: stretch; align-self: center; margin: 0;
+  border: 1px solid var(--panel-3); min-height: 47px;
+}
+.np-stamp { display: flex; align-items: center; padding: 9px 14px; border-right: 1px solid var(--panel-3); }
+.np-mark {
+  border: 2px double var(--lamp-green); color: var(--lamp-green);
+  padding: 6px 11px 5px; white-space: nowrap;
+  font: 600 11px/1 var(--cond); letter-spacing: .2em; text-transform: uppercase;
+}
+.np-mark.red   { border-color: var(--lamp-red);   color: var(--lamp-red); }
+.np-mark.hold  { border-color: var(--lamp-amber); color: var(--lamp-amber); }
+.np-mark.unproven { border-color: var(--board-ink-4); color: var(--board-ink-2); }
+.np-field {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 9px clamp(10px, 1.1vw, 16px) 8px; border-right: 1px solid var(--panel-3);
+}
+.np-field:last-child { border-right: 0; }
+.np-field dt {
+  margin: 0 0 5px; color: var(--board-ink-3);
+  font: 600 8.5px/1 var(--cond); letter-spacing: .2em; text-transform: uppercase;
+}
+.np-field dd { margin: 0; font: 400 13px/1 var(--mono); color: var(--board-ink); white-space: nowrap; }
+.np-field dd.bad { color: var(--lamp-red); }
+
+/* the plate and the actions share a line: what the line is, and what you can
+   do about it. They wrap rather than clip when they no longer fit. */
+.board .stations, .board .nameplate { }
+.board-acts {
+  display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+  padding: 12px 0 16px; margin-left: auto;
+}
+.board-acts .btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 600 11px/1 var(--cond); letter-spacing: .14em; text-transform: uppercase;
+  padding: 9px 14px; border: 1.5px solid var(--board-faint); background: transparent; color: var(--board-ink);
+}
+.board-acts .btn-primary { background: var(--lamp-amber); border-color: var(--lamp-amber); color: var(--ink-on-amber); }
+.board-acts .btn-quiet { border-color: transparent; color: var(--board-ink-3); }
+.board-acts .btn:disabled { background: transparent; border-color: var(--board-rule); color: var(--board-ink-4); }
+
+@media (max-width: 860px) {
+  .nameplate { flex-wrap: wrap; min-height: 0; width: 100%; }
+  .np-stamp { width: 100%; border-right: 0; border-bottom: 1px solid var(--panel-3); }
+  .np-field { flex: 1 1 auto; border-bottom: 1px solid var(--panel-3); }
+  .board-acts { margin-left: 0; }
+}
+
+/* The plate and the actions share a line -- what the line is, and what you can
+   do about it. Between roughly 900 and 1100px they no longer fit side by side,
+   so the row wraps instead of pushing the buttons off the board. */
+/* The gap and the plate's padding give way before the row does: at a window
+   a little over 1100px wide, "Accept these checks" is a dozen pixels too wide
+   to sit beside the plate and drops onto a line of its own, flush right. */
+.line-row {
+  display: flex; align-items: center; gap: 14px clamp(14px, 1.6vw, 26px);
+  flex-wrap: wrap; padding: 0 0 14px;
+}
+.line-row .nameplate { align-self: center; }
+.line-row .board-acts { margin-left: auto; padding: 0; }
+.line-row .board-acts { align-items: center; }
+/* Too narrow for both, the buttons take the next line from its start. Pushed
+   right, they would sit under nothing, flush against the edge, reading as
+   something that has fallen off the row. The width is the row's own, not the window's:
+   the side rail comes and goes and takes 240px with it. */
+.board { container-type: inline-size; container-name: board; }
+@container board (max-width: 760px) {
+  .line-row .board-acts { margin-left: 0; width: 100%; }
+}
+@media (max-width: 860px) {
+  .line-row .board-acts { align-items: flex-start; }
+}
+.proc.steps { padding: 10px 0 6px; }
+
+/* THE STEPS AND THE ACTIONS, ONE LINE.
+
+   Two rows -- the steps, then the lamps with the buttons riding beside
+   them -- work unfolded: the strip is 130px tall and there is somewhere for a
+   button to sit. Folded, the strip collapses to a row of dots and a short
+   phrase, and the buttons would be left floating against a bar that is two
+   thirds empty.
+
+   So the pairing is by what the control acts on, not by what happens to be
+   tall. The buttons rule on, re-run, rebuild and discard the FEATURE, which is
+   what the step strip names -- they share its line. The lamps report the RUN,
+   and they get the line below whichever height they are drawn at. Folding
+   removes a row instead of hollowing one out. */
+.proc-row {
+  display: flex; align-items: center; gap: 6px 26px; flex-wrap: wrap;
+  border-top: 1px solid var(--board-edge); margin-top: 13px;
+}
+/* The rule the row carries belongs to the row, not to the steps inside it. */
+.proc-row .proc.steps {
+  border-top: 0; margin-top: 0; flex: 1 1 auto; min-width: 0; padding: 6px 0;
+}
+.proc-row .board-acts { margin-left: auto; padding: 7px 0; align-items: center; }
+
+@media (max-width: 860px) {
+  /* Stacked, the buttons take the whole line and start at the left edge like
+     everything else. Without the width they stay beside the steps and squeeze
+     them instead -- six words with nothing between them. */
+  .proc-row .board-acts { margin-left: 0; width: 100%; padding: 0 0 12px; }
+}
+/* Below 780px the interpuncts between the steps are hidden (see `.proc .arr`),
+   and the steps have no column gap of their own -- so the six words would run
+   into each other. The separator can go; the space it occupied cannot. */
+@media (max-width: 780px) {
+  .proc.steps { column-gap: 14px; }
+}
+
+/* The action for "describe a feature" belongs beside the composer. In the
+   toolbar it would need a sentence explaining why it is disabled; here the empty
+   box directly above it is the explanation. */
+.compose-acts { display: flex; align-items: flex-start; gap: 18px; margin: 1.4rem 0 0; flex-wrap: wrap; }
+.compose-acts .btn {
+  flex: none; display: inline-flex; align-items: center; gap: 7px;
+  font: 600 11px/1 var(--cond); letter-spacing: .14em; text-transform: uppercase;
+  padding: 11px 16px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper);
+}
+.compose-acts .btn:disabled {
+  background: transparent; border-color: var(--line-strong); color: var(--ink-3);
+}
+.compose-acts .after-note { margin: 0; flex: 1; min-width: 18rem; }
+
+/* The crew page is drawn without a bar, so it does not get the h1 that
+   featureBar gives every other screen; without this it has no heading of any
+   level. */
+.crew-title {
+  margin: 0 0 .4rem; font-family: var(--cond); font-size: 1.5rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.crew-sub { margin: 0 0 1.4rem; color: var(--ink-2); max-width: 74ch; }
+
+/* A masthead spanning the whole window over a 1180px measure puts the nav at
+   the far right of a wide screen and the title it belongs to 300px inside.
+   And #featurebar's own 24px padding insets the board from the rail and the
+   window edge while the masthead meets both -- two dark rows that should be
+   one surface, misaligned. */
+.masthead { padding: 0; }
+.mast-in {
+  display: flex; align-items: center; gap: .6rem;
+  width: 100%; max-width: 1180px; margin: 0 auto;
+  padding: 12px var(--gutter) 10px;
+}
+#featurebar { padding: 0; }
+
+/* One measure for the shell. At 1180 against the body's default container of
+   1080, the board and the masthead would set a title 130px inside the content
+   it titles. Screens that opt into .wrap.wide are deliberately wider than the
+   chrome above them; everything else lines up. */
+.hall, .mast-in { max-width: 1080px; }
+
+/* .wrap sits inside main's 24px padding; .hall carries its own. To put their
+   CONTENT on the same origin the hall's box has to be wider by that padding --
+   otherwise the board's title lands 24px inside the content it titles. */
+.hall, .mast-in { max-width: calc(1080px + var(--gutter) * 2); }
+
+/* ── ONE HEADER ROW ────────────────────────────────────────────────────────
+   As two bands of the same black -- a chevron on the left and a nav on the
+   right with nothing between them, then a title and nothing else -- the
+   masthead and the board's title row spend 257px before the screen's subject.
+   So they are one row -- where you are on the left, where you can go on the
+   right -- and the board wears it on any screen that has a line. The masthead
+   in index.html is the same row for the screens that do not, so it steps aside
+   whenever a board is on the page. */
+body.has-board .masthead { display: none; }
+
+/* Name on the left, the way out on the right, and the row is as tall as the
+   name. Centred, so the two things in the row sit on the same line without
+   nudging either one. */
+.hdr { display: flex; align-items: center; gap: 26px; padding: 13px 0 0px; }
+.hdr-main { flex: 1; min-width: 0; }
+.crumbline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.crumbline .panel-toggle { border: 0; background: none; padding: 0; align-self: center;
+  color: var(--board-ink-4); cursor: pointer; }
+.crumbline .panel-toggle:hover { border: 0; color: var(--board-ink-hi); }
+.crumbline .pt-chev { color: inherit; font-size: 13px; }
+.crumbline .ftitle { margin: 0; font: 600 26px/1 var(--cond); letter-spacing: .05em;
+  text-transform: uppercase; color: var(--board-ink-hi); }
+/* The branch and the pass number are what a feature screen still needs from a
+   sub-line, and at this size they sit beside the name instead of under it. */
+.fsub { font: 400 12.5px/1 var(--mono); color: var(--board-ink-3); }
+
+/* Which pass the line is on. Loud on purpose: a repair round and a first pass
+   light the same lamps, and this is the only thing on the board that differs. */
+.fpass { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--board-ink); border: 1px solid var(--board-faint); padding: 6px 9px; margin-left: 14px;
+  white-space: nowrap; align-self: center; }
+.fpass.rework { color: var(--ink-on-amber); background: var(--lamp-amber); border-color: var(--lamp-amber); }
+.lamp.lit.green.prior { background: var(--lamp-green-prior); box-shadow: none; }
+.lamp.lit.green.prior::after { opacity: .25; }
+.mlamp.lit.green.prior { background: var(--lamp-green-prior); box-shadow: none; }
+
+.hdr-right { display: flex; align-items: center; gap: 16px; flex: none; }
+.hdr-right .mast-nav { display: flex; align-items: center; flex-wrap: wrap; }
+.hdr-right .mast-nav a { font: 400 11px/1 var(--mono); color: var(--board-ink-3); text-decoration: none; }
+.hdr-right .mast-nav a:hover, .hdr-right .mast-nav a.on { color: var(--board-ink-hi); }
+.hdr-right .mast-nav .sep { color: var(--board-rule); padding: 0 6px; }
+
+/* ── THE SCHEME PICKER ─────────────────────────────────────────────────────
+   Last thing in the masthead, after `settings`, with a rule in front of it:
+   the four words before it are places you can go, and this is not one.
+
+   It letters itself in the board's own ink -- `hi` for the chosen scheme,
+   `3` for the two on offer -- so the control follows whatever scheme it is
+   sitting in without knowing that schemes exist. Each chip is a two-band
+   square: that scheme's board on the left, its floor on the right, set
+   inline by the markup because they are the OTHER schemes' values and a
+   scheme cannot hold its neighbours'.
+
+   The chosen one is marked by a ring, not by the nav's underline. That mark
+   already means "the page you are on", and this console's whole argument is
+   that two registers stay apart. */
+.sw-pick { display: inline-flex; align-items: center; gap: 2px;
+           margin-left: 11px; padding-left: 11px;
+           border-left: 1px solid var(--board-rule); }
+.sw-pick button {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: 0; padding: 3px 5px; cursor: pointer;
+  font: 400 12.5px/1 var(--mono); color: var(--board-ink-3);
+}
+.sw-pick button:hover { color: var(--board-ink-hi); }
+.sw-pick button[aria-pressed="true"] { color: var(--board-ink-hi); }
+.sw-pick button:focus-visible { outline: 2px solid var(--lamp-amber); outline-offset: 1px; }
+/* The split is the point -- board on the left, floor on the right, in that
+   scheme's real values -- and it disappears exactly where it matters most.
+   Day's board and floor are both near-white; night's are both near-black; a
+   swatch previewing either one is close to a single flat colour at 13px, and
+   the scheme most likely to be on screen when you look is the one you are
+   already in. A fixed seam down the middle is not one of the scheme's own
+   values -- neither is the border around the whole chip, already here for
+   the same reason -- but it is what keeps the split legible when the two
+   halves are not. */
+.sw-pick i {
+  width: 13px; height: 13px; flex: none; border: 1px solid var(--board-rule);
+  background: linear-gradient(90deg,
+    var(--c-board) 0 calc(50% - .5px),
+    rgba(128, 128, 128, .55) calc(50% - .5px) calc(50% + .5px),
+    var(--c-floor) calc(50% + .5px) 100%);
+}
+.sw-pick button[aria-pressed="true"] i {
+  border-color: var(--board-ink-hi); box-shadow: 0 0 0 1px var(--board-ink-hi);
+}
+/* Only the chosen scheme says its name. The other two are objects. */
+.sw-pick button:not([aria-pressed="true"]) b { display: none; }
+
+@media (max-width: 860px) {
+  .hdr { flex-direction: column; align-items: flex-start; gap: 12px; padding: 13px 0 11px; }
+  .hdr-right { flex-wrap: wrap; gap: 10px 14px; width: 100%; }
+  .crumbline .ftitle { font-size: 22px; }
+}
+
+/* ── THE COMPOSER, AS DRAWN ────────────────────────────────────────────────
+   The one place in this tool where you write rather than rule. Square and
+   ruled like every other surface in this world -- the only white box on the
+   page with a soft corner and no edge would read as a gap in the floor rather
+   than as paper laid on it. */
+.start .field { border: 1px solid var(--line); border-radius: 0; min-height: 150px; }
+.start .field:focus-within {
+  border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+/* The sentence beside the action is the only guidance on this screen, so it is
+   set to be read: body size, body colour. */
+.compose-acts .after-note { font-size: .9rem; line-height: 1.6; color: var(--ink-2); }
+.compose-acts .after-note b { color: var(--ink); font-weight: 600; }
+
+/* Nothing built yet is one line under a rule, not a section heading with a
+   count of zero above an empty list. */
+.start-none {
+  margin: 34px 0 0; padding-top: 16px; border-top: 1px solid var(--line);
+  font-size: .9rem; color: var(--ink-3);
+}
+
+/* A section of gate 0, opened by the step strip. It stands in for a tab panel, so
+   it keeps that panel's spacing and drops the tab bar's border. */
+.psection { margin: 1.6rem 0 1rem; }
+
+/* What this section of gate 0 is. The strip gives it a word; this gives it a
+   sentence, because a word like `first run` names a moment rather than a
+   subject. */
+/* No measure cap. At 78ch inside a 1080px column the lede would stop
+   two-thirds of the way across while the plate, the rows and the cards below all ran to
+   the same right edge -- which reads as an accident rather than a decision.
+   These ledes are one or two sentences; the column is the measure. */
+.sec-lede {
+  margin: .35rem 0 1.1rem;
+  font-size: .9375rem; line-height: 1.55; color: var(--ink-2);
+}
+
+/* THE TITLE SITS ON THE MEASURE. As the first thing in the title's row, the
+   rail toggle would push the project's name 11px right of the step strip, the
+   nameplate and every line of the body below. It is chrome for the rail,
+   not part of the name, so it hangs in the gutter instead of displacing it. */
+.crumbline { position: relative; }
+/* Centred in the gutter rather than pushed to the end of it: at -1.2rem the
+   glyph runs 236..243 against a rail whose edge is 238, so the control sits
+   *on* the rail. And a box of 8x13 would be a target smaller than the glyph
+   most people are aiming at. */
+.crumbline .panel-toggle {
+  position: absolute; left: calc(var(--gutter) / -2 - 11px); top: 50%;
+  transform: translateY(-50%);
+  display: flex; align-items: center; justify-content: center;
+  box-sizing: border-box; width: 22px; height: 22px;
+  /* the base rule pulls itself 7px left with a negative margin, for a row it
+     is not in here */
+  margin: 0; padding: 0; border: 0; line-height: 1;
+}
+/* #767e75 on the panel is 3.9:1 -- under the floor for text, and this is a
+   7px glyph. */
+.crumbline .panel-toggle { color: var(--board-ink-2); }
+.crumbline .panel-toggle:hover { color: var(--board-ink-hi); background: color-mix(in srgb, var(--board-ink-hi) 7%, transparent); }
+.crumbline .pt-chev { color: inherit; font-size: 15px; }
+
+@media (max-width: 900px) {
+  /* No gutter worth hanging in: the control comes back into the row, where it
+     can be reached. */
+  .crumbline .panel-toggle { position: static; transform: none; margin-right: 2px; }
+}
+
+/* THE HEADER MEETS THE RAIL. `main` carries the page gutter, so a board built
+   into it -- the one element on the page that is a surface rather than content
+   -- would be inset by that gutter, and the floor would show through as a light
+   strip down both sides of the black. Only boards inside #main: the ones in
+   #featurebar are its siblings and already span the column, and pulling those
+   too would put them 24px past the edge of the page. Their .hall keeps the
+   content on the same origin as .wrap either way, which is what the measure is
+   for. */
+#main > .board {
+  margin-left: calc(-1 * var(--gutter));
+  margin-right: calc(-1 * var(--gutter));
+}
+
+/* The heading of a gate-0 section. It has to outrank the section's own content
+   without competing with the project name on the board above it. */
+.sec-title {
+  margin: 1.5rem 0 .45rem;
+  font: 600 1.25rem/1.25 var(--display); letter-spacing: -.01em; color: var(--ink);
+}
+.sec-title + .sec-lede { margin-top: 0; }
+/* Under a heading the ruling is no longer the page's opening line, so it sets
+   at the size of the prose it sits in rather than as a headline. */
+.sec-lede + .p-verdict { font-size: 1.0625rem; margin: 1.5rem 0 .5rem; }
+
+/* The masthead is the header on screens without a board, and as a single
+   unbreakable row its nav would run past the right edge below about 600px and
+   take 12px of the page with it. Wrap it, the same as the board's copy. */
+/* With `flex: none` it cannot give up width it does not have, so wrapping
+   never triggers -- it just runs off the edge. */
+.mast-right { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; }
+#mast-nav { flex-wrap: wrap; justify-content: flex-end; }
+
+/* ── THE STOPPED LINE ──────────────────────────────────────────────────────
+   One event, one red. The band is the lamp red at full strength and the error
+   card is the same hue as a reading surface -- a different red from a
+   different palette would give a page about one failure two of them. */
+.error-box { border-left-color: var(--lamp-red); }
+.eb-h {
+  margin: 0 0 .5rem; font: 600 1rem/1.25 var(--display); color: var(--ink);
+  letter-spacing: -.005em;
+}
+/* Machine output. It gets the width of the document rather than the width of
+   prose, and it keeps its own line breaks. */
+.error-box pre { font-size: .8125rem; line-height: 1.5; overflow-x: auto; }
+
+/* ── THE LINE, FOLDED ──────────────────────────────────────────────────────
+   Sixteen stacked lamps are the signature of this console, and they are also
+   130px of every feature screen. Folded, the same sixteen are a row of dots
+   with the count beside them, and the actions come up onto that line: one row
+   instead of two. */
+.stations.folded {
+  display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0;
+  padding: 0; flex-wrap: nowrap;
+}
+.mini-lamps { display: flex; align-items: center; gap: 5px; flex: none; }
+.mlamp {
+  width: 9px; height: 9px; border-radius: 50%; flex: none;
+  background: var(--panel-3); border: 1px solid var(--board-seam);
+}
+.mlamp.lit.green { background: var(--lamp-green); box-shadow: 0 0 5px -1px var(--lamp-green); }
+.mlamp.lit.red   { background: var(--lamp-red);   box-shadow: 0 0 5px -1px var(--lamp-red); }
+.mlamp.lit.white { background: var(--lamp-white); box-shadow: 0 0 5px -1px var(--lamp-white); }
+.mlamp.skipped   { background: var(--panel-3); border-style: dashed; border-color: var(--board-rule); }
+.mlamp.lit.blink { animation: lampblink 1.15s steps(1) infinite; }
+
+.mini-word {
+  font: 400 12.5px/1 var(--mono); color: var(--board-ink-3); min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mini-word.bad { color: var(--lamp-red); }
+/* Not fixed-width, and willing to shrink: this text renders, so it has to fit
+   the same row without pushing the strip onto a second line and, with it, the
+   page past whatever fixed-height frame holds this header. */
+.mini-rail {
+  font: 600 9.5px/1 var(--cond); letter-spacing: .18em; text-transform: uppercase;
+  color: var(--board-ink-4); border-left: 1px solid var(--panel-3); padding-left: 14px;
+  flex: 0 1 auto; min-width: 3.5em; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-row.folded { padding-bottom: 12px; }
+
+/* Same place folded or not: at the end of the strip's own row. */
+.strip-toggle {
+  flex: none; background: none; border: 0; padding: 4px 2px 4px 12px;
+  color: var(--board-ink-4); cursor: pointer; line-height: 1;
+}
+.strip-toggle:hover { color: var(--board-ink-hi); }
+.strip-toggle .st-chev { font-size: 15px; line-height: 1; }
+.strip-toggle:focus-visible { outline: 2px solid var(--lamp-amber); outline-offset: 2px; }
+
+
+/* The timeline says which lane a station belongs to in a word; the bar can say
+   it in the same colour the lane rules use, so the plot reads as four bands of
+   work rather than one grey ramp. */
+.tl-row { grid-template-columns: 6.5rem 3.4rem minmax(0, 1fr) 2.6rem 3.2rem 3.4rem; }
+/* Narrow, the band word goes and its column with it. Written after the row's
+   own columns, or those win and five cells sit in a grid of six. */
+@media (max-width: 640px) {
+  .tl-row { grid-template-columns: 5.5rem minmax(0, 1fr) 2.6rem 3.2rem 3.4rem; }
+}
+.tl-calls { font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); text-align: right; }
+.tl-bar.lane-plan   { background: var(--green); }
+.tl-bar.lane-build  { background: var(--red); }
+.tl-bar.lane-verify { background: var(--amber); }
+.tl-bar.lane-review { background: var(--rail); }
+.tl-bar.running { background: var(--accent); }
+.tl-bar.failed  { background: var(--red); }
+.tl-band.lane-plan   { color: var(--green); }
+.tl-band.lane-build  { color: var(--red); }
+.tl-band.lane-verify { color: var(--amber); }
+.tl-band.lane-review { color: var(--ink-3); }
+
+/* A finished 40-second station inside a run measured in hours is a bar under a
+   pixel wide, and the call dot drawn on top of it covers what is left -- so
+   four completed stations would read as four empty tracks with a ring in them. The
+   bar keeps a legible minimum and sits above the dots; the numbers beside it
+   carry the proportion the axis cannot. */
+.tl-bar { min-width: 10px; z-index: 1; }
+.tl-mark { z-index: 2; width: var(--size, 5px); }
+.tl-track { overflow: hidden; }
+
+/* ── GATE 1: THE QUESTION ROW ──────────────────────────────────────────────
+   Laid out as wrapping chips, three sentence-length answers come out 421px,
+   393px and 415px wide with ragged ends and no alignment to read down. They are
+   a list of things you might choose, so they are a column: same left edge, same
+   right edge, one line of sight. */
+.opts { display: grid; gap: 5px; }
+.opts .opt {
+  display: flex; align-items: baseline; gap: .75rem; width: 100%; max-width: none;
+}
+.opts .opt > .def { margin-left: auto; flex: none; }
+
+/* The way into "why this matters" and into writing your own answer belongs
+   under the text it unfolds, and it can say what it does -- not a bare `+` in
+   a 26px column at the far right of the row, a hand's width from the thing it
+   expands. */
+.qmore {
+  display: inline-block; margin: .4rem 0 0; padding: 0;
+  background: none; border: 0; border-bottom: 1px solid var(--line-strong);
+  font-family: var(--cond); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); cursor: pointer;
+}
+.qmore:hover { color: var(--ink); border-bottom-color: var(--ink); }
+.qmore:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* Three columns: the way in sits under the text, so it needs no fourth. */
+.qrow { grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 1.35fr); }
+/* Narrow, the answer goes under the question rather than beside it. After the
+   three columns above, or they win and the question is squeezed into one. */
+@media (max-width: 1100px) {
+  .qrow { grid-template-columns: 6rem minmax(0, 1fr); }
+}
+
+/* One band above the questions, not two. The sentence is the bar's own
+   right-hand half rather than a paragraph below it. */
+.strip { display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; }
+/* Ranged right but set left: a ragged left edge on two lines of prose is
+   harder to pick up than the alignment gains. */
+.strip .strip-note { margin-left: auto; text-align: left; max-width: 58ch; }
+@media (max-width: 900px) {
+  .strip .strip-note { margin-left: 0; text-align: left; }
+}
+
+/* ── ONE BUTTON GRAMMAR ────────────────────────────────────────────────────
+   Lettering applied a container at a time -- to .board-acts, to
+   .compose-acts, to .cord -- and never to `.btn` itself leaves a button in any
+   other container in the body face, and two of them can sit an inch apart in
+   different alphabets: FREEZE THE SPEC beside "That's not what I meant".
+
+   It belongs on the button. A container may still say how big and what colour;
+   none of them has to remember how a button is lettered. */
+/* Bigger and less tracked than 11px at .14em. At that size a label reads as a
+   caption applied to a button rather than as the button's own word, and four
+   of them in a row become a band of texture you have to slow down to parse.
+   The face still carries the direction; the letters do not have to shout
+   it. */
+.btn {
+  font: 600 13px/1.1 var(--cond); letter-spacing: .05em; text-transform: uppercase;
+  gap: 7px;
+}
+.btn-sm { font-size: 13px; }
+
+/* ── THE READING, AT FULL WIDTH ────────────────────────────────────────────
+   As a two-column grid -- prose on the left, its two buttons in a column of
+   their own on the right -- the restatement would set the one paragraph on
+   this screen you are meant to read closely in about half the box it sits in,
+   wrapping early to leave room for controls that need none of that height.
+
+   The text takes the width; the buttons go under it, where the eye already is
+   when it finishes reading. */
+.restate { grid-template-columns: minmax(0, 1fr); }
+.restate-text { max-width: none; }
+.restate > .restate-acts { justify-content: flex-start; margin-top: .1rem; }
+
+/* ── SIXTEEN STATIONS, NO SCROLLBAR ────────────────────────────────────────
+   With `flex: 1 0 62px` -- grow yes, shrink NEVER -- sixteen cells insist on
+   992px inside a 979px board and the whole strip takes a horizontal scrollbar
+   to cover a 17px shortfall. A board you have to scroll is not a board: the
+   point of the lamps is that the state of the line is one glance.
+
+   Three things give the room back, in order of how much: the cells may shrink;
+   the gutters between them are 2px rather than 4px (16 cells, so that alone
+   is 32px); and the name scales with the window rather than holding one size and
+   pushing. Below the width where even that stops fitting, the strip is still
+   scrollable -- a fallback that should never be reached rather than the
+   mechanism. */
+/* A basis of 0 would make the strip content-less as far as the row is
+   concerned, collapsing it to 576px beside whatever shares the row. It has to ASK
+   for sixteen cells' worth -- it just has to be willing to give a little back. */
+.stn { flex: 1 1 58px; min-width: 0; padding-left: 2px; padding-right: 2px; }
+.stn-nm {
+  font-size: clamp(6.8px, .6vw, 8.5px); letter-spacing: .05em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.stn-no { font-size: clamp(7.5px, .62vw, 9px); }
+
+/* Once the cells can shrink, nothing forces anything else in the row onto a
+   line of its own -- and a strip sharing the row gets 576px for sixteen
+   stations, which truncates seven of the sixteen names. The lamps are the
+   thing this board is for, and they get the row to themselves: the actions
+   sit up on the step line, and the only thing beside the strip is the fold
+   control. A basis of 100% would push that control onto a line of its own
+   too -- 24px of nothing under the lamps. Basis zero and grow instead: the
+   strip takes everything the chevron does not need. */
+.line-row .stations { flex: 1 1 0; min-width: 0; }
+
+/* ── THE SPEC DOCUMENT ─────────────────────────────────────────────────────
+   A title, because otherwise its summary is the first thing under a 300px
+   black board with nothing between them. */
+.spec-title {
+  margin: 0 0 .5rem; font: 600 21px/1.25 var(--cond);
+  letter-spacing: .02em; color: var(--ink);
+}
+.spec-title + .spec-summary { margin-top: 0; }
+/* Whichever of these is the document's first line, the column's padding is
+   already above it -- see `.wrap.doc-wrap`. */
+.doc-wrap > .spec-summary:first-child,
+.doc-tools + .spec-summary { margin-top: 0; }
+
+/* Two or three lists of different kinds, one at a time. Side by side in a
+   720px measure each gets about 220px for prose. */
+.ptabs.doc-tabs { margin: .2rem 0 0; gap: 1.2rem; }
+.ptabs.doc-tabs + .ppanel { padding-top: 1rem; }
+.ptabs.doc-tabs .fz-count {
+  font-family: var(--mono); font-size: .625rem; color: var(--ink-3); margin-left: .25rem;
+}
+.ptabs.doc-tabs .ptab.on .fz-count { color: var(--ink-2); }
+
+/* ── THE FOUR LANES, IN FOUR COLOURS ───────────────────────────────────────
+   A lane is where on the line a station sits, not how it is doing, so it keeps
+   its hue whether the station passed, is running or was never reached. Blue
+   plans, green builds, yellow verifies, orange reviews -- the same four
+   wherever lanes are named: the timeline, the station list, the rail.
+
+   Status still outranks lane on a bar. A station that is running takes the
+   accent and one that stopped takes red, because those are the two things you
+   need to see before you see anything else. */
+.tl-bar.lane-plan   { background: var(--lane-plan); }
+.tl-bar.lane-build  { background: var(--lane-build); }
+.tl-bar.lane-verify { background: var(--lane-verify); }
+.tl-bar.lane-review { background: var(--lane-review); }
+.tl-bar.running { background: var(--accent); }
+.tl-bar.failed  { background: var(--red); }
+
+.tl-band.lane-plan   { color: var(--lane-plan-ink); }
+.tl-band.lane-build  { color: var(--lane-build-ink); }
+.tl-band.lane-verify { color: var(--lane-verify-ink); }
+.tl-band.lane-review { color: var(--lane-review-ink); }
+
+
+/* The rail names a feature's lane in the same word the strip and the timeline
+   use, so it takes the same colour -- on the panel's ground, which needs the
+   lit set. The dot beside it stays the lamp: word is where, dot is how. */
+.panel-feature .fband.lane-plan   { color: var(--lane-plan-lit); }
+.panel-feature .fband.lane-build  { color: var(--lane-build-lit); }
+.panel-feature .fband.lane-verify { color: var(--lane-verify-lit); }
+.panel-feature .fband.lane-review { color: var(--lane-review-lit); }
+
+
+/* A result for a check that is no longer on the list. Held back rather than
+   hidden: a row saying "passed" beside a green tick reads as a live check,
+   which is the page asserting something it does not mean. */
+.gline.superseded { opacity: .55; }
+.gline.superseded .g-name { font-weight: 400; }
+
+/* A re-read's own summary is prose, not a transcript. `.pk-sub` is monospace at
+   84ch everywhere else, which would turn a paragraph explaining a reading into a
+   narrow wall of code-face text with the point buried in the middle of it. */
+.rs-block .pk-sub {
+  font-family: inherit; font-size: .8rem; color: var(--ink-2);
+  max-width: none; line-height: 1.6;
+}
+
+/* One test level: what it is, what it is worth, and why. Laid out rather than
+   printed -- space-padded columns inside a `<pre>` are the wrong container for
+   a paragraph, and scroll sideways instead of wrapping. */
+.ts-tier { padding: .55rem 0; border-top: 1px solid var(--line); }
+.ts-tier:first-child { border-top: none; padding-top: .2rem; }
+.ts-head { margin: 0 0 .25rem; display: flex; align-items: baseline; gap: .5rem;
+  flex-wrap: wrap; }
+.ts-name { font-weight: 600; font-size: .8rem; min-width: 6.5rem; }
+.ts-runner { font-size: .7rem; color: var(--ink-3); }
+.ts-note { margin: .35rem 0 0; font-size: .75rem; line-height: 1.55;
+  color: var(--ink-2); }
+.ts-why > summary { cursor: pointer; list-style: none; }
+.ts-why > summary::-webkit-details-marker { display: none; }
+.ts-why > summary:hover .ts-more { color: var(--accent-ink); }
+.ts-more { font-size: .68rem; color: var(--ink-3); text-transform: uppercase;
+  letter-spacing: .04em; }
+.ts-why[open] .ts-more { color: var(--accent-ink); }
+.ts-rule { margin: .15rem 0; font-size: .72rem; color: var(--ink-2);
+  overflow-wrap: anywhere; }
+.ts-match { display: inline-block; min-width: 8rem; color: var(--ink-3); }
+/* The load command, under the run command it belongs to. Indented and quieter,
+   because it is the same rule's second half rather than a rule of its own. */
+.ts-sub { margin-top: 0; padding-left: 1.1rem; opacity: .8; }
+/* One sentence of how the tier cleans up, visible without opening "why": it is
+   often the whole of what a reading changed. */
+.ts-cleanup { margin: .2rem 0 .45rem; font-size: var(--t-body); font-style: italic;
+  line-height: 1.45; color: var(--ink); white-space: normal; }
+.p .ts-tier .ts-cleanup { padding-left: 1.1rem; padding-right: .85rem; }
+/* The choice for a tier that does not clean up: one fix, or leave it.
+   A tinted panel with white options on it, so the options read as separate
+   things to pick between rather than one run of text; section labels in small
+   caps; the chosen option with a heavier edge. */
+.cf { margin: .35rem .85rem .75rem 1.1rem; padding: .6rem .7rem .3rem;
+  background: var(--surface-sunk); }
+.cf-h { margin: .35rem 0 .4rem; font-size: .66rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-2); }
+.cf-h:first-child { margin-top: 0; }
+.cf-opt { display: flex; gap: .7rem; padding: .7rem .8rem; margin: 0 0 .5rem;
+  border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+.cf-opt:has(input:checked) { border: 2px solid var(--ink); padding: calc(.7rem - 1px) calc(.8rem - 1px); }
+.cf-opt input { margin-top: .25rem; }
+.cf-body { display: flex; flex-direction: column; gap: .2rem; font-size: var(--t-body); }
+.cf-title { font-weight: 600; font-size: .9rem; color: var(--ink); }
+.cf-rec { margin-left: .45rem; font-size: .66rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--green); }
+.cf-sum { color: var(--ink-2); line-height: 1.45; }
+.cf-parts { margin: .3rem 0 0; padding: .35rem 0 0; list-style: none; font-size: .75rem;
+  color: var(--ink-2); border-top: 1px dashed var(--line); }
+.cf-parts li { margin: .15rem 0; }
+.cf-btn { margin-left: .4rem; padding: .05rem .4rem; font-size: .65rem; }
+.cf-read { display: inline-block; margin-left: .3rem; }
+/* A fix that needs code: not a choice to apply, a prompt to take elsewhere. */
+.cf-code { display: flex; flex-direction: column; gap: .2rem; padding: .7rem .8rem; margin: 0 0 .5rem;
+  border: 1px dashed var(--line-strong); background: var(--surface); font-size: var(--t-body); }
+.cf-code .btn { margin-top: .3rem; }
+/* A proposed file: its path, one plain sentence, and the purpose one click
+   down -- all on the same left edge as the rest of the card's rows. */
+.sc-file { padding: .35rem .85rem .45rem; border-bottom: 1px solid var(--line); }
+.sc-file:last-child { border-bottom: 0; }
+.sc-path { margin: 0 0 .15rem; font-size: .75rem; color: var(--ink-2); }
+.sc-summary { margin: 0 0 .2rem; font-size: var(--t-body); font-style: italic; color: var(--ink); }
+.ts-sub .ts-match { min-width: calc(8rem - 1.1rem); font-style: italic; }
+

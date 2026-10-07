@@ -1,0 +1,77 @@
+{
+ "blob": "9a26160ccd389c8ab41ed8e419dda64b36c36f6c",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "NO_SEAM_CHECK",
+   "SEAM_GATE",
+   "settle_integration",
+   "is_seam_check",
+   "seam_checks",
+   "integration_detail",
+   "seam_gates",
+   "check_seams"
+  ],
+  "domain_terms": [
+   "seam",
+   "integration",
+   "check"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 24,
+    "name": "settle_integration"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "is_seam_check"
+   },
+   {
+    "calls": [],
+    "line": 73,
+    "name": "seam_checks"
+   },
+   {
+    "calls": [
+     "seam_checks"
+    ],
+    "line": 80,
+    "name": "integration_detail"
+   },
+   {
+    "calls": [
+     "rule_for"
+    ],
+    "line": 89,
+    "name": "seam_gates"
+   },
+   {
+    "calls": [
+     "seam_checks",
+     "is_seam_check",
+     "_raised_in"
+    ],
+    "line": 120,
+    "name": "check_seams"
+   }
+  ],
+  "imports": [
+   "factory/gates.py",
+   "factory/schemas.py",
+   "factory/pipeline/checks/gate_results.py",
+   "factory/executors.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines the integrator's seam checks and verifies they were checked, splitting seam checks off from other edits and reporting when seams are unchecked or failing.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

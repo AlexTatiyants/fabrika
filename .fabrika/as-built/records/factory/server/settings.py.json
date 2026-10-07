@@ -1,0 +1,366 @@
+{
+ "blob": "6252989659f1460b577b30071c79312a3c6486ab",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "agent role",
+   "LLM provider",
+   "plan route",
+   "staffing level",
+   "usage meter",
+   "egress proxy"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "roles",
+   "routes",
+   "levels",
+   "staffing",
+   "fallbacks"
+  ],
+  "entities_written": [
+   "api settings",
+   "credentials",
+   "roles",
+   "prompts",
+   "staffing"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "api_key_source",
+     "mask_key",
+     "credentials_path",
+     "config_target_path",
+     "write_api_settings",
+     "write_credential",
+     "sync_default_route",
+     "write_editor_url",
+     "httpx.AsyncClient",
+     "staffing_suggestions",
+     "team_of",
+     "independence_problems",
+     "write_staffing",
+     "asbuilt.now_running",
+     "write_role",
+     "write_role_prompt",
+     "delete_role",
+     "prompt_path",
+     "egress.status",
+     "egress.ensure_proxy",
+     "egress.self_test"
+    ],
+    "line": 24,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "api_key_source",
+     "mask_key",
+     "credentials_path",
+     "config_target_path"
+    ],
+    "line": 35,
+    "name": "provider_state"
+   },
+   {
+    "calls": [
+     "provider_state"
+    ],
+    "line": 49,
+    "name": "get_provider"
+   },
+   {
+    "calls": [
+     "write_api_settings",
+     "api_key_source",
+     "write_credential",
+     "sync_default_route",
+     "write_editor_url",
+     "provider_state"
+    ],
+    "line": 53,
+    "name": "put_provider"
+   },
+   {
+    "calls": [
+     "write_editor_url"
+    ],
+    "line": 77,
+    "name": "put_editor"
+   },
+   {
+    "calls": [
+     "mask_key",
+     "probe",
+     "provider_message"
+    ],
+    "line": 86,
+    "name": "test_provider"
+   },
+   {
+    "calls": [
+     "httpx.AsyncClient"
+    ],
+    "line": 105,
+    "name": "probe"
+   },
+   {
+    "calls": [],
+    "line": 112,
+    "name": "provider_message"
+   },
+   {
+    "calls": [],
+    "line": 184,
+    "name": "role_usage"
+   },
+   {
+    "calls": [],
+    "line": 226,
+    "name": "as_built_unsplit"
+   },
+   {
+    "calls": [
+     "role_usage",
+     "prompt_path",
+     "team_of",
+     "independence_problems",
+     "config_target_path"
+    ],
+    "line": 252,
+    "name": "list_roles"
+   },
+   {
+    "calls": [
+     "staffing_suggestions",
+     "team_of",
+     "independence_problems",
+     "config_target_path"
+    ],
+    "line": 297,
+    "name": "staffing_state"
+   },
+   {
+    "calls": [
+     "staffing_state"
+    ],
+    "line": 330,
+    "name": "get_staffing"
+   },
+   {
+    "calls": [
+     "write_staffing",
+     "staffing_state",
+     "config_target_path"
+    ],
+    "line": 336,
+    "name": "put_staffing"
+   },
+   {
+    "calls": [],
+    "line": 345,
+    "name": "list_routes"
+   },
+   {
+    "calls": [],
+    "line": 356,
+    "name": "route_meters"
+   },
+   {
+    "calls": [
+     "egress.status"
+    ],
+    "line": 366,
+    "name": "egress_status"
+   },
+   {
+    "calls": [
+     "egress.ensure_proxy",
+     "egress.status"
+    ],
+    "line": 376,
+    "name": "egress_start"
+   },
+   {
+    "calls": [
+     "egress.self_test",
+     "egress.status"
+    ],
+    "line": 385,
+    "name": "egress_test"
+   },
+   {
+    "calls": [],
+    "line": 393,
+    "name": "refresh_meters"
+   },
+   {
+    "calls": [],
+    "line": 406,
+    "name": "check_route"
+   },
+   {
+    "calls": [
+     "write_role",
+     "config_target_path"
+    ],
+    "line": 418,
+    "name": "patch_role"
+   },
+   {
+    "calls": [
+     "prompt_path",
+     "write_role_prompt",
+     "write_role"
+    ],
+    "line": 434,
+    "name": "create_review_agent"
+   },
+   {
+    "calls": [
+     "delete_role"
+    ],
+    "line": 457,
+    "name": "remove_review_agent"
+   },
+   {
+    "calls": [
+     "write_role_prompt"
+    ],
+    "line": 465,
+    "name": "put_prompt"
+   }
+  ],
+  "imports": [
+   "factory/asbuilt.py",
+   "factory/egress.py",
+   "factory/config.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "LLM provider API",
+   "Docker",
+   "filesystem"
+  ],
+  "purpose": "Exposes HTTP endpoints for managing provider credentials, agent configuration (roles), routing, resource usage tracking, and network egress settings. Handles reading and writing all settings to config files.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "get_provider",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/provider"
+   },
+   {
+    "handler": "put_provider",
+    "kind": "route",
+    "method": "PUT",
+    "name": "/api/provider"
+   },
+   {
+    "handler": "put_editor",
+    "kind": "route",
+    "method": "PUT",
+    "name": "/api/editor"
+   },
+   {
+    "handler": "test_provider",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/provider/test"
+   },
+   {
+    "handler": "list_roles",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/roles"
+   },
+   {
+    "handler": "get_staffing",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/staffing"
+   },
+   {
+    "handler": "put_staffing",
+    "kind": "route",
+    "method": "PUT",
+    "name": "/api/staffing"
+   },
+   {
+    "handler": "list_routes",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/routes"
+   },
+   {
+    "handler": "route_meters",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/meters"
+   },
+   {
+    "handler": "egress_status",
+    "kind": "route",
+    "method": "GET",
+    "name": "/api/egress"
+   },
+   {
+    "handler": "egress_start",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/egress/start"
+   },
+   {
+    "handler": "egress_test",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/egress/test"
+   },
+   {
+    "handler": "refresh_meters",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/meters/refresh"
+   },
+   {
+    "handler": "check_route",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/routes/{name}/check"
+   },
+   {
+    "handler": "patch_role",
+    "kind": "route",
+    "method": "PATCH",
+    "name": "/api/roles/{name}"
+   },
+   {
+    "handler": "create_review_agent",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/roles"
+   },
+   {
+    "handler": "remove_review_agent",
+    "kind": "route",
+    "method": "DELETE",
+    "name": "/api/roles/{name}"
+   },
+   {
+    "handler": "put_prompt",
+    "kind": "route",
+    "method": "PUT",
+    "name": "/api/roles/{name}/prompt"
+   }
+  ]
+ }
+}

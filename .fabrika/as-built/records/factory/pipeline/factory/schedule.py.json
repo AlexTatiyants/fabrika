@@ -1,0 +1,107 @@
+{
+ "blob": "5676d967b28ee26f13293675687bff5d4e41dca6",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ScheduleMixin"
+  ],
+  "domain_terms": [
+   "route plan",
+   "window",
+   "capacity",
+   "feature",
+   "deferral"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 17,
+    "name": "ScheduleMixin"
+   },
+   {
+    "calls": [
+     "RouteMonitor"
+    ],
+    "line": 18,
+    "name": "routes"
+   },
+   {
+    "calls": [
+     "values",
+     "getattr"
+    ],
+    "line": 32,
+    "name": "routes_in_use"
+   },
+   {
+    "calls": [
+     "routes_in_use"
+    ],
+    "line": 44,
+    "name": "plan_verdict"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "float",
+     "getattr",
+     "str",
+     "append",
+     "_save",
+     "_emit"
+    ],
+    "line": 48,
+    "name": "defer_build"
+   },
+   {
+    "calls": [
+     "store_for",
+     "state_of",
+     "append",
+     "_save",
+     "_emit"
+    ],
+    "line": 68,
+    "name": "cancel_deferral"
+   },
+   {
+    "calls": [
+     "feature_ids",
+     "store_for",
+     "state_of"
+    ],
+    "line": 83,
+    "name": "deferred_features"
+   },
+   {
+    "calls": [
+     "routes_in_use",
+     "gauge_live",
+     "gauge",
+     "get",
+     "append"
+    ],
+    "line": 103,
+    "name": "record_headroom"
+   }
+  ],
+  "imports": [
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/routes.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Manages route plans a run can draw on: which routes are needed, what capacity remains, and delays builds until time windows reset.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

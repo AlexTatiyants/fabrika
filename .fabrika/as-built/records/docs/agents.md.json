@@ -1,0 +1,33 @@
+{
+ "blob": "2f3fdc31257ed9f55efc0290107fb5936b9d0b13",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "agent",
+   "pipeline",
+   "review",
+   "harness",
+   "repair loop",
+   "breaker",
+   "oracle",
+   "spec",
+   "finding",
+   "probe"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [
+   "OpenHands"
+  ],
+  "purpose": "Documents the system's agents\u2014three kinds (pipeline, review, harness), configuration by level and team, the repair loop with stopping conditions, re-verification, executors, and OpenHands harness implementation.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

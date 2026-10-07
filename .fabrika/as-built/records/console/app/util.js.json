@@ -1,0 +1,68 @@
+{
+ "blob": "9eacae0fabb5074c0aba9a6bb0dfeec9d786357f",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "esc",
+   "rel",
+   "dur",
+   "toast",
+   "errorToast",
+   "api"
+  ],
+  "domain_terms": [
+   "escaping",
+   "time formatting",
+   "notifications",
+   "API"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 8,
+    "name": "esc"
+   },
+   {
+    "calls": [],
+    "line": 12,
+    "name": "rel"
+   },
+   {
+    "calls": [],
+    "line": 23,
+    "name": "dur"
+   },
+   {
+    "calls": [],
+    "line": 46,
+    "name": "toast"
+   },
+   {
+    "calls": [
+     "toast"
+    ],
+    "line": 86,
+    "name": "errorToast"
+   },
+   {
+    "calls": [
+     "goOffline",
+     "comeBack"
+    ],
+    "line": 88,
+    "name": "api"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Provides common utilities: HTML escaping, time formatting, duration formatting, toast notifications, and the API client for server communication.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

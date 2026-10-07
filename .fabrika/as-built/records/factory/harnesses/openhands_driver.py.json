@@ -1,0 +1,93 @@
+{
+ "blob": "9483a50317c76954e9ff265c5b729b44e594ff75",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "head",
+   "uncommit_to",
+   "changed_files",
+   "skill_dirs",
+   "project_skills",
+   "record_spend",
+   "main"
+  ],
+  "domain_terms": [
+   "harness",
+   "coding agent",
+   "conversation loop",
+   "nudge",
+   "spend tracking"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [
+   "changed files in checkout",
+   "spend_file"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 63,
+    "name": "head"
+   },
+   {
+    "calls": [
+     "head"
+    ],
+    "line": 69,
+    "name": "uncommit_to"
+   },
+   {
+    "calls": [],
+    "line": 90,
+    "name": "changed_files"
+   },
+   {
+    "calls": [],
+    "line": 125,
+    "name": "skill_dirs"
+   },
+   {
+    "calls": [
+     "skill_dirs"
+    ],
+    "line": 130,
+    "name": "project_skills"
+   },
+   {
+    "calls": [],
+    "line": 150,
+    "name": "record_spend"
+   },
+   {
+    "calls": [
+     "head",
+     "project_skills",
+     "record_spend",
+     "uncommit_to",
+     "changed_files"
+    ],
+    "line": 181,
+    "name": "main"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "OpenHands SDK",
+   "LiteLLM API"
+  ],
+  "purpose": "Drives OpenHands as the factory's coding harness, providing a persistent conversation loop that can send nudges to the agent within the same turn until it writes code.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "main",
+    "kind": "command",
+    "method": "",
+    "name": "openhands_driver"
+   }
+  ]
+ }
+}

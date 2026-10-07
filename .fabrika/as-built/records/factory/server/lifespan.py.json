@@ -1,0 +1,89 @@
+{
+ "blob": "f73191167090a4dfc4145464dda51ca6ab57fa58",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "lifespan_for"
+  ],
+  "domain_terms": [
+   "server startup",
+   "server shutdown",
+   "sandboxes",
+   "container images",
+   "previews",
+   "scheduled builds"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 30,
+    "name": "lifespan_for"
+   },
+   {
+    "calls": [
+     "hub"
+    ],
+    "line": 52,
+    "name": "on_signal"
+   },
+   {
+    "calls": [
+     "Sandbox",
+     "image_tag",
+     "harness_image_tag",
+     "sweep_images",
+     "sweep_previews",
+     "asyncio",
+     "registry",
+     "factory_for",
+     "store_or_404",
+     "previews",
+     "hub",
+     "signal"
+    ],
+    "line": 41,
+    "name": "lifespan"
+   },
+   {
+    "calls": [
+     "store_or_404",
+     "FeatureState"
+    ],
+    "line": 146,
+    "name": "preview_stage"
+   },
+   {
+    "calls": [
+     "previews"
+    ],
+    "line": 150,
+    "name": "reap_previews"
+   }
+  ],
+  "imports": [
+   "factory/isolation.py",
+   "factory/config.py",
+   "factory/containers.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/unitenv.py",
+   "factory/server/context.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "filesystem",
+   "signal handling"
+  ],
+  "purpose": "Manages server startup and shutdown: cleans up abandoned sandboxes and container images, re-arms scheduled builds on boot, and gracefully closes all client connections and previews on shutdown.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

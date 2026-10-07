@@ -1,0 +1,34 @@
+<p class="lead">Guides are the repository's own files that say how its code is written. What's committed on the
+  branch features start from is what binds, for Fabrika's agents and for anything else that writes code there.</p>
+
+<h4>What counts</h4>
+<ul>
+  <li><b>How to work here</b>: <span class="mono">AGENTS.md</span> at the root (commands, code style, testing), a
+    nested one for a folder's own rules, <span class="mono">CLAUDE.md</span>, which is the same thing for Claude
+    Code, and any document an AGENTS.md points to.</li>
+  <li><b>UX and visual style</b>: <span class="mono">DESIGN.md</span> at the root, for anything a person sees.</li>
+  <li><b>Skills</b>: <span class="mono">name/SKILL.md</span>, in <span class="mono">.claude/skills/</span> or
+    <span class="mono">.agents/skills/</span>.</li>
+</ul>
+
+<h4>How Fabrika uses them</h4>
+<p>Fabrika stores and approves nothing here. It reads the files at the commit a feature starts from, so the
+  repository says which rules are in force and every tool sees the same set. A coding harness that loads them
+  itself reads them directly; an agent with no harness, such as the scout, the architect, the reviewer or a checker,
+  is handed the same files by code. The oracle and the breaker get only what the guides say about testing. Every
+  worker sees every skill: Fabrika links them, for each session only, into the folder its tool reads.</p>
+
+<h4>What it proposes</h4>
+<p>Fabrika proposes changes to guides as commits you edit first: an AGENTS.md where there is none, a DESIGN.md
+  started from the design tokens the code defines, a CLAUDE.md that points at AGENTS.md, a line pointing AGENTS.md
+  at DESIGN.md, a link so both skills folders hold the same skills, a commit for guide files sitting uncommitted in
+  your working copy, and, once a few features have run, the conventions they kept following that AGENTS.md doesn't
+  state yet. In that last one every rule was counted by code; the sentences are a model's, and yours to edit.</p>
+<p><b>Review</b> opens the text in an editor. Change it if you like, then <b>Commit</b>: exactly what's in the
+  editor is written to your working branch and committed. <b>No thanks</b> declines, and it isn't offered again.
+  Guide files in your working copy that aren't committed are listed first, because until they're on the base
+  branch no agent follows them.</p>
+
+<h4>Where the code disagrees</h4>
+<p>When a feature's scout finds code doing otherwise than a guide says, the tab lists it. Settle each in the guide
+  or in the code. New skills go in whichever skills folder you choose here.</p>

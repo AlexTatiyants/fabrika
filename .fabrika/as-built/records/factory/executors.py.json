@@ -1,0 +1,545 @@
+{
+ "blob": "5e981b356b252fc6ce7446c98a4eb774b5720762",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ExecutorError",
+   "Executor",
+   "DirectExecutor",
+   "CommandExecutor",
+   "unprepared_container",
+   "unit_brief",
+   "files_on_disk",
+   "harness_spend",
+   "read_spend_file",
+   "Authored",
+   "ignored",
+   "changed_under",
+   "session_response",
+   "session_envelope",
+   "session_refusal",
+   "harness_unstarted",
+   "_context_files",
+   "_retry_if_empty",
+   "_send_back",
+   "_container_route",
+   "_open_container_session",
+   "_spend_argv",
+   "_context_argv",
+   "_classify",
+   "author",
+   "run",
+   "build_executor"
+  ],
+  "domain_terms": [
+   "work unit",
+   "executor",
+   "harness",
+   "worktree",
+   "session",
+   "disclosure",
+   "container session",
+   "send-back loop"
+  ],
+  "entities_defined": [
+   "ExecutorError",
+   "Executor",
+   "DirectExecutor",
+   "CommandExecutor",
+   "Authored",
+   "_ContainerSession",
+   "_NoEnv",
+   "_Reflection"
+  ],
+  "entities_read": [
+   "WorkUnit",
+   "Spec",
+   "Guide"
+  ],
+  "entities_written": [
+   "FileWrite",
+   "SendBackRecord",
+   "Authored",
+   "WorkerOutput"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 50,
+    "name": "unprepared_container"
+   },
+   {
+    "calls": [
+     "spec_text"
+    ],
+    "line": 70,
+    "name": "unit_brief"
+   },
+   {
+    "calls": [
+     "safe_join"
+    ],
+    "line": 197,
+    "name": "files_on_disk"
+   },
+   {
+    "calls": [],
+    "line": 244,
+    "name": "harness_spend"
+   },
+   {
+    "calls": [],
+    "line": 268,
+    "name": "read_spend_file"
+   },
+   {
+    "calls": [],
+    "line": 295,
+    "name": "ignored"
+   },
+   {
+    "calls": [
+     "is_runner_output"
+    ],
+    "line": 313,
+    "name": "changed_under"
+   },
+   {
+    "calls": [
+     "session_refusal"
+    ],
+    "line": 352,
+    "name": "_session_outcome"
+   },
+   {
+    "calls": [],
+    "line": 381,
+    "name": "_is_placeholder"
+   },
+   {
+    "calls": [],
+    "line": 536,
+    "name": "_denied_calls"
+   },
+   {
+    "calls": [],
+    "line": 569,
+    "name": "_denial_flag"
+   },
+   {
+    "calls": [
+     "session_envelope"
+    ],
+    "line": 574,
+    "name": "session_response"
+   },
+   {
+    "calls": [],
+    "line": 596,
+    "name": "session_envelope"
+   },
+   {
+    "calls": [
+     "session_envelope",
+     "_without_the_gauge"
+    ],
+    "line": 620,
+    "name": "_harness_said"
+   },
+   {
+    "calls": [],
+    "line": 657,
+    "name": "_without_the_gauge"
+   },
+   {
+    "calls": [
+     "_harness_said"
+    ],
+    "line": 678,
+    "name": "session_refusal"
+   },
+   {
+    "calls": [
+     "session_refusal"
+    ],
+    "line": 702,
+    "name": "_session_exhausted"
+   },
+   {
+    "calls": [],
+    "line": 715,
+    "name": "harness_unstarted"
+   },
+   {
+    "calls": [],
+    "line": 727,
+    "name": "_retry_note"
+   },
+   {
+    "calls": [],
+    "line": 760,
+    "name": "_no_edits_output"
+   },
+   {
+    "calls": [],
+    "line": 816,
+    "name": "_prepared"
+   },
+   {
+    "calls": [],
+    "line": 164,
+    "name": "DirectExecutor.__init__"
+   },
+   {
+    "calls": [
+     "unit_brief"
+    ],
+    "line": 168,
+    "name": "DirectExecutor.run"
+   },
+   {
+    "calls": [],
+    "line": 844,
+    "name": "CommandExecutor.__init__"
+   },
+   {
+    "calls": [],
+    "line": 855,
+    "name": "CommandExecutor._harness_prompt"
+   },
+   {
+    "calls": [],
+    "line": 870,
+    "name": "CommandExecutor._task_stdin"
+   },
+   {
+    "calls": [],
+    "line": 881,
+    "name": "CommandExecutor.session_route"
+   },
+   {
+    "calls": [],
+    "line": 904,
+    "name": "CommandExecutor._fallback_session"
+   },
+   {
+    "calls": [
+     "session_route"
+    ],
+    "line": 908,
+    "name": "CommandExecutor._session_argv"
+   },
+   {
+    "calls": [
+     "read_spend_file",
+     "harness_spend",
+     "session_envelope"
+    ],
+    "line": 915,
+    "name": "CommandExecutor._record_session_spend"
+   },
+   {
+    "calls": [],
+    "line": 985,
+    "name": "CommandExecutor._env"
+   },
+   {
+    "calls": [
+     "_run_harness",
+     "_session_outcome",
+     "session_response"
+    ],
+    "line": 1026,
+    "name": "CommandExecutor._invoke"
+   },
+   {
+    "calls": [],
+    "line": 1060,
+    "name": "CommandExecutor._run_harness"
+   },
+   {
+    "calls": [
+     "_fallback_context"
+    ],
+    "line": 1103,
+    "name": "CommandExecutor._fallback"
+   },
+   {
+    "calls": [
+     "_context_files",
+     "files_on_disk"
+    ],
+    "line": 1150,
+    "name": "CommandExecutor._fallback_context"
+   },
+   {
+    "calls": [],
+    "line": 1174,
+    "name": "CommandExecutor._context_files"
+   },
+   {
+    "calls": [],
+    "line": 444,
+    "name": "_ContainerSession._exec"
+   },
+   {
+    "calls": [],
+    "line": 460,
+    "name": "_ContainerSession.copy_in"
+   },
+   {
+    "calls": [],
+    "line": 487,
+    "name": "_ContainerSession.collect_spend"
+   },
+   {
+    "calls": [],
+    "line": 507,
+    "name": "_ContainerSession.collect_sidecars"
+   },
+   {
+    "calls": [
+     "_exec"
+    ],
+    "line": 518,
+    "name": "_ContainerSession.stop_agent"
+   },
+   {
+    "calls": [],
+    "line": 529,
+    "name": "_ContainerSession.close"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "PathEscape"
+    ],
+    "line": 1201,
+    "name": "_context_files"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "PathEscape"
+    ],
+    "line": 1209,
+    "name": "usable"
+   },
+   {
+    "calls": [
+     "_retry_note",
+     "self._invoke",
+     "self._task_stdin"
+    ],
+    "line": 1246,
+    "name": "_retry_if_empty"
+   },
+   {
+    "calls": [
+     "send_back_brief",
+     "SendBackRecord",
+     "self._invoke",
+     "self._task_stdin"
+    ],
+    "line": 1281,
+    "name": "_send_back"
+   },
+   {
+    "calls": [
+     "self.config.route_for"
+    ],
+    "line": 1324,
+    "name": "_container_route"
+   },
+   {
+    "calls": [
+     "sessioncreds.prepare",
+     "_ContainerSession",
+     "sessioncreds.install",
+     "ExecutorError"
+    ],
+    "line": 1343,
+    "name": "_open_container_session"
+   },
+   {
+    "calls": [],
+    "line": 1410,
+    "name": "fill"
+   },
+   {
+    "calls": [],
+    "line": 1449,
+    "name": "_spend_argv"
+   },
+   {
+    "calls": [
+     "self._context_files"
+    ],
+    "line": 1467,
+    "name": "_context_argv"
+   },
+   {
+    "calls": [
+     "is_runner_output",
+     "ignored"
+    ],
+    "line": 1488,
+    "name": "_classify"
+   },
+   {
+    "calls": [
+     "is_runner_output",
+     "ignored"
+    ],
+    "line": 1500,
+    "name": "is_litter"
+   },
+   {
+    "calls": [
+     "self._env",
+     "self._harness_prompt",
+     "_prepared",
+     "safe_join",
+     "self._session_argv",
+     "session_model",
+     "self._container_route",
+     "self._open_container_session",
+     "isolation.TEST_SUITE_ON_HOST",
+     "ExecutorError",
+     "changed_under",
+     "self._invoke",
+     "self._task_stdin",
+     "_retry_note",
+     "self._fallback_session",
+     "session_refusal",
+     "fallback_session_model",
+     "self._record_session_spend",
+     "Authored"
+    ],
+    "line": 1507,
+    "name": "author"
+   },
+   {
+    "calls": [
+     "session_model",
+     "FACTORY_ROOT"
+    ],
+    "line": 1578,
+    "name": "build"
+   },
+   {
+    "calls": [
+     "changed_under",
+     "safe_join",
+     "PathEscape",
+     "FileWrite"
+    ],
+    "line": 1614,
+    "name": "collect"
+   },
+   {
+    "calls": [
+     "self._env",
+     "Worktree",
+     "self._harness_prompt",
+     "unit_brief",
+     "_prepared",
+     "guide_lib.Bridge",
+     "self._session_argv",
+     "session_model",
+     "guide_lib.Reads.of",
+     "guide_lib.bridge",
+     "Guide.model_validate",
+     "guide_lib.harness_note",
+     "guide_lib._loaded",
+     "guide_lib.applies",
+     "self._invoke",
+     "self._task_stdin",
+     "self._classify",
+     "self._retry_if_empty",
+     "self._send_back",
+     "guide_lib.unbridge",
+     "self._record_session_spend",
+     "_denied_calls",
+     "self._fallback",
+     "_no_edits_output",
+     "self.llm.ask",
+     "_Reflection",
+     "_is_placeholder",
+     "_denial_flag",
+     "SelfDisclosure",
+     "WorkerOutput"
+    ],
+    "line": 1763,
+    "name": "run"
+   },
+   {
+    "calls": [],
+    "line": 1830,
+    "name": "fill"
+   },
+   {
+    "calls": [
+     "self._classify",
+     "FileWrite"
+    ],
+    "line": 1864,
+    "name": "collect"
+   },
+   {
+    "calls": [
+     "DirectExecutor",
+     "CommandExecutor",
+     "ExecutorError"
+    ],
+    "line": 2144,
+    "name": "build_executor"
+   }
+  ],
+  "imports": [
+   "factory/procs.py",
+   "factory/guides.py",
+   "factory/isolation.py",
+   "factory/sessioncreds.py",
+   "factory/config.py",
+   "factory/llm.py",
+   "factory/schemas.py",
+   "factory/sendback.py",
+   "factory/workspace.py",
+   "factory/agentbox.py",
+   "factory/meters.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "subprocess",
+   "asyncio",
+   "Docker",
+   "the local filesystem",
+   "a language model provider"
+  ],
+  "purpose": "Implements two executor protocols for running work units: DirectExecutor proves the pipeline shape with no tooling, while CommandExecutor runs a real coding harness in an isolated worktree and interrogates the resulting diff.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "author",
+    "kind": "export",
+    "method": "",
+    "name": "author"
+   },
+   {
+    "handler": "run",
+    "kind": "export",
+    "method": "",
+    "name": "run"
+   },
+   {
+    "handler": "build_executor",
+    "kind": "export",
+    "method": "",
+    "name": "build_executor"
+   }
+  ]
+ }
+}

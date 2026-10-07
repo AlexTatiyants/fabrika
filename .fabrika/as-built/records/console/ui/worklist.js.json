@@ -1,0 +1,72 @@
+{
+ "blob": "8fa779902ba03f3c20193f98c17b9b4c6ed2d028",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Worklist"
+  ],
+  "domain_terms": [
+   "finding",
+   "criterion",
+   "packet",
+   "ruling",
+   "disposition"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 33,
+    "name": "Said"
+   },
+   {
+    "calls": [
+     "packetOf",
+     "tagOf",
+     "noteOf"
+    ],
+    "line": 42,
+    "name": "Call"
+   },
+   {
+    "calls": [
+     "livePreview"
+    ],
+    "line": 212,
+    "name": "ManualChecks"
+   },
+   {
+    "calls": [
+     "callsFor",
+     "settledBy",
+     "manualChecksFor",
+     "manualRulings",
+     "packetOf"
+    ],
+    "line": 270,
+    "name": "Worklist"
+   }
+  ],
+  "imports": [
+   "console/ui/shared.js",
+   "console/ui/preview.js",
+   "console/ui/rework.js"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the worklist screen where humans review and decide on findings raised by the automated system, displaying findings and manual checks with full original attribution and routing to the repair loop.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "Worklist",
+    "kind": "export",
+    "method": "",
+    "name": "Worklist"
+   }
+  ]
+ }
+}

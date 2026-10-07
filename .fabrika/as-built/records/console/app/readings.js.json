@@ -1,0 +1,303 @@
+{
+ "blob": "84c4b49d92abe2f2e1331b2194eea73753021057",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ENV_KINDS",
+   "VERDICT_PILL",
+   "DIFF_IDENTITY",
+   "DIFF_PROSE",
+   "PART_TAB",
+   "PART_NAMES",
+   "UNDOABLE_PARTS",
+   "GATE_ABSENT",
+   "startDraft",
+   "savedEnvironment",
+   "setDraft",
+   "environmentProblems",
+   "canaryNote",
+   "proposalCard",
+   "classifyProposed",
+   "restatedLine",
+   "cleanupBy",
+   "cleanupPill",
+   "cleanupChoice",
+   "applyCleanup",
+   "cleanupGist",
+   "cleanupNote",
+   "tierChanges",
+   "tierChangeList",
+   "testingSummary",
+   "resurveyBlock",
+   "partsWaiting",
+   "readingParts",
+   "partsBlock",
+   "partsDone",
+   "toolingDriftBlock",
+   "gateOutcome",
+   "isGreen",
+   "unrunnableGates",
+   "gateResultRow",
+   "firstRunSection",
+   "baselineVerdict"
+  ],
+  "domain_terms": [
+   "reading (proposal from survey)",
+   "proposal card",
+   "testing tier",
+   "gate (check)",
+   "environment (container build)",
+   "scaffolding (template files)",
+   "cleanup (test teardown)",
+   "verdict",
+   "baseline",
+   "gate",
+   "checks"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "baseline"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 15,
+    "name": "startDraft"
+   },
+   {
+    "calls": [],
+    "line": 37,
+    "name": "savedEnvironment"
+   },
+   {
+    "calls": [],
+    "line": 56,
+    "name": "setDraft"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 63,
+    "name": "environmentProblems"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 92,
+    "name": "canaryNote"
+   },
+   {
+    "calls": [
+     "esc",
+     "firstSentence"
+    ],
+    "line": 181,
+    "name": "proposalCard"
+   },
+   {
+    "calls": [],
+    "line": 153,
+    "name": "diffLines"
+   },
+   {
+    "calls": [],
+    "line": 210,
+    "name": "classifyProposed"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 230,
+    "name": "restatedLine"
+   },
+   {
+    "calls": [],
+    "line": 245,
+    "name": "cleanupBy"
+   },
+   {
+    "calls": [],
+    "line": 247,
+    "name": "cleanupPill"
+   },
+   {
+    "calls": [
+     "esc",
+     "encodeURIComponent"
+    ],
+    "line": 267,
+    "name": "cleanupChoice"
+   },
+   {
+    "calls": [
+     "withBusy",
+     "api",
+     "loadProject",
+     "render",
+     "toast"
+    ],
+    "line": 350,
+    "name": "applyCleanup"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 376,
+    "name": "cleanupGist"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 384,
+    "name": "cleanupNote"
+   },
+   {
+    "calls": [],
+    "line": 397,
+    "name": "tierChanges"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 456,
+    "name": "tierChangeList"
+   },
+   {
+    "calls": [
+     "cleanupNote",
+     "cleanupGist",
+     "cleanupChoice",
+     "cleanupPill",
+     "esc"
+    ],
+    "line": 469,
+    "name": "testingSummary"
+   },
+   {
+    "calls": [
+     "waitingChanges",
+     "partsWaiting",
+     "encodeURIComponent",
+     "icon",
+     "esc"
+    ],
+    "line": 524,
+    "name": "resurveyBlock"
+   },
+   {
+    "calls": [],
+    "line": 598,
+    "name": "partsWaiting"
+   },
+   {
+    "calls": [
+     "classifyProposed",
+     "tierChanges",
+     "tierChangeList",
+     "testingSummary",
+     "diffLines",
+     "proposalCard",
+     "esc",
+     "ticks"
+    ],
+    "line": 606,
+    "name": "readingParts"
+   },
+   {
+    "calls": [
+     "partsWaiting",
+     "partsDone",
+     "readingParts",
+     "proposalCard",
+     "esc",
+     "icon"
+    ],
+    "line": 892,
+    "name": "partsBlock"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 929,
+    "name": "partsDone"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 944,
+    "name": "toolingDriftBlock"
+   },
+   {
+    "calls": [],
+    "line": 979,
+    "name": "gateOutcome"
+   },
+   {
+    "calls": [],
+    "line": 994,
+    "name": "isGreen"
+   },
+   {
+    "calls": [
+     "gateOutcome"
+    ],
+    "line": 998,
+    "name": "unrunnableGates"
+   },
+   {
+    "calls": [
+     "esc",
+     "dur",
+     "bytes"
+    ],
+    "line": 1007,
+    "name": "gateResultRow"
+   },
+   {
+    "calls": [
+     "unrunnableGates",
+     "factRow",
+     "esc",
+     "dur",
+     "icon",
+     "baselineVerdict",
+     "gateLine"
+    ],
+    "line": 1055,
+    "name": "firstRunSection"
+   },
+   {
+    "calls": [
+     "unrunnableGates",
+     "gateOutcome",
+     "icon",
+     "esc"
+    ],
+    "line": 1107,
+    "name": "baselineVerdict"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders readings\u2014proposals for what checks should run\u2014and manages user interactions to approve or modify testing tiers, environments, scaffolding files, and other configuration parts discovered by the repository survey.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/cleanup"
+   }
+  ],
+  "ways_in": []
+ }
+}

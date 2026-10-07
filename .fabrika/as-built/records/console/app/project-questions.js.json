@@ -1,0 +1,285 @@
+{
+ "blob": "75e5b3f335a75790e317b953001f74489c2b4328",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "fold",
+   "gateBars",
+   "blockingItems",
+   "offeredItems",
+   "standingBlocks",
+   "qRow",
+   "checkRow",
+   "coveragePill",
+   "coverageState",
+   "coverageLine",
+   "diagnosisOf",
+   "readingOf",
+   "redKindSentence",
+   "diagnosisBlock",
+   "proposedAddRow",
+   "alsoRow",
+   "suggestionRow",
+   "familyGroups",
+   "waitingChanges",
+   "surveyWaiting",
+   "checkRuling",
+   "proposalTodo",
+   "proposalNotice",
+   "checksQuestion",
+   "SECTION_ICON",
+   "TICK",
+   "FAMILY_ICONS",
+   "FAMILIES"
+  ],
+  "domain_terms": [
+   "checks and gates",
+   "check families",
+   "coverage metrics",
+   "diagnosis of failures",
+   "proposed gate changes"
+  ],
+  "entities_defined": [
+   "SECTION_ICON",
+   "TICK",
+   "FAMILY_ICONS",
+   "FAMILIES"
+  ],
+  "entities_read": [
+   "state",
+   "COVERAGE_REPORTS",
+   "FAMILY_ASKS"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 15,
+    "name": "fold"
+   },
+   {
+    "calls": [
+     "isGreen"
+    ],
+    "line": 43,
+    "name": "gateBars"
+   },
+   {
+    "calls": [
+     "unrunnableGates",
+     "judgingCount"
+    ],
+    "line": 66,
+    "name": "blockingItems"
+   },
+   {
+    "calls": [
+     "pendingScaffolding",
+     "liveRecommendations"
+    ],
+    "line": 84,
+    "name": "offeredItems"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 88,
+    "name": "standingBlocks"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 153,
+    "name": "qRow"
+   },
+   {
+    "calls": [
+     "isGreen",
+     "gateOutcome",
+     "diagnosisOf",
+     "redKindSentence",
+     "qRow",
+     "runsLine",
+     "guardsText",
+     "heldOnNewCode",
+     "checkFold",
+     "proposedFor",
+     "coveragePill",
+     "editHref",
+     "todoCard",
+     "diagnosisBlock",
+     "readingWord",
+     "waitingChanges",
+     "proposalTodo",
+     "esc"
+    ],
+    "line": 174,
+    "name": "checkRow"
+   },
+   {
+    "calls": [
+     "esc"
+    ],
+    "line": 290,
+    "name": "coveragePill"
+   },
+   {
+    "calls": [
+     "liveRecommendations"
+    ],
+    "line": 301,
+    "name": "coverageState"
+   },
+   {
+    "calls": [
+     "esc",
+     "coveragePill"
+    ],
+    "line": 315,
+    "name": "coverageLine"
+   },
+   {
+    "calls": [],
+    "line": 344,
+    "name": "diagnosisOf"
+   },
+   {
+    "calls": [],
+    "line": 349,
+    "name": "readingOf"
+   },
+   {
+    "calls": [
+     "esc",
+     "readingOf"
+    ],
+    "line": 357,
+    "name": "redKindSentence"
+   },
+   {
+    "calls": [
+     "esc",
+     "readingOf"
+    ],
+    "line": 388,
+    "name": "diagnosisBlock"
+   },
+   {
+    "calls": [
+     "esc",
+     "proposalTodo"
+    ],
+    "line": 458,
+    "name": "proposedAddRow"
+   },
+   {
+    "calls": [
+     "isGreen",
+     "qRow",
+     "esc"
+    ],
+    "line": 467,
+    "name": "alsoRow"
+   },
+   {
+    "calls": [
+     "qRow",
+     "esc",
+     "recTodo"
+    ],
+    "line": 483,
+    "name": "suggestionRow"
+   },
+   {
+    "calls": [
+     "checkRow",
+     "waitingChanges",
+     "proposedAddRow",
+     "suggestionRow",
+     "coverageLine",
+     "alsoRow",
+     "esc",
+     "icon"
+    ],
+    "line": 491,
+    "name": "familyGroups"
+   },
+   {
+    "calls": [],
+    "line": 566,
+    "name": "waitingChanges"
+   },
+   {
+    "calls": [
+     "partsWaiting"
+    ],
+    "line": 576,
+    "name": "surveyWaiting"
+   },
+   {
+    "calls": [],
+    "line": 581,
+    "name": "checkRuling"
+   },
+   {
+    "calls": [
+     "esc",
+     "firstSentence"
+    ],
+    "line": 584,
+    "name": "proposalTodo"
+   },
+   {
+    "calls": [
+     "waitingChanges",
+     "icon"
+    ],
+    "line": 635,
+    "name": "proposalNotice"
+   },
+   {
+    "calls": [
+     "sectionHead",
+     "gateCount",
+     "gateBars",
+     "checksEditor",
+     "staleBaselineNote",
+     "proposalNotice",
+     "familyGroups",
+     "declinedChecks",
+     "declinedRecommendations",
+     "liveRecommendations",
+     "todoSection",
+     "encodeURIComponent"
+    ],
+    "line": 644,
+    "name": "checksQuestion"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the checks section of a project page, displaying which gates block approval, their results, coverage metrics, diagnoses of failures, and proposed changes to the gate list.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "checksQuestion",
+    "kind": "export",
+    "method": "",
+    "name": "checksQuestion"
+   },
+   {
+    "handler": "fold",
+    "kind": "export",
+    "method": "",
+    "name": "fold"
+   }
+  ]
+ }
+}

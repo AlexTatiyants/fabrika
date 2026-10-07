@@ -1,0 +1,266 @@
+{
+ "blob": "7605cb24dad05bff6a45aba13a98908a97f0cecd",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "test_a_skipped_blind_test_is_a_known_and_stated_blind_spot",
+   "test_a_file_that_lost_its_contents_is_a_blocker_not_a_refusal",
+   "test_a_feature_that_changes_what_a_check_looks_for_is_a_blocker",
+   "test_a_change_inside_the_named_section_is_reported",
+   "test_a_settings_file_that_no_longer_parses_is_reported_not_skipped",
+   "test_a_new_suppression_is_reported_beside_the_check_it_silences",
+   "test_the_whole_suite_reaches_disk_and_the_protected_set",
+   "test_a_run_the_budget_could_not_measure_says_so_in_a_finding",
+   "test_a_run_starts_outside_any_repair_round",
+   "test_as_built_groups_are_the_same_on_every_reading",
+   "test_a_big_file_is_shown_in_parts_with_its_seams_counted",
+   "test_a_file_s_source_carries_what_the_reading_knows_at_its_lines",
+   "test_code_resolves_an_import_however_the_language_writes_it",
+   "test_small_files_are_read_several_to_a_call_and_each_answered_for",
+   "test_a_batched_answer_that_skips_what_a_file_defines_is_read_again_alone",
+   "test_a_reading_at_the_plan_s_limit_stops_keeps_what_it_read_and_commits_nothing",
+   "test_a_generated_file_paints_the_picture_and_is_never_put_up_for_review",
+   "test_a_refresh_reads_only_what_changed_and_commits_only_the_as_built",
+   "test_a_long_file_is_read_in_numbered_pieces_that_keep_its_own_line_numbers",
+   "test_what_a_feature_changed_is_said_in_the_system_s_terms",
+   "test_the_as_built_pages_link_down_and_back_up"
+  ],
+  "domain_terms": [
+   "as-built reading",
+   "file records",
+   "call graph",
+   "subsystems",
+   "generated files",
+   "blind acceptance tests"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "pipeline.check_blind_attribution",
+     "gates.GateReport",
+     "_reported"
+    ],
+    "line": 9,
+    "name": "test_a_skipped_blind_test_is_a_known_and_stated_blind_spot"
+   },
+   {
+    "calls": [
+     "_branch",
+     "pipeline.check_destructive_writes",
+     "Config"
+    ],
+    "line": 46,
+    "name": "test_a_file_that_lost_its_contents_is_a_blocker_not_a_refusal"
+   },
+   {
+    "calls": [
+     "_branch",
+     "pipeline.check_settings_changed",
+     "_checks_with_settings"
+    ],
+    "line": 67,
+    "name": "test_a_feature_that_changes_what_a_check_looks_for_is_a_blocker"
+   },
+   {
+    "calls": [
+     "_branch",
+     "pipeline.check_settings_changed",
+     "_checks_with_settings"
+    ],
+    "line": 81,
+    "name": "test_a_change_inside_the_named_section_is_reported"
+   },
+   {
+    "calls": [
+     "_branch",
+     "pipeline.check_settings_changed",
+     "_checks_with_settings"
+    ],
+    "line": 90,
+    "name": "test_a_settings_file_that_no_longer_parses_is_reported_not_skipped"
+   },
+   {
+    "calls": [
+     "_branch",
+     "pipeline.check_new_suppressions",
+     "_checks_with_settings"
+    ],
+    "line": 99,
+    "name": "test_a_new_suppression_is_reported_beside_the_check_it_silences"
+   },
+   {
+    "calls": [
+     "inspect.getsource",
+     "pipeline.Factory._converge",
+     "pipeline.Factory._build"
+    ],
+    "line": 118,
+    "name": "test_the_whole_suite_reaches_disk_and_the_protected_set"
+   },
+   {
+    "calls": [
+     "load_config",
+     "pipeline.check_budget_coverage"
+    ],
+    "line": 148,
+    "name": "test_a_run_the_budget_could_not_measure_says_so_in_a_finding"
+   },
+   {
+    "calls": [
+     "inspect.getsource",
+     "pipeline.Factory._build"
+    ],
+    "line": 168,
+    "name": "test_a_run_starts_outside_any_repair_round"
+   },
+   {
+    "calls": [
+     "asbuilt_graph.louvain"
+    ],
+    "line": 179,
+    "name": "test_as_built_groups_are_the_same_on_every_reading"
+   },
+   {
+    "calls": [
+     "asbuilt_graph.Source",
+     "asbuilt_graph.build",
+     "FileRecord"
+    ],
+    "line": 194,
+    "name": "test_a_big_file_is_shown_in_parts_with_its_seams_counted"
+   },
+   {
+    "calls": [
+     "_ab_repo",
+     "_ab_read",
+     "asbuilt.commit_into_repo",
+     "asbuilt.source_view",
+     "asbuilt_graph._span_end"
+    ],
+    "line": 215,
+    "name": "test_a_file_s_source_carries_what_the_reading_knows_at_its_lines"
+   },
+   {
+    "calls": [
+     "asbuilt_graph.resolve_link"
+    ],
+    "line": 249,
+    "name": "test_code_resolves_an_import_however_the_language_writes_it"
+   },
+   {
+    "calls": [
+     "_ab_repo",
+     "_AbStub",
+     "asbuilt.RecordCache",
+     "asbuilt.reader_contract",
+     "load_config",
+     "_ab_read",
+     "asbuilt.chunks_of"
+    ],
+    "line": 269,
+    "name": "test_small_files_are_read_several_to_a_call_and_each_answered_for"
+   },
+   {
+    "calls": [
+     "asbuilt.evident_definitions",
+     "_ab_repo",
+     "_AbStub",
+     "_ab_read",
+     "FileRecord",
+     "asbuilt.thin_answer",
+     "asbuilt_graph.Source"
+    ],
+    "line": 295,
+    "name": "test_a_batched_answer_that_skips_what_a_file_defines_is_read_again_alone"
+   },
+   {
+    "calls": [
+     "_ab_repo",
+     "load_config",
+     "asbuilt.RecordCache",
+     "asbuilt.reader_contract",
+     "_AbStub",
+     "asbuilt.AsBuiltReader",
+     "asbuilt.AsBuiltError",
+     "asbuilt.cache_coverage",
+     "_ab_read"
+    ],
+    "line": 336,
+    "name": "test_a_reading_at_the_plan_s_limit_stops_keeps_what_it_read_and_commits_nothing"
+   },
+   {
+    "calls": [
+     "asbuilt_graph.Source",
+     "FileRecord",
+     "asbuilt_graph.build",
+     "asbuilt_graph.findings",
+     "asbuilt_graph.apply_account",
+     "SystemAccount",
+     "StartHere",
+     "asbuilt_graph.is_generated"
+    ],
+    "line": 361,
+    "name": "test_a_generated_file_paints_the_picture_and_is_never_put_up_for_review"
+   },
+   {
+    "calls": [
+     "_ab_repo",
+     "_ab_read",
+     "asbuilt.commit_into_repo",
+     "asbuilt.status",
+     "asbuilt.load_committed",
+     "_AbStub",
+     "_ab_commit",
+     "asbuilt.AsBuiltError"
+    ],
+    "line": 389,
+    "name": "test_a_refresh_reads_only_what_changed_and_commits_only_the_as_built"
+   },
+   {
+    "calls": [
+     "asbuilt.chunks_of",
+     "asbuilt.numbered"
+    ],
+    "line": 427,
+    "name": "test_a_long_file_is_read_in_numbered_pieces_that_keep_its_own_line_numbers"
+   },
+   {
+    "calls": [
+     "asbuilt_graph.AsBuilt",
+     "asbuilt_graph.FileNode",
+     "asbuilt_graph.Edge",
+     "asbuilt_graph.Subsystem",
+     "asbuilt_graph.WayInNode",
+     "asbuilt_graph.system_change"
+    ],
+    "line": 439,
+    "name": "test_what_a_feature_changed_is_said_in_the_system_s_terms"
+   },
+   {
+    "calls": [
+     "_ab_repo",
+     "_ab_read",
+     "asbuilt_pages.render"
+    ],
+    "line": 457,
+    "name": "test_the_as_built_pages_link_down_and_back_up"
+   }
+  ],
+  "imports": [
+   "tests/helpers.py"
+  ],
+  "is_test": true,
+  "kind": "test",
+  "launches": [],
+  "outside": [
+   "git",
+   "the file system"
+  ],
+  "purpose": "Tests the as-built system, which reads and analyzes repository structure file-by-file to build a call graph, track dependencies, detect changes, and identify risky modifications.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

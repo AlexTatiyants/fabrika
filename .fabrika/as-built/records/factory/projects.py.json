@@ -1,0 +1,785 @@
+{
+ "blob": "36ab54fa8a02ca6479c520cdb9e04905ae604441",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ProjectError",
+   "project_slug",
+   "repo_dockerfile",
+   "Project",
+   "watched_paths",
+   "proposed_scaffolding",
+   "proposed_parts",
+   "scaffolding_state",
+   "unmet_capabilities",
+   "cleanup_option_problems",
+   "chosen_cleanup",
+   "unwritten_references",
+   "ProjectRegistry",
+   "write_repo_dockerfile",
+   "diagnosis_for",
+   "apply_diagnosis_fix",
+   "move_dockerfile_into_repo",
+   "move_dockerfile_on_acceptance",
+   "retire_fabrika_dockerfile",
+   "record_survey",
+   "tooling_drift",
+   "recommendation_key",
+   "live_recommendations",
+   "decline_family",
+   "reinstate_family",
+   "hold_new_code",
+   "ratchet_check",
+   "raise_recommendation",
+   "decline_recommendation",
+   "command_problems",
+   "adopt_recommendation",
+   "reinstate_recommendation",
+   "declined_gates",
+   "set_check_runs",
+   "decline_gate",
+   "reinstate_gate",
+   "proposal_state",
+   "rule_on_proposed_check",
+   "rule_on_proposed_part",
+   "_reading_settled",
+   "_answer_requests",
+   "_since_reading",
+   "undo_proposed_check",
+   "_undo_part",
+   "apply_survey_diff",
+   "record_reading",
+   "record_baseline",
+   "approve",
+   "approval_fingerprint",
+   "approved_fingerprint",
+   "update",
+   "live_feature_ids",
+   "delete",
+   "guides",
+   "set_skills_dir",
+   "raise_guide_checks",
+   "write_guide",
+   "decline_guide_offer",
+   "pending_guide_draft",
+   "record_survey_started",
+   "record_failure",
+   "dockerfile_state",
+   "dockerfile_digest",
+   "dockerfile_stage"
+  ],
+  "domain_terms": [
+   "project",
+   "gates (checks)",
+   "environment",
+   "baseline",
+   "parked check",
+   "scaffolding",
+   "evidence",
+   "checks (test gates)",
+   "recommendations (proposals)",
+   "surveys (repository readings)",
+   "Dockerfile (build environment)",
+   "proposals (check changes)",
+   "scaffolding (setup files)",
+   "feature",
+   "gate",
+   "approval",
+   "survey",
+   "guide",
+   "Dockerfile"
+  ],
+  "entities_defined": [
+   "Project",
+   "ProjectRegistry"
+  ],
+  "entities_read": [
+   "ProjectState",
+   "EnvironmentSpec",
+   "Gate",
+   "ScaffoldFile",
+   "EvidenceStore",
+   "Project",
+   "ProjectSurvey",
+   "SurveyDiff",
+   "Recommendation",
+   "GateRuling",
+   "KeptCheck",
+   "CapabilityRuling",
+   "FamilyRuling",
+   "RecommendationRuling",
+   "FeatureState",
+   "GuideDraft",
+   "GateReport"
+  ],
+  "entities_written": [
+   "ProjectState",
+   "Project"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 73,
+    "name": "project_slug"
+   },
+   {
+    "calls": [],
+    "line": 87,
+    "name": "repo_dockerfile"
+   },
+   {
+    "calls": [],
+    "line": 108,
+    "name": "Project.__init__"
+   },
+   {
+    "calls": [
+     "repo_dockerfile"
+    ],
+    "line": 124,
+    "name": "Project.adopt_repo_dockerfile"
+   },
+   {
+    "calls": [
+     "is_green"
+    ],
+    "line": 168,
+    "name": "Project.parked_checks"
+   },
+   {
+    "calls": [],
+    "line": 196,
+    "name": "Project.check_kinds"
+   },
+   {
+    "calls": [],
+    "line": 229,
+    "name": "Project.judging_gates"
+   },
+   {
+    "calls": [
+     "EvidenceStore"
+    ],
+    "line": 253,
+    "name": "Project.store"
+   },
+   {
+    "calls": [
+     "EvidenceStore"
+    ],
+    "line": 261,
+    "name": "Project.feature_store"
+   },
+   {
+    "calls": [
+     "list_feature_ids"
+    ],
+    "line": 264,
+    "name": "Project.feature_ids"
+   },
+   {
+    "calls": [],
+    "line": 269,
+    "name": "Project.require_ready"
+   },
+   {
+    "calls": [
+     "tooling_paths",
+     "launched_scripts"
+    ],
+    "line": 285,
+    "name": "watched_paths"
+   },
+   {
+    "calls": [],
+    "line": 314,
+    "name": "proposed_scaffolding"
+   },
+   {
+    "calls": [],
+    "line": 359,
+    "name": "_part_now"
+   },
+   {
+    "calls": [],
+    "line": 366,
+    "name": "_plain"
+   },
+   {
+    "calls": [
+     "_plain",
+     "_part_now",
+     "scaffolding_state"
+    ],
+    "line": 374,
+    "name": "proposed_parts"
+   },
+   {
+    "calls": [
+     "proposed_scaffolding",
+     "safe_join"
+    ],
+    "line": 405,
+    "name": "scaffolding_state"
+   },
+   {
+    "calls": [],
+    "line": 430,
+    "name": "unmet_capabilities"
+   },
+   {
+    "calls": [],
+    "line": 502,
+    "name": "cleanup_option_problems"
+   },
+   {
+    "calls": [],
+    "line": 530,
+    "name": "chosen_cleanup"
+   },
+   {
+    "calls": [],
+    "line": 549,
+    "name": "unwritten_references"
+   },
+   {
+    "calls": [],
+    "line": 574,
+    "name": "ProjectRegistry.__init__"
+   },
+   {
+    "calls": [
+     "list_feature_ids"
+    ],
+    "line": 580,
+    "name": "ProjectRegistry.ids"
+   },
+   {
+    "calls": [
+     "EvidenceStore",
+     "Project"
+    ],
+    "line": 583,
+    "name": "ProjectRegistry.get"
+   },
+   {
+    "calls": [
+     "get"
+    ],
+    "line": 592,
+    "name": "ProjectRegistry.list"
+   },
+   {
+    "calls": [
+     "get"
+    ],
+    "line": 602,
+    "name": "ProjectRegistry.exists"
+   },
+   {
+    "calls": [
+     "project_slug",
+     "exists",
+     "get",
+     "Project",
+     "save"
+    ],
+    "line": 611,
+    "name": "ProjectRegistry.create"
+   },
+   {
+    "calls": [],
+    "line": 633,
+    "name": "ProjectRegistry.save"
+   },
+   {
+    "calls": [
+     "gate_problems",
+     "working_directory_problems",
+     "preview_problems"
+    ],
+    "line": 682,
+    "name": "ProjectRegistry.environment_problems"
+   },
+   {
+    "calls": [],
+    "line": 783,
+    "name": "ProjectRegistry.preview_problems"
+   },
+   {
+    "calls": [],
+    "line": 819,
+    "name": "ProjectRegistry._script_body"
+   },
+   {
+    "calls": [
+     "_script_body"
+    ],
+    "line": 852,
+    "name": "ProjectRegistry.gate_problems"
+   },
+   {
+    "calls": [],
+    "line": 959,
+    "name": "ProjectRegistry._compose_service_problems"
+   },
+   {
+    "calls": [],
+    "line": 1021,
+    "name": "ProjectRegistry.working_directory_problems"
+   },
+   {
+    "calls": [],
+    "line": 1072,
+    "name": "ProjectRegistry.environment_notes"
+   },
+   {
+    "calls": [
+     "_is_test_path",
+     "is_setup_path"
+    ],
+    "line": 1113,
+    "name": "ProjectRegistry.scaffold_problems"
+   },
+   {
+    "calls": [
+     "proposed_scaffolding",
+     "scaffold_problems"
+    ],
+    "line": 1167,
+    "name": "ProjectRegistry.apply_scaffolding"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "repo_dockerfile",
+     "commit_paths",
+     "current_branch"
+    ],
+    "line": 1258,
+    "name": "write_repo_dockerfile"
+   },
+   {
+    "calls": [
+     "latest_by_check"
+    ],
+    "line": 1286,
+    "name": "diagnosis_for"
+   },
+   {
+    "calls": [
+     "diagnosis_for",
+     "safe_join",
+     "repo_dockerfile",
+     "commit_paths",
+     "current_branch"
+    ],
+    "line": 1296,
+    "name": "apply_diagnosis_fix"
+   },
+   {
+    "calls": [
+     "write_repo_dockerfile"
+    ],
+    "line": 1353,
+    "name": "move_dockerfile_into_repo"
+   },
+   {
+    "calls": [
+     "move_dockerfile_into_repo"
+    ],
+    "line": 1369,
+    "name": "move_dockerfile_on_acceptance"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "repo_dockerfile",
+     "commit_paths"
+    ],
+    "line": 1390,
+    "name": "retire_fabrika_dockerfile"
+   },
+   {
+    "calls": [
+     "head_sha",
+     "watched_paths",
+     "approval_fingerprint",
+     "declined_gates",
+     "scaffold_problems",
+     "environment_problems",
+     "save"
+    ],
+    "line": 1420,
+    "name": "record_survey"
+   },
+   {
+    "calls": [
+     "tooling_drift"
+    ],
+    "line": 1489,
+    "name": "tooling_drift"
+   },
+   {
+    "calls": [],
+    "line": 1502,
+    "name": "recommendation_key"
+   },
+   {
+    "calls": [
+     "recommendation_key"
+    ],
+    "line": 1517,
+    "name": "live_recommendations"
+   },
+   {
+    "calls": [
+     "update"
+    ],
+    "line": 1586,
+    "name": "decline_family"
+   },
+   {
+    "calls": [
+     "update"
+    ],
+    "line": 1601,
+    "name": "reinstate_family"
+   },
+   {
+    "calls": [
+     "update"
+    ],
+    "line": 1609,
+    "name": "hold_new_code"
+   },
+   {
+    "calls": [
+     "is_green",
+     "update"
+    ],
+    "line": 1639,
+    "name": "ratchet_check"
+   },
+   {
+    "calls": [],
+    "line": 1691,
+    "name": "raise_recommendation"
+   },
+   {
+    "calls": [
+     "live_recommendations",
+     "recommendation_key",
+     "update"
+    ],
+    "line": 1695,
+    "name": "decline_recommendation"
+   },
+   {
+    "calls": [],
+    "line": 1718,
+    "name": "command_problems"
+   },
+   {
+    "calls": [
+     "live_recommendations",
+     "recommendation_key",
+     "command_problems",
+     "environment_problems",
+     "update"
+    ],
+    "line": 1764,
+    "name": "adopt_recommendation"
+   },
+   {
+    "calls": [
+     "update"
+    ],
+    "line": 1875,
+    "name": "reinstate_recommendation"
+   },
+   {
+    "calls": [],
+    "line": 1886,
+    "name": "declined_gates"
+   },
+   {
+    "calls": [
+     "save"
+    ],
+    "line": 1890,
+    "name": "set_check_runs"
+   },
+   {
+    "calls": [
+     "declined_gates",
+     "update"
+    ],
+    "line": 1907,
+    "name": "decline_gate"
+   },
+   {
+    "calls": [
+     "declined_gates",
+     "update"
+    ],
+    "line": 1943,
+    "name": "reinstate_gate"
+   },
+   {
+    "calls": [],
+    "line": 1963,
+    "name": "proposal_state"
+   },
+   {
+    "calls": [
+     "rule_on_proposed_part",
+     "proposal_state",
+     "declined_gates",
+     "update",
+     "_reading_settled"
+    ],
+    "line": 2006,
+    "name": "rule_on_proposed_check"
+   },
+   {
+    "calls": [
+     "proposal_state",
+     "apply_survey_diff",
+     "update",
+     "save",
+     "_plain",
+     "_part_now",
+     "_reading_settled"
+    ],
+    "line": 2065,
+    "name": "rule_on_proposed_part"
+   },
+   {
+    "calls": [
+     "proposal_state",
+     "head_sha",
+     "watched_paths",
+     "proposed_parts",
+     "_since_reading",
+     "_answer_requests"
+    ],
+    "line": 2100,
+    "name": "_reading_settled"
+   },
+   {
+    "calls": [],
+    "line": 2121,
+    "name": "_answer_requests"
+   },
+   {
+    "calls": [],
+    "line": 2140,
+    "name": "_since_reading"
+   },
+   {
+    "calls": [
+     "proposal_state",
+     "_undo_part",
+     "update"
+    ],
+    "line": 2151,
+    "name": "undo_proposed_check"
+   },
+   {
+    "calls": [
+     "update",
+     "_plain",
+     "_part_now"
+    ],
+    "line": 2178,
+    "name": "_undo_part"
+   },
+   {
+    "calls": [
+     "declined_gates",
+     "head_sha",
+     "watched_paths",
+     "update"
+    ],
+    "line": 2189,
+    "name": "apply_survey_diff"
+   },
+   {
+    "calls": [
+     "head_sha",
+     "watched_paths",
+     "save"
+    ],
+    "line": 2362,
+    "name": "record_reading"
+   },
+   {
+    "calls": [
+     "_now",
+     "dockerfile_digest",
+     "save"
+    ],
+    "line": 2375,
+    "name": "record_baseline"
+   },
+   {
+    "calls": [
+     "unrunnable",
+     "is_green",
+     "approval_fingerprint",
+     "save"
+    ],
+    "line": 2389,
+    "name": "approve"
+   },
+   {
+    "calls": [
+     "hashlib.sha256"
+    ],
+    "line": 2547,
+    "name": "approval_fingerprint"
+   },
+   {
+    "calls": [],
+    "line": 2583,
+    "name": "approved_fingerprint"
+   },
+   {
+    "calls": [
+     "live_feature_ids",
+     "save"
+    ],
+    "line": 2590,
+    "name": "update"
+   },
+   {
+    "calls": [
+     "feature_ids",
+     "feature_store"
+    ],
+    "line": 2664,
+    "name": "live_feature_ids"
+   },
+   {
+    "calls": [
+     "get",
+     "live_feature_ids",
+     "feature_store",
+     "Sandbox.reopen"
+    ],
+    "line": 2679,
+    "name": "delete"
+   },
+   {
+    "calls": [
+     "guides.found"
+    ],
+    "line": 2733,
+    "name": "guides"
+   },
+   {
+    "calls": [
+     "save"
+    ],
+    "line": 2743,
+    "name": "set_skills_dir"
+   },
+   {
+    "calls": [
+     "guides.tracked",
+     "Recommendation",
+     "recommendation_key",
+     "raise_recommendation"
+    ],
+    "line": 2757,
+    "name": "raise_guide_checks"
+   },
+   {
+    "calls": [
+     "guides.working_guides",
+     "safe_join",
+     "guides.edited",
+     "guides.read_at",
+     "commit_paths"
+    ],
+    "line": 2788,
+    "name": "write_guide"
+   },
+   {
+    "calls": [
+     "save"
+    ],
+    "line": 2878,
+    "name": "decline_guide_offer"
+   },
+   {
+    "calls": [
+     "GuideDraft.model_validate"
+    ],
+    "line": 2885,
+    "name": "pending_guide_draft"
+   },
+   {
+    "calls": [
+     "save"
+    ],
+    "line": 2900,
+    "name": "record_survey_started"
+   },
+   {
+    "calls": [
+     "save"
+    ],
+    "line": 2915,
+    "name": "record_failure"
+   },
+   {
+    "calls": [
+     "safe_join",
+     "repo_dockerfile",
+     "current_branch"
+    ],
+    "line": 2921,
+    "name": "dockerfile_state"
+   },
+   {
+    "calls": [
+     "hashlib.sha256"
+    ],
+    "line": 2952,
+    "name": "dockerfile_digest"
+   },
+   {
+    "calls": [
+     "re.match"
+    ],
+    "line": 2957,
+    "name": "dockerfile_stage"
+   }
+  ],
+  "imports": [
+   "factory/git.py",
+   "factory/schemas.py",
+   "factory/gates.py",
+   "factory/sandbox.py",
+   "factory/workspace.py",
+   "factory/store.py",
+   "factory/diagnosis.py",
+   "factory/guides.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "the local git checkout",
+   "the filesystem",
+   "git repository",
+   "Git repository",
+   "file system"
+  ],
+  "purpose": "Defines the Project class and ProjectRegistry for managing repositories the factory works on, including their gates (quality checks), environment configuration, evidence ledger, and scaffolding proposals.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

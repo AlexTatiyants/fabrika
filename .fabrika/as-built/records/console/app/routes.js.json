@@ -1,0 +1,362 @@
+{
+ "blob": "132cd43ca2fe146c1b2650fd5579182efe6a486f",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "ROUTE_LAMP",
+   "routeState",
+   "routeChip",
+   "meterCell",
+   "setupBlock",
+   "checkedAgo",
+   "windowBars",
+   "meterAge",
+   "limitReached",
+   "limitLine",
+   "creditLine",
+   "defaultModel",
+   "shortVersion",
+   "crewLine",
+   "modelSlot",
+   "ago",
+   "untilRetry",
+   "refusalLine",
+   "accountCard",
+   "harnessCard",
+   "lanesSection",
+   "liveRoutes",
+   "routesSection",
+   "egressWhen",
+   "egressRow",
+   "egressSection",
+   "egressTestBlock",
+   "testEgress",
+   "refreshEgress",
+   "startEgress",
+   "modelOptions",
+   "roleDraft",
+   "promptWords",
+   "ROLE_BLURB",
+   "ROLE_PHASES",
+   "roleRow",
+   "cfgChip",
+   "cfgFlag",
+   "promptOutline",
+   "roleSheetHtml",
+   "providerCard",
+   "crewPending",
+   "CREW_STEPS",
+   "crewLoading",
+   "rolesScreen"
+  ],
+  "domain_terms": [
+   "agents and roles",
+   "routes and accounts",
+   "harnesses",
+   "network proxy and egress",
+   "model providers",
+   "fallback lanes"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 24,
+    "name": "routeState"
+   },
+   {
+    "calls": [
+     "routeState"
+    ],
+    "line": 28,
+    "name": "routeChip"
+   },
+   {
+    "calls": [],
+    "line": 39,
+    "name": "meterCell"
+   },
+   {
+    "calls": [],
+    "line": 53,
+    "name": "setupBlock"
+   },
+   {
+    "calls": [],
+    "line": 73,
+    "name": "checkedAgo"
+   },
+   {
+    "calls": [
+     "limitReached",
+     "limitLine",
+     "creditLine",
+     "meterAge"
+    ],
+    "line": 86,
+    "name": "windowBars"
+   },
+   {
+    "calls": [],
+    "line": 122,
+    "name": "meterAge"
+   },
+   {
+    "calls": [],
+    "line": 147,
+    "name": "limitReached"
+   },
+   {
+    "calls": [
+     "limitReached"
+    ],
+    "line": 149,
+    "name": "limitLine"
+   },
+   {
+    "calls": [],
+    "line": 168,
+    "name": "creditLine"
+   },
+   {
+    "calls": [],
+    "line": 191,
+    "name": "defaultModel"
+   },
+   {
+    "calls": [],
+    "line": 197,
+    "name": "shortVersion"
+   },
+   {
+    "calls": [],
+    "line": 204,
+    "name": "crewLine"
+   },
+   {
+    "calls": [
+     "defaultModel"
+    ],
+    "line": 218,
+    "name": "modelSlot"
+   },
+   {
+    "calls": [],
+    "line": 239,
+    "name": "ago"
+   },
+   {
+    "calls": [],
+    "line": 248,
+    "name": "untilRetry"
+   },
+   {
+    "calls": [
+     "ago",
+     "untilRetry"
+    ],
+    "line": 262,
+    "name": "refusalLine"
+   },
+   {
+    "calls": [
+     "windowBars",
+     "limitReached",
+     "refusalLine"
+    ],
+    "line": 283,
+    "name": "accountCard"
+   },
+   {
+    "calls": [
+     "shortVersion",
+     "checkedAgo",
+     "crewLine",
+     "modelSlot",
+     "setupBlock"
+    ],
+    "line": 334,
+    "name": "harnessCard"
+   },
+   {
+    "calls": [],
+    "line": 386,
+    "name": "lanesSection"
+   },
+   {
+    "calls": [],
+    "line": 432,
+    "name": "liveRoutes"
+   },
+   {
+    "calls": [
+     "liveRoutes",
+     "crewPending",
+     "accountCard",
+     "harnessCard"
+    ],
+    "line": 434,
+    "name": "routesSection"
+   },
+   {
+    "calls": [
+     "ago"
+    ],
+    "line": 478,
+    "name": "egressWhen"
+   },
+   {
+    "calls": [
+     "egressWhen"
+    ],
+    "line": 483,
+    "name": "egressRow"
+   },
+   {
+    "calls": [
+     "egressWhen",
+     "egressTestBlock",
+     "egressRow",
+     "crewPending"
+    ],
+    "line": 495,
+    "name": "egressSection"
+   },
+   {
+    "calls": [
+     "egressWhen"
+    ],
+    "line": 561,
+    "name": "egressTestBlock"
+   },
+   {
+    "calls": [],
+    "line": 574,
+    "name": "testEgress"
+   },
+   {
+    "calls": [],
+    "line": 583,
+    "name": "refreshEgress"
+   },
+   {
+    "calls": [],
+    "line": 588,
+    "name": "startEgress"
+   },
+   {
+    "calls": [
+     "routeState"
+    ],
+    "line": 600,
+    "name": "modelOptions"
+   },
+   {
+    "calls": [],
+    "line": 636,
+    "name": "roleDraft"
+   },
+   {
+    "calls": [],
+    "line": 655,
+    "name": "promptWords"
+   },
+   {
+    "calls": [
+     "roleDraft",
+     "routeChip",
+     "promptWords"
+    ],
+    "line": 710,
+    "name": "roleRow"
+   },
+   {
+    "calls": [],
+    "line": 765,
+    "name": "cfgChip"
+   },
+   {
+    "calls": [],
+    "line": 776,
+    "name": "cfgFlag"
+   },
+   {
+    "calls": [],
+    "line": 788,
+    "name": "promptOutline"
+   },
+   {
+    "calls": [
+     "roleDraft",
+     "routeState",
+     "modelOptions",
+     "defaultModel"
+    ],
+    "line": 801,
+    "name": "roleSheetHtml"
+   },
+   {
+    "calls": [],
+    "line": 881,
+    "name": "providerCard"
+   },
+   {
+    "calls": [],
+    "line": 933,
+    "name": "crewPending"
+   },
+   {
+    "calls": [
+     "crewPending"
+    ],
+    "line": 944,
+    "name": "crewLoading"
+   },
+   {
+    "calls": [
+     "crewLoading",
+     "routesSection",
+     "egressSection",
+     "lanesSection",
+     "providerCard",
+     "roleRow"
+    ],
+    "line": 953,
+    "name": "rolesScreen"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "browser DOM",
+   "model provider APIs"
+  ],
+  "purpose": "Renders the crew page displaying agents/roles, API routes/accounts, network proxy status, and configuration UI for managing the automated testing and code review infrastructure.",
+  "routes_called": [
+   {
+    "method": "POST",
+    "path": "/api/egress/test"
+   },
+   {
+    "method": "GET",
+    "path": "/api/egress"
+   },
+   {
+    "method": "POST",
+    "path": "/api/egress/start"
+   }
+  ],
+  "ways_in": [
+   {
+    "handler": "rolesScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "crew"
+   }
+  ]
+ }
+}

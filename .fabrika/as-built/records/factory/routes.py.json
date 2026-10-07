@@ -1,0 +1,255 @@
+{
+ "blob": "50f5667a4289e5717061db2bcebf755be70cd780",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "CHECK_STALE_S",
+   "PROBE_PROMPT",
+   "RouteStatus",
+   "base_status",
+   "check_installed",
+   "ok_detail",
+   "check_connection",
+   "route_fingerprint",
+   "PlanVerdict",
+   "PROBE_HOLD_S",
+   "RouteMonitor"
+  ],
+  "domain_terms": [
+   "route",
+   "harness",
+   "plan",
+   "window",
+   "probe",
+   "credential"
+  ],
+  "entities_defined": [
+   "RouteStatus",
+   "PlanVerdict",
+   "RouteMonitor"
+  ],
+  "entities_read": [
+   "Config",
+   "RouteConfig",
+   "RoleConfig"
+  ],
+  "entities_written": [
+   "RouteStatus"
+  ],
+  "functions": [
+   {
+    "calls": [],
+    "line": 75,
+    "name": "_tool_message"
+   },
+   {
+    "calls": [],
+    "line": 93,
+    "name": "RouteStatus"
+   },
+   {
+    "calls": [],
+    "line": 173,
+    "name": "as_dict"
+   },
+   {
+    "calls": [
+     "RouteStatus"
+    ],
+    "line": 190,
+    "name": "base_status"
+   },
+   {
+    "calls": [
+     "kill"
+    ],
+    "line": 220,
+    "name": "_run"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 235,
+    "name": "check_installed"
+   },
+   {
+    "calls": [],
+    "line": 255,
+    "name": "ok_detail"
+   },
+   {
+    "calls": [
+     "base_status",
+     "check_installed",
+     "RoleConfig",
+     "refusal_words"
+    ],
+    "line": 283,
+    "name": "check_connection"
+   },
+   {
+    "calls": [
+     "refusal_words"
+    ],
+    "line": 407,
+    "name": "_as_refusal"
+   },
+   {
+    "calls": [],
+    "line": 434,
+    "name": "route_fingerprint"
+   },
+   {
+    "calls": [],
+    "line": 465,
+    "name": "PlanVerdict"
+   },
+   {
+    "calls": [],
+    "line": 486,
+    "name": "seconds_to_start"
+   },
+   {
+    "calls": [],
+    "line": 489,
+    "name": "as_dict"
+   },
+   {
+    "calls": [],
+    "line": 504,
+    "name": "RouteMonitor"
+   },
+   {
+    "calls": [
+     "MeterStore",
+     "use_mirror",
+     "DrawStore",
+     "_load"
+    ],
+    "line": 524,
+    "name": "__init__"
+   },
+   {
+    "calls": [],
+    "line": 541,
+    "name": "store_path"
+   },
+   {
+    "calls": [
+     "_as_refusal",
+     "RouteStatus"
+    ],
+    "line": 545,
+    "name": "_load"
+   },
+   {
+    "calls": [
+     "write_atomic",
+     "route_fingerprint"
+    ],
+    "line": 566,
+    "name": "_save"
+   },
+   {
+    "calls": [
+     "read_from_disk",
+     "read_limit"
+    ],
+    "line": 581,
+    "name": "gauge"
+   },
+   {
+    "calls": [],
+    "line": 601,
+    "name": "gauge_is_current"
+   },
+   {
+    "calls": [
+     "gauge",
+     "refresh"
+    ],
+    "line": 615,
+    "name": "gauge_live"
+   },
+   {
+    "calls": [
+     "gauge_live",
+     "gauges"
+    ],
+    "line": 668,
+    "name": "gauges_live"
+   },
+   {
+    "calls": [
+     "gauge_live",
+     "PlanVerdict"
+    ],
+    "line": 674,
+    "name": "plan_verdict"
+   },
+   {
+    "calls": [
+     "gauge"
+    ],
+    "line": 742,
+    "name": "gauges"
+   },
+   {
+    "calls": [],
+    "line": 760,
+    "name": "_expire_refusal"
+   },
+   {
+    "calls": [
+     "_models_in_use",
+     "gauge",
+     "base_status",
+     "check_installed",
+     "_expire_refusal",
+     "ok_detail"
+    ],
+    "line": 803,
+    "name": "survey"
+   },
+   {
+    "calls": [],
+    "line": 886,
+    "name": "_models_in_use"
+   },
+   {
+    "calls": [
+     "check_connection",
+     "_save"
+    ],
+    "line": 901,
+    "name": "refresh"
+   },
+   {
+    "calls": [
+     "_save"
+    ],
+    "line": 909,
+    "name": "forget"
+   }
+  ],
+  "imports": [
+   "factory/procs.py",
+   "factory/config.py",
+   "factory/files.py",
+   "factory/meters.py",
+   "factory/llm.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "subprocess execution",
+   "filesystem",
+   "an LLM provider"
+  ],
+  "purpose": "Determines whether routes (CLI tools and API endpoints that access LLM models) are installed and connected; distinguishes between tool-not-found, not-signed-in, and other errors so each has an actionable next step; caches checks on disk so the console can show status without spending a turn.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

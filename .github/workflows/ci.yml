@@ -1,0 +1,59 @@
+# What a green check means: the code lints, every console script parses, and the
+# test suite passes on each supported Python. The suite stands in local scripts
+# for harnesses, CLIs and containers, so it needs no Docker, no provider key and
+# no network. What CI cannot cover: real agent runs, isolation under a real
+# container runtime, and how the console looks.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install "ruff>=0.6"
+      - run: ruff check factory tests
+
+  console:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Every console script parses
+        run: |
+          for f in console/app/*.js console/asbuilt.js; do node --check "$f"; done
+          for f in console/ui/*.js; do node --experimental-default-type=module --check "$f"; done
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # The tests make commits in temporary repositories.
+      - run: |
+          git config --global user.name "CI"
+          git config --global user.email "ci@example.invalid"
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest tests -q

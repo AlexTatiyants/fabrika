@@ -1,0 +1,26 @@
+{
+ "blob": "1f31c9671c722919e00f1fcd4bf0c0d1591fb027",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "acceptance criteria",
+   "specification",
+   "oracle (testing role)",
+   "packet (work unit)",
+   "criterion"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines the oracle role in a software factory pipeline \u2014 the agent that writes acceptance tests from specifications without seeing the implementation, establishing whether a feature actually meets its promised contract.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

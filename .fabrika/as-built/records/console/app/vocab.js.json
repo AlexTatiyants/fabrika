@@ -1,0 +1,60 @@
+{
+ "blob": "70885689b2643be88df58ae7474fdf0fa0ea74e3",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "STAGES",
+   "VERDICTS",
+   "SEVERITY_ORDER",
+   "stagesWhere",
+   "stageField",
+   "ACTIVE_STAGES",
+   "NEEDS_YOU",
+   "SETTLED_STAGES",
+   "STAGE_WORDS",
+   "STAGE_BAND",
+   "STEP_OF_STAGE",
+   "GATE_OF",
+   "GATE_STEP",
+   "VERDICT_WORD",
+   "RAIL_VERDICT",
+   "STEP_WORD",
+   "stepWord"
+  ],
+  "domain_terms": [
+   "stages",
+   "verdicts",
+   "severity",
+   "gates",
+   "bands"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 58,
+    "name": "stagesWhere"
+   },
+   {
+    "calls": [],
+    "line": 59,
+    "name": "stageField"
+   },
+   {
+    "calls": [],
+    "line": 79,
+    "name": "stepWord"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Defines the vocabulary for stages, verdicts, and severity levels used throughout the console UI.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

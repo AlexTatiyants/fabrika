@@ -1,0 +1,575 @@
+{
+ "blob": "3f6cb7616a57f8e03ea6eb9e141a693606068ea6",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "DockerError",
+   "HOST_UNREACHABLE",
+   "FACTORY_ROOT",
+   "docker_available",
+   "DISK_REMEDY",
+   "docker_disk",
+   "low_disk",
+   "image_tag",
+   "NAME_PREFIX",
+   "LEGACY_NAME_PREFIX",
+   "image_exists",
+   "build_image",
+   "build_argv",
+   "hardening_argv",
+   "HARNESS_ROOT",
+   "HARNESS_CHECK_MARK",
+   "harness_image_tag",
+   "harness_dockerfile",
+   "harness_build_problem",
+   "harness_image",
+   "sweep_images",
+   "DockerRunner",
+   "ComposeRunner",
+   "DOORWAY_SCRIPT",
+   "PREVIEW_LABEL",
+   "PREVIEW_NETWORK_INFIX",
+   "Door",
+   "inner_argv",
+   "door_argv",
+   "session_address",
+   "sweep_previews",
+   "runner_for"
+  ],
+  "domain_terms": [
+   "gates",
+   "container",
+   "harness",
+   "sealed network",
+   "compose stack",
+   "environment",
+   "container runner",
+   "preview door",
+   "egress proxy",
+   "setup session"
+  ],
+  "entities_defined": [
+   "Door"
+  ],
+  "entities_read": [
+   "Project",
+   "EnvironmentSpec",
+   "DockerConfig",
+   "Config"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [
+     "asyncio.create_subprocess_exec",
+     "asyncio.wait_for",
+     "procs.kill"
+    ],
+    "line": 65,
+    "name": "_run"
+   },
+   {
+    "calls": [
+     "asyncio.create_subprocess_exec",
+     "asyncio.wait_for",
+     "procs.kill"
+    ],
+    "line": 86,
+    "name": "_run_id"
+   },
+   {
+    "calls": [],
+    "line": 110,
+    "name": "_last_id"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 119,
+    "name": "docker_available"
+   },
+   {
+    "calls": [],
+    "line": 145,
+    "name": "_size"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 149,
+    "name": "docker_disk"
+   },
+   {
+    "calls": [
+     "docker_disk"
+    ],
+    "line": 175,
+    "name": "low_disk"
+   },
+   {
+    "calls": [
+     "_safe_project"
+    ],
+    "line": 188,
+    "name": "image_tag"
+   },
+   {
+    "calls": [],
+    "line": 199,
+    "name": "_safe_project"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 216,
+    "name": "image_exists"
+   },
+   {
+    "calls": [
+     "docker_available",
+     "image_exists",
+     "build_argv",
+     "_run"
+    ],
+    "line": 220,
+    "name": "build_image"
+   },
+   {
+    "calls": [],
+    "line": 276,
+    "name": "build_argv"
+   },
+   {
+    "calls": [],
+    "line": 300,
+    "name": "hardening_argv"
+   },
+   {
+    "calls": [],
+    "line": 333,
+    "name": "_harness_files"
+   },
+   {
+    "calls": [],
+    "line": 342,
+    "name": "harness_home"
+   },
+   {
+    "calls": [],
+    "line": 348,
+    "name": "harness_check"
+   },
+   {
+    "calls": [],
+    "line": 356,
+    "name": "_install_lines"
+   },
+   {
+    "calls": [
+     "_harness_files",
+     "harness_dockerfile"
+    ],
+    "line": 360,
+    "name": "harness_image_tag"
+   },
+   {
+    "calls": [
+     "harness_check",
+     "harness_home",
+     "_install_lines"
+    ],
+    "line": 385,
+    "name": "harness_dockerfile"
+   },
+   {
+    "calls": [],
+    "line": 436,
+    "name": "harness_build_problem"
+   },
+   {
+    "calls": [
+     "_install_lines",
+     "_harness_files",
+     "harness_image_tag",
+     "image_exists",
+     "harness_dockerfile",
+     "_run"
+    ],
+    "line": 483,
+    "name": "harness_image"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 550,
+    "name": "sweep_images"
+   },
+   {
+    "calls": [],
+    "line": 644,
+    "name": "DockerRunner.__init__"
+   },
+   {
+    "calls": [
+     "hardening_argv",
+     "with_env"
+    ],
+    "line": 665,
+    "name": "DockerRunner.argv"
+   },
+   {
+    "calls": [],
+    "line": 718,
+    "name": "DockerRunner.session_id"
+   },
+   {
+    "calls": [
+     "_network",
+     "_run_id",
+     "_last_id",
+     "low_disk"
+    ],
+    "line": 723,
+    "name": "DockerRunner.open_session"
+   },
+   {
+    "calls": [
+     "create_sealed",
+     "open_egress",
+     "remove_sealed",
+     "subnet_of"
+    ],
+    "line": 758,
+    "name": "DockerRunner._network"
+   },
+   {
+    "calls": [
+     "_run",
+     "with_env"
+    ],
+    "line": 788,
+    "name": "DockerRunner.start_service"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 814,
+    "name": "DockerRunner.discard_session"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 828,
+    "name": "DockerRunner.close_session"
+   },
+   {
+    "calls": [
+     "_run",
+     "remove_sealed"
+    ],
+    "line": 849,
+    "name": "DockerRunner.down"
+   },
+   {
+    "calls": [
+     "_network",
+     "_run"
+    ],
+    "line": 862,
+    "name": "DockerRunner.execute"
+   },
+   {
+    "calls": [],
+    "line": 914,
+    "name": "ComposeRunner.__init__"
+   },
+   {
+    "calls": [
+     "_override",
+     "container_range"
+    ],
+    "line": 941,
+    "name": "ComposeRunner._override_text"
+   },
+   {
+    "calls": [
+     "_service_names",
+     "_compose",
+     "composeenv.resolve",
+     "_rebased_volumes"
+    ],
+    "line": 997,
+    "name": "ComposeRunner._override"
+   },
+   {
+    "calls": [
+     "_compose"
+    ],
+    "line": 1078,
+    "name": "ComposeRunner._rebased_volumes"
+   },
+   {
+    "calls": [],
+    "line": 1122,
+    "name": "ComposeRunner._compose"
+   },
+   {
+    "calls": [
+     "_compose"
+    ],
+    "line": 1130,
+    "name": "ComposeRunner._service_names"
+   },
+   {
+    "calls": [
+     "_compose"
+    ],
+    "line": 1136,
+    "name": "ComposeRunner._declared_networks"
+   },
+   {
+    "calls": [
+     "_compose"
+    ],
+    "line": 1140,
+    "name": "ComposeRunner._unsealable"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 1160,
+    "name": "ComposeRunner._stack_networks"
+   },
+   {
+    "calls": [
+     "_stack_networks",
+     "open_egress",
+     "close_egress"
+    ],
+    "line": 1167,
+    "name": "ComposeRunner._seal"
+   },
+   {
+    "calls": [
+     "_service_network",
+     "resolver_file"
+    ],
+    "line": 1203,
+    "name": "_egress_flags"
+   },
+   {
+    "calls": [],
+    "line": 1212,
+    "name": "_base_argv"
+   },
+   {
+    "calls": [
+     "_plan_blocks",
+     "_override_text",
+     "_base_argv",
+     "_ensure_up",
+     "_seal",
+     "_run",
+     "with_env"
+    ],
+    "line": 1223,
+    "name": "execute"
+   },
+   {
+    "calls": [
+     "_unsealable",
+     "_seal",
+     "_run",
+     "_stopped_services_said",
+     "low_disk",
+     "_stack_headline"
+    ],
+    "line": 1267,
+    "name": "_ensure_up"
+   },
+   {
+    "calls": [],
+    "line": 1319,
+    "name": "up_problem"
+   },
+   {
+    "calls": [
+     "_service_names"
+    ],
+    "line": 1324,
+    "name": "_stack_headline"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 1336,
+    "name": "_stopped_services_said"
+   },
+   {
+    "calls": [],
+    "line": 1364,
+    "name": "session_id"
+   },
+   {
+    "calls": [
+     "_plan_blocks",
+     "_override_text",
+     "_base_argv",
+     "_ensure_up",
+     "_seal",
+     "_run_id"
+    ],
+    "line": 1368,
+    "name": "open_session"
+   },
+   {
+    "calls": [
+     "_run",
+     "with_env"
+    ],
+    "line": 1418,
+    "name": "start_service"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 1440,
+    "name": "discard_session"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 1447,
+    "name": "close_session"
+   },
+   {
+    "calls": [
+     "_take_down",
+     "release_blocks"
+    ],
+    "line": 1472,
+    "name": "down"
+   },
+   {
+    "calls": [
+     "_seal",
+     "_base_argv",
+     "_run"
+    ],
+    "line": 1493,
+    "name": "_take_down"
+   },
+   {
+    "calls": [
+     "_take_down"
+    ],
+    "line": 1507,
+    "name": "reset_stack"
+   },
+   {
+    "calls": [],
+    "line": 1531,
+    "name": "_doorway_guard"
+   },
+   {
+    "calls": [
+     "_doorway_guard"
+    ],
+    "line": 1538,
+    "name": "inner_argv"
+   },
+   {
+    "calls": [
+     "_doorway_guard"
+    ],
+    "line": 1550,
+    "name": "door_argv"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 1567,
+    "name": "session_address"
+   },
+   {
+    "calls": [],
+    "line": 1587,
+    "name": "Door.__init__"
+   },
+   {
+    "calls": [
+     "session_address",
+     "_run",
+     "close"
+    ],
+    "line": 1593,
+    "name": "Door.open"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 1626,
+    "name": "Door.trouble"
+   },
+   {
+    "calls": [
+     "_run"
+    ],
+    "line": 1644,
+    "name": "Door.close"
+   },
+   {
+    "calls": [
+     "_run",
+     "remove_sealed"
+    ],
+    "line": 1653,
+    "name": "sweep_previews"
+   },
+   {
+    "calls": [
+     "build_image",
+     "LocalRunner",
+     "DockerRunner",
+     "ComposeRunner"
+    ],
+    "line": 1712,
+    "name": "runner_for"
+   }
+  ],
+  "imports": [
+   "factory/procs.py",
+   "factory/composeenv.py",
+   "factory/isolation.py",
+   "factory/config.py",
+   "factory/egress.py",
+   "factory/egress_proxy.py",
+   "factory/gates.py",
+   "factory/projects.py",
+   "factory/schemas.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "asyncio",
+   "docker-compose"
+  ],
+  "purpose": "Manages Docker container isolation for running project gates. Builds and runs containers with sealed networks, handles setup persistence through container commits, and provides integration with Docker Compose for full-stack test environments.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

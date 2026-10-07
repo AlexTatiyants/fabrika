@@ -1,0 +1,52 @@
+{
+ "blob": "d03572d47ca7f0a33fe689a80eef8ed6eff94cc0",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "EDITOR_PRESETS",
+   "resolveEditorUrl",
+   "controlRoomScreen"
+  ],
+  "domain_terms": [
+   "editor",
+   "configuration",
+   "file opening"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state.config"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "resolveEditorUrl"
+   },
+   {
+    "calls": [
+     "esc",
+     "icon",
+     "resolveEditorUrl"
+    ],
+    "line": 25,
+    "name": "controlRoomScreen"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the control room screen with per-machine settings; currently allows configuration of the editor URL template for opening files.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "controlRoomScreen",
+    "kind": "screen",
+    "method": "",
+    "name": "control-room"
+   }
+  ]
+ }
+}

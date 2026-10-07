@@ -1,0 +1,28 @@
+{
+ "blob": "8ddcfd9a9d8c9aea16d6ebb23ed647393e76f7f8",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [],
+  "domain_terms": [
+   "architecture",
+   "pipeline",
+   "packet",
+   "gates",
+   "agents",
+   "isolation",
+   "testing"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [],
+  "imports": [],
+  "is_test": false,
+  "kind": "docs",
+  "launches": [],
+  "outside": [],
+  "purpose": "Index to Fabrika's design documentation covering architecture, gates, agents, isolation, code reading, and testing.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

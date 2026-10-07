@@ -1,0 +1,24 @@
+.venv/
+# The harness runs under its own interpreter so its dependency tree cannot
+# move this project's pins. See executor.command in factory.yaml.
+.venv-openhands/
+__pycache__/
+*.pyc
+.factory/
+factory.yaml
+.pytest_cache/
+.DS_Store
+.factory-credentials.json
+*~lock~
+
+# Personal: notes, and the editor's own launch configuration.
+ideas.md
+.claude/
+
+# Packaging residue of an editable install.
+*.egg-info/
+
+# The design tool's working state: its brief, critiques and sidecars.
+# DESIGN.md is the record that ships.
+.impeccable/
+PRODUCT.md

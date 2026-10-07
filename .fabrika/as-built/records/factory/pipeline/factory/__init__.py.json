@@ -1,0 +1,51 @@
+{
+ "blob": "7f6bb7513be6abef717dee2aebdce1a2a864f7ff",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "Factory",
+   "ProgressCallback"
+  ],
+  "domain_terms": [
+   "factory",
+   "orchestrator",
+   "phase",
+   "mixin"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 31,
+    "name": "Factory"
+   }
+  ],
+  "imports": [
+   "factory/pipeline/factory/base.py",
+   "factory/pipeline/factory/schedule.py",
+   "factory/pipeline/factory/guidance.py",
+   "factory/pipeline/factory/intake.py",
+   "factory/pipeline/factory/build.py",
+   "factory/pipeline/factory/cut.py",
+   "factory/pipeline/factory/commit.py",
+   "factory/pipeline/factory/breaker.py",
+   "factory/pipeline/factory/blind.py",
+   "factory/pipeline/factory/assess.py",
+   "factory/pipeline/factory/converge.py",
+   "factory/pipeline/factory/lanes.py",
+   "factory/pipeline/factory/environment.py",
+   "factory/pipeline/factory/verify.py",
+   "factory/pipeline/factory/context.py",
+   "factory/pipeline/factory/human.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Assembles the orchestrator from one mixin per stretch of the run, each mixin holding methods for one phase, with no method defined in two mixins.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

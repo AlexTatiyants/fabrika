@@ -1,0 +1,194 @@
+{
+ "blob": "d4e4e0c447937c6ce78bd089eb4d8e96cbf25a36",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "AssessMixin"
+  ],
+  "domain_terms": [
+   "feature",
+   "gate",
+   "seam check",
+   "blind suite",
+   "oracle",
+   "breaker probe",
+   "attribution",
+   "sandbox"
+  ],
+  "entities_defined": [
+   "AssessMixin"
+  ],
+  "entities_read": [
+   "FeatureState",
+   "Spec",
+   "OracleSuite",
+   "Gate",
+   "GateResult",
+   "GateReport",
+   "BreakerTest",
+   "BreakerReport",
+   "IntegrationReport"
+  ],
+  "entities_written": [
+   "GateResult",
+   "FeatureState",
+   "SupportFile"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "run_gates",
+     "safe_join",
+     "check_seams"
+    ],
+    "line": 56,
+    "name": "_run_seam_checks"
+   },
+   {
+    "calls": [
+     "runner_for",
+     "run_setup",
+     "run_gates",
+     "_run_project_checks",
+     "_run_seam_checks",
+     "test_session",
+     "seam_gates",
+     "_run_blind_suite",
+     "_sort_failures",
+     "oracle_problems",
+     "_may_revise_oracle",
+     "_revise_blind_suite",
+     "oracle_files",
+     "_collect_traces",
+     "GateResult",
+     "GateReport",
+     "_attribute_failures"
+    ],
+    "line": 128,
+    "name": "_assess"
+   },
+   {
+    "calls": [],
+    "line": 334,
+    "name": "_cached_attribution"
+   },
+   {
+    "calls": [
+     "harness_authoring"
+    ],
+    "line": 360,
+    "name": "_may_revise_oracle"
+   },
+   {
+    "calls": [
+     "tested_spec",
+     "verify_context",
+     "testing_context",
+     "_oracle_guides",
+     "safe_join",
+     "BaseTree",
+     "_commit_all",
+     "_author_files",
+     "role_prompt",
+     "unit_env",
+     "env_recorder",
+     "oracle_files",
+     "SupportFile",
+     "sandbox.commit",
+     "_session_exhausted"
+    ],
+    "line": 387,
+    "name": "_revise_blind_suite"
+   },
+   {
+    "calls": [
+     "check_blind_suite_loads",
+     "check_blind_attribution",
+     "check_attribution",
+     "check_oracle_file_failures",
+     "check_unreset_sort",
+     "check_leaks",
+     "check_blind_helper_errors",
+     "check_seams"
+    ],
+    "line": 551,
+    "name": "_restate_from_checks"
+   },
+   {
+    "calls": [
+     "run_gate",
+     "run_gates",
+     "tracked_changes",
+     "_commit_rewrites",
+     "_find_rewriters"
+    ],
+    "line": 579,
+    "name": "_run_project_checks"
+   },
+   {
+    "calls": [],
+    "line": 619,
+    "name": "_commit_rewrites"
+   },
+   {
+    "calls": [
+     "git.run",
+     "restore_tracked",
+     "run_gate",
+     "tracked_changes"
+    ],
+    "line": 629,
+    "name": "_find_rewriters"
+   },
+   {
+    "calls": [
+     "set_aside",
+     "run_gates"
+    ],
+    "line": 653,
+    "name": "_sort_failures"
+   },
+   {
+    "calls": [
+     "runner_for",
+     "run_setup",
+     "test_session",
+     "run_gates",
+     "Worktree"
+    ],
+    "line": 733,
+    "name": "_attribute_failures"
+   }
+  ],
+  "imports": [
+   "factory/containers.py",
+   "factory/gates.py",
+   "factory/git.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/oracle_suite.py",
+   "factory/pipeline/ledger.py",
+   "factory/pipeline/probes.py",
+   "factory/pipeline/repairs.py",
+   "factory/pipeline/checks/gate_results.py",
+   "factory/pipeline/checks/seams.py",
+   "factory/pipeline/checks/blind.py",
+   "factory/executors.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "Docker",
+   "Git",
+   "a model provider",
+   "the local file system"
+  ],
+  "purpose": "Runs assessment gates, seam checks, and breaker probes against a feature branch, and determines whether any test failures are caused by the feature or were pre-existing.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

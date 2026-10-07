@@ -1,0 +1,257 @@
+{
+ "blob": "113fd27868a3c144f88fa6143a8d61acae466992",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "IntakeMixin"
+  ],
+  "domain_terms": [
+   "feature",
+   "specification",
+   "acceptance criteria",
+   "interrogator",
+   "scout",
+   "sandbox"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "FeatureState",
+   "InterrogationReport",
+   "ScoutReport",
+   "scout",
+   "interrogation",
+   "answers",
+   "correction",
+   "drift"
+  ],
+  "entities_written": [
+   "FeatureState",
+   "drift",
+   "interrogation",
+   "scout",
+   "scout_slice",
+   "scout_failed",
+   "digest",
+   "spec",
+   "spec_draft",
+   "spec_check",
+   "answers",
+   "approval",
+   "correction",
+   "reintake",
+   "spec_testability",
+   "guide_contradictions"
+  ],
+  "functions": [
+   {
+    "calls": [
+     "working_tree_drift"
+    ],
+    "line": 49,
+    "name": "working_tree_drift"
+   },
+   {
+    "calls": [
+     "working_tree_drift",
+     "_slug",
+     "Sandbox",
+     "FeatureState",
+     "PhaseState",
+     "PHASE_NAMES",
+     "ProjectError"
+    ],
+    "line": 54,
+    "name": "create_feature"
+   },
+   {
+    "calls": [],
+    "line": 118,
+    "name": "run_intake"
+   },
+   {
+    "calls": [],
+    "line": 141,
+    "name": "_intake"
+   },
+   {
+    "calls": [
+     "InterrogationReport"
+    ],
+    "line": 162,
+    "name": "record_answers"
+   },
+   {
+    "calls": [
+     "ScoutReport",
+     "InterrogationReport",
+     "current_payload",
+     "ResolvedAnswer"
+    ],
+    "line": 200,
+    "name": "finalize_spec"
+   },
+   {
+    "calls": [
+     "fixture_inventory",
+     "spec_hash",
+     "check_spec_testability",
+     "unchecked_levels",
+     "Spec",
+     "SpecRevision"
+    ],
+    "line": 254,
+    "name": "_write_spec"
+   },
+   {
+    "calls": [
+     "spec_hash",
+     "verify_context",
+     "spec_text",
+     "anchored_objections",
+     "settle_objections",
+     "objection_block",
+     "criteria_changed",
+     "CheckReport",
+     "CheckObjection"
+    ],
+    "line": 328,
+    "name": "_check_spec"
+   },
+   {
+    "calls": [
+     "fixture_inventory",
+     "InterrogationReport"
+    ],
+    "line": 419,
+    "name": "_interrogate"
+   },
+   {
+    "calls": [
+     "repo_tree",
+     "symbol_index",
+     "slice_repo",
+     "slice_coverage",
+     "slice_digest",
+     "merge_scouts",
+     "ScoutReport"
+    ],
+    "line": 463,
+    "name": "_scout"
+   },
+   {
+    "calls": [
+     "symbol_index",
+     "slice_repo",
+     "slice_coverage"
+    ],
+    "line": 556,
+    "name": "intake_plan"
+   },
+   {
+    "calls": [
+     "ProjectError",
+     "reset_phases",
+     "INTAKE_PHASES",
+     "this_process"
+    ],
+    "line": 580,
+    "name": "rerun_intake"
+   },
+   {
+    "calls": [
+     "ScoutReport",
+     "this_process"
+    ],
+    "line": 629,
+    "name": "reinterrogate"
+   },
+   {
+    "calls": [
+     "_now",
+     "this_process"
+    ],
+    "line": 665,
+    "name": "approve_spec"
+   }
+  ],
+  "imports": [
+   "factory/projects.py",
+   "factory/sandbox.py",
+   "factory/schemas.py",
+   "factory/store.py",
+   "factory/workspace.py",
+   "factory/pipeline/text.py",
+   "factory/pipeline/records.py",
+   "factory/pipeline/ownership.py",
+   "factory/pipeline/checks/cut.py",
+   "factory/pipeline/checks/blind.py",
+   "factory/pipeline/packet.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "LLM",
+   "filesystem repositories",
+   "process monitoring"
+  ],
+  "purpose": "Orchestrates intake and gate 1 of the pipeline: repository scouting, interrogation of ambiguities, spec writing and review. Manages feature creation, human answers, spec finalization, and approval.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "working_tree_drift",
+    "kind": "export",
+    "method": "",
+    "name": "working_tree_drift"
+   },
+   {
+    "handler": "create_feature",
+    "kind": "export",
+    "method": "",
+    "name": "create_feature"
+   },
+   {
+    "handler": "run_intake",
+    "kind": "export",
+    "method": "",
+    "name": "run_intake"
+   },
+   {
+    "handler": "record_answers",
+    "kind": "export",
+    "method": "",
+    "name": "record_answers"
+   },
+   {
+    "handler": "finalize_spec",
+    "kind": "export",
+    "method": "",
+    "name": "finalize_spec"
+   },
+   {
+    "handler": "intake_plan",
+    "kind": "export",
+    "method": "",
+    "name": "intake_plan"
+   },
+   {
+    "handler": "rerun_intake",
+    "kind": "export",
+    "method": "",
+    "name": "rerun_intake"
+   },
+   {
+    "handler": "reinterrogate",
+    "kind": "export",
+    "method": "",
+    "name": "reinterrogate"
+   },
+   {
+    "handler": "approve_spec",
+    "kind": "export",
+    "method": "",
+    "name": "approve_spec"
+   }
+  ]
+ }
+}

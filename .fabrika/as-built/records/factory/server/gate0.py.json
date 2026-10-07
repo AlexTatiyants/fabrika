@@ -1,0 +1,282 @@
+{
+ "blob": "67f247a5f59b3546daf3494ee5c8974b57b803fc",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "register"
+  ],
+  "domain_terms": [
+   "checks",
+   "guides",
+   "gates",
+   "recommendations",
+   "families"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 21,
+    "name": "register"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 29,
+    "name": "decline_recommendation"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 44,
+    "name": "adopt_recommendation"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 60,
+    "name": "reinstate_recommendation"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 70,
+    "name": "ratchet_check"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry",
+     "guide_offers"
+    ],
+    "line": 80,
+    "name": "rule_on_guide_draft"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry",
+     "guide_offers"
+    ],
+    "line": 101,
+    "name": "rule_on_guide_offer"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 129,
+    "name": "set_skills_dir"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 138,
+    "name": "apply_diagnosis_fix"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 148,
+    "name": "hold_new_code"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 158,
+    "name": "decline_family"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 168,
+    "name": "reinstate_family"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 178,
+    "name": "set_check_runs"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 188,
+    "name": "decline_gate"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry"
+    ],
+    "line": 205,
+    "name": "reinstate_gate"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "onboarding"
+    ],
+    "line": 220,
+    "name": "approve_project"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "registry",
+     "hub"
+    ],
+    "line": 229,
+    "name": "update_project"
+   },
+   {
+    "calls": [
+     "project_or_404",
+     "onboarding"
+    ],
+    "line": 253,
+    "name": "propose_gate_changes"
+   }
+  ],
+  "imports": [
+   "factory/projects.py",
+   "factory/workspace.py",
+   "factory/server/bodies.py",
+   "factory/server/context.py",
+   "factory/server/guides_view.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "REST endpoints for Gate 0 decisions: managing project checks, guides, recommendations, gate settings, diagnosis fixes, and the final approval that moves a project from setup to active.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "decline_recommendation",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/recommendations/decline"
+   },
+   {
+    "handler": "adopt_recommendation",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/recommendations/adopt"
+   },
+   {
+    "handler": "reinstate_recommendation",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/recommendations/reinstate"
+   },
+   {
+    "handler": "ratchet_check",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/checks/ratchet"
+   },
+   {
+    "handler": "rule_on_guide_draft",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/guides/draft"
+   },
+   {
+    "handler": "rule_on_guide_offer",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/guides/offer"
+   },
+   {
+    "handler": "set_skills_dir",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/guides/skills-dir"
+   },
+   {
+    "handler": "apply_diagnosis_fix",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/diagnosis/apply"
+   },
+   {
+    "handler": "hold_new_code",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/checks/new-code"
+   },
+   {
+    "handler": "decline_family",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/families/decline"
+   },
+   {
+    "handler": "reinstate_family",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/families/reinstate"
+   },
+   {
+    "handler": "set_check_runs",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/checks/runs"
+   },
+   {
+    "handler": "decline_gate",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/gates/decline"
+   },
+   {
+    "handler": "reinstate_gate",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/gates/reinstate"
+   },
+   {
+    "handler": "approve_project",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/approve"
+   },
+   {
+    "handler": "update_project",
+    "kind": "route",
+    "method": "PATCH",
+    "name": "/api/projects/{project_id}"
+   },
+   {
+    "handler": "propose_gate_changes",
+    "kind": "route",
+    "method": "POST",
+    "name": "/api/projects/{project_id}/proposal"
+   }
+  ]
+ }
+}

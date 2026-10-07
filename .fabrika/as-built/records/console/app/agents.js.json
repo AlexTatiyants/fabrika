@@ -1,0 +1,80 @@
+{
+ "blob": "7c550cd83fb28fdb099e215b498fcea74ab882f7",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "EFFORTS",
+   "NODE_H",
+   "diaWidth",
+   "teamOf",
+   "diaNode",
+   "diaChain",
+   "pipelineDiagram"
+  ],
+  "domain_terms": [
+   "agent",
+   "pipeline",
+   "station",
+   "gate"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "state.roles",
+   "state.openRole"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 18,
+    "name": "diaWidth"
+   },
+   {
+    "calls": [],
+    "line": 26,
+    "name": "teamOf"
+   },
+   {
+    "calls": [
+     "esc",
+     "asBuiltWorking"
+    ],
+    "line": 34,
+    "name": "diaNode"
+   },
+   {
+    "calls": [
+     "diaNode"
+    ],
+    "line": 63,
+    "name": "diaChain"
+   },
+   {
+    "calls": [
+     "diaNode",
+     "diaChain",
+     "esc",
+     "tag",
+     "asBuiltNow"
+    ],
+    "line": 85,
+    "name": "pipelineDiagram"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [],
+  "purpose": "Renders the agents page: a diagram of the pipeline with every node as an interactive control, plus the roster of models assigned to each agent station.",
+  "routes_called": [],
+  "ways_in": [
+   {
+    "handler": "pipelineDiagram",
+    "kind": "screen",
+    "method": "",
+    "name": "agents"
+   }
+  ]
+ }
+}

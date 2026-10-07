@@ -1,0 +1,28 @@
+<p class="lead">Evidence is everything the run produced that you can check for yourself, before anybody's reading
+  of it. Every other tab is an argument made about the run; this one is the run's own artifacts.</p>
+
+<h4>What's on it</h4>
+<ul>
+  <li><b>On screen</b>: recordings of the browser tests, where any ran. The quickest thing to judge, and the
+    weakest proof.</li>
+  <li><b>The project's checks</b>: each of them and what it said. A fact: a process exited, and no model was
+    involved.</li>
+  <li><b>Guides this feature was held to</b>: the repository's own rules the agents were given.</li>
+  <li><b>Blind acceptance tests</b>: the oracle's tests, written from the spec without seeing the code, and run one
+    file at a time. Strong, and narrow.</li>
+  <li><b>Breaker probes</b>: tests written to break the change. Only a failure carries information.</li>
+</ul>
+<p>Each kind says what it does not prove. At the end, <i>What this run did not produce</i> lists what's missing,
+  such as a seam with no check, or a check never read at the base commit. An amber dot on the tab means something to
+  watch is missing: a criterion with no blind test, or a browser run that left no recording.</p>
+<p>Opened from a criterion, the same tab narrows to that criterion's evidence.</p>
+
+<h4>Dependencies</h4>
+<p>Every package the feature added or moved, read from the lockfiles at the commit the feature started from and
+  now, then looked up in OSV and each package's registry and held to the project's policy. No model wrote any of
+  it. One row per direct dependency, with what it brought in folded under it, and the rows that need a ruling come
+  first.</p>
+<p>A red dot means a package is malicious, has a known vulnerability, or is under a license the project doesn't
+  allow. An amber dot means something needs a person: a package nobody could look up, a license that is unknown or
+  flagged, or one released in the last few days. What the project already depended on before the feature is on its
+  Survey tab.</p>

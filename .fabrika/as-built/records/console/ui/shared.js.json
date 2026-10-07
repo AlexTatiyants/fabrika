@@ -1,0 +1,324 @@
+{
+ "blob": "999f7d14f11e41b74c155ab8af0ee821b1c53c9b",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "useBarAction",
+   "base",
+   "request",
+   "send",
+   "DISPOSITIONS",
+   "TAG",
+   "tagOf",
+   "NO_NOTE",
+   "noteOf",
+   "MAT",
+   "MAT_BLURB",
+   "AC_STATE",
+   "acState",
+   "SEVERITY_PILL",
+   "esc",
+   "usd",
+   "pct",
+   "packetOf",
+   "fileIndex",
+   "statementOf",
+   "titleOf",
+   "criteriaRows",
+   "evidenceFor",
+   "Pill",
+   "MatDot",
+   "Composer",
+   "FlagsHere",
+   "Empty",
+   "FocusTools",
+   "Row",
+   "OUTCOME",
+   "BANDS",
+   "findingsWithRecords",
+   "outcomeOf",
+   "isRestatement",
+   "bandsOf",
+   "buildUnits",
+   "disclosureUnit",
+   "decisionUnit",
+   "repairAccount",
+   "homelessDecisions",
+   "blindSpots",
+   "discountsFor",
+   "awaitingRuling",
+   "clusterFindings",
+   "STAGES",
+   "VERDICTS",
+   "SEVERITY_ORDER",
+   "SEV_RANK",
+   "UNROUTED",
+   "WORK_STATE",
+   "callsFor",
+   "manualChecksFor",
+   "manualRulings",
+   "settledBy"
+  ],
+  "domain_terms": [
+   "findings",
+   "acceptance criteria",
+   "review packets",
+   "repair loop",
+   "blind tests"
+  ],
+  "entities_defined": [],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 23,
+    "name": "useBarAction"
+   },
+   {
+    "calls": [],
+    "line": 35,
+    "name": "base"
+   },
+   {
+    "calls": [],
+    "line": 43,
+    "name": "request"
+   },
+   {
+    "calls": [
+     "request"
+    ],
+    "line": 45,
+    "name": "send"
+   },
+   {
+    "calls": [],
+    "line": 81,
+    "name": "tagOf"
+   },
+   {
+    "calls": [],
+    "line": 103,
+    "name": "noteOf"
+   },
+   {
+    "calls": [],
+    "line": 151,
+    "name": "acState"
+   },
+   {
+    "calls": [],
+    "line": 166,
+    "name": "esc"
+   },
+   {
+    "calls": [],
+    "line": 167,
+    "name": "usd"
+   },
+   {
+    "calls": [],
+    "line": 168,
+    "name": "pct"
+   },
+   {
+    "calls": [],
+    "line": 176,
+    "name": "packetOf"
+   },
+   {
+    "calls": [
+     "packetOf"
+    ],
+    "line": 178,
+    "name": "fileIndex"
+   },
+   {
+    "calls": [],
+    "line": 197,
+    "name": "statementOf"
+   },
+   {
+    "calls": [],
+    "line": 208,
+    "name": "titleOf"
+   },
+   {
+    "calls": [
+     "fileIndex",
+     "packetOf",
+     "statementOf",
+     "titleOf",
+     "acState",
+     "pct"
+    ],
+    "line": 213,
+    "name": "criteriaRows"
+   },
+   {
+    "calls": [
+     "packetOf"
+    ],
+    "line": 248,
+    "name": "evidenceFor"
+   },
+   {
+    "calls": [],
+    "line": 265,
+    "name": "Pill"
+   },
+   {
+    "calls": [],
+    "line": 269,
+    "name": "MatDot"
+   },
+   {
+    "calls": [],
+    "line": 276,
+    "name": "Composer"
+   },
+   {
+    "calls": [
+     "Pill"
+    ],
+    "line": 326,
+    "name": "FlagsHere"
+   },
+   {
+    "calls": [],
+    "line": 339,
+    "name": "Empty"
+   },
+   {
+    "calls": [],
+    "line": 359,
+    "name": "FocusTools"
+   },
+   {
+    "calls": [],
+    "line": 383,
+    "name": "Row"
+   },
+   {
+    "calls": [
+     "packetOf"
+    ],
+    "line": 456,
+    "name": "findingsWithRecords"
+   },
+   {
+    "calls": [],
+    "line": 463,
+    "name": "outcomeOf"
+   },
+   {
+    "calls": [],
+    "line": 468,
+    "name": "isRestatement"
+   },
+   {
+    "calls": [
+     "outcomeOf"
+    ],
+    "line": 470,
+    "name": "bandsOf"
+   },
+   {
+    "calls": [],
+    "line": 507,
+    "name": "buildUnits"
+   },
+   {
+    "calls": [],
+    "line": 510,
+    "name": "disclosureUnit"
+   },
+   {
+    "calls": [],
+    "line": 513,
+    "name": "decisionUnit"
+   },
+   {
+    "calls": [
+     "buildUnits",
+     "packetOf"
+    ],
+    "line": 526,
+    "name": "repairAccount"
+   },
+   {
+    "calls": [
+     "buildUnits",
+     "packetOf",
+     "decisionUnit"
+    ],
+    "line": 542,
+    "name": "homelessDecisions"
+   },
+   {
+    "calls": [
+     "packetOf"
+    ],
+    "line": 554,
+    "name": "blindSpots"
+   },
+   {
+    "calls": [],
+    "line": 710,
+    "name": "discountsFor"
+   },
+   {
+    "calls": [
+     "findingsWithRecords",
+     "isRestatement",
+     "outcomeOf"
+    ],
+    "line": 741,
+    "name": "awaitingRuling"
+   },
+   {
+    "calls": [],
+    "line": 759,
+    "name": "clusterFindings"
+   },
+   {
+    "calls": [
+     "clusterFindings",
+     "awaitingRuling",
+     "outcomeOf"
+    ],
+    "line": 824,
+    "name": "callsFor"
+   },
+   {
+    "calls": [
+     "packetOf"
+    ],
+    "line": 871,
+    "name": "manualChecksFor"
+   },
+   {
+    "calls": [],
+    "line": 873,
+    "name": "manualRulings"
+   },
+   {
+    "calls": [],
+    "line": 882,
+    "name": "settledBy"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "preact",
+   "the DOM"
+  ],
+  "purpose": "Provides shared UI components and data utilities for reviewing work across gate-2 screens\u2014displaying findings, acceptance criteria status, materiality levels, and management of flags and decisions using preact components rather than string concatenation.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

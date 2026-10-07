@@ -1,0 +1,245 @@
+{
+ "blob": "ff6704072b0ddbb1b87d5603b66bcddab349eff1",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "LOCKFILES",
+   "MANIFESTS",
+   "PUBLIC_SOURCES",
+   "Locked",
+   "normalise",
+   "parse_uv",
+   "parse_poetry",
+   "parse_requirements",
+   "parse_package_lock",
+   "parse_pnpm",
+   "parse_yarn",
+   "PARSERS",
+   "declared_names",
+   "Inventory",
+   "read_inventory",
+   "Change",
+   "diff",
+   "unresolved",
+   "OSV_BATCH",
+   "CLASSIFIER_SPDX",
+   "Facts",
+   "spdx_from_pypi",
+   "spdx_from_npm",
+   "Lookup",
+   "license_verdict",
+   "judge",
+   "facts_for",
+   "findings",
+   "project_inventory",
+   "inventory_record",
+   "latest_inventory",
+   "refresh_inventory"
+  ],
+  "domain_terms": [
+   "package",
+   "lockfile",
+   "ecosystem",
+   "advisory",
+   "license"
+  ],
+  "entities_defined": [
+   "Locked",
+   "Inventory",
+   "Change",
+   "Facts"
+  ],
+  "entities_read": [],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 70,
+    "name": "normalise"
+   },
+   {
+    "calls": [],
+    "line": 76,
+    "name": "_private"
+   },
+   {
+    "calls": [],
+    "line": 83,
+    "name": "_attach_via"
+   },
+   {
+    "calls": [
+     "normalise",
+     "_private",
+     "_attach_via"
+    ],
+    "line": 111,
+    "name": "parse_uv"
+   },
+   {
+    "calls": [
+     "normalise",
+     "_private",
+     "_attach_via"
+    ],
+    "line": 141,
+    "name": "parse_poetry"
+   },
+   {
+    "calls": [
+     "_private",
+     "normalise",
+     "_attach_via"
+    ],
+    "line": 162,
+    "name": "parse_requirements"
+   },
+   {
+    "calls": [
+     "_private",
+     "_attach_via"
+    ],
+    "line": 199,
+    "name": "parse_package_lock"
+   },
+   {
+    "calls": [
+     "_private",
+     "_attach_via"
+    ],
+    "line": 227,
+    "name": "parse_pnpm"
+   },
+   {
+    "calls": [
+     "_private"
+    ],
+    "line": 254,
+    "name": "parse_yarn"
+   },
+   {
+    "calls": [
+     "normalise"
+    ],
+    "line": 295,
+    "name": "declared_names"
+   },
+   {
+    "calls": [
+     "declared_names"
+    ],
+    "line": 339,
+    "name": "read_inventory"
+   },
+   {
+    "calls": [],
+    "line": 399,
+    "name": "_version_key"
+   },
+   {
+    "calls": [
+     "_version_key"
+    ],
+    "line": 403,
+    "name": "diff"
+   },
+   {
+    "calls": [],
+    "line": 433,
+    "name": "unresolved"
+   },
+   {
+    "calls": [],
+    "line": 486,
+    "name": "spdx_from_pypi"
+   },
+   {
+    "calls": [],
+    "line": 499,
+    "name": "spdx_from_npm"
+   },
+   {
+    "calls": [],
+    "line": 509,
+    "name": "Lookup"
+   },
+   {
+    "calls": [],
+    "line": 518,
+    "name": "Lookup.facts"
+   },
+   {
+    "calls": [],
+    "line": 583,
+    "name": "license_verdict"
+   },
+   {
+    "calls": [
+     "license_verdict"
+    ],
+    "line": 609,
+    "name": "judge"
+   },
+   {
+    "calls": [
+     "judge"
+    ],
+    "line": 631,
+    "name": "facts_for"
+   },
+   {
+    "calls": [],
+    "line": 654,
+    "name": "findings"
+   },
+   {
+    "calls": [
+     "git.out"
+    ],
+    "line": 742,
+    "name": "_git_text"
+   },
+   {
+    "calls": [
+     "_git_text",
+     "read_inventory"
+    ],
+    "line": 746,
+    "name": "project_inventory"
+   },
+   {
+    "calls": [],
+    "line": 795,
+    "name": "inventory_record"
+   },
+   {
+    "calls": [],
+    "line": 803,
+    "name": "latest_inventory"
+   },
+   {
+    "calls": [
+     "latest_inventory",
+     "project_inventory"
+    ],
+    "line": 812,
+    "name": "refresh_inventory"
+   }
+  ],
+  "imports": [
+   "factory/git.py"
+  ],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "OSV (Open Source Vulnerabilities database)",
+   "PyPI",
+   "npm registry",
+   "git"
+  ],
+  "purpose": "Reads lockfiles and manifests to inventory what a project depends on, diffs them against a base commit, and looks up what is publicly known about each package via OSV and package registries, holding answers to a project's dependency policy.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}

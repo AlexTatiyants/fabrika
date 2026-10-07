@@ -1,0 +1,188 @@
+{
+ "blob": "c83438036c0a2c47649e947bdafb0659ecf9ff8d",
+ "contract": "e26a72f7abab",
+ "record": {
+  "defines": [
+   "loadPanelPrefs",
+   "savePanelPrefs",
+   "savePanelPrefsSoon",
+   "syncPanelFilters",
+   "isCalling",
+   "orderProjects",
+   "commitPanelOrder",
+   "setPanelHtml",
+   "renderPanel",
+   "renderPanelStatus",
+   "applyPanelFilter",
+   "syncToggle",
+   "setRail",
+   "closePanel",
+   "endPanelDrag",
+   "nudgeGroup",
+   "isTyping",
+   "focusOn",
+   "setFocus",
+   "focusable",
+   "syncFocus",
+   "focusToggle"
+  ],
+  "domain_terms": [
+   "project",
+   "feature",
+   "rail",
+   "stage",
+   "reading mode"
+  ],
+  "entities_defined": [],
+  "entities_read": [
+   "project",
+   "feature"
+  ],
+  "entities_written": [],
+  "functions": [
+   {
+    "calls": [],
+    "line": 45,
+    "name": "loadPanelPrefs"
+   },
+   {
+    "calls": [],
+    "line": 60,
+    "name": "savePanelPrefs"
+   },
+   {
+    "calls": [],
+    "line": 70,
+    "name": "savePanelPrefsSoon"
+   },
+   {
+    "calls": [],
+    "line": 78,
+    "name": "syncPanelFilters"
+   },
+   {
+    "calls": [],
+    "line": 90,
+    "name": "isCalling"
+   },
+   {
+    "calls": [],
+    "line": 99,
+    "name": "orderProjects"
+   },
+   {
+    "calls": [
+     "savePanelPrefs"
+    ],
+    "line": 110,
+    "name": "commitPanelOrder"
+   },
+   {
+    "calls": [],
+    "line": 122,
+    "name": "setPanelHtml"
+   },
+   {
+    "calls": [
+     "orderProjects",
+     "renderPanelStatus",
+     "applyPanelFilter"
+    ],
+    "line": 128,
+    "name": "renderPanel"
+   },
+   {
+    "calls": [],
+    "line": 268,
+    "name": "renderPanelStatus"
+   },
+   {
+    "calls": [],
+    "line": 284,
+    "name": "applyPanelFilter"
+   },
+   {
+    "calls": [],
+    "line": 337,
+    "name": "syncToggle"
+   },
+   {
+    "calls": [
+     "syncToggle"
+    ],
+    "line": 347,
+    "name": "setRail"
+   },
+   {
+    "calls": [
+     "syncToggle"
+    ],
+    "line": 353,
+    "name": "closePanel"
+   },
+   {
+    "calls": [
+     "commitPanelOrder",
+     "applyPanelFilter",
+     "renderPanel"
+    ],
+    "line": 410,
+    "name": "endPanelDrag"
+   },
+   {
+    "calls": [
+     "commitPanelOrder",
+     "applyPanelFilter"
+    ],
+    "line": 423,
+    "name": "nudgeGroup"
+   },
+   {
+    "calls": [],
+    "line": 512,
+    "name": "isTyping"
+   },
+   {
+    "calls": [],
+    "line": 568,
+    "name": "focusOn"
+   },
+   {
+    "calls": [
+     "render"
+    ],
+    "line": 575,
+    "name": "setFocus"
+   },
+   {
+    "calls": [],
+    "line": 587,
+    "name": "focusable"
+   },
+   {
+    "calls": [],
+    "line": 589,
+    "name": "syncFocus"
+   },
+   {
+    "calls": [
+     "focusOn",
+     "esc"
+    ],
+    "line": 599,
+    "name": "focusToggle"
+   }
+  ],
+  "imports": [],
+  "is_test": false,
+  "kind": "code",
+  "launches": [],
+  "outside": [
+   "browser localStorage",
+   "browser DOM"
+  ],
+  "purpose": "Manages the rail sidebar of projects shown on every screen, including search and filtering, drag-to-reorder persistence, and reading mode that hides the chrome. Stores panel state and user preferences in localStorage.",
+  "routes_called": [],
+  "ways_in": []
+ }
+}
