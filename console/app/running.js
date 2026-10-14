@@ -528,7 +528,7 @@ function callRow(row, station) {
       <span class="scall-out">${esc(word)}</span>
       <span class="num">${c.duration_s ? dur(c.duration_s) : ''}</span>
       <span class="num">${tokens ? bytes(tokens) : '—'}</span>
-      <span class="num">${callSpend(c) ? usd(callSpend(c)) : '—'}</span>
+      <span class="num">${c.local ? 'local' : callSpend(c) ? usd(callSpend(c)) : '—'}</span>
       ${raw ? `<button class="linkish scall-raw-toggle" data-call-raw="${esc(row.r.seq)}"
         >${open ? 'hide' : 'what the route said'}</button>` : ''}
       ${raw && open ? `<pre class="scall-raw">${esc(raw.slice(-4000))}</pre>` : ''}

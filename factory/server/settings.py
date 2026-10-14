@@ -120,7 +120,13 @@ def register(app: FastAPI, ctx: Context) -> None:
             return str(error or "")[:200] or response.text[:200]
 
         sent = mask_key(key)
-        keyed, error = await probe("/key")
+        # `/key` is the aggregator's own question. An endpoint that speaks only
+        # the OpenAI-compatible core has no such path, and its 404 would read
+        # as a refusal.
+        default = cfg.routes.get(cfg.default_route)
+        keyed = None
+        if default is None or default.dialect == "openrouter":
+            keyed, error = await probe("/key")
         if keyed is not None and keyed.status_code == 200:
             return {"ok": True, "checked": "credential", "sent": sent,
                     "detail": f"{base} accepted the key."}

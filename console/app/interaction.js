@@ -54,6 +54,8 @@ async function dispatchMainClick(event) {
     return;
   }
 
+  // -- a local server, on the crew page or in setup
+  if (target.dataset.ls) return localServerClick(target);
   // -- agent configuration
   if (target.dataset.ac && state.ac) return agentConfigClick(target, event);
   // -- setup
@@ -480,6 +482,7 @@ main.addEventListener('click', (event) => {
 main.addEventListener('input', (event) => {
   // Kept across the repaint a poll makes while the ruling is being written.
   if (event.target.id === 'cut-note') { state.cutNote = event.target.value; return; }
+  if (event.target.dataset.lsField && localServerInput(event.target)) return;
   const answer = event.target.closest('[data-answer]');
   if (answer) {
     state.answers[answer.dataset.answer] = answer.value;

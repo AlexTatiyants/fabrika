@@ -31,9 +31,11 @@ import time
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
-from . import containers, egress, procs
-from .config import (Config, RouteConfig, independence_problems, staffing_suggestions,
-                     write_staffing)
+import httpx
+
+from . import containers, egress, gateway, procs
+from .config import (Config, RouteConfig, independence_problems, local_route_name,
+                     local_server_template, staffing_suggestions, write_staffing)
 from .files import write_atomic
 
 log = logging.getLogger(__name__)
@@ -212,17 +214,24 @@ def route_takes_key(route: RouteConfig) -> bool:
 
 def connected_routes(cfg: Config, statuses: list[dict[str, Any]]) -> list[str]:
     """The routes that can carry a call now: the provider key's route when a key
-    is set, a keyed route that is on and has its key, and a signed-in plan."""
+    is set, any other api route that is on and has its key, a server that
+    wants none and answered its check, a keyed route that is on and has its
+    key, and a signed-in plan."""
     by_name = {s["name"]: s for s in statuses}
     out = []
     for name, route in cfg.routes.items():
         if not route.enabled:
             continue
-        if name == cfg.default_route:
-            if route.kind == "api" and route.api_key:
+        checked_ok = (by_name.get(name) or {}).get("state") == "ok"
+        if route.kind == "api":
+            if not route.needs_key or route.local:
+                # A server of one's own is connected by answering, key or not.
+                if checked_ok:
+                    out.append(name)
+            elif route.api_key or (name == cfg.default_route and cfg.api.api_key):
                 out.append(name)
             continue
-        if route.kind != "cli":
+        if name == cfg.default_route or route.kind != "cli":
             continue
         if route_takes_key(route):
             if route.api_key:
@@ -230,6 +239,213 @@ def connected_routes(cfg: Config, statuses: list[dict[str, Any]]) -> list[str]:
         elif (by_name.get(name) or {}).get("state") == "ok":
             out.append(name)
     return out
+
+
+# ---------------------------------------------------------------- a local server
+
+def local_server_route(cfg: Config, base_url: str, api_key: str = "",
+                       name: str = "") -> RouteConfig:
+    """The route a server at `base_url` would be, before anything is written:
+    the `local_server` template with this address and key."""
+    template = local_server_template(cfg)
+    if not template:
+        raise RuntimeError("factory.example.yaml has no `local_server` block to make a "
+                           "server's route from.")
+    route_name = local_route_name(name) if name else "local"
+    body = {k: v for k, v in template.items() if k in RouteConfig.model_fields}
+    body.update(name=route_name, kind="api", base_url=base_url.strip().rstrip("/"),
+                api_key=api_key.strip(), auth="key" if api_key.strip() else "none",
+                label=name or route_name, context_window=0)
+    return RouteConfig(**body)
+
+
+def _check(id_: str, title: str, ok: bool | None, detail: str,
+           remedy: dict[str, str] | None = None) -> dict[str, Any]:
+    return {"id": id_, "title": title, "ok": ok, "detail": detail, "remedy": remedy or None}
+
+
+def _skipped(id_: str, title: str, because: str) -> dict[str, Any]:
+    return _check(id_, title, None, f"Not run: {because}")
+
+
+def _restart(route: RouteConfig, why: str) -> dict[str, str]:
+    """The remedy for a server started wrongly: how to start it, from config."""
+    return {"text": f"{why} {route.setup_note}".strip(), "command": route.setup_command}
+
+
+def context_needs(cfg: Config) -> tuple[int, dict[str, int]]:
+    """The largest prompt any agent is sent, in estimated tokens, and what each
+    enabled agent needs on top of it: that prompt plus its `max_tokens`.
+
+    The prompt is the larger of a scout slice and the repository digest, which
+    are what the biggest calls carry -- the same estimate the gateway refuses
+    on, so a role named here is a role that would be refused.
+    """
+    pipeline = cfg.pipeline
+    prompt = gateway.estimate_tokens("x" * max(pipeline.scout_slice_chars,
+                                               pipeline.repo_digest_budget))
+    return prompt, {name: prompt + role.max_tokens
+                    for name, role in cfg.roles.items() if role.enabled}
+
+
+async def _post(client: httpx.AsyncClient, url: str, body: dict[str, Any]
+                ) -> tuple[int, dict[str, Any] | None, str]:
+    try:
+        answer = await client.post(url, json=body)
+    except httpx.HTTPError as exc:
+        return 0, None, f"{type(exc).__name__} {exc}".strip()
+    try:
+        parsed = answer.json()
+    except ValueError:
+        parsed = None
+    return answer.status_code, parsed if isinstance(parsed, dict) else None, answer.text[:300]
+
+
+async def connect_local_server(cfg: Config, base_url: str, api_key: str = "",
+                               name: str = "") -> dict[str, Any]:
+    """Everything Connect checks about a model server, one row each.
+
+    In the order a failure would explain the next: reached from this machine;
+    reached from an agent's sandbox, through a throwaway sealed container and a
+    lease on the gateway; what it serves and how large a call it takes; whether
+    it answers to a strict schema; whether it makes tool calls; and which
+    agents its context is too small for. Each row is ok, a warning with a
+    remedy, or not run because an earlier one failed. Writes nothing.
+    """
+    from .routes import list_models
+
+    route = local_server_route(cfg, base_url, api_key, name)
+    base, key = route.base_url, route.api_key
+    checks: list[dict[str, Any]] = []
+
+    models, problem = await list_models(base, key)
+    reached = models is not None
+    checks.append(_check(
+        "host", "Reached from Fabrika", reached,
+        f"{base}/models answered{', with the key' if key else ', with no key'}."
+        if reached else problem,
+        None if reached else _restart(route, "Start the server, or check the address and port.")))
+
+    if not reached:
+        checks.append(_skipped("sandbox", "Reached from an agent sandbox",
+                               "the server did not answer this machine."))
+    else:
+        try:
+            gw = await gateway.ensure(cfg)
+        except gateway.GatewayError as exc:
+            checks.append(_check("sandbox", "Reached from an agent sandbox", False, str(exc)))
+        else:
+            lease = gw.lease(role="setup", route=route.name, base_url=base, key=key)
+            try:
+                said = await egress.gateway_check(cfg.docker, lease.token,
+                                                  gateway.URL + "/models")
+            finally:
+                gw.revoke(lease)
+            status = int(said.get("status") or 0)
+            checks.append(_check(
+                "sandbox", "Reached from an agent sandbox", status == 200,
+                "A sealed container reached the server through the gateway, the way an "
+                "agent's calls go." if status == 200 else
+                (f"The server answered {status} through the gateway: {str(said.get('body'))[:300]}"
+                 if status else
+                 f"A sealed container could not reach the gateway: {str(said.get('body'))[-300:]}"),
+                None if status == 200 else
+                {"text": "Docker and the network proxy have to be running for agents to reach "
+                         "any model. Start Docker, then press Connect again.",
+                 "command": ""}))
+
+    window = await gateway.ensure_context_window(route, base, retry=True) if reached else 0
+    if not reached:
+        checks.append(_skipped("models", "Models found", "the server did not answer."))
+    elif not models:
+        checks.append(_check("models", "Models found", False, "The server lists no models.",
+                             _restart(route, "Start the server with a model loaded.")))
+    else:
+        checks.append(_check(
+            "models", "Models found", True,
+            f"{', '.join(models)}."
+            + (f" Context window {window:,} tokens a call." if window else
+               " The server did not say its context window, so nothing is checked against it.")))
+
+    model = (models or [""])[0]
+    async with httpx.AsyncClient(
+            timeout=httpx.Timeout(120.0, connect=10.0),
+            headers={"Authorization": f"Bearer {key}"} if key else {}) as client:
+        if not model:
+            checks.append(_skipped("schema", "Structured answers", "there is no model to ask."))
+            checks.append(_skipped("tools", "Tool calls", "there is no model to ask."))
+        else:
+            status, answer, text = await _post(client, f"{base}/chat/completions", {
+                "model": model, "max_tokens": 256, "temperature": 0,
+                "messages": [{"role": "user", "content": 'Answer with {"answer": "ok"}.'}],
+                "response_format": {"type": "json_schema", "json_schema": {
+                    "name": "Check", "strict": True, "schema": {
+                        "type": "object", "properties": {"answer": {"type": "string"}},
+                        "required": ["answer"], "additionalProperties": False}}}})
+            content = ""
+            if answer:
+                content = str(((answer.get("choices") or [{}])[0].get("message") or {})
+                              .get("content") or "")
+            try:
+                valid = isinstance(json.loads(content).get("answer"), str)
+            except (ValueError, AttributeError):
+                valid = False
+            checks.append(_check(
+                "schema", "Structured answers", valid,
+                f"{model} answered a strict JSON schema with a valid object." if valid else
+                (f"The server answered {status}: {text}" if status != 200 else
+                 f"{model} did not answer the schema with a valid object: {content[:200]!r}"),
+                None if valid else {
+                    "text": "Every agent here answers to a schema. Try another model, or a "
+                            "newer build of the server.", "command": ""}))
+
+            status, answer, text = await _post(client, f"{base}/chat/completions", {
+                "model": model, "max_tokens": 256, "temperature": 0,
+                "messages": [{"role": "user", "content": "What time is it? Use the tool."}],
+                "tools": [{"type": "function", "function": {
+                    "name": "current_time", "description": "The current time.",
+                    "parameters": {"type": "object", "properties": {}}}}]})
+            calls = []
+            if answer:
+                calls = ((answer.get("choices") or [{}])[0].get("message") or {}) \
+                    .get("tool_calls") or []
+            checks.append(_check(
+                "tools", "Tool calls", bool(calls),
+                f"{model} called the tool it was offered." if calls else
+                ("The server refused a request with tools" + (f" ({status}): {text}" if status
+                                                              else f": {text}")
+                 if status != 200 else f"{model} answered without calling the tool."),
+                None if calls else _restart(
+                    route, "Agents work through OpenHands, which needs native tool calls.")))
+
+    if not reached:
+        checks.append(_skipped("context", "Context", "the server did not answer."))
+    elif not window:
+        checks.append(_check("context", "Context", None,
+                             "The server did not say its context window, so no agent's calls "
+                             "can be checked against it before they are sent."))
+    else:
+        prompt, needs = context_needs(cfg)
+        short = sorted((n for n, need in needs.items() if need > window),
+                       key=lambda n: -needs[n])
+        checks.append(_check(
+            "context", "Context", not short,
+            f"{window:,} tokens a call holds every agent's largest call "
+            f"(about {prompt:,} prompt tokens plus its max_tokens)." if not short else
+            f"{window:,} tokens a call is too small for {len(short)} agent"
+            f"{'s' if len(short) != 1 else ''}: "
+            + ", ".join(f"{n} (needs about {needs[n]:,})" for n in short[:8])
+            + (f" and {len(short) - 8} more" if len(short) > 8 else "")
+            + ". Their calls would be refused before they are sent, never cut short.",
+            None if not short else _restart(
+                route, "Give the server more context, or point only the other agents at it.")))
+
+    return {"ok": all(c["ok"] is not False for c in checks) and reached,
+            # A warning is the person's to weigh; a server that lists no model
+            # has nothing to add.
+            "can_add": bool(models),
+            "base_url": base, "models": models or [], "context_window": window,
+            "checks": checks}
 
 
 # ---------------------------------------------------------------- harnesses

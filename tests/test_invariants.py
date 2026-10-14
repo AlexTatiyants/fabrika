@@ -2061,7 +2061,7 @@ def test_v5_schema_failure_is_retried_then_succeeds(monkeypatch):
                   '"existing_capabilities": [], "do_not_duplicate": [], "relevant_files": [], "risks": []}\n```'),
     ]
 
-    async def fake_post(payload):
+    async def fake_post(payload, route=None):
         calls.append(payload)
         return payloads[len(calls) - 1]
 
@@ -2083,7 +2083,7 @@ def test_v5_three_failures_raise_loudly(monkeypatch):
     client = LLM(_stub_config())
     calls = []
 
-    async def fake_post(payload):
+    async def fake_post(payload, route=None):
         calls.append(payload)
         return _response("still not json")
 

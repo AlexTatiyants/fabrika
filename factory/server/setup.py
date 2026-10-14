@@ -17,10 +17,13 @@ from typing import Any
 import httpx
 from fastapi import FastAPI, HTTPException
 
+from urllib.parse import urlsplit
+
 from .. import commissioning as cm
-from ..config import (ConfigError, api_key_source, mask_key, write_credential,
-                      write_executor_kind, write_rework_limits, write_route_enabled)
-from .bodies import SetupCrew, SetupDecline, SetupKey, SetupLimits
+from ..config import (ConfigError, api_key_source, local_server_template, mask_key,
+                      write_credential, write_executor_kind, write_local_server,
+                      write_rework_limits, write_route_enabled)
+from .bodies import LocalServer, SetupCrew, SetupDecline, SetupKey, SetupLimits
 from .context import Context
 
 
@@ -113,6 +116,8 @@ def register(app: FastAPI, ctx: Context) -> None:
                         and s["name"] != cfg.default_route]
         default = cfg.routes.get(cfg.default_route)
         return {
+            "local_servers": local_servers(statuses, connected),
+            "local_offered": bool(local_server_template(cfg)),
             "machine": dict(machine) or None,
             "can_start_docker": cm.can_start_docker(),
             "provider": {
@@ -139,6 +144,59 @@ def register(app: FastAPI, ctx: Context) -> None:
             "busy": jobs.any_running(),
             "config_path": str(cfg.source_path),
         }
+
+    def local_servers(statuses: list[dict[str, Any]],
+                      connected: list[str]) -> list[dict[str, Any]]:
+        """Every model server of one's own that is configured, for the crew
+        step to offer as a side."""
+        return [{"route": s["name"], "label": s.get("label") or s["name"],
+                 "account_label": s.get("account_label") or s["name"],
+                 "base_url": cfg.routes[s["name"]].base_url,
+                 "models": s.get("models") or [], "connected": s["name"] in connected}
+                for s in statuses
+                if s.get("account_kind") == "local" and cfg.routes[s["name"]].enabled]
+
+    def checked_url(raw: str) -> str:
+        url = raw.strip().rstrip("/")
+        parts = urlsplit(url)
+        if parts.scheme not in ("http", "https") or not parts.netloc:
+            raise HTTPException(status_code=422,
+                                detail="The address must start with http:// or https://.")
+        return url
+
+    @app.post("/api/local-servers/connect")
+    async def connect_local_server(body: LocalServer) -> dict[str, Any]:
+        """Every check a model server has to pass, one row each. Writes
+        nothing: Add server does, once a person has read these."""
+        try:
+            return await cm.connect_local_server(cfg, checked_url(body.base_url),
+                                                 body.api_key, body.name.strip())
+        except RuntimeError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @app.post("/api/local-servers")
+    async def add_local_server(body: LocalServer) -> dict[str, Any]:
+        """Write the server as a route. Its models and context window are asked
+        for again here rather than taken from the client: what is written is
+        what the server says now."""
+        from .. import gateway
+        from ..routes import list_models
+
+        url = checked_url(body.base_url)
+        if not body.name.strip():
+            raise HTTPException(status_code=422, detail="Give the server a name.")
+        route = cm.local_server_route(cfg, url, body.api_key, body.name.strip())
+        models, problem = await list_models(url, route.api_key)
+        if not models:
+            raise HTTPException(status_code=409, detail=problem or "The server lists no models.")
+        window = await gateway.ensure_context_window(route, url, retry=True)
+        try:
+            name = write_local_server(cfg, name=body.name.strip(), base_url=url, models=models,
+                                      context_window=window, api_key=body.api_key)
+        except ConfigError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from None
+        routes.forget(name)
+        return await routes.refresh(name)
 
     @app.post("/api/setup/machine")
     async def post_machine() -> dict[str, Any]:

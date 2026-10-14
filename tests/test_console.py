@@ -4246,3 +4246,81 @@ def test_a_stage_and_a_verdict_are_named_in_one_place():
         assert holders == ["vocab.js"], f"{word} is written in {holders}, not only in app/vocab.js"
     from support import CONSOLE_SCRIPTS
     assert CONSOLE_SCRIPTS[0] == "app/vocab.js", "the words load before anything reads them"
+
+
+def _crew_js(body: str):
+    """The crew page's own code -- the local-server form and the route cards --
+    run in node."""
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    source = "\n".join((ROOT / "console" / "app" / name).read_text(encoding="utf-8")
+                       for name in ("local-server.js", "routes.js"))
+    script = ("const state = {};\n"
+              "const esc = (s) => String(s ?? '').replace(/[&<>\"]/g, (c) => "
+              "({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));\n"
+              + source + "\n" + body)
+    out = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    return json.loads(out.stdout)
+
+
+def test_a_local_server_s_account_card_says_local_its_address_and_who_uses_it():
+    """Not "api key", not "billed per token": a server of one's own is local,
+    has no billing, and says where it is. Until an agent is pointed at it, it
+    says so -- assignment is on Agent configuration, not on this card."""
+    got = _crew_js("""
+const server = {name: 'studio-mac', label: 'Studio Mac', account_label: 'Studio Mac',
+  account_kind: 'local', kind: 'api', billed: false, state: 'ok', harness_label: 'OpenHands',
+  base_url: 'http://192.168.1.50:8080/v1', models: ['local-model']};
+const idle = accountCard(server);
+state.roles = {roles: [{name: 'worker', route: 'studio-mac', enabled: true}]};
+const used = accountCard(server);
+state.routes = {routes: [server], default: 'default'};
+const options = modelOptions({name: 'worker'}, {route: 'default', model: 'x'});
+console.log(JSON.stringify({idle, used, options, tile: localServerTile()}));
+""")
+    assert '<span class="hver mono">local</span>' in got["idle"]
+    assert "no billing" in got["idle"] and "192.168.1.50:8080/v1" in got["idle"]
+    assert "api key" not in got["idle"] and "billed per token" not in got["idle"]
+    assert "not assigned to any agent" in got["idle"]
+    assert "used by <b>1 agent</b>" in got["used"]
+    assert 'value="studio-mac|local-model"' in got["options"], \
+        "its models are offered on Agent configuration"
+    assert "Add a local server" in got["tile"] and 'data-ls="open"' in got["tile"]
+
+
+def test_the_local_server_form_checks_its_fields_before_anything_is_sent():
+    """Address and name are required, the address an http(s) URL -- a LAN
+    address included; the key is optional. Add server appears only once
+    Connect has run, and a warning carries its remedy with a copy button."""
+    got = _crew_js("""
+const s = lsState();
+s.open = true;
+const empty = lsErrors(s);
+Object.assign(s, {url: 'localhost:8080', name: 'Studio'});
+const scheme = lsErrors(s);
+s.url = 'http://192.168.1.50:8080/v1';
+const lan = lsErrors(s);
+s.errors = empty;
+const before = localServerForm('crew');
+s.errors = {};
+s.result = {can_add: true, checks: [
+  {id: 'host', title: 'Reached from Fabrika', ok: true, detail: 'answered'},
+  {id: 'tools', title: 'Tool calls', ok: false, detail: 'refused',
+   remedy: {text: 'Restart it.', command: 'start-the-server --with-tools'}}]};
+const after = localServerForm('crew');
+console.log(JSON.stringify({empty, scheme, lan, before, after}));
+""")
+    assert set(got["empty"]) == {"url", "name"}, "the key is optional"
+    assert set(got["scheme"]) == {"url"} and got["lan"] == {}
+    assert 'placeholder="http://localhost:8080/v1"' in got["before"]
+    assert 'placeholder="only if your server asks for one"' in got["before"]
+    assert 'type="password"' in got["before"] and 'aria-invalid="true"' in got["before"]
+    assert 'data-ls="connect"' in got["before"] and 'data-ls="add"' not in got["before"]
+    assert 'data-ls="add"' in got["after"] and "Add server" in got["after"]
+    assert 'data-copy="start-the-server --with-tools"' in got["after"]
+    assert got["after"].index('data-ls="connect"') < got["after"].index('data-ls="add"'), \
+        "Connect comes first"

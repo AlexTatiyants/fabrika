@@ -30,7 +30,8 @@ from pydantic import BaseModel, Field
 from . import procs
 from . import gateway, guides as guide_lib, isolation, sessioncreds
 from .isolation import IsolationError, require_contained
-from .config import Config, fallback_session_model, harness_model, session_fallback, session_model
+from .config import (Config, fallback_session_model, harness_model, route_endpoint,
+                     session_fallback, session_model)
 from .llm import LLM, LLMError
 from .schemas import (Decision, FileWrite, Guide, SelfDisclosure, SendBackRecord, Spec, WorkerOutput,
                       WorkUnit)
@@ -614,7 +615,7 @@ def session_response(log: str, route=None) -> dict[str, Any]:
     return {
         "usage": {"prompt_tokens": prompt, "completion_tokens": completion,
                   "cost": _as_float(_dig(envelope, route.cost_key)) if envelope else 0.0},
-        "_route": {"billed": route.billed},
+        "_route": {"billed": route.billed, "local": route.local},
     }
 
 
@@ -1004,6 +1005,7 @@ class CommandExecutor:
             route=(route.name if route is not None else ""),
             billed=(route.billed if route is not None else True),
             turns=int(spent.get("turns") or 0),
+            local=bool(route is not None and route.local),
         )
         return spent
 
@@ -1013,7 +1015,13 @@ class CommandExecutor:
         env = dict(os.environ)
         key = self.config.api.api_key
         key_env = self.config.executor.key_env
-        if key_env and not key:
+        default = self.config.routes.get(self.config.default_route)
+        if default is not None and not default.needs_key:
+            # A server that wants no key: the harness is told so, rather than
+            # refused for want of one or handed a key the server never asked for.
+            key = ""
+            env["LLM_AUTH"] = "none"
+        elif key_env and not key:
             # Never launch a harness that cannot authenticate. Given no key, a
             # CLI is as likely to open an interactive login and block until the
             # timeout as it is to exit -- and a hang reads as a slow build
@@ -1392,18 +1400,23 @@ class CommandExecutor:
         docker = self.config.docker.binary
         # A harness that would have been handed this app's provider key is
         # handed a session token for the model gateway instead, and told the
-        # gateway is its provider. The key never enters the container. With no
-        # key stored there is nothing to lease, and `prepare` says so as before.
+        # gateway is its provider. The key never enters the container. The
+        # gateway forwards to this route's own endpoint with this route's own
+        # key -- or none, on a route with `auth: none`. With a key needed and
+        # none stored there is nothing to lease, and `prepare` says so as before.
         gw, lease = None, None
-        key = (self.config.api.api_key or "").strip()
-        if key and gateway.leases_its_key(route):
+        base, key, headers = route_endpoint(self.config, route)
+        if (key or not route.needs_key) and gateway.leases_its_key(route):
             try:
                 gw = await gateway.ensure(self.config)
             except gateway.GatewayError as exc:
                 raise ExecutorError(str(exc)) from exc
-            lease = gw.lease(role=role, route=route.name,
-                             base_url=route.base_url or self.config.api.base_url or "",
-                             key=key, headers=self.config.api.headers)
+            # The local server is asked from here, on the host -- the same
+            # side the gateway reaches it from.
+            window = await gateway.ensure_context_window(route, base)
+            lease = gw.lease(role=role, route=route.name, base_url=base, key=key,
+                             headers=headers, context_window=window,
+                             budget=gateway.BUDGET.get())
         try:
             bundle = await sessioncreds.prepare(
                 route, self.config, lease.token if lease is not None else "")

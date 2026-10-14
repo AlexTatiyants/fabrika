@@ -231,7 +231,7 @@ class RouteConfig(BaseModel):
 
     name: str = ""
     kind: str = "api"                      # "api" | "cli"
-    metered: str = "tokens"                # "tokens" | "turns"
+    metered: str = "tokens"                # "tokens" | "turns" | "local"
     enabled: bool = True
     label: str = ""                        # what the console calls it
 
@@ -262,6 +262,36 @@ class RouteConfig(BaseModel):
     base_url: str = ""
     api_key: str = ""
     model_prefix: str = ""
+    # "key": the endpoint wants a key, and a route without one is not
+    # connected. "none": it wants nothing -- a model server on this machine or
+    # the LAN -- and every place that refuses to start without a key lets this
+    # route through.
+    auth: Literal["key", "none"] = "key"
+    # Which request this endpoint understands beyond the OpenAI-compatible
+    # core. "openrouter" also takes `reasoning` and `provider` in the payload
+    # and answers `/key`; "openai" is the core and nothing else, which is what
+    # a local server speaks. A field it does not know is at best ignored and
+    # at worst a 400, so a route says which one it is.
+    dialect: Literal["openrouter", "openai"] = "openrouter"
+    # How many tokens one call may hold, prompt and answer together. Zero is
+    # "not known", and nothing is checked. A local server started with a small
+    # context answers an oversized prompt with a 400 that is not retried, or
+    # truncates it silently; a call that cannot fit is refused here, before it
+    # is sent, with the numbers that say why.
+    context_window: int = 0
+    # Where the window is read from, when the server says: a path on the
+    # endpoint's own host (not under `base_url`'s path), and the dotted key in
+    # the JSON it answers with. Read the first time the route is used and kept
+    # for the life of the process, so nothing needs typing in. Configuration,
+    # because the endpoint is the server's and this package names no server.
+    context_window_path: str = ""
+    context_window_key: str = ""
+    # The route whose harness carries this one's sessions, when it has none of
+    # its own: everything about how sessions run in a container is taken from
+    # it, and only the endpoint, the key and the model differ. A local model
+    # driven by the same harness as the provider key is one line, not a copy
+    # of forty.
+    harness: str = ""
 
     # --- cli routes -----------------------------------------------------
     # One completion: the prompt arrives on stdin, a JSON envelope leaves on
@@ -532,6 +562,16 @@ class RouteConfig(BaseModel):
     def billed(self) -> bool:
         """Whether this route's spend can reach the budget guard at all."""
         return self.metered == "tokens"
+
+    @property
+    def local(self) -> bool:
+        """Whether this route's model runs on hardware nobody bills for: its
+        tokens are counted, and there is no figure to price them with."""
+        return self.metered == "local"
+
+    @property
+    def needs_key(self) -> bool:
+        return self.auth != "none"
 
 
 class ApiConfig(BaseModel):
@@ -1289,6 +1329,7 @@ class Config(BaseModel):
         only ever fails where nobody is looking.
         """
         install_default_route(self)
+        inherit_harnesses(self)
 
     def route(self, name: str = "") -> RouteConfig:
         """A route by name, or the default. A missing one is an error.
@@ -1466,6 +1507,53 @@ def sync_default_route(cfg: Config) -> Config:
     return cfg
 
 
+#: What a route takes from the one its `harness:` names: how its sessions run
+#: in a container, and nothing about where its model is or who pays for it.
+HARNESS_FIELDS = (
+    "harness_label", "session_in_container", "reads_instructions", "reads_nested",
+    "reads_skills", "session_spend_flag", "container_build_image", "container_install",
+    "container_check", "container_session_command", "container_env",
+    "container_credentials", "container_build_files", "container_payload",
+)
+
+
+def inherit_harnesses(cfg: Config) -> Config:
+    """Fill each route that names a `harness:` from the route it names.
+
+    Only what the route left empty, as `install_default_route` does: a route
+    that says something of its own about its sessions keeps it. A name that is
+    not a route is an error, said where it was written.
+    """
+    for route in cfg.routes.values():
+        if not route.harness:
+            continue
+        source = cfg.routes.get(route.harness)
+        if source is None or source is route:
+            raise ConfigError(
+                f"route {route.name!r} takes its harness from {route.harness!r}, which is "
+                f"not another configured route. Configured routes: {', '.join(sorted(cfg.routes))}.")
+        copied = source.model_copy(deep=True)
+        for field_name in HARNESS_FIELDS:
+            if not getattr(route, field_name):
+                setattr(route, field_name, getattr(copied, field_name))
+    return cfg
+
+
+def route_endpoint(cfg: Config, route: RouteConfig) -> tuple[str, str, dict[str, str]]:
+    """Where an api route's calls go: its base URL, its key, and its headers.
+
+    The default route is the `api` block, read live -- a key saved in the
+    console reaches the next call without a reload. Every other route is its
+    own: its `base_url`, its key, and no headers but the ones a call carries.
+    A route with `auth: none` has no key, whatever is stored.
+    """
+    if route.name == cfg.default_route and route.kind == "api":
+        base, key, headers = cfg.api.base_url, cfg.api.api_key, dict(cfg.api.headers)
+    else:
+        base, key, headers = route.base_url, route.api_key, {}
+    return (base or "").strip(), ((key or "").strip() if route.needs_key else ""), headers
+
+
 #: `rework` keys that name one repository's commands or environment, refused in
 #: factory.yaml because that file applies to every project.
 #:
@@ -1617,6 +1705,7 @@ def load_config(path: str | Path = "factory.yaml") -> Config:
         source_path=str(p),
     )
     install_default_route(cfg)
+    inherit_harnesses(cfg)
     unknown = sorted({r.route for r in cfg.roles.values() if r.route} - set(cfg.routes))
     if unknown:
         raise ConfigError(
@@ -1631,8 +1720,12 @@ def load_config(path: str | Path = "factory.yaml") -> Config:
     # The same rule for a command-line route that spends a key of its own: the
     # variable it names wins, and a key entered in the console is stored under
     # that variable's name.
+    # An api route other than the default keeps its key the same way: the
+    # default's is the `api` block's, and is read above.
     for route in cfg.routes.values():
-        if route.kind == "cli" and route.key_env and not route.api_key:
+        if route.name == cfg.default_route:
+            continue
+        if route.kind in ("cli", "api") and route.key_env and not route.api_key:
             route.api_key = read_credential(cfg, route.key_env)
     sync_default_route(cfg)
     return cfg
@@ -2484,6 +2577,83 @@ def write_route_enabled(config: Config, name: str, enabled: bool = True) -> Conf
     fresh = load_config(path)
     config.routes[name] = fresh.routes[name]
     return config
+
+
+#: The top-level block a local model server's route is made from. Not a route
+#: itself -- nothing carries a call through it -- but everything a server of
+#: one's own has in common: no billing, the OpenAI dialect, the default
+#: route's harness, where its context window is read, and how to start one.
+#: The console supplies the rest: a name, an address, an optional key.
+LOCAL_SERVER = "local_server"
+
+
+def local_server_template(config: Config) -> dict[str, Any]:
+    """The `local_server` block, from this file or else the shipped example."""
+    for path in (Path(config.source_path) if config.source_path else None,
+                 example_config_path(config)):
+        if path is None or not path.exists():
+            continue
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        if isinstance(data.get(LOCAL_SERVER), dict):
+            return dict(data[LOCAL_SERVER])
+    return {}
+
+
+def local_route_name(name: str) -> str:
+    """A route name from what a person called the server."""
+    slug = re.sub(r"[^a-z0-9]+", "-", (name or "").lower()).strip("-")
+    return slug or "local"
+
+
+def local_key_env(route_name: str) -> str:
+    """Where a local server's key is stored: the credentials file, under this
+    name, as the provider key is -- never in factory.yaml."""
+    return "LOCAL_" + re.sub(r"[^A-Z0-9]+", "_", route_name.upper()).strip("_") + "_API_KEY"
+
+
+def write_local_server(config: Config, *, name: str, base_url: str, models: list[str],
+                       context_window: int = 0, api_key: str = "") -> str:
+    """Add a model server of one's own as a route, and return its name.
+
+    The block is the `local_server` template with this server's name, address,
+    models and context window. A key, when the server wants one, goes to the
+    credentials file; the route only names where. Every level of the route is
+    set to its first model, so the crew can be staffed from it -- which agents
+    run on it is chosen on the agent configuration screen, not here.
+    """
+    template = local_server_template(config)
+    if not template:
+        raise ConfigError("factory.example.yaml has no `local_server` block to make a "
+                          "server's route from.")
+    route_name = local_route_name(name)
+    if route_name in config.routes:
+        raise ConfigError(f"a route named {route_name!r} already exists. Give the server "
+                          "another name.")
+    if not models:
+        raise ConfigError("the server listed no models, so there is nothing to run on it.")
+    key = (api_key or "").strip()
+    key_env = local_key_env(route_name) if key else ""
+
+    def change(data):
+        block = CommentedMap(template)
+        block.update(enabled=True, kind="api", label=name.strip(),
+                     account_label=name.strip(), base_url=base_url,
+                     auth="key" if key else "none", models=list(models))
+        if context_window:
+            block["context_window"] = int(context_window)
+        if key_env:
+            block["key_env"] = key_env
+        data.setdefault("routes", CommentedMap())[route_name] = block
+        data.setdefault("levels", CommentedMap())[route_name] = CommentedMap(
+            (level, _flow({"model": models[0]})) for level in LEVELS)
+
+    if key_env:
+        write_credential(config, key_env, key)
+    path = _rewrite(config, change)
+    fresh = load_config(path)
+    config.routes[route_name] = fresh.routes[route_name]
+    config.levels[route_name] = fresh.levels.get(route_name, {})
+    return route_name
 
 
 def session_fallback(config: "Config", role: str) -> "RouteConfig | None":

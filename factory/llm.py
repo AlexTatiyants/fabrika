@@ -26,7 +26,8 @@ from pydantic import BaseModel, ValidationError
 
 from . import procs
 from . import isolation
-from .config import Config, ConfigError, RoleConfig, RouteConfig
+from .config import Config, ConfigError, RoleConfig, RouteConfig, route_endpoint
+from . import gateway
 from .agentbox import completion_box
 from .isolation import IsolationError
 
@@ -141,8 +142,10 @@ def call_entry(
         "prompt_tokens": int(_as_float(usage.get("prompt_tokens"))),
         "completion_tokens": int(_as_float(usage.get("completion_tokens"))),
         "billed": billed,
+        # A local model is neither: nobody was charged, and nothing priced it.
+        "local": bool(meta.get("local")),
         "cost_usd": reported if billed else 0.0,
-        "notional_usd": 0.0 if billed else reported,
+        "notional_usd": 0.0 if billed or meta.get("local") else reported,
     }
 
 
@@ -276,6 +279,11 @@ class RoleUsage:
     # stopped at `reserve_usd` for spend that never happened is a run stopped
     # for nothing.
     notional_cost: float = 0.0
+    # Calls on a model this machine or the LAN runs. Not unbilled in the
+    # subscription's sense -- there is no plan and no window -- and not free in
+    # the "$0.00 billed" sense either: nobody priced them. Counted apart so the
+    # ledger can say "local" rather than either.
+    local_calls: int = 0
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -289,6 +297,7 @@ class RoleUsage:
             "turns": self.turns,
             "unbilled_calls": self.unbilled_calls,
             "notional_cost": round(self.notional_cost, 6),
+            "local_calls": self.local_calls,
         }
 
 
@@ -510,6 +519,10 @@ class LLM:
             use_mirror(config.evidence_path)
         self._client = client
         self._owns_client = client is None
+        # One client per api route other than the default, each with its own
+        # base URL and key baked in. The default's is `client` above, which is
+        # also the one a caller may hand in.
+        self._route_clients: dict[str, httpx.AsyncClient] = {}
         self.usage: dict[str, RoleUsage] = {}
         # Every role that ran somewhere other than where it was configured, and
         # why. A packet says which agents read the work; if one of them read it
@@ -541,7 +554,8 @@ class LLM:
         if self._client is None:
             api = self.config.api
             headers = {"Content-Type": "application/json", **api.headers}
-            if api.api_key:
+            default = self.config.routes.get(self.config.default_route)
+            if api.api_key and (default is None or default.needs_key):
                 headers["Authorization"] = f"Bearer {api.api_key}"
             self._client = httpx.AsyncClient(
                 base_url=api.base_url.rstrip("/"),
@@ -564,30 +578,73 @@ class LLM:
                 pass
         if self._owns_client:
             self._client = None
+        await self._close_route_clients()
+
+    async def _close_route_clients(self) -> None:
+        clients = list(self.__dict__.setdefault("_route_clients", {}).values())
+        self._route_clients = {}
+        for client in clients:
+            try:
+                await client.aclose()
+            except Exception:
+                pass
 
     async def aclose(self) -> None:
         if self._client is not None and self._owns_client:
             await self._client.aclose()
             self._client = None
+        await self._close_route_clients()
+
+    def _client_for(self, route: RouteConfig | None) -> httpx.AsyncClient:
+        """The client that reaches this route's endpoint, with its key on.
+
+        The default route is the `api` block and `client` above. Every other
+        api route has its own `base_url` and key, so a local server can sit
+        beside the provider and a role can be pointed at either.
+        """
+        if route is None or route.name == self.config.default_route:
+            return self.client
+        clients = self.__dict__.setdefault("_route_clients", {})
+        built = clients.get(route.name)
+        if built is None:
+            base, key, headers = route_endpoint(self.config, route)
+            headers = {"Content-Type": "application/json", **headers}
+            if key:
+                headers["Authorization"] = f"Bearer {key}"
+            built = clients[route.name] = httpx.AsyncClient(
+                base_url=base.rstrip("/"), headers=headers,
+                timeout=httpx.Timeout(self.config.api.timeout_s))
+        return built
 
     # -- transport --------------------------------------------------------
 
-    async def _post(self, payload: dict[str, Any]) -> dict[str, Any]:
+    async def _post(self, payload: dict[str, Any],
+                    route: RouteConfig | None = None) -> dict[str, Any]:
         """AC-3.5 -- transport and 429/5xx retries with exponential backoff.
 
-        The single HTTP seam in the codebase. Tests replace this method.
+        The single HTTP seam in the codebase. Tests replace this method. The
+        call goes to `route`'s own endpoint; no route is the default.
         """
         api = self.config.api
+        client = self._client_for(route)
+        keyed = bool(route_endpoint(self.config, route)[1]) if route is not None \
+            else bool(api.api_key)
         last: Exception | None = None
         for attempt in range(api.max_transport_retries):
             try:
-                resp = await self.client.post("/chat/completions", json=payload)
+                resp = await client.post("/chat/completions", json=payload)
             except (httpx.TransportError, httpx.TimeoutException) as exc:
                 last = exc
             else:
                 if resp.status_code == 429 or resp.status_code >= 500:
                     last = LLMError(f"HTTP {resp.status_code}: {resp.text[:400]}")
-                elif resp.status_code in (401, 403) and not api.api_key:
+                elif resp.status_code in (401, 403) and route is not None and not route.needs_key:
+                    raise LLMError(
+                        f"HTTP {resp.status_code}: route {route.name!r} is set up with "
+                        "`auth: none`, and its server wants a key. Start the server without "
+                        "one, or give the route a key and `auth: key`. "
+                        f"The server said: {resp.text[:300]}")
+                elif resp.status_code in (401, 403) and not keyed:
                     # The provider's own words for this are about cookies or
                     # sessions, and they are the first thing a new install shows.
                     # The status stays in front: route health reads it.
@@ -612,6 +669,7 @@ class LLM:
         messages: list[dict[str, str]],
         schema: Type[BaseModel] | None,
         temperature: float | None,
+        route: RouteConfig | None = None,
     ) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "model": role.model,
@@ -619,9 +677,13 @@ class LLM:
             "temperature": role.temperature if temperature is None else temperature,
             "max_tokens": role.max_tokens,
         }
-        if role.reasoning_effort and role.reasoning_effort.lower() not in ("", "none"):
+        # `reasoning` and `provider` are the aggregator's own fields. An
+        # endpoint that speaks only the OpenAI-compatible core ignores them at
+        # best and refuses the call at worst.
+        extended = route is None or route.dialect == "openrouter"
+        if extended and role.reasoning_effort and role.reasoning_effort.lower() not in ("", "none"):
             payload["reasoning"] = {"effort": role.reasoning_effort}
-        if role.providers:
+        if extended and role.providers:
             # AC-3.4 -- without pinning, quantisation and context window differ
             # between hosts of the same model, and an eval measures the host.
             payload["provider"] = {
@@ -775,7 +837,20 @@ class LLM:
         if route.kind == "cli":
             response = await self._run_cli(route, role, messages, schema)
         else:
-            response = await self._post(self._payload(role, messages, schema, temperature))
+            payload = self._payload(role, messages, schema, temperature, route)
+            base = route_endpoint(self.config, route)[0]
+            window = await gateway.ensure_context_window(route, base)
+            refused = gateway.window_problem(
+                route.name, window, gateway.estimate_tokens(gateway.prompt_of(payload)),
+                gateway.answer_room(payload))
+            if refused:
+                raise LLMError(refused)
+            response = await self._post(payload, route)
+            if isinstance(response, dict):
+                # Which route answered, and whether its figure is money. The
+                # default route bills per token; a local one prices nothing.
+                response.setdefault("_route", {"name": route.name, "billed": route.billed,
+                                               "local": route.local})
         # The model this answer was asked of, carried with it. `ask` accounts
         # for a response against the role it was given, and on a fallback that
         # is the configured role -- not the stand-in the request actually went
@@ -1028,6 +1103,12 @@ class LLM:
         # actually stop that run, a rate limit, remains invisible.
         meta = response.get("_route") or {}
         billed = bool(meta.get("billed", True))
+        if meta.get("local"):
+            u.routes.add(str(meta.get("name") or ""))
+            u.local_calls += 1
+            return {"cost_usd": 0.0, "notional_usd": 0.0,
+                    "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens,
+                    "total_tokens": total_tokens}
         if meta:
             u.routes.add(str(meta.get("name") or ""))
             if not billed:
@@ -1207,7 +1288,7 @@ class LLM:
     def record_external(
         self, role_name: str, model: str, cost: float,
         prompt_tokens: int = 0, completion_tokens: int = 0, calls: int = 1,
-        *, route: str = "", billed: bool = True, turns: int = 0,
+        *, route: str = "", billed: bool = True, turns: int = 0, local: bool = False,
     ) -> None:
         """Spend that did not go through this client, folded into the same tally.
 
@@ -1234,6 +1315,10 @@ class LLM:
         u.total_tokens += max(0, prompt_tokens) + max(0, completion_tokens)
         if route:
             u.routes.add(route)
+        if local:
+            # A model on hardware nobody bills: tokens, and no figure at all.
+            u.local_calls += max(0, calls)
+            return
         try:
             amount = max(0.0, float(cost))
         except (TypeError, ValueError):
@@ -1338,6 +1423,7 @@ class LLM:
             # a reader comparing them can see which routes this run could
             # actually account for.
             "unbilled_calls": sum(u.unbilled_calls for u in self.usage.values()),
+            "local_calls": sum(u.local_calls for u in self.usage.values()),
             "fallbacks": list(self.fallbacks),
             "calls": sum(u.calls for u in self.usage.values()),
         }

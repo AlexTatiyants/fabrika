@@ -379,7 +379,10 @@ def harness_image_tag(base_image: str, route) -> str:
             body = b""
         parts.append(f"{target}\0{hashlib.sha256(body).hexdigest()}")
     digest = hashlib.sha256("\0".join(parts).encode("utf-8")).hexdigest()[:12]
-    return f"{NAME_PREFIX}-harness/{_safe_project(route.name)}:{digest}"
+    # Named for the route the harness belongs to: a route that borrows another's
+    # (`harness:`) runs in the same layer, not a second copy of it.
+    owner = getattr(route, "harness", "") or route.name
+    return f"{NAME_PREFIX}-harness/{_safe_project(owner)}:{digest}"
 
 
 def harness_dockerfile(base_image: str, route, staged: Sequence[tuple[str, str]]) -> str:

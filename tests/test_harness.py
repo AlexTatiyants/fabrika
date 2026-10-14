@@ -187,7 +187,7 @@ def test_a_truncated_answer_is_refused_not_retried(monkeypatch):
     llm = LLM(config)
     calls = {"n": 0}
 
-    async def fake_post(payload):
+    async def fake_post(payload, route=None):
         calls["n"] += 1
         return {
             "choices": [{"finish_reason": "length",
@@ -220,7 +220,7 @@ def test_a_truncated_answer_is_refused_on_the_schemaless_path_too(monkeypatch):
     config.roles["scout"].route = ""   # the HTTP path; see the test above
     llm = LLM(config)
 
-    async def fake_post(payload):
+    async def fake_post(payload, route=None):
         return {"choices": [{"finish_reason": "length",
                              "message": {"content": "half a sentence that stops"}}],
                 "usage": {}}
@@ -1175,7 +1175,7 @@ def test_a_route_that_runs_out_sends_the_role_somewhere_rather_than_ending_the_r
         seen.append(route.name)
         raise RouteExhausted("route 'codex' has no credit left: out of credits")
 
-    async def live_api(payload):
+    async def live_api(payload, route=None):
         seen.append("default")
         return {"choices": [{"message": {"content":
                 '{"summary":"s","findings":[],"conceded":[]}'}}],
@@ -1964,7 +1964,7 @@ def test_a_route_names_its_harness_and_its_account_apart():
         status = routes_mod.base_status(route)
         assert status.harness_label and status.account_label, \
             f"{name} names neither half of what it is"
-        assert status.account_kind in ("subscription", "key")
+        assert status.account_kind in ("subscription", "key", "local")
     default = routes_mod.base_status(cfg.route("default"))
     assert default.harness_label != default.account_label, \
         "the default route is a driver spending a provider key: two names, not one"
@@ -2090,7 +2090,7 @@ def test_a_billed_route_still_counts_against_the_budget(tmp_path):
     cfg = Config(roles={"scout": RoleConfig(name="scout", model="m")})
     llm = LLM(cfg)
 
-    async def fake_post(payload):
+    async def fake_post(payload, route=None):
         return {"choices": [{"message": {"content": json.dumps({
                     "summary": "ok", "stack": [], "conventions": [],
                     "existing_capabilities": [], "do_not_duplicate": [],
@@ -2939,7 +2939,7 @@ def test_a_fallback_is_booked_as_the_model_it_actually_ran_on():
     llm = LLM(cfg)
     sent: list[tuple[str, str]] = []
 
-    async def fake_post(payload):
+    async def fake_post(payload, route=None):
         sent.append(("api", payload.get("model", "")))
         return {"choices": [{"message": {"content": "{}"}, "finish_reason": "stop"}],
                 "usage": {"prompt_tokens": 1, "completion_tokens": 1}}
@@ -3000,7 +3000,7 @@ def test_every_call_is_written_down_in_the_order_it_happened(tmp_path):
         pytest.skip("this config gives the reviewer no fallback to take")
     llm = LLM(cfg)
 
-    async def answer(payload):
+    async def answer(payload, route=None):
         return {"model": "provider/the-one-that-answered",
                 "choices": [{"message": {"content": "{}"}, "finish_reason": "stop"}],
                 "usage": {"prompt_tokens": 120, "completion_tokens": 30, "cost": 0.002}}
@@ -3995,3 +3995,101 @@ def test_a_route_that_signs_in_its_own_way_is_not_leased(tmp_path, monkeypatch):
         asyncio.run(executor._open_container_session(
             "worker", default, _Prepared(), default.container_session_command,
             task_file=tmp_path / "t.md", spend_file=tmp_path / "spend.json"))
+
+
+def test_the_gateway_refuses_what_cannot_fit_or_cannot_be_paid_for_before_sending_it():
+    """Two refusals made from numbers in factory.yaml, before the upstream sees
+    anything: a prompt and `max_tokens` larger than the route's context window,
+    and any call once the run's budget is spent -- what is booked so far plus
+    what this session has spent through the gateway."""
+    import httpx
+    from factory.gateway import Gateway
+
+    answer = json.dumps({"choices": [{"message": {"content": "ok"}}],
+                         "usage": {"prompt_tokens": 10, "completion_tokens": 2,
+                                   "cost": 0.5}}).encode()
+
+    def ask(content: str, max_tokens: int) -> bytes:
+        return json.dumps({"model": "m", "max_tokens": max_tokens,
+                           "messages": [{"role": "user", "content": content}]}).encode()
+
+    async def scenario():
+        async with _upstream(lambda req: (200, {"content-type": "application/json"},
+                                          [answer])) as (base, seen):
+            gw = Gateway(timeout_s=10)
+            await gw.start("127.0.0.1", 0)
+            small = gw.lease(role="worker", route="local", base_url=base, key="",
+                             context_window=1000)
+            booked = 0.6
+            paying = gw.lease(role="repairer", route="default", base_url=base, key="k",
+                              budget=(1.0, lambda: booked))
+            url = f"http://127.0.0.1:{gw.port}/chat/completions"
+            got = {}
+            async with httpx.AsyncClient() as client:
+                def post(lease, body):
+                    return client.post(url, content=body,
+                                       headers={"authorization": f"Bearer {lease.token}"})
+                got["too_big"] = await post(small, ask("x" * 4000, 100))
+                got["no_room"] = await post(small, ask("short", 2000))
+                got["fits"] = await post(small, ask("short", 100))
+                got["first"] = await post(paying, ask("short", 100))
+                got["spent"] = await post(paying, ask("short", 100))
+            await gw.stop()
+            return got, list(seen), small, paying
+
+    got, seen, small, paying = asyncio.run(scenario())
+    assert got["too_big"].status_code == 400 and got["no_room"].status_code == 400
+    said = got["too_big"].json()["error"]["message"]
+    assert "context window of 1,000" in said and "Nothing was sent" in said
+    assert got["fits"].status_code == 200 and got["first"].status_code == 200
+    assert got["spent"].status_code == 402, "0.6 booked plus 0.5 through this session is past 1.0"
+    assert "budget" in got["spent"].json()["error"]["message"]
+    assert len(seen) == 2, "only the two calls that were allowed reached the upstream"
+    assert small.calls == 1 and paying.calls == 1, "a refused call is not a call"
+
+
+def test_a_session_on_a_local_route_is_leased_to_its_own_endpoint_with_no_key(tmp_path):
+    """A local server's route, from the shipped template: its session gets a session
+    token and the gateway, as the default route's does, and the lease forwards
+    to the local server -- no key, the server's context window read from the
+    host side, and the run's budget held if one is set. Nothing about the local
+    server's address reaches the container."""
+    from factory import commissioning, gateway
+    from factory.config import inherit_harnesses, load_config
+    from factory.executors import CommandExecutor
+
+    def serve(req):
+        return 200, {"content-type": "application/json"}, [
+            json.dumps({"default_generation_settings": {"n_ctx": 16384}}).encode()]
+
+    config = load_config(ROOT / "factory.example.yaml")
+    config.api.api_key = "sk-or-v1-the-provider-key"
+    config.docker.gateway_port = 0
+    executor = CommandExecutor(llm=None, config=config)
+
+    async def scenario():
+        async with _upstream(serve) as (base, _seen):
+            route = commissioning.local_server_route(config, base, name="Studio")
+            config.routes[route.name] = route
+            inherit_harnesses(config)
+            ceiling = gateway.BUDGET.set((5.0, lambda: 0.0))
+            try:
+                session = await executor._open_container_session(
+                    "worker", route, _Prepared(), route.container_session_command,
+                    task_file=tmp_path / "t.md", spend_file=tmp_path / "spend.json")
+            finally:
+                gateway.BUDGET.reset(ceiling)
+            env_file = session.bundle.env_file.read_text()
+            await session.close()
+            await gateway.stop()
+            return base, session, env_file
+
+    base, session, env_file = asyncio.run(scenario())
+    lease = session.lease
+    assert lease is not None and lease.route == "studio"
+    assert lease.base_url == base and lease.key == "", "its own endpoint, and no key"
+    assert lease.context_window == 16384
+    assert lease.budget is not None and lease.budget[0] == 5.0
+    assert f"LLM_API_KEY={lease.token}" in env_file.splitlines()
+    assert f"LLM_BASE_URL={gateway.URL}" in session.argv
+    assert config.api.api_key not in env_file and base not in " ".join(session.argv)

@@ -66,14 +66,16 @@ def _lock() -> asyncio.Lock:
     return _locks.setdefault(id(loop), asyncio.Lock())
 
 
-async def _docker(argv: Sequence[str], timeout: float = 60.0) -> tuple[int, str]:
+async def _docker(argv: Sequence[str], timeout: float = 60.0,
+                  stdin: bytes | None = None) -> tuple[int, str]:
     try:
         proc = await asyncio.create_subprocess_exec(
-            *argv, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
+            *argv, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
+            stdin=asyncio.subprocess.PIPE if stdin is not None else None)
     except OSError as exc:
         return 127, str(exc)
     try:
-        out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
+        out, _ = await asyncio.wait_for(proc.communicate(stdin), timeout=timeout)
     except asyncio.TimeoutError:
         await procs.kill(proc)
         return -9, f"timed out after {timeout:g}s"
@@ -617,3 +619,59 @@ async def self_test(docker: DockerConfig) -> dict:
     return _last_test
 
 
+
+
+#: What `gateway_check` runs: one request at the gateway's name, the way a
+#: harness in a sealed container makes one. The token and the request come in
+#: on stdin, never in argv, where every process on this machine could read
+#: them.
+_GATEWAY_PROBE = r"""
+import json, sys, urllib.error, urllib.request
+asked = json.loads(sys.stdin.read())
+body = asked.get("body")
+request = urllib.request.Request(
+    asked["url"], method="POST" if body is not None else "GET",
+    data=json.dumps(body).encode() if body is not None else None,
+    headers={"authorization": "Bearer " + asked["token"], "content-type": "application/json"})
+try:
+    with urllib.request.urlopen(request, timeout=120) as answer:
+        print(json.dumps({"status": answer.status, "body": answer.read(4000).decode("utf-8", "replace")}))
+except urllib.error.HTTPError as exc:
+    print(json.dumps({"status": exc.code, "body": exc.read(2000).decode("utf-8", "replace")}))
+except Exception as exc:
+    print(json.dumps({"status": 0, "body": f"{type(exc).__name__}: {exc}"}))
+"""
+
+
+async def gateway_check(docker: DockerConfig, token: str, url: str,
+                        body: dict | None = None) -> dict:
+    """One request from inside a throwaway sealed container, through the proxy
+    and the model gateway: the path an agent's harness takes, rather than
+    "the server answers from here". A GET, or a POST of `body`.
+
+    `url` is the gateway's name and path as a container sees it. Returns the
+    status and the start of the body the container got; 0 means it never got
+    an answer at all. The network is removed afterwards either way.
+    """
+    import uuid as _uuid
+    name = f"{PROXY}-gatewaycheck-{_uuid.uuid4().hex[:8]}"
+    try:
+        problem = await create_sealed(docker, name) or await open_egress(docker, name)
+        if problem:
+            return {"status": 0, "body": problem}
+        code, out = await _docker([
+            docker.binary, "run", "--rm", "--interactive", "--network", name,
+            *resolver_argv(await subnet_of(docker, name)),
+            "--entrypoint", "python", _image_tag(docker), "-c", _GATEWAY_PROBE],
+            timeout=180, stdin=json.dumps({"token": token, "url": url,
+                                           "body": body}).encode())
+        for line in reversed(out.splitlines()):
+            try:
+                said = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(said, dict) and "status" in said:
+                return said
+        return {"status": 0, "body": out[-600:] or f"the check container exited {code}"}
+    finally:
+        await remove_sealed(docker, name)

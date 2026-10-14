@@ -23,8 +23,10 @@ from pathlib import Path
 from dataclasses import dataclass, field, fields
 from typing import Any, Sequence
 
-from . import procs
-from .config import Config, RoleConfig, RouteConfig
+import httpx
+
+from . import gateway, procs
+from .config import Config, RoleConfig, RouteConfig, route_endpoint
 from .files import write_atomic
 from .meters import (DrawStore, MeterStore, WindowReading, read_from_disk, read_limit,
                      use_mirror)
@@ -113,7 +115,11 @@ class RouteStatus:
     # from it. Supplied by config; see `RouteConfig.harness_label`.
     harness_label: str = ""
     account_label: str = ""
-    account_kind: str = ""   # subscription | key
+    account_kind: str = ""   # subscription | key | local
+    #: Where an api route's calls go, and the route whose harness carries its
+    #: sessions when it borrows one -- a model server is not a new harness.
+    base_url: str = ""
+    harness_of: str = ""
 
     schema_completions: bool = True
     installed: bool | None = None
@@ -173,7 +179,8 @@ class RouteStatus:
     def as_dict(self) -> dict[str, Any]:
         body = {k: getattr(self, k) for k in (
             "name", "label", "kind", "metered", "enabled", "completes", "authors",
-            "billed", "harness_label", "account_label", "account_kind",
+            "billed", "harness_label", "account_label", "account_kind", "base_url",
+            "harness_of",
             "schema_completions", "installed", "version", "connected",
             "state", "detail",
             "checked_at", "retry_at", "last_refusal",
@@ -198,8 +205,11 @@ def base_status(route: RouteConfig) -> RouteStatus:
         # naming them rather than by guessing a vendor here.
         harness_label=route.harness_label or route.label or route.name,
         account_label=route.account_label or route.label or route.name,
-        account_kind=route.account_kind or ("key" if route.billed else "subscription"),
+        account_kind=route.account_kind or ("local" if route.local
+                                            else "key" if route.billed else "subscription"),
         kind=route.kind,
+        base_url=route.base_url if route.kind == "api" else "",
+        harness_of=route.harness,
         metered=route.metered,
         enabled=route.enabled,
         completes=route.completes(),
@@ -280,6 +290,32 @@ def ok_detail(route: RouteConfig) -> str:
     ).strip()
 
 
+async def list_models(base_url: str, key: str = "",
+                      timeout_s: float = 10.0) -> tuple[list[str] | None, str]:
+    """What an OpenAI-compatible server says it serves, from `/models`, and
+    `None` with the reason when it does not answer that question.
+
+    Asked from this machine, which is where the gateway reaches it from too.
+    """
+    base = (base_url or "").strip().rstrip("/")
+    if not base.startswith(("http://", "https://")):
+        return None, f"{base_url!r} is not an http:// or https:// URL."
+    headers = {"Authorization": f"Bearer {key}"} if key else {}
+    try:
+        async with httpx.AsyncClient(timeout=timeout_s) as client:
+            answer = await client.get(f"{base}/models", headers=headers)
+    except httpx.HTTPError as exc:
+        return None, f"nothing answered at {base}: {type(exc).__name__} {exc}".strip()
+    if answer.status_code != 200:
+        return None, f"{base}/models answered {answer.status_code}: {answer.text[:200]}"
+    try:
+        listed = answer.json().get("data") or []
+        ids = [str(m.get("id")) for m in listed if isinstance(m, dict) and m.get("id")]
+    except (ValueError, AttributeError):
+        return None, f"{base}/models did not answer with a model list."
+    return ids, ""
+
+
 async def check_connection(route: RouteConfig, llm: Any) -> RouteStatus:
     """One real call, and an honest reading of what came back.
 
@@ -292,6 +328,28 @@ async def check_connection(route: RouteConfig, llm: Any) -> RouteStatus:
     """
     status = base_status(route)
     status.checked_at = time.time()
+
+    if route.kind != "cli" and (not route.needs_key or route.local):
+        # A server of one's own: the question is whether it answers -- asked of
+        # the server itself, with its key if it has one. Its context window is
+        # read on the same visit, so a call that cannot fit is refused from the
+        # start.
+        config = getattr(llm, "config", None)
+        base, key = ((route_endpoint(config, route)[:2]) if config is not None
+                     else (route.base_url, route.api_key if route.needs_key else ""))
+        status.installed = True
+        models, problem = await list_models(base, key)
+        if models is None:
+            status.connected, status.state = False, "error"
+            status.detail = problem
+            return status
+        window = await gateway.ensure_context_window(route, base, retry=True)
+        status.connected, status.state = True, "ok"
+        status.models = list(route.models) or models
+        status.detail = (f"Answers at {base}, {'with its key' if key else 'with no key'}"
+                         + (f", and a context window of {window:,} tokens." if window
+                            else "; it did not say its context window."))
+        return status
 
     if route.kind != "cli":
         # An api route's credential is tested by the provider card, which knows
@@ -857,6 +915,12 @@ class RouteMonitor:
                     status.detail = "Installed since the last check. Check the connection."
                 if status.state == "limited":
                     status = self._expire_refusal(status)
+            elif route.kind != "cli" and (not route.needs_key or route.local):
+                # No key to look at, so nothing is known until the server is
+                # asked -- which costs nothing but is not done on a screen load.
+                status.installed = True
+                status.state, status.connected = "unknown", None
+                status.detail = "Not checked yet. Check that the server answers."
             elif route.kind != "cli":
                 # An api route's credential is a fact on disk, not a question
                 # for the network. Saying "not checked" about something we can

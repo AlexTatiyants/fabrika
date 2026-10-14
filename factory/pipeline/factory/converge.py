@@ -9,7 +9,7 @@ import time
 from typing import Any, Sequence
 
 from ...llm import RateLimited
-from ... import dependencies
+from ... import dependencies, gateway
 from ...sandbox import Sandbox
 from ...schemas import (
     ArbiterReport,
@@ -754,6 +754,13 @@ class ConvergeMixin:
             # mode is a run that spends everything repairing and ends with no
             # packet at all, which is strictly worse than not looping.
             return spent() < max(0.0, cfg.budget_usd - cfg.reserve_usd)
+
+        # The same ceiling, held per call by the model gateway for every
+        # session this loop opens: one that would carry a round past the budget
+        # is refused at the call that crosses it, not found out after the round.
+        # The whole budget, not less the reserve -- the reserve is the loop's
+        # own discipline; the gateway's is the line nobody is charged past.
+        held_budget = gateway.BUDGET.set((cfg.budget_usd, spent))
 
         def out_of_time() -> bool:
             return (time.monotonic() - started) > cfg.wall_clock_minutes * 60
@@ -1546,6 +1553,7 @@ class ConvergeMixin:
         store.append("rework", summary, role="orchestrator", spec_hash=state.spec_hash)
         store.append("rework_state", {**ledger.dump(), "round": round_index},
                      role="orchestrator", spec_hash=state.spec_hash)
+        gateway.BUDGET.reset(held_budget)
         return {
             "gates": gates, "qa": qa, "trace": trace, "ledger": ledger, "rework": summary,
             "reviews": reviews, "workers": all_workers, "written": all_written,

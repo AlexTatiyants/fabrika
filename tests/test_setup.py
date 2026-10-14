@@ -389,7 +389,8 @@ def _setup_screen(payload, at=0):
     import shutil
     if not shutil.which("node"):
         pytest.skip("node is not installed")
-    source = (ROOT / "console" / "app" / "setup.js").read_text()
+    source = "\n".join((ROOT / "console" / "app" / name).read_text()
+                       for name in ("local-server.js", "setup.js"))
     script = (
         "const esc = (s) => String(s ?? '').replace(/[&<>\"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));\n"
         "const AC_HREF = '#/?agent-config';\n"
@@ -462,3 +463,149 @@ def test_the_accounts_station_offers_a_key_field_to_a_route_that_takes_one():
     html = _setup_screen(_payload(), at=1)["html"]
     assert 'id="su-key-keyed"' in html and "Test and save" in html
     assert "signed in" in html
+
+
+
+
+# ---------------------------------------------------------------- a local server
+
+def _model_server(*, tools=True, n_ctx=131072):
+    """A stand-in for a model server: its model list, its context, a strict
+    schema answered, and a tool call made -- or refused, as a server started
+    without native tool calling refuses one."""
+    def serve(req):
+        ok = {"content-type": "application/json"}
+        if req["path"] == "/props":
+            return 200, ok, [json.dumps({"default_generation_settings": {"n_ctx": n_ctx}}).encode()]
+        if req["path"].endswith("/models"):
+            return 200, ok, [json.dumps({"data": [{"id": "local-model"}]}).encode()]
+        body = json.loads(req["body"] or b"{}")
+        if body.get("tools"):
+            if not tools:
+                return 500, ok, [b'{"error": {"message": "tools param requires a flag"}}']
+            message = {"role": "assistant", "content": None, "tool_calls": [{
+                "id": "c1", "type": "function",
+                "function": {"name": "current_time", "arguments": "{}"}}]}
+        else:
+            message = {"role": "assistant", "content": '{"answer": "ok"}'}
+        return 200, ok, [json.dumps({"choices": [{"message": message}]}).encode()]
+    return serve
+
+
+def test_connect_checks_a_server_from_both_sides_and_says_what_to_do(editable_config, monkeypatch):
+    """Six rows, in the order a failure explains the next. The sandbox row is
+    the path an agent's calls take -- a sealed container, through a lease on
+    the gateway -- and is stood in for here at the one function that reaches
+    Docker. A server without tool calls, or with too little context for some
+    agents, is a warning with the command that fixes it, from the
+    `local_server` block; nothing is written."""
+    from factory import commissioning, egress
+    from factory.config import local_server_template
+
+    config, tmp_path = editable_config
+    config.docker.gateway_port = 0
+    through = []
+
+    async def sealed(docker, token, url, body=None):
+        through.append((token, url))
+        return {"status": 200, "body": '{"data": []}'}
+
+    monkeypatch.setattr(egress, "gateway_check", sealed)
+
+    async def scenario(**server):
+        from factory import gateway
+        async with _upstream(_model_server(**server)) as (base, seen):
+            try:
+                got = await commissioning.connect_local_server(config, base, name="Studio")
+            finally:
+                await gateway.stop()
+            return got, list(seen)
+
+    good, seen = asyncio.run(scenario())
+    assert [c["id"] for c in good["checks"]] == ["host", "sandbox", "models", "schema", "tools",
+                                                 "context"]
+    assert all(c["ok"] for c in good["checks"]), good["checks"]
+    assert good["ok"] and good["can_add"] and good["models"] == ["local-model"]
+    assert good["context_window"] == 131072
+    assert through and through[0][1] == "http://models.fabrika.internal/models"
+    assert through[0][0].startswith("fabrika-session-"), "the sandbox call carries a lease"
+    assert all("authorization" not in r["headers"] for r in seen), "no key, none sent"
+    assert not (tmp_path / "factory.yaml").exists(), "Connect writes nothing"
+
+    bad, _ = asyncio.run(scenario(tools=False, n_ctx=8192))
+    rows = {c["id"]: c for c in bad["checks"]}
+    command = local_server_template(config)["setup_command"]
+    assert rows["tools"]["ok"] is False and "OpenHands" in rows["tools"]["remedy"]["text"]
+    assert rows["tools"]["remedy"]["command"] == command, "an appliable remedy, from config"
+    assert rows["context"]["ok"] is False and "worker" in rows["context"]["detail"]
+    assert "refused before they are sent" in rows["context"]["detail"]
+    assert rows["context"]["remedy"]["command"] == command
+    assert not bad["ok"] and bad["can_add"], "a warning is the person's to weigh"
+
+
+def test_a_server_that_does_not_answer_stops_the_checks_that_need_it(editable_config):
+    from factory import commissioning
+
+    config, _ = editable_config
+    got = asyncio.run(commissioning.connect_local_server(config, "http://127.0.0.1:9/v1",
+                                                         name="Gone"))
+    rows = {c["id"]: c for c in got["checks"]}
+    assert rows["host"]["ok"] is False and rows["host"]["remedy"]["command"]
+    assert rows["sandbox"]["ok"] is None and rows["context"]["ok"] is None
+    assert not got["can_add"]
+
+
+def test_adding_a_server_writes_its_route_and_its_key_apart(editable_config, monkeypatch,
+                                                           open_client):
+    """Add server asks the server again rather than trusting the client, writes
+    the route, keeps a key in the credentials file, and checks it so it shows as
+    answering. A bad address is refused before anything is sent."""
+    from factory import gateway, routes
+    from factory.config import load_config, read_credential
+
+    config, tmp_path = editable_config
+    _stub_machine(monkeypatch)
+    _with_key(config)
+    asked = []
+
+    async def listing(base_url, key="", timeout_s=10.0):
+        asked.append((base_url, key))
+        return ["local-model"], ""
+
+    async def window(route, base_url="", **_):
+        route.context_window = route.context_window or 65536
+        return route.context_window
+
+    monkeypatch.setattr(routes, "list_models", listing)
+    monkeypatch.setattr(gateway, "ensure_context_window", window)
+    client = open_client(config, tmp_path)
+
+    refused = client.post("/api/local-servers", json={"base_url": "localhost:8080", "name": "x"})
+    assert refused.status_code == 422 and not asked
+
+    added = client.post("/api/local-servers", json={
+        "base_url": "http://192.168.1.50:8080/v1/", "name": "Studio Mac",
+        "api_key": "server-secret"}).json()
+    assert added["name"] == "studio-mac" and added["state"] == "ok", added
+    assert added["account_kind"] == "local" and added["base_url"] == "http://192.168.1.50:8080/v1"
+    assert ("http://192.168.1.50:8080/v1", "server-secret") in asked
+    route = load_config(tmp_path / "factory.yaml").routes["studio-mac"]
+    assert route.context_window == 65536 and route.models == ["local-model"]
+    assert "server-secret" not in (tmp_path / "factory.yaml").read_text()
+    assert read_credential(config, route.key_env) == "server-secret"
+    setup = _settled(client)
+    assert "studio-mac" in setup["connected"]
+    assert [s["route"] for s in setup["local_servers"]] == ["studio-mac"]
+
+
+def test_setup_offers_a_local_server_with_the_crew_page_s_form():
+    html = _setup_screen(_payload(local_offered=True), at=1)["html"]
+    assert "Use a local server" in html and 'data-ls="open"' in html
+    assert 'id="ls-url"' not in html, "the form opens on request"
+
+    on = [{"route": "studio-mac", "label": "Studio Mac", "account_label": "Studio Mac",
+           "base_url": "http://192.168.1.50:8080/v1", "models": ["local-model"], "connected": True}]
+    accounts = _setup_screen(_payload(local_offered=True, local_servers=on), at=1)["html"]
+    assert "Studio Mac" in accounts and "192.168.1.50" in accounts
+    crew = _setup_screen(_payload(local_servers=on, connected=["default", "studio-mac"]), at=3)
+    assert "Studio Mac" in crew["html"], "a connected server can staff a side"

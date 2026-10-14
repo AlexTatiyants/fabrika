@@ -177,6 +177,15 @@ class SetupKey(BaseModel):
     api_key: str = Field(min_length=1)
 
 
+class LocalServer(BaseModel):
+    """A model server of one's own: where it is, what to call it, and a key
+    only if it asks for one. Blank means it wants none."""
+
+    base_url: str = Field(min_length=1)
+    name: str = ""
+    api_key: str = ""
+
+
 class SetupDecline(BaseModel):
     declined: bool = True
 

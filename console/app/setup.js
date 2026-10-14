@@ -40,6 +40,8 @@ const suRunning = (name) => (suJob(name) || {}).state === 'running';
 function suFamily(route) {
   const d = state.setup;
   if (route === d.provider.route) return d.provider.account_label || route;
+  const ls = (d.local_servers || []).find((x) => x.route === route);
+  if (ls) return ls.account_label || ls.label || route;
   const a = d.accounts.find((x) => x.name === route);
   return (a && (a.account_label || a.label)) || route;
 }
@@ -47,6 +49,8 @@ function suFamily(route) {
 function suRouteLabel(route) {
   const d = state.setup;
   if (route === d.provider.route) return `${d.provider.account_label} key`;
+  const ls = (d.local_servers || []).find((x) => x.route === route);
+  if (ls) return ls.label || route;
   const a = d.accounts.find((x) => x.name === route);
   return (a && (a.harness_label || a.label)) || route;
 }
@@ -275,6 +279,24 @@ function suAccount(a) {
     <div class="su-body">${body}</div></div>`;
 }
 
+/* Servers of one's own already added, and the form that adds another -- the
+   same form as the crew page's "Add a local server" (local-server.js). */
+function suLocal() {
+  const d = state.setup;
+  if (!d.local_offered && !(d.local_servers || []).length) return '';
+  const rows = (d.local_servers || []).map((x) => `<div class="su-acct"><div class="su-acct-h">${
+    suMark(x.connected ? 'green' : '', x.connected ? 'answering' : 'not checked')}
+      <h3>${esc(x.label)}</h3><span class="su-who mono">${esc(x.base_url)} · no billing</span>
+      <span class="su-st">${x.connected ? '<span class="pill pill-green">answering</span>' : '<span class="pill">not checked</span>'}</span></div>
+      ${x.models.length ? `<div class="su-body"><div class="su-models">${x.models.map(esc).join(' · ')}</div></div>` : ''}</div>`).join('');
+  const open = lsState().open;
+  return `${rows}${d.local_offered ? `<div class="su-acct"><div class="su-acct-h">${suMark('', 'optional')}
+      <h3>Use a local server</h3><span class="su-who">your own hardware · no billing</span>
+      <span class="su-st"><button type="button" class="btn btn-sm ${open ? 'btn-quiet' : ''}" data-ls="open"
+        aria-expanded="${open}">${open ? 'Close' : 'Set up'}</button></span></div>
+      ${open ? `<div class="su-body">${localServerForm('setup')}</div>` : ''}</div>` : ''}`;
+}
+
 function suAccounts() {
   const d = state.setup;
   const keyed = d.accounts.filter((a) => a.takes_key);
@@ -286,6 +308,7 @@ function suAccounts() {
     <p class="su-lede-2">Fabrika puts the agents that build on one company's models and the agents that check on another's, so a reviewer doesn't share the blind spots of the code's author. With one account it still works; the checking is just less independent.</p>
     <p class="su-label">Per token</p>
     ${suProvider()}${keyed.map(suAccount).join('')}
+    ${suLocal() ? `<p class="su-label su-gap">Your own hardware</p>${suLocal()}` : ''}
     ${plans.length ? `<p class="su-label su-gap">Plans you already pay for</p>${plans.map(suAccount).join('')}` : ''}
     ${d.switched_off.length ? `<p class="su-foot">${d.switched_off.map(esc).join(', ')} ${d.switched_off.length > 1 ? 'are' : 'is'} switched off in factory.yaml.</p>` : ''}
     ${suNav(n ? 'Continue to harnesses' : 'Continue', { disabled: !n,
@@ -359,7 +382,8 @@ function suCrew() {
     su.check = staffed && conn.includes(staffed.check) ? staffed.check
       : conn.find((r) => suFamily(r) !== suFamily(su.build)) || conn[0] || null;
   }
-  const routesAll = [d.provider.route, ...d.accounts.map((a) => a.name)];
+  const routesAll = [d.provider.route, ...d.accounts.map((a) => a.name),
+    ...(d.local_servers || []).map((x) => x.route)];
   const provs = (side) => routesAll.map((r) => {
     const on = conn.includes(r);
     return `<button type="button" class="su-prov" ${on ? '' : 'disabled'} aria-pressed="${su[side] === r}"

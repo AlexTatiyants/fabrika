@@ -197,8 +197,13 @@ def main() -> int:
     ignore = {".git", ".openhands", ".factory-task.md"}
 
     api_key = os.environ.get("LLM_API_KEY") or os.environ.get("OPENROUTER_API_KEY") or ""
+    if not api_key and os.environ.get("LLM_AUTH") == "none":
+        # A server that wants no key. The client library still wants a string
+        # to put in the header, and the server ignores whatever it is.
+        api_key = "no-key"
     if not api_key:
-        print("no provider key in LLM_API_KEY or OPENROUTER_API_KEY", file=sys.stderr)
+        print("no provider key in LLM_API_KEY or OPENROUTER_API_KEY, and LLM_AUTH is not "
+              "'none'", file=sys.stderr)
         return 2
 
     llm = LLM(

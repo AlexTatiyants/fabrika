@@ -22,6 +22,11 @@ egress proxy answers that one name by carrying the connection here
    per session -- observed, rather than whatever the harness says about
    itself.
 
+Because it sees every call before it is sent, it also refuses two kinds: one
+whose prompt and `max_tokens` cannot fit the route's context window, and any
+call once the run's budget is spent. Both are numbers from `factory.yaml`, read
+by plain code.
+
 It listens on this machine's loopback only, on `docker.gateway_port`, and
 starts with the first session that needs it. Plain code, no model in it.
 
@@ -34,11 +39,13 @@ design, and what was measured before it was built, is docs/model-gateway.md.
 from __future__ import annotations
 
 import asyncio
+import contextvars
 import json
 import logging
+import math
 import secrets
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import urlsplit
 
 import h11
@@ -73,6 +80,105 @@ class GatewayError(RuntimeError):
     """The gateway could not be started. Says why, and what to change."""
 
 
+#: The budget a session opened now is held to: the ceiling in dollars, and how
+#: to ask what has been spent against it. Set by whatever owns a budget -- the
+#: rework loop -- around the work it pays for, and read when a lease is made.
+#: None, the default, is no ceiling: the build lane is bought before there is
+#: anything to decide, and the budget never applied to it.
+BUDGET: contextvars.ContextVar[tuple[float, Callable[[], float]] | None] = \
+    contextvars.ContextVar("fabrika_gateway_budget", default=None)
+
+#: Characters per token, for the estimate a context window is checked with. No
+#: tokenizer is to hand for a model this package does not know the name of, and
+#: four is the usual figure for English. It errs toward sending: a borderline
+#: call goes out, and the server's own refusal is what the human reads.
+CHARS_PER_TOKEN = 4
+
+
+def estimate_tokens(text: str) -> int:
+    """Roughly how many tokens `text` is. See `CHARS_PER_TOKEN`."""
+    return math.ceil(len(text) / CHARS_PER_TOKEN)
+
+
+def prompt_of(body: dict[str, Any]) -> str:
+    """Everything in a request that counts against the context window except
+    the answer: the messages, and the tools a harness describes in every call."""
+    parts = [body.get("messages"), body.get("input"), body.get("tools"), body.get("system")]
+    return json.dumps([p for p in parts if p], ensure_ascii=False, separators=(",", ":"))
+
+
+def answer_room(body: dict[str, Any]) -> int:
+    """The most the request asks to be answered with, under whichever name the
+    harness uses for it."""
+    for key in ("max_tokens", "max_completion_tokens", "max_output_tokens"):
+        try:
+            value = int(body.get(key) or 0)
+        except (TypeError, ValueError):
+            value = 0
+        if value:
+            return value
+    return 0
+
+
+def window_problem(route_name: str, window: int, prompt_tokens: int, max_tokens: int) -> str:
+    """Why a call cannot fit `window`, or empty when it can (or the window is
+    not known)."""
+    if window <= 0 or prompt_tokens + max_tokens <= window:
+        return ""
+    return (f"this call cannot fit route {route_name!r}: about {prompt_tokens:,} prompt tokens "
+            f"plus up to {max_tokens:,} for the answer is more than its context window of "
+            f"{window:,}. Nothing was sent. Give the server a larger context, lower the "
+            "role's `max_tokens`, or point the role at a route with more room.")
+
+
+def _dig(body: Any, path: str) -> Any:
+    for part in [p for p in (path or "").split(".") if p]:
+        if not isinstance(body, dict):
+            return None
+        body = body.get(part)
+    return body
+
+
+#: Where a context window was asked for and not given, so a call does not wait
+#: on the same silence every time. A route's Check asks again (`retry`).
+_unanswered: set[str] = set()
+
+
+async def ensure_context_window(route: Any, base_url: str = "", timeout_s: float = 10.0,
+                                retry: bool = False) -> int:
+    """The route's context window, read from its server the first time it is
+    asked for and kept on the route after that.
+
+    Only a route that says where (`context_window_path`, `context_window_key`)
+    and has not been given a number is asked. A server that does not answer,
+    or answers without the key, leaves the window unknown -- and an unknown
+    window checks nothing -- rather than stopping the call over a reading.
+    """
+    if route.context_window or not (route.context_window_path and route.context_window_key):
+        return route.context_window
+    parts = urlsplit(base_url or route.base_url)
+    if not parts.scheme or not parts.netloc:
+        return 0
+    url = f"{parts.scheme}://{parts.netloc}/{route.context_window_path.lstrip('/')}"
+    if url in _unanswered and not retry:
+        return 0
+    try:
+        async with httpx.AsyncClient(timeout=timeout_s) as client:
+            answer = await client.get(url)
+        value = int(_dig(answer.json(), route.context_window_key) or 0)
+    except (httpx.HTTPError, ValueError, TypeError):
+        log.info("model gateway: route %s did not say its context window at %s",
+                 route.name, url)
+        _unanswered.add(url)
+        return 0
+    if value > 0:
+        route.context_window = value
+        _unanswered.discard(url)
+    else:
+        _unanswered.add(url)
+    return route.context_window
+
+
 @dataclass
 class Lease:
     """One session's right to reach one route's model, and what it has used."""
@@ -83,6 +189,10 @@ class Lease:
     base_url: str
     key: str = field(repr=False)
     headers: dict[str, str] = field(default_factory=dict, repr=False)
+    #: The route's context window in tokens; 0 checks nothing.
+    context_window: int = 0
+    #: The run's ceiling and its spend so far, when one applies. See `BUDGET`.
+    budget: tuple[float, Callable[[], float]] | None = field(default=None, repr=False)
     calls: int = 0
     prompt_tokens: int = 0
     completion_tokens: int = 0
@@ -99,6 +209,32 @@ class Lease:
         self.completion_tokens += _int(usage.get("completion_tokens",
                                                  usage.get("output_tokens")))
         self.cost_usd += _float(usage.get("cost"))
+
+    def refusal(self, body: bytes) -> tuple[int, str]:
+        """Why this call must not be sent, as a status and a sentence, or
+        (0, "") when it may."""
+        if self.budget is not None:
+            ceiling, spent = self.budget
+            try:
+                so_far = float(spent()) + self.cost_usd
+            except Exception:  # noqa: BLE001 -- a broken reading refuses nothing
+                so_far = 0.0
+            if ceiling > 0 and so_far >= ceiling:
+                return 402, (f"the run's budget is spent: ${so_far:.2f} of ${ceiling:.2f} "
+                             "(`rework.budget_usd`). Nothing was sent. Raise it in "
+                             "factory.yaml if the work is worth more.")
+        if self.context_window > 0 and body:
+            try:
+                request = json.loads(body)
+            except ValueError:
+                request = None
+            if isinstance(request, dict):
+                problem = window_problem(self.route, self.context_window,
+                                         estimate_tokens(prompt_of(request)),
+                                         answer_room(request))
+                if problem:
+                    return 400, problem
+        return 0, ""
 
     def spend(self) -> dict[str, Any] | None:
         """What this session used, in the shape a spend file has, or None if
@@ -208,10 +344,12 @@ class Gateway:
         self.leases.clear()
 
     def lease(self, *, role: str, route: str, base_url: str, key: str,
-              headers: dict[str, str] | None = None) -> Lease:
+              headers: dict[str, str] | None = None, context_window: int = 0,
+              budget: tuple[float, Callable[[], float]] | None = None) -> Lease:
         token = TOKEN_PREFIX + secrets.token_urlsafe(24)
         lease = Lease(token=token, role=role, route=route, base_url=base_url, key=key,
-                      headers=dict(headers or {}))
+                      headers=dict(headers or {}), context_window=context_window,
+                      budget=budget)
         self.leases[token] = lease
         return lease
 
@@ -291,6 +429,12 @@ class Gateway:
             await self._refuse(conn, writer, 401,
                                "not a session token this gateway issued, or its session "
                                "has ended")
+            return
+        status, problem = lease.refusal(body)
+        if status:
+            log.warning("model gateway: refused a call for %s on %s: %s",
+                        lease.role, lease.route, problem)
+            await self._refuse(conn, writer, status, problem)
             return
         target = lease.base_url.rstrip("/") + request.target.decode("latin-1")
         upstream = [(k, v) for k, v in headers.items() if k not in _DROP_UP]
@@ -373,12 +517,15 @@ async def stop() -> None:
 
 
 def leases_its_key(route: Any) -> bool:
-    """Whether a route's session would be handed this app's provider key.
+    """Whether a route's session would be handed a key this app holds -- the
+    provider key, or the route's own, or none at all on a route with
+    `auth: none`.
 
     That key is the one a session never gets any more: it gets a session token
-    for the gateway instead. A route that signs in some other way -- its own
-    token, a file, the keychain -- is not changed here (yet: see
-    docs/model-gateway.md for the order those go in).
+    for the gateway instead, and the gateway forwards to the route's own
+    endpoint. A route that signs in some other way -- its own token, a file,
+    the keychain -- is not changed here (yet: see docs/model-gateway.md for the
+    order those go in).
     """
     return any(spec.kind == "env" and spec.from_api_key
                for spec in getattr(route, "container_credentials", []) or [])

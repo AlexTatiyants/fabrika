@@ -617,6 +617,49 @@ routes:
       - Paste it here. Fabrika tests it with one free call before saving it.
     docs_url: https://aistudio.google.com/apikey
 
+
+# ---------------------------------------------------------------------------
+# local_server -- what a model server of your own is made from
+#
+# Not a route. "Add a local server" on the crew page (or "Use a local server"
+# in setup) adds one route per server to `routes:` from this block, with the
+# name, address and models you give it there, and a key only if the server
+# asks for one -- stored in the credentials file, never here. Its agents still
+# run in OpenHands, the default route's harness: this is a model server, not a
+# new harness.
+#
+# The server is llama.cpp's `llama-server`, on this machine or another one on
+# your network. Fabrika reaches it from this machine and agents reach it
+# through Fabrika's gateway, so `localhost` and a LAN address both work.
+# ---------------------------------------------------------------------------
+local_server:
+  account_kind: local
+  # Counted in tokens, priced at nothing: the ledger says "local", not
+  # "$0.00 billed", and the budget guard has nothing to stop on.
+  metered: local
+  # The OpenAI-compatible core and nothing else: no `reasoning`, no
+  # `provider`, no `/key`.
+  dialect: openai
+  # LiteLLM's name for "any OpenAI-compatible endpoint", which is what the
+  # harness is told this is.
+  model_prefix: "openai/"
+  harness: default
+  # `/props` answers `default_generation_settings.n_ctx`: the context one call
+  # gets (the server's `-c` divided by its parallel slots). Read when the
+  # server is connected, so a call that cannot fit is refused before it is
+  # sent rather than truncated.
+  context_window_path: /props
+  context_window_key: default_generation_settings.n_ctx
+  # The remedy Connect offers when the server cannot make tool calls (the
+  # harness needs them) or its context is too small for the agents: start it
+  # like this. `--jinja` turns on native tool calling. The largest prompts run
+  # to about 30,000 tokens and a role asks for up to its `max_tokens` back
+  # (48,000 on some), so `-c` has room for both.
+  setup_command: llama-server --jinja -c 98304 --host 0.0.0.0 -m your-model.gguf
+  setup_note: >-
+    Restart the server with native tool calling on (--jinja) and a context
+    large enough for the agents you point at it (-c).
+
 paths:
   # There is no repository here. A repository belongs to a project, and projects
   # are created at runtime by pointing the factory at a directory. One global

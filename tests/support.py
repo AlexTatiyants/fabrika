@@ -33,6 +33,7 @@ CONSOLE_SCRIPTS = [
     "app/util.js",
     "app/rail.js",
     "app/agents.js",
+    "app/local-server.js",
     "app/routes.js",
     "app/agent-config.js",
     "app/control-room.js",

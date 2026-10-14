@@ -1606,3 +1606,274 @@ def test_a_crew_that_cannot_run_is_refused_and_the_file_is_left_alone(editable_c
         _staff(config, build="gemini-cli")
     assert (tmp_path / "factory.yaml").read_text() == before
     assert config.role("worker").route == "claude-code"
+
+
+# ==========================================================================
+# per-route endpoints and local routes (docs/model-gateway.md, step 2)
+# ==========================================================================
+
+
+def _completion(cost=None):
+    usage = {"prompt_tokens": 12, "completion_tokens": 3}
+    if cost is not None:
+        usage["cost"] = cost
+    return json.dumps({"model": "m", "usage": usage, "choices": [
+        {"message": {"role": "assistant", "content": "hello"}, "finish_reason": "stop"}]}).encode()
+
+
+def _two_routes(provider: str, local: str):
+    from factory.config import Config, RoleConfig, RouteConfig
+
+    config = Config(roles={
+        "scout": RoleConfig(name="scout", model="vendor/big", reasoning_effort="high",
+                            providers=["one-host"]),
+        "reader": RoleConfig(name="reader", model="local-model", route="local",
+                             reasoning_effort="high", providers=["one-host"]),
+    }, routes={"local": RouteConfig(name="local", kind="api", base_url=local, auth="none",
+                                    dialect="openai", metered="local",
+                                    api_key="a-key-the-server-never-asked-for")})
+    config.api.base_url = provider
+    config.api.api_key = "sk-the-provider-key"
+    config.api.headers = {"X-Title": "software factory"}
+    return config
+
+
+def test_each_api_route_carries_its_own_roles_to_its_own_endpoint():
+    """A local server beside the provider, not instead of it. Each role's call
+    goes to its own route's endpoint with its own route's key -- none, on a
+    route with `auth: none` -- and only the aggregator's dialect is sent the
+    aggregator's own fields. What the local server answered is booked as local,
+    not as $0.00 billed."""
+    from factory.llm import LLM, journal_calls, stop_journaling
+
+    rows = []
+
+    async def scenario():
+        json_answer = {"content-type": "application/json"}
+        async with _upstream(lambda req: (200, json_answer, [_completion(0.002)])) as (provider, to_provider):
+            async with _upstream(lambda req: (200, json_answer, [_completion()])) as (local, to_local):
+                config = _two_routes(provider, local)
+                llm = LLM(config)
+                token = journal_calls(rows.append)
+                try:
+                    await llm.ask("scout", "hi")
+                    await llm.ask("reader", "hi")
+                finally:
+                    stop_journaling(token)
+                    await llm.aclose()
+                return llm, list(to_provider), list(to_local)
+
+    llm, to_provider, to_local = asyncio.run(scenario())
+    assert len(to_provider) == 1 and len(to_local) == 1, "each role reached its own endpoint once"
+    asked, local = to_provider[0], to_local[0]
+    assert asked["path"] == local["path"] == "/api/v1/chat/completions"
+    assert asked["headers"]["authorization"] == "Bearer sk-the-provider-key"
+    assert asked["headers"]["x-title"] == "software factory"
+    assert "authorization" not in local["headers"], "auth: none sends no key, stored or not"
+    assert "x-title" not in local["headers"], "the provider's headers are the provider's"
+    provider_body, local_body = json.loads(asked["body"]), json.loads(local["body"])
+    assert provider_body["reasoning"] == {"effort": "high"} and provider_body["provider"]["order"]
+    assert "reasoning" not in local_body and "provider" not in local_body, \
+        "dialect: openai is sent the OpenAI-compatible core and nothing else"
+
+    usage = llm.usage_report()["roles"]
+    assert usage["scout"]["cost"] == 0.002 and usage["scout"]["local_calls"] == 0
+    assert usage["reader"]["local_calls"] == 1 and usage["reader"]["total_tokens"] == 15
+    assert usage["reader"]["cost"] == 0 and usage["reader"]["unbilled_calls"] == 0, \
+        "a local call is not a subscription turn either"
+    row = next(r for r in rows if r["role"] == "reader")
+    assert row["route"] == "local" and row["local"] and row["cost_usd"] == 0.0
+    assert not next(r for r in rows if r["role"] == "scout")["local"]
+
+
+def test_a_route_that_needs_no_key_gets_past_every_place_that_wanted_one(tmp_path):
+    """The executor's env, the credentials a session is handed, and whether the
+    route counts as connected: each refused an empty key, and a local server
+    has none. A route that does need one still refuses."""
+    from factory import commissioning
+    from factory.config import Config, ContainerCredential, RoleConfig, RouteConfig
+    from factory.executors import CommandExecutor, ExecutorError
+    from factory.sessioncreds import CredentialError, _env_value
+
+    config = Config(roles={"worker": RoleConfig(name="worker", model="local-model")})
+    config.executor.command = ["harness", "{task_file}", "{worktree}"]
+    config.executor.key_env = "HARNESS_KEY"
+    config.api.api_key = ""
+    executor = CommandExecutor(llm=None, config=config)
+    with pytest.raises(ExecutorError):
+        executor._env()
+    config.routes[config.default_route].auth = "none"
+    env = executor._env()
+    assert env["LLM_AUTH"] == "none" and "HARNESS_KEY" not in env
+
+    spec = ContainerCredential(kind="env", name="LLM_API_KEY", from_api_key=True)
+    keyless = RouteConfig(name="local", kind="api", auth="none", base_url="http://l/v1")
+    keyed = RouteConfig(name="other", kind="api", base_url="http://o/v1")
+    assert _env_value(spec, config, "", keyless) == ""
+    with pytest.raises(CredentialError):
+        _env_value(spec, config, "", keyed)
+    keyed.api_key = "sk-other"
+    assert _env_value(spec, config, "", keyed) == "sk-other", "the route's own key, not the api block's"
+
+    config.routes.update(local=keyless, other=keyed)
+    unchecked = commissioning.connected_routes(config, [{"name": "local", "state": "unknown"}])
+    assert "other" in unchecked, "a second api route with its key is not skipped"
+    assert "local" not in unchecked, "a keyless server is connected once it has answered"
+    assert "local" in commissioning.connected_routes(config, [{"name": "local", "state": "ok"}])
+
+
+def test_a_keyless_server_is_connected_by_answering_and_says_its_context_window(tmp_path):
+    """No key to look at, so the server is asked: `/models` for whether it
+    answers, and the route's own path for its context window -- on the
+    server's host, not under the API's path."""
+    from factory import routes
+    from factory.config import Config, RouteConfig
+
+    def serve(req):
+        if req["path"] == "/props":
+            return 200, {"content-type": "application/json"}, [
+                json.dumps({"default_generation_settings": {"n_ctx": 32768}}).encode()]
+        return 200, {"content-type": "application/json"}, [
+            json.dumps({"data": [{"id": "local-model"}]}).encode()]
+
+    async def scenario():
+        async with _upstream(serve) as (base, seen):
+            route = RouteConfig(name="local", kind="api", auth="none", base_url=base,
+                                context_window_path="/props",
+                                context_window_key="default_generation_settings.n_ctx")
+            config = Config(routes={"local": route})
+            config.paths.evidence = str(tmp_path)
+            monitor = routes.RouteMonitor(config, None)
+            before = next(s for s in await monitor.survey() if s["name"] == "local")
+            status = await monitor.refresh("local")
+            return before, status, route, list(seen)
+
+    before, status, route, seen = asyncio.run(scenario())
+    assert before["state"] == "unknown" and before["connected"] is None, \
+        "no key is not a missing key: unasked, not unauthenticated"
+    assert status["state"] == "ok" and status["connected"]
+    assert status["models"] == ["local-model"]
+    assert route.context_window == 32768 and "32,768" in status["detail"]
+    assert [r["path"] for r in seen] == ["/api/v1/models", "/props"]
+    assert all("authorization" not in r["headers"] for r in seen)
+
+
+def test_a_call_that_cannot_fit_the_context_window_is_refused_before_it_is_sent():
+    """A local server with a small context answers an oversized call with a 400
+    that is not retried, or truncates it. The window is read from the server
+    the first time the route is used, and a call whose prompt and `max_tokens`
+    cannot fit is refused here with the numbers -- the server never sees it."""
+    from factory.config import Config, RoleConfig, RouteConfig
+    from factory.llm import LLM, LLMError
+
+    def serve(req):
+        if req["path"] == "/props":
+            return 200, {"content-type": "application/json"}, [
+                json.dumps({"default_generation_settings": {"n_ctx": 4096}}).encode()]
+        return 200, {"content-type": "application/json"}, [_completion()]
+
+    async def scenario():
+        async with _upstream(serve) as (base, seen):
+            config = Config(roles={
+                "reader": RoleConfig(name="reader", model="local-model", route="local",
+                                     max_tokens=8000),
+                "scout": RoleConfig(name="scout", model="local-model", route="local",
+                                    max_tokens=1000),
+            }, routes={"local": RouteConfig(
+                name="local", kind="api", auth="none", dialect="openai", base_url=base,
+                metered="local", context_window_path="/props",
+                context_window_key="default_generation_settings.n_ctx")})
+            llm = LLM(config)
+            try:
+                with pytest.raises(LLMError) as refused:
+                    await llm.ask("reader", "a short question")
+                fitted = await llm.ask("scout", "a short question")
+            finally:
+                await llm.aclose()
+            return str(refused.value), fitted, config.routes["local"], list(seen)
+
+    refused, fitted, route, seen = asyncio.run(scenario())
+    assert route.context_window == 4096
+    assert "context window of 4,096" in refused and "8,000" in refused and "Nothing was sent" in refused
+    assert fitted == "hello"
+    assert [r["path"] for r in seen].count("/api/v1/chat/completions") == 1, \
+        "the call that could not fit never reached the server"
+    assert [r["path"] for r in seen].count("/props") == 1, "read once, then kept"
+
+
+def test_a_local_server_is_written_as_a_route_from_the_template(editable_config):
+    """One route per server, made from the `local_server` block: keyless unless
+    the server asks, the OpenAI dialect, booked as local, its sessions run by
+    the default route's harness against its own endpoint. A key goes to the
+    credentials file and never into factory.yaml; a name already taken is
+    refused rather than written over."""
+    from factory.config import ConfigError, load_config, read_credential, write_local_server
+
+    config, tmp_path = editable_config
+    name = write_local_server(config, name="Studio Mac", base_url="http://192.168.1.50:8080/v1",
+                              models=["local-model", "other"], context_window=32768)
+    keyed = write_local_server(config, name="Rack", base_url="http://10.0.0.9:8080/v1",
+                               models=["local-model"], api_key="server-secret")
+    assert (name, keyed) == ("studio-mac", "rack")
+
+    written = (tmp_path / "factory.yaml").read_text()
+    assert "server-secret" not in written, "a key never goes into factory.yaml"
+    reloaded = load_config(tmp_path / "factory.yaml")
+    studio, rack = reloaded.routes["studio-mac"], reloaded.routes["rack"]
+    default = reloaded.routes[reloaded.default_route]
+    assert studio.enabled and studio.label == "Studio Mac" and studio.account_label == "Studio Mac"
+    assert not studio.needs_key and studio.dialect == "openai" and studio.local and not studio.billed
+    assert studio.models == ["local-model", "other"] and studio.context_window == 32768
+    assert studio.container_session_command == default.container_session_command, \
+        "a model server, not a new harness"
+    assert {c.model for c in reloaded.levels["studio-mac"].values()} == {"local-model"}
+    assert rack.needs_key and rack.api_key == "server-secret"
+    assert read_credential(config, rack.key_env) == "server-secret"
+    assert default.dialect == "openrouter" and default.needs_key, "the provider is untouched"
+
+    with pytest.raises(ConfigError):
+        write_local_server(config, name="studio mac", base_url="http://x/v1", models=["m"])
+
+
+def test_only_the_aggregator_dialect_is_probed_at_key(tmp_path, monkeypatch):
+    """`/key` is the aggregator's own question. Asked of an endpoint that
+    speaks only the OpenAI-compatible core, its 404 would read as a refusal;
+    such a default route is proved at `/models` instead."""
+    import shutil
+
+    import httpx
+    from fastapi.testclient import TestClient
+    from factory.config import load_config
+    from factory.server import create_app
+    from factory.server import settings as settings_view
+
+    asked = []
+
+    class Recording:
+        def __init__(self, *a, **kw):
+            pass
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            return False
+
+        async def get(self, url, headers=None):
+            asked.append(url)
+            return httpx.Response(200, json={"data": []})
+
+    monkeypatch.setattr(settings_view.httpx, "AsyncClient", Recording)
+    shutil.copyfile(ROOT / "factory.example.yaml", tmp_path / "factory.example.yaml")
+
+    def probed(dialect: str) -> list[str]:
+        asked.clear()
+        config = load_config(tmp_path / "factory.example.yaml")
+        config.paths.evidence = str(tmp_path / "evidence")
+        config.api.api_key = "sk-some-key"
+        config.routes[config.default_route].dialect = dialect
+        TestClient(create_app(config)).post("/api/provider/test")
+        return [url.rsplit("/", 1)[-1] for url in asked]
+
+    assert probed("openrouter") == ["key"]
+    assert probed("openai") == ["models"]

@@ -1,8 +1,11 @@
 # The model gateway
 
-**Status: step 1 built.** The gateway, session tokens, the proxy's special case
-and OpenHands sessions through them are in (`factory/gateway.py`); the rest of
-this page is proposed. It says what was wrong, the rule that fixes it, and the
+**Status: steps 1 and 2 built.** The gateway, session tokens, the proxy's
+special case and OpenHands sessions through them are in (`factory/gateway.py`),
+and so are per-route endpoints, keyless local routes, context windows, the
+gateway's refusals and "Add a local server" on the crew page and in setup.
+Steps 3 to 6
+are proposed. The page says what was wrong, the rule that fixes it, and the
 order to build it in.
 
 ## In one paragraph
@@ -65,7 +68,8 @@ for every agent session:
   loopback; one on another machine is a private LAN address. Both are refused,
   and a literal IP never reaches the proxy in the first place.
 
-Three smaller gaps sit behind that one, all on the host side:
+Three smaller gaps sat behind that one, all on the host side (step 2 closed
+them):
 
 - **One API endpoint.** Every `kind: api` completion goes through the single
   `api:` block (`factory/llm.py`, `_post`); a second API route's own `base_url`
@@ -160,11 +164,27 @@ It is plain code, not an agent, and does five things per request:
    (`_record_session_spend`, `factory/executors.py`); the gateway's count is
    observed, and can be checked against the harness's.
 
-Because it sees every call before it is made, the gateway can also refuse one:
-when the run's `budget_usd` is spent, or when a prompt plus `max_tokens` is
-larger than the route's context window. Both are numbers in `factory.yaml` read
-by plain code, so INV-6 holds. Neither is built yet: the context window is a
-route field that arrives in step 2, and the budget check goes in with it.
+Because it sees every call before it is made, the gateway also refuses one,
+before the upstream sees it (built in step 2):
+
+- **Past the budget**, with a 402. The rework loop holds its `rework.budget_usd`
+  in `gateway.BUDGET` for every session it opens, beside how to read what it
+  has spent; the gateway refuses once that, plus what the session has spent
+  through it so far, reaches the ceiling. The whole budget, not less the
+  reserve: the reserve is the loop's own discipline between rounds, and the
+  gateway's is the line nobody is charged past. Outside the loop -- the build
+  lane -- no budget is set, which is how it always was: the build is bought
+  before there is anything to decide.
+- **Too large for the window**, with a 400 that says the numbers: an estimate
+  of the prompt (the messages and tool definitions, at four characters a
+  token) plus the request's `max_tokens` against the route's `context_window`.
+  No tokenizer is to hand for a model this package does not name, so the
+  estimate errs toward sending; a borderline call goes out, and the server's
+  own refusal is what the human reads.
+
+Both are numbers in `factory.yaml` read by plain code, so INV-6 holds.
+Fabrika's own completions (`llm.py`) make the same window check before they
+send.
 
 ### How the proxy reaches the gateway
 
@@ -184,19 +204,44 @@ agent's container, which is the point, and gives up the keychain and the
 "never leaves the process" property, which is a cost to write down rather than
 hide.
 
-### Routes get their own endpoints
+### Routes get their own endpoints (built)
 
-`llm.py` stops reading `config.api` for every completion and reads the route's
-own `base_url` and key, so a local route can sit beside OpenRouter and roles
-can choose between them. A route gains three fields:
+`llm.py` reads the route, not `config.api`: each completion goes to its route's
+own `base_url` with its route's own key (`route_endpoint`, `factory/config.py`;
+one cached client per api route), so a local route sits beside OpenRouter and
+roles choose between them. The default route is still the `api` block, read
+live, so a key saved in the console reaches the next call. `connected_routes`
+no longer skips an api route that is not the default. A route has these fields
+for it:
 
-- `auth: none` — no key is needed, and the four places that require one honour
-  it.
-- `context_window` — in tokens. For the first local server it is read from `/props`
-  (`n_ctx`) when the route is connected, so nothing needs typing in; elsewhere
-  it is set in `factory.yaml`.
-- `dialect` — `openrouter` or `openai`. Only `openrouter` gets the `reasoning`
-  and `provider` fields `llm.py` sends today; only it is probed at `/key`.
+- `auth: key | none`. With `none`, nothing is sent, whatever is stored, and the
+  four places that refused an empty key let the route through: the host
+  executor's env (it sets `LLM_AUTH=none` instead), `sessioncreds`, the
+  OpenHands driver (which reads `LLM_AUTH`), and the route's connected state.
+  A keyless route is connected by answering, not by holding a key: Check asks
+  its `/models`, and until then it reads "not checked", not "unauthenticated".
+- `context_window`, in tokens; 0 checks nothing. A route that names
+  `context_window_path` and `context_window_key` has it read from its server
+  the first time it is used or checked, on the server's host rather than under
+  the API's path, and kept for the process. A local server's route reads
+  `/props`, `default_generation_settings.n_ctx` -- the context one call gets --
+  when it is connected, and Add server writes the number into the route.
+- `dialect: openrouter | openai`. Only `openrouter` is sent `reasoning` and
+  `provider`, and only it is probed at `/key` by the provider card's Test.
+- `metered: local`. Tokens are counted and nothing prices them: the ledger
+  books `local_calls` and the console says "local", where it would otherwise
+  have said "$0.00 billed" or counted turns against a plan. Such a route is not
+  billed, so the budget guard has nothing to stop on.
+- `harness: <route>`. A route that names another takes every field of how its
+  sessions run in a container from it (`HARNESS_FIELDS`), and differs only in
+  its endpoint, key and model. A local server's route runs in the default
+  route's harness, in the same image layer, so no second copy of OpenHands is
+  built, and the crew page draws no harness card for it.
+
+A session on any route whose harness would have been handed this app's key is
+leased to that route's own endpoint and key -- none, with `auth: none` -- with
+its context window and the run's budget on the lease. The local server is
+reached from the host side, so `localhost` and a LAN address both work.
 
 Fabrika's own calls go straight from the server to the route's target. They
 never pass through the proxy and never did.
@@ -214,12 +259,41 @@ it is called supported:
   schema in `factory/schemas.py` is run through `strict_schema()` and sent to a
   real server once, and any it rejects is listed.
 - **Usage is booked as local.** `usage.cost` is absent, so the ledger shows
-  tokens and "local", not "$0.00 billed".
+  tokens and "local", not "$0.00 billed". Built: `metered: local`.
 
-The setup card gains a "Local server" choice: a URL and no key, a model list
-filled from `/v1/models`, and a check that runs from inside a throwaway sealed
-container through the gateway — the path an agent will actually take, not just
-"the server answers from here".
+Adding one is a form (built), the same on the crew page ("Add a local
+server", the dashed last tile of the accounts grid) and in setup's accounts
+step ("Use a local server"): an address (http or https; a LAN address works),
+a name for the account card, and a key only if the server asks for one --
+blank is `auth: none`. Fields are checked in the page before anything is sent.
+**Connect** writes nothing and answers six rows, each ok or a warning with a
+remedy (`commissioning.connect_local_server`):
+
+1. Reached from Fabrika: `GET {url}/models` from this machine.
+2. Reached from an agent sandbox: a throwaway sealed container asks
+   `http://models.fabrika.internal/models` with a temporary lease on the
+   gateway (`egress.gateway_check`) -- the path an agent's calls take.
+3. Models found, and the context window from `/props` when the server says it.
+4. Structured answers: one small strict `json_schema` request comes back valid.
+5. Tool calls: one request with a trivial tool. OpenHands needs them.
+6. Context: the window against each enabled agent's largest call -- the larger
+   of a scout slice and the repository digest, estimated, plus its
+   `max_tokens` -- naming the agents whose calls would be refused before they
+   are sent (never cut short).
+
+The remedy for a server started wrongly (rows 1, 5 and 6) is the
+`local_server` block's `setup_command`, with a copy button: configuration, so
+no server is named in code. **Add server** appears once Connect has run. It
+asks the server again rather than trusting the page, then writes one route per
+server from the `local_server` block in `factory.yaml` (or the shipped
+example): `kind: api`, `base_url`, `auth`, `dialect: openai`, `metered: local`,
+`harness: default`, the discovered `models` and `context_window`, and every
+level of the route set to its first model so setup's crew step can staff from
+it. A key goes to the credentials file under `LOCAL_<NAME>_API_KEY`, never into
+`factory.yaml`. The account card then says "local" in the kind slot, "no
+billing", the address, and "not assigned to any agent" until a role uses it.
+Its models are offered on Agent configuration, which is where agents are
+pointed at it; the form assigns none.
 
 Both deployments are the same configuration with a different URL:
 `http://localhost:8080/v1` when the model runs on this machine,
@@ -332,9 +406,15 @@ left beside the new one.
    which the driver uses, was checked against the gateway on the host, plain
    and streamed. Not yet run: a full OpenHands session against a real
    provider.
-2. **Per-route endpoints and local routes.** `llm.py` reads the route,
-   `auth: none`, `context_window`, `dialect`. The first local server as a route. The
-   setup card's "Local server" choice.
+2. **Per-route endpoints and local routes. Built.** `llm.py` reads the route,
+   `auth: none`, `context_window`, `dialect`, `metered: local`, `harness:`.
+   Local servers as routes made from the `local_server` block. The gateway's
+   two refusals. "Add a local server" on the crew page and in setup, with
+   Connect's six checks.
+   Tested against stub servers, not yet against a real one: the end-to-end run
+   below, and sending every `strict_schema()` to a real server, remain. The
+   OpenHands driver changed (it reads `LLM_AUTH`), so the default harness
+   layer rebuilds once.
 3. **Claude Code**, if step 0 says it can.
 4. **Codex**, if step 0 says it can.
 5. **Google's CLI.**
@@ -358,12 +438,32 @@ In the repo's own suites, each persisting:
   only and names the setting when its port is taken. The shipped default route
   opens a session with a session token in its env file, the gateway as its
   base URL, the key nowhere, and the token dead after close.
-- **Step 2 adds** a spent budget and an oversized prompt refused before the
-  upstream sees them.
-- **`tests/test_config.py`.** Two API routes, one local with `auth: none`, each
-  role's completion reaches its own route's endpoint. `dialect: openai` sends no
-  `reasoning` or `provider` field. `context_window` is read from a stubbed
-  `/props`.
+- **Step 2 added**, in the same place: a spent budget and an oversized prompt
+  refused before the upstream sees them, and a refused call not counted; a
+  session on a local server's route leased to its own endpoint with no key,
+  its window read from the server and the run's budget on the lease.
+- **`tests/test_config.py`, built with step 2.** Two API routes, one local
+  with `auth: none`, each role's completion reaches its own route's endpoint
+  with its own key (none for the local one), and the local one is booked as
+  local. `dialect: openai` sends no `reasoning` or `provider` field and is not
+  probed at `/key`. `auth: none` gets past the executor env, `sessioncreds`
+  and the connected state, and a second keyed api route is no longer skipped.
+  A keyless server is connected by answering, and its `context_window` is read
+  from a stubbed `/props`; a call that cannot fit is refused before it is sent.
+  A local server is written as a route from the template, borrowing the
+  default harness, with a key kept out of `factory.yaml` and a taken name
+  refused.
+- **`tests/test_setup.py`, built with step 2.** Connect's six rows against a
+  stub server, the sandbox row stood in for at the one function that reaches
+  Docker: all ok for a good server; warnings with the configured remedy for one
+  without tool calls and too little context, naming the agents refused; the
+  rest not run when the server does not answer; nothing written. Add server
+  writes the route and keeps its key apart, and it shows as connected. Setup
+  offers the same form, and a connected server can staff a side.
+- **`tests/test_console.py`, built with step 2.** The account card says
+  "local", "no billing", the address and who uses it; its models are offered
+  on Agent configuration; the form checks its fields before sending, and Add
+  server appears only after Connect, with each warning's remedy copyable.
 - **`tests/test_invariants.py`, INV-14.** A fake session is prepared for every
   route in `factory.example.yaml`, and none of the configured secrets appears in
   any env file or copied file handed to the container, except on a route marked

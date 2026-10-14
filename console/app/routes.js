@@ -40,13 +40,18 @@ function meterCell(role) {
   const u = role.usage || {};
   const dollars = u.cost ? '$' + u.cost.toFixed(2) : '';
   const turns = u.turns || u.unbilled_calls || 0;
+  // A model on your own hardware: counted, never priced. Not "$0.00", which
+  // reads as free spend, and not turns, which are a plan's.
+  const local = u.local_calls || 0;
   // Both, when an agent has run on both kinds of route -- a run that fell back
   // from a subscription onto a metered one has a real dollar figure AND turns
   // that figure does not cover, and showing either alone understates it.
-  const said = [dollars, turns ? `${turns} turns` : ''].filter(Boolean).join(' + ');
+  const said = [dollars, turns ? `${turns} turns` : '', local ? `${local} local` : '']
+    .filter(Boolean).join(' + ');
   if (!said) return '<span class="dim">—</span>';
   return `<span title="${turns
     ? 'Turns are against a subscription, which charges by the month and reports no dollars per call. Only routes metered per token have a price.'
+    : local && !dollars ? 'Calls to a model on your own hardware. Counted in tokens; nothing prices them.'
     : 'Metered in dollars by the route that carried it.'}">${said}</span>`;
 }
 
@@ -282,12 +287,17 @@ function refusalLine(r) {
  * of which is wrong. Six slots, aligned across the row by subgrid. */
 function accountCard(r) {
   const limited = r.state === 'limited';
-  const sub = !r.billed;
+  const local = r.account_kind === 'local';
+  const sub = !r.billed && !local;
   // Dark, not red, where the harness could not answer: nothing was learned
   // about the account, and unknown is not broken.
   const lamp = r.state === 'ok' ? 'lit'
     : limited || r.state === 'unauthenticated' ? 'warn' : '';
-  const said = r.state === 'ok'
+  const said = local
+      ? (r.state === 'ok' ? 'Answering · <b>no billing</b>'
+        : r.state === 'unknown' ? 'Not checked · <b>no billing</b>'
+        : `Not answering · ${esc(r.detail || 'press Check')}`)
+    : r.state === 'ok'
       ? (sub ? 'Signed in · <b>plan limits</b>' : 'Key stored · <b>billed per token</b>')
     : limited ? `Signed in · <b>${esc(String((r.last_refusal || {}).why || 'refusing calls'))}</b>`
     : r.state === 'unauthenticated' ? (sub ? 'Nobody is signed in' : 'No key stored')
@@ -295,27 +305,36 @@ function accountCard(r) {
   const ws = r.windows || [];
   const plan = ws.length || Object.keys(r.credits || {}).length || limitReached(r)
     ? windowBars(r)
-    : `<div class="hwins"><span class="hslot-empty">${
-        r.billed ? 'billed per token · no plan window'
+    : `<div class="hwins"><span class="hslot-empty${local ? ' mono' : ''}">${
+        local ? esc(r.base_url || 'your own hardware')
+        : r.billed ? 'billed per token · no plan window'
         : r.state === 'ok' ? 'no reading yet · press Check'
         : 'no reading yet'}</span></div>`;
   const isDefault = (state.routes || {}).default === r.name;
+  // Which agents a server of one's own carries. It is added with none, and
+  // they are chosen on Agent configuration.
+  const users = local ? ((state.roles || {}).roles || []).filter(
+    (x) => (x.route || (state.routes || {}).default) === r.name && x.enabled !== false).length : 0;
+  const crew = local
+    ? (users ? `used by <b>${users} agent${users === 1 ? '' : 's'}</b> · through ${esc(r.harness_label || 'its harness')}`
+      : 'not assigned to any agent')
+    : `spent by <b>${esc(r.harness_label || r.label || r.name)}</b>${isDefault ? ' · the default route' : ''}`;
   return `
     <div class="acard ${r.state === 'ok' ? 'on' : ''} ${limited ? 'limited' : ''}">
       <div class="hhead">
         <span class="lamp ${lamp}"></span>
         <span class="hname">${esc(r.account_label || r.label || r.name)}</span>
         <span class="hver mono">${esc(r.account_kind === 'subscription'
-          ? 'subscription' : 'api key')}</span>
+          ? 'subscription' : local ? 'local' : 'api key')}</span>
       </div>
       <p class="hauth">${said}</p>
       ${plan}
       <div class="hsay">${refusalLine(r)}</div>
-      <p class="hcrew">spent by <b>${esc(r.harness_label || r.label || r.name)}</b>${
-        isDefault ? ' · the default route' : ''}</p>
+      <p class="hcrew">${crew}</p>
       <div class="hact">
         ${limited ? `<button class="btn btn-sm" data-check-route="${esc(r.name)}">Ask now</button>` : ''}
-        ${r.kind === 'api' ? '<button class="btn btn-sm btn-quiet" data-open-provider="1">Change key</button>' : ''}
+        ${local ? `<button class="btn btn-sm btn-quiet" data-check-route="${esc(r.name)}">Check</button>`
+          : r.kind === 'api' ? '<button class="btn btn-sm btn-quiet" data-open-provider="1">Change key</button>' : ''}
       </div>
     </div>`;
 }
@@ -448,13 +467,14 @@ function routesSection() {
       <p class="eyebrow">Accounts · who serves the model and bills for it${
         short ? ` · ${short} account${short === 1 ? '' : 's'} refusing calls` : ''}</p>
       ${refreshing ? crewPending('Refreshing how much of each plan is left. This can take a few seconds.') : ''}
-      <div class="account-grid">${rows.map(accountCard).join('')}</div>
+      <div class="account-grid">${rows.map(accountCard).join('')}${localServerTile()}</div>
+      ${lsState().open ? localServerForm('crew') : ''}
     </section>
 
     <section class="section">
       <p class="eyebrow">Harnesses · the programs that run an agent${
         stuck ? ` · ${stuck} not ready` : ''}</p>
-      <div class="harness-grid">${rows.map(harnessCard).join('')}</div>
+      <div class="harness-grid">${rows.filter((r) => !r.harness_of).map(harnessCard).join('')}</div>
       ${off.length ? `<p class="small dim roles-foot">${
         off.map((r) => esc(r.harness_label || r.label || r.name)).join(', ')} ${
         off.length === 1 ? 'is' : 'are'} switched off in

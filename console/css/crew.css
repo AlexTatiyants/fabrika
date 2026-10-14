@@ -682,3 +682,40 @@ body.sheet-open { overflow: hidden; }
 .test-bad { color: var(--red); }
 .provider-line { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 
+
+/* A model server of your own: the dashed tile that ends the accounts grid, and
+   the form it opens below the grid. Shared with setup's "Use a local server". */
+.ls-tile {
+  border-style: dashed; background: transparent; cursor: pointer; text-align: left;
+  font: inherit; color: var(--ink-2); grid-row: span 6;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  gap: .35rem;
+}
+.ls-tile:hover, .ls-tile[aria-expanded="true"] { border-color: var(--line-strong); color: var(--ink); }
+.ls-plus { font-family: var(--mono); font-size: 1.25rem; line-height: 1; color: var(--ink-3); }
+.ls-form {
+  border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 1rem 1.1rem;
+  margin: 0 0 1.1rem; background: var(--surface);
+}
+.ls-lede { margin: 0 0 .8rem; font-size: .875rem; color: var(--ink-2); max-width: 70ch; }
+.ls-fields { display: grid; gap: .7rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.ls-field { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
+.ls-label { font-size: var(--t-small); color: var(--ink-3); }
+.ls-field input {
+  min-width: 0; padding: .45rem .6rem; background: var(--surface-lift); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  font-family: var(--mono); font-size: var(--t-body);
+}
+.ls-field.bad input { border-color: var(--red); }
+.ls-error { font-size: var(--t-small); color: var(--red); }
+.ls-checks { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .55rem; }
+.ls-check { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; }
+.ls-check .su-mark { margin-top: .35rem; }
+.ls-check-t { font-weight: 500; color: var(--ink); }
+.ls-check-d { font-size: .875rem; color: var(--ink-2); overflow-wrap: anywhere; }
+.ls-check.warn .ls-check-d { color: var(--ink); }
+.ls-remedy { margin-top: .4rem; padding-left: .6rem; border-left: 2px solid var(--amber-line); }
+.ls-remedy p { margin: 0 0 .35rem; font-size: .875rem; color: var(--ink-2); }
+.ls-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: 1rem; }
+.ls-actions .su-grow { flex: 1; }
+.ls-tile-t { font-family: var(--display); font-size: 1rem; font-weight: 600; color: var(--ink); }

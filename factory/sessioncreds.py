@@ -36,7 +36,7 @@ from pathlib import Path
 from typing import Sequence
 
 from . import procs
-from .config import Config, ContainerCredential, DockerConfig, RouteConfig
+from .config import Config, ContainerCredential, DockerConfig, RouteConfig, route_endpoint
 
 
 class CredentialError(RuntimeError):
@@ -91,13 +91,19 @@ async def _keychain(service: str, *, optional: bool = False) -> bytes:
     return out.strip()
 
 
-def _env_value(spec: ContainerCredential, config: Config, session_token: str = "") -> str:
+def _env_value(spec: ContainerCredential, config: Config, session_token: str = "",
+               route: RouteConfig | None = None) -> str:
     if spec.from_api_key and session_token:
         # The provider key itself stays in this process. What the harness
         # reads in its place is good for one session, at the gateway only.
         return session_token
     if spec.from_api_key:
-        value = (config.api.api_key or "").strip()
+        if route is not None and not route.needs_key:
+            # A server that wants no key: there is nothing to hand in, and
+            # nothing missing.
+            return ""
+        value = (route_endpoint(config, route)[1] if route is not None
+                 else (config.api.api_key or "").strip())
         source = "this app's stored provider key"
     else:
         source = spec.source or spec.name
@@ -133,7 +139,7 @@ async def prepare(route: RouteConfig, config: Config, session_token: str = "") -
                         "a credential of kind 'env' must say what variable the harness "
                         "reads it as (`name`)."
                     )
-                value = _env_value(spec, config, session_token)
+                value = _env_value(spec, config, session_token, route)
                 if value:
                     lines.append(f"{spec.name}={value}")
                 continue
