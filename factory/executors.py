@@ -28,7 +28,7 @@ from typing import Any, Callable, Protocol, Sequence, runtime_checkable
 from pydantic import BaseModel, Field
 
 from . import procs
-from . import guides as guide_lib, isolation, sessioncreds
+from . import gateway, guides as guide_lib, isolation, sessioncreds
 from .isolation import IsolationError, require_contained
 from .config import Config, fallback_session_model, harness_model, session_fallback, session_model
 from .llm import LLM, LLMError
@@ -438,6 +438,10 @@ class _ContainerSession:
     home: str = ""
     argv: list[str] = dataclass_field(default_factory=list)
     host_spend_file: Path | None = None
+    #: The session's lease on the model gateway, when its harness would have
+    #: been handed this app's provider key. Revoked in `close()`.
+    lease: Any = None
+    gateway: Any = None
     marker: str = dataclass_field(
         default_factory=lambda: f"factory-session-{uuid.uuid4().hex[:12]}")
 
@@ -492,11 +496,28 @@ class _ContainerSession:
         out rather than left behind: this is the only record of what a session
         spent that survives the session being killed.
         """
-        if not (self.spend_in_container and self.host_spend_file):
+        if not self.host_spend_file:
             return
-        code, output = await self._exec(
-            [self.docker, "exec", self.container, "cat", self.spend_in_container])
-        if code != 0 or not output.strip():
+        output = ""
+        if self.spend_in_container:
+            code, output = await self._exec(
+                [self.docker, "exec", self.container, "cat", self.spend_in_container])
+            if code != 0:
+                output = ""
+        # What the gateway saw, when the session's model calls went through it,
+        # is the record: observed rather than reported, and kept in this
+        # process, where a kill inside the container cannot reach it. What the
+        # harness said rides along, so the two can be compared.
+        observed = self.lease.spend() if self.lease is not None else None
+        if observed is not None:
+            try:
+                reported = json.loads(output) if output.strip() else None
+            except ValueError:
+                reported = None
+            if isinstance(reported, dict):
+                observed["harness_reported"] = reported
+            output = json.dumps(observed)
+        if not output.strip():
             return
         try:
             self.host_spend_file.parent.mkdir(parents=True, exist_ok=True)
@@ -531,6 +552,10 @@ class _ContainerSession:
             await sessioncreds.uninstall(self.bundle, self.container, self.config.docker)
         finally:
             self.bundle.cleanup()
+            # The token stops working the moment the session is over, so one
+            # copied out of the container is worth nothing afterwards.
+            if self.gateway is not None and self.lease is not None:
+                self.gateway.revoke(self.lease)
 
 
 def _denied_calls(route, log: str) -> list[str]:
@@ -1365,10 +1390,30 @@ class CommandExecutor:
             return None
 
         docker = self.config.docker.binary
-        bundle = await sessioncreds.prepare(route, self.config)
+        # A harness that would have been handed this app's provider key is
+        # handed a session token for the model gateway instead, and told the
+        # gateway is its provider. The key never enters the container. With no
+        # key stored there is nothing to lease, and `prepare` says so as before.
+        gw, lease = None, None
+        key = (self.config.api.api_key or "").strip()
+        if key and gateway.leases_its_key(route):
+            try:
+                gw = await gateway.ensure(self.config)
+            except gateway.GatewayError as exc:
+                raise ExecutorError(str(exc)) from exc
+            lease = gw.lease(role=role, route=route.name,
+                             base_url=route.base_url or self.config.api.base_url or "",
+                             key=key, headers=self.config.api.headers)
+        try:
+            bundle = await sessioncreds.prepare(
+                route, self.config, lease.token if lease is not None else "")
+        except BaseException:
+            if lease is not None:
+                gw.revoke(lease)
+            raise
         session = _ContainerSession(
             bundle=bundle, container=container, docker=docker,
-            config=self.config, spend_in_container="",
+            config=self.config, spend_in_container="", lease=lease, gateway=gw,
         )
         try:
             await sessioncreds.install(bundle, container, self.config.docker)
@@ -1402,8 +1447,10 @@ class CommandExecutor:
             # Where the provider is, for a harness configured through its
             # environment rather than its argv. Its key is not here: a value in
             # `--env` is a value in a command line, which every process on this
-            # machine can read. Keys travel as credentials, through a file.
-            "base_url": route.base_url or self.config.api.base_url or "",
+            # machine can read. Keys travel as credentials, through a file. On
+            # a lease, the provider is the gateway, which knows the real one.
+            "base_url": (gateway.URL if lease is not None
+                         else route.base_url or self.config.api.base_url or ""),
             "factory_root": "",
         }
 

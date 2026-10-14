@@ -1933,6 +1933,52 @@ async def _carry_once(proxy, dest, send: bytes = b"") -> bytes:
             return got
 
 
+def _upstream(respond):
+    """A provider for the model gateway to forward to, on loopback.
+
+    Records every request it is sent -- method, path, headers, the body as
+    bytes -- and answers each with `respond(request)`: a status, headers, and
+    the body as a list of chunks, where `None` is a pause of 0.3 s. Closes the
+    connection after each answer, as an HTTP/1.0 server would, so a body has no
+    length to give away whether it was streamed.
+    """
+    import contextlib
+
+    @contextlib.asynccontextmanager
+    async def serve():
+        seen: list[dict] = []
+
+        async def handle(reader, writer):
+            head = (await reader.readuntil(b"\r\n\r\n")).decode("latin-1")
+            first, *lines = head.split("\r\n")
+            method, path, _ = first.split(" ", 2)
+            headers = {}
+            for line in lines:
+                if line:
+                    name, _, value = line.partition(":")
+                    headers[name.strip().lower()] = value.strip()
+            size = int(headers.get("content-length") or 0)
+            body = await reader.readexactly(size) if size else b""
+            seen.append({"method": method, "path": path, "headers": headers, "body": body})
+            status, out_headers, chunks = respond(seen[-1])
+            writer.write(f"HTTP/1.1 {status} OK\r\n".encode()
+                         + b"".join(f"{k}: {v}\r\n".encode() for k, v in out_headers.items())
+                         + b"connection: close\r\n\r\n")
+            for chunk in chunks:
+                if chunk is None:
+                    await asyncio.sleep(0.3)
+                    continue
+                writer.write(chunk)
+                await writer.drain()
+            writer.close()
+
+        server = await asyncio.start_server(handle, "127.0.0.1", 0)
+        async with server:
+            yield f"http://127.0.0.1:{server.sockets[0].getsockname()[1]}/api/v1", seen
+
+    return serve()
+
+
 def _dns_query(name: str, qtype: int = 1, ident: int = 0x1234) -> bytes:
     import struct
     labels = b"".join(bytes([len(p)]) + p.encode() for p in name.split(".")) + b"\0"
@@ -2620,6 +2666,7 @@ __all__ = [
     '_run_console_js',
     '_LEDGER',
     '_carry_once',
+    '_upstream',
     '_dns_query',
     '_polluted_sort',
     '_leaky_run',

@@ -123,6 +123,11 @@ def _run_argv(docker: DockerConfig, version: str) -> list[str]:
         "--volume", f"{SCRIPT}:/egress_proxy.py:ro",
         "--env", f"EGRESS_POOL={docker.sealed_pool}",
         "--env", f"EGRESS_TRANSPARENT_PORT={TRANSPARENT_PORT}",
+        # The model gateway, on this machine's loopback. Docker Desktop carries
+        # `host.docker.internal` from the bridge to the host's own 127.0.0.1
+        # (measured; see docs/model-gateway.md), so the gateway needs no wider
+        # address -- and nothing but this container is ever pointed at it.
+        "--env", f"EGRESS_GATEWAY=host.docker.internal:{docker.gateway_port}",
         _image_tag(docker), "python", "/egress_proxy.py",
     ]
 

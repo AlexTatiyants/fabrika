@@ -3686,3 +3686,312 @@ def test_an_openhands_worker_loads_the_root_agents_md_and_the_projects_skills():
     assert not ignored(".claude/skills/x/SKILL.md", ignore)
     assert ignored(".claude/settings.local.json", ignore) and ignored(".claude.json", ignore)
     assert not ignored(".gitignore", ignore) and ignored(".git/config", ignore)
+
+
+# ==========================================================================
+# the model gateway: no provider key in a sandbox
+# ==========================================================================
+
+
+def test_the_gateway_name_is_answered_only_when_the_proxy_has_a_gateway(monkeypatch):
+    """`models.fabrika.internal` gets a stand-in like a public name -- and only
+    when Fabrika started the proxy with a gateway. Without one it is refused
+    with every other `.internal` name, and so is every other `.internal` name
+    either way: the exception is one name, not a suffix."""
+    from factory import egress_proxy as proxy
+
+    stand_ins = proxy.StandIns()
+
+    def ask(name):
+        reply = proxy.answer(_dns_query(name), "10.212.4.5", stand_ins)
+        return reply[3] & 0x0F, reply[6:8]
+
+    monkeypatch.setattr(proxy, "GATEWAY", "")
+    assert ask(proxy.GATEWAY_NAME)[0] == proxy.NXDOMAIN
+    monkeypatch.setattr(proxy, "GATEWAY", "host.docker.internal:18077")
+    rcode, answers = ask(proxy.GATEWAY_NAME)
+    assert rcode == proxy.NOERROR and answers == b"\x00\x01", "one A record, a stand-in"
+    assert stand_ins.name_for(stand_ins.address_for("10.212.4.0/22", proxy.GATEWAY_NAME)) \
+        == proxy.GATEWAY_NAME
+    for other in ("metadata.google.internal", "fabrika.internal", "x.models.fabrika.internal"):
+        assert ask(other)[0] == proxy.NXDOMAIN, f"{other} would get a stand-in"
+
+
+def test_the_way_out_carries_the_gateway_name_to_the_gateway_and_only_on_its_port(
+        monkeypatch, capsys):
+    """The one destination on this machine the proxy will connect to, and it is
+    Fabrika's setting, not the container's: the name on port 80 reaches the
+    gateway, the same name on a developer's port reaches nothing, and every
+    refusal that held before still holds."""
+    from factory import egress_proxy as proxy
+
+    stand_ins = proxy.StandIns()
+    monkeypatch.setattr(proxy, "STAND_INS", stand_ins)
+    gateway_in = stand_ins.address_for("10.212.4.0/22", proxy.GATEWAY_NAME)
+
+    async def scenario():
+        gateway = await asyncio.start_server(
+            lambda r, w: (w.write(b"from the gateway"), w.close()), "127.0.0.1", 0)
+        monkeypatch.setattr(proxy, "GATEWAY", f"127.0.0.1:{gateway.sockets[0].getsockname()[1]}")
+        async with gateway:
+            reached = await _carry_once(proxy, (gateway_in, 80))
+            other_port = await _carry_once(proxy, (gateway_in, 8300))
+            for name in ("127.0.0.1", "192.168.65.254", "host.docker.internal"):
+                address = stand_ins.address_for("10.212.4.0/22", name)
+                assert await _carry_once(proxy, (address, 18077)) == b"", f"{name} was carried"
+        monkeypatch.setattr(proxy, "GATEWAY", "")
+        unset = await _carry_once(proxy, (gateway_in, 80))
+        return reached, other_port, unset
+
+    reached, other_port, unset = asyncio.run(scenario())
+    assert reached == b"from the gateway"
+    assert other_port == b"" and unset == b""
+    lines = [json.loads(x) for x in capsys.readouterr().out.splitlines() if x.startswith("{")]
+    assert lines[0] == {**lines[0], "event": "forwarded",
+                        "target": f"{proxy.GATEWAY_NAME}:80"}
+    assert lines[1]["event"] == "refused" and "port 80 only" in lines[1]["why"]
+    assert all(x["event"] == "refused" for x in lines[2:5])
+    assert lines[5]["event"] == "refused" and "without a model gateway" in lines[5]["why"]
+
+
+def test_the_proxy_is_started_knowing_where_the_gateway_is():
+    """On this machine's loopback, at the configured port, by the name Docker
+    Desktop carries there from the bridge. A change of port is a new version of
+    the proxy, so the running one is replaced rather than left pointing at the
+    old port."""
+    from factory import egress
+
+    argv = egress._run_argv(_docker_config(gateway_port=19999), "v")
+    assert "EGRESS_GATEWAY=host.docker.internal:19999" in argv
+    assert egress._version(_docker_config(gateway_port=19999)) != \
+        egress._version(_docker_config(gateway_port=18077))
+
+
+def test_the_gateway_refuses_a_token_it_did_not_issue_or_has_revoked():
+    """Nothing reaches the provider without a live lease: not a made-up token,
+    not the provider key itself, and not a token whose session has ended -- so
+    one copied out of a container is worth nothing afterwards."""
+    import httpx
+    from factory.gateway import Gateway
+
+    async def scenario():
+        async with _upstream(lambda req: (200, {"content-type": "application/json"},
+                                          [b'{"ok": true}'])) as (base, seen):
+            gw = Gateway(timeout_s=10)
+            await gw.start("127.0.0.1", 0)
+            lease = gw.lease(role="worker", route="default", base_url=base, key="sk-the-real-key")
+            url = f"http://127.0.0.1:{gw.port}/chat/completions"
+            async with httpx.AsyncClient() as client:
+                made_up = await client.post(url, headers={"authorization": "Bearer fabrika-session-x"})
+                the_key = await client.post(url, headers={"authorization": "Bearer sk-the-real-key"})
+                none = await client.post(url)
+                live = await client.post(url, headers={"authorization": f"Bearer {lease.token}"})
+                gw.revoke(lease)
+                revoked = await client.post(url, headers={"authorization": f"Bearer {lease.token}"})
+            await gw.stop()
+            return made_up, the_key, none, live, revoked, list(seen)
+
+    made_up, the_key, none, live, revoked, seen = asyncio.run(scenario())
+    assert [r.status_code for r in (made_up, the_key, none, revoked)] == [401] * 4
+    assert "session token" in made_up.json()["error"]["message"]
+    assert live.status_code == 200 and live.json() == {"ok": True}
+    assert len(seen) == 1, "a refused request must not reach the provider at all"
+
+
+def test_the_gateway_puts_the_route_s_key_on_and_takes_the_session_s_off():
+    """What the provider sees is the route's key and the route's headers, at the
+    route's base URL -- never the session token. The body goes through byte for
+    byte, tool calls included, both ways: a harness that works against the
+    provider works against the gateway."""
+    import httpx
+    from factory.gateway import Gateway
+
+    request = json.dumps({"model": "anthropic/claude-sonnet-5", "messages": [
+        {"role": "user", "content": "list the files"},
+        {"role": "assistant", "content": None, "tool_calls": [{
+            "id": "call_1", "type": "function",
+            "function": {"name": "bash", "arguments": "{\"command\": \"ls\"}"}}]},
+        {"role": "tool", "tool_call_id": "call_1", "content": "a.py\nb.py"}],
+        "tools": [{"type": "function", "function": {"name": "bash", "parameters": {}}}]},
+        separators=(",", ":")).encode()
+    answer = json.dumps({"id": "c1", "model": "anthropic/claude-sonnet-5", "choices": [{
+        "index": 0, "finish_reason": "tool_calls", "message": {"role": "assistant", "tool_calls": [{
+            "id": "call_2", "type": "function",
+            "function": {"name": "bash", "arguments": "{\"command\": \"cat a.py\"}"}}]}}],
+        "usage": {"prompt_tokens": 1200, "completion_tokens": 30, "cost": 0.0042}}).encode()
+
+    async def scenario():
+        async with _upstream(lambda req: (200, {"content-type": "application/json"},
+                                          [answer])) as (base, seen):
+            gw = Gateway(timeout_s=10)
+            await gw.start("127.0.0.1", 0)
+            lease = gw.lease(role="worker", route="default", base_url=base,
+                             key="sk-the-real-key", headers={"X-Title": "software factory"})
+            async with httpx.AsyncClient() as client:
+                got = await client.post(
+                    f"http://127.0.0.1:{gw.port}/chat/completions?trace=1", content=request,
+                    headers={"authorization": f"Bearer {lease.token}",
+                             "content-type": "application/json", "x-api-key": lease.token})
+            await gw.stop()
+            return got, seen[0], lease
+
+    got, sent, lease = asyncio.run(scenario())
+    assert sent["path"] == "/api/v1/chat/completions?trace=1", "the route's base URL, then the path"
+    assert sent["headers"]["authorization"] == "Bearer sk-the-real-key"
+    assert sent["headers"]["x-title"] == "software factory"
+    assert lease.token not in json.dumps(sent["headers"]), "the session token went upstream"
+    assert sent["body"] == request
+    assert got.status_code == 200 and got.content == answer
+    assert lease.spend() == {"cost_usd": 0.0042, "prompt_tokens": 1200, "completion_tokens": 30,
+                             "model": "anthropic/claude-sonnet-5", "calls": 1, "source": "gateway"}
+
+
+def test_a_streamed_answer_comes_through_the_gateway_as_it_is_sent():
+    """Each event reaches the harness when the provider sends it, not when the
+    answer is finished -- a gateway that buffered would turn every streaming
+    harness into one that waits. The usage the stream ends with is what is
+    recorded for the session."""
+    import time as _time
+    import httpx
+    from factory.gateway import Gateway
+
+    events = [b'data: {"choices":[{"delta":{"content":"po"}}],"model":"m-1"}\n\n', None,
+              b'data: {"choices":[{"delta":{"content":"ng"}}],"model":"m-1"}\n\n', None,
+              b'data: {"choices":[],"usage":{"prompt_tokens":9,"completion_tokens":2,'
+              b'"cost":0.0001},"model":"m-1"}\n\n', b"data: [DONE]\n\n"]
+
+    async def scenario():
+        async with _upstream(lambda req: (200, {"content-type": "text/event-stream"},
+                                          events)) as (base, _seen):
+            gw = Gateway(timeout_s=10)
+            await gw.start("127.0.0.1", 0)
+            lease = gw.lease(role="worker", route="default", base_url=base, key="k")
+            arrived, body = [], b""
+            async with httpx.AsyncClient() as client:
+                async with client.stream(
+                        "POST", f"http://127.0.0.1:{gw.port}/chat/completions",
+                        headers={"authorization": f"Bearer {lease.token}"},
+                        content=b'{"stream": true}') as response:
+                    started = _time.monotonic()
+                    async for chunk in response.aiter_raw():
+                        arrived.append(_time.monotonic() - started)
+                        body += chunk
+            await gw.stop()
+            return arrived, body, lease
+
+    arrived, body, lease = asyncio.run(scenario())
+    assert body == b"".join(e for e in events if e is not None), "the stream was changed"
+    assert arrived[0] < 0.25 and arrived[-1] > 0.5, \
+        f"the first event waited for the last: arrivals at {arrived}"
+    assert lease.spend()["prompt_tokens"] == 9 and lease.spend()["cost_usd"] == 0.0001
+
+
+def test_the_gateway_listens_on_this_machine_s_loopback_and_says_when_it_cannot():
+    """Loopback only: nothing on the network can reach it, and only the egress
+    proxy is pointed at it. A port something else holds is said, with the
+    setting that moves it, rather than leaving every session to fail with a
+    connection refused."""
+    from factory import gateway
+    from factory.config import load_config
+
+    config = load_config()
+    config.docker.gateway_port = 0
+
+    async def scenario():
+        gw = await gateway.ensure(config)
+        assert await gateway.ensure(config) is gw, "one per process"
+        bound = [s.getsockname()[0] for s in gw._server.sockets]
+        held = config.model_copy(deep=True)
+        held.docker.gateway_port = gw.port
+        await gateway.stop()
+        blocker = await asyncio.start_server(lambda r, w: w.close(), "127.0.0.1", 0)
+        held.docker.gateway_port = blocker.sockets[0].getsockname()[1]
+        try:
+            await gateway.ensure(held)
+        except gateway.GatewayError as exc:
+            problem = str(exc)
+        else:
+            problem = ""
+        blocker.close()
+        return bound, problem
+
+    bound, problem = asyncio.run(scenario())
+    assert bound == ["127.0.0.1"]
+    assert "docker.gateway_port" in problem
+
+
+def test_a_session_that_would_be_handed_the_provider_key_is_handed_a_session_token(tmp_path):
+    """The shipped default route, as configured: its harness reads the key from
+    `LLM_API_KEY` and its provider from `LLM_BASE_URL`. In the container those
+    are now a session token and the gateway. The key itself appears nowhere a
+    container can read -- not the env file, not the command line -- and the
+    token is dead once the session closes. What the gateway saw is the
+    session's spend."""
+    from factory import gateway
+    from factory.config import load_config
+    from factory.executors import CommandExecutor, read_spend_file
+
+    config = load_config(ROOT / "factory.example.yaml")
+    config.api.api_key = "sk-or-v1-a-key-that-must-stay-here"
+    config.docker.gateway_port = 0
+    executor = CommandExecutor(llm=None, config=config)
+    route = config.route(config.default_route)
+    assert gateway.leases_its_key(route), "the shipped default route hands in the app's key"
+
+    async def scenario():
+        session = await executor._open_container_session(
+            "worker", route, _Prepared(), route.container_session_command,
+            task_file=tmp_path / "t.md", spend_file=tmp_path / "spend.json")
+        env_file = session.bundle.env_file.read_text()
+        gw = await gateway.ensure(config)
+        live = session.lease.token in gw.leases
+        session.lease.observe({"prompt_tokens": 50, "completion_tokens": 5, "cost": 0.01}, "m")
+        session.spend_in_container = ""
+        await session.collect_spend()
+        await session.close()
+        revoked = session.lease.token not in gw.leases
+        await gateway.stop()
+        return session, env_file, live, revoked
+
+    session, env_file, live, revoked = asyncio.run(scenario())
+    assert config.api.api_key not in env_file and config.api.api_key not in " ".join(session.argv)
+    assert f"LLM_API_KEY={session.lease.token}" in env_file.splitlines()
+    assert f"LLM_BASE_URL={gateway.URL}" in session.argv
+    assert session.lease.base_url == config.api.base_url and session.lease.key == config.api.api_key
+    assert live and revoked
+    assert read_spend_file(tmp_path / "spend.json")["source"] == "gateway"
+
+
+def test_a_route_that_signs_in_its_own_way_is_not_leased(tmp_path, monkeypatch):
+    """Only this app's provider key goes through the gateway in this step. A
+    route with its own token keeps it, and with no key stored there is nothing
+    to lease: the session is refused as before, rather than started with a
+    token the gateway can only forward unauthenticated."""
+    from factory.config import load_config
+    from factory.executors import CommandExecutor
+    from factory.sessioncreds import CredentialError
+
+    config = load_config(ROOT / "factory.example.yaml")
+    config.docker.gateway_port = 0
+    executor = CommandExecutor(llm=None, config=config)
+    monkeypatch.setenv("TEST_OWN_TOKEN", "own-token-value")
+    own = _container_route(container_credentials=[{"kind": "env", "name": "TEST_OWN_TOKEN"}],
+                           container_env={"HOME": "/agent-home", "BASE": "{base_url}"},
+                           base_url="https://provider.example/v1")
+
+    session = asyncio.run(executor._open_container_session(
+        "worker", own, _Prepared(), own.container_session_command,
+        task_file=tmp_path / "t.md", spend_file=tmp_path / "spend.json"))
+    try:
+        assert session.lease is None
+        assert "BASE=https://provider.example/v1" in session.argv
+        assert "TEST_OWN_TOKEN=own-token-value" in session.bundle.env_file.read_text()
+    finally:
+        asyncio.run(session.close())
+
+    config.api.api_key = ""
+    default = config.route(config.default_route)
+    with pytest.raises(CredentialError):
+        asyncio.run(executor._open_container_session(
+            "worker", default, _Prepared(), default.container_session_command,
+            task_file=tmp_path / "t.md", spend_file=tmp_path / "spend.json"))

@@ -3,7 +3,7 @@
 Booting: chain the shutdown signals, sweep what a killed process left behind --
 sandboxes, superseded images, previews -- and re-arm every build that was
 waiting on a plan. Stopping: end the open streams, cancel what was re-armed,
-and close every preview this process opened.
+and close every preview this process opened, and the model gateway.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from typing import Any
 
 from fastapi import FastAPI
 
-from .. import isolation
+from .. import gateway as model_gateway, isolation
 from ..config import session_fallback
 from ..containers import harness_image_tag, image_tag, sweep_images, sweep_previews
 from ..sandbox import Sandbox
@@ -182,5 +182,11 @@ def lifespan_for(ctx: Context):
                 await previews.stop_all(by="Fabrika stopping")
             except Exception:  # noqa: BLE001 -- the next boot's sweep has it
                 log.exception("stopping the open previews failed")
+            # Every open session's lease ends with it; the next session starts
+            # it again.
+            try:
+                await model_gateway.stop()
+            except Exception:  # noqa: BLE001
+                log.exception("stopping the model gateway failed")
 
     return lifespan

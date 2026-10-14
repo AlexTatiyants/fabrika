@@ -28,6 +28,14 @@ It forwards to any *public* address and refuses the rest -- loopback, private
 ranges, link-local, and Docker Desktop's range for the host machine. Refusing
 by name would not be enough: a name is whatever DNS says it is today.
 
+One name is the exception, and it is not the agent's to point anywhere:
+`models.fabrika.internal`, the model gateway (`factory/gateway.py`). When
+Fabrika starts this process with `EGRESS_GATEWAY`, that name gets a stand-in
+like any other, and a connection to it on port 80 is carried to the gateway on
+this machine -- the one address on it this process will connect to, fixed by
+Fabrika, never by what a container asked for. Without `EGRESS_GATEWAY` it is
+refused like every other `.internal` name.
+
 Every connection it forwards or refuses is one JSON line on stdout, which is
 the container's log: `egress.status` reads it back for the console, so what an
 agent tried to reach is something a person can look at rather than infer.
@@ -48,6 +56,13 @@ import struct
 import sys
 import time
 from collections import OrderedDict
+
+#: The model gateway's name inside a sealed network, and where it really is:
+#: `host:port`, set by Fabrika when it starts this process. Empty means there
+#: is no gateway, and the name is refused like any other `.internal` one.
+GATEWAY_NAME = "models.fabrika.internal"
+GATEWAY_PORT_INSIDE = 80
+GATEWAY = os.environ.get("EGRESS_GATEWAY", "")
 
 #: Docker Desktop reaches the host machine through this range, and it is not
 #: only private by the book -- it is the specific hole this proxy exists to
@@ -270,7 +285,9 @@ def answer(packet: bytes, client: str, stand_ins: StandIns = STAND_INS,
         return reply(REFUSED)
     if opcode != 0:
         return reply(NOTIMP)
-    if "." not in name or name.endswith(LOCAL_SUFFIXES) or name in ("localhost",):
+    gateway = name == GATEWAY_NAME and bool(GATEWAY)
+    if not gateway and ("." not in name or name.endswith(LOCAL_SUFFIXES)
+                        or name in ("localhost",)):
         return reply(NXDOMAIN)
     if qtype not in (A, ANY):
         # No AAAA: the sealed networks are IPv4 only, and an empty answer sends
@@ -373,6 +390,9 @@ async def carry(client_r: asyncio.StreamReader, client_w: asyncio.StreamWriter) 
         client_w.close()
         return
     where = f"{name}:{port}"
+    if name == GATEWAY_NAME:
+        await carry_to_gateway(client_r, client_w, port)
+        return
     real, why = await resolve(name, port)
     if why:
         note("refused", client_w, where, why)
@@ -386,6 +406,40 @@ async def carry(client_r: asyncio.StreamReader, client_w: asyncio.StreamWriter) 
         # kept out, the far end was simply not there. Logged apart, so the
         # console's count of refusals means only what the rule stopped.
         note("failed", client_w, where, f"{where}: {exc or 'timed out'}")
+        client_w.close()
+        return
+    note("forwarded", client_w, where)
+    await asyncio.gather(pipe(client_r, up_w), pipe(up_r, client_w))
+
+
+async def carry_to_gateway(client_r: asyncio.StreamReader, client_w: asyncio.StreamWriter,
+                           port: int) -> None:
+    """A connection to the gateway's name, carried to the gateway.
+
+    Not through `resolve`: the gateway is on this machine, which is exactly
+    what the public-address rule refuses. The address is Fabrika's setting, not
+    anything the container named, and only the one port is carried -- a
+    container that asks for any other gets nothing, so the name cannot be used
+    to reach another port on this machine.
+    """
+    where = f"{GATEWAY_NAME}:{port}"
+    host, _, gw_port = GATEWAY.rpartition(":")
+    if not host or not gw_port.isdigit():
+        note("refused", client_w, where, "this proxy was started without a model gateway")
+        client_w.close()
+        return
+    if port != GATEWAY_PORT_INSIDE:
+        note("refused", client_w, where,
+             f"the model gateway answers on port {GATEWAY_PORT_INSIDE} only")
+        client_w.close()
+        return
+    try:
+        up_r, up_w = await asyncio.wait_for(
+            asyncio.open_connection(host, int(gw_port)), timeout=CONNECT_TIMEOUT_S)
+    except (OSError, asyncio.TimeoutError) as exc:
+        note("failed", client_w, where,
+             f"the model gateway at {GATEWAY} did not answer: {exc or 'timed out'}; "
+             "it runs inside Fabrika and starts with the first session that needs it")
         client_w.close()
         return
     note("forwarded", client_w, where)

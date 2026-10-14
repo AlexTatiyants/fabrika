@@ -695,6 +695,12 @@ class DockerConfig(BaseModel):
     # holds 256 networks. Change it if it overlaps a network this machine
     # already reaches -- a company VPN, say.
     sealed_pool: str = "10.212.0.0/14"
+    # Where the model gateway listens on this machine, on loopback only (see
+    # `gateway.py`). A session in a container reaches it as
+    # `http://models.fabrika.internal`, through the egress proxy, which is the
+    # only thing pointed at this port. Change it if something else here holds
+    # it; the proxy is restarted with the new one by itself.
+    gateway_port: int = 18077
     # What a CLI completion runs in when it is not part of any unit: a plain
     # glibc image, because each harness brings its own runtime under
     # `/opt/harness` (see `container_build_image`). Each call gets a container

@@ -3,9 +3,11 @@
 Every agent session and every command a check runs happens inside a container
 on a network of its own. That network is `--internal`, so it has no route to
 this machine, to another feature's containers, or to the internet. Whatever
-genuinely needs the internet -- a package install, an agent calling its model
-provider -- goes through the egress proxy (`egress.py`), which forwards to
-public addresses and refuses everything else.
+genuinely needs the internet -- a package install, say -- goes through the
+egress proxy (`egress.py`), which forwards to public addresses and refuses
+everything else. An agent's model calls go through it too, but not to the
+internet: to the model gateway in this process (`gateway.py`), the one
+destination on this machine the proxy will carry anything to.
 
 This was not always so, and the gaps were each found the hard way. Agents with
 no prepared environment ran on this machine's shell: the oracle always did, and

@@ -91,7 +91,11 @@ async def _keychain(service: str, *, optional: bool = False) -> bytes:
     return out.strip()
 
 
-def _env_value(spec: ContainerCredential, config: Config) -> str:
+def _env_value(spec: ContainerCredential, config: Config, session_token: str = "") -> str:
+    if spec.from_api_key and session_token:
+        # The provider key itself stays in this process. What the harness
+        # reads in its place is good for one session, at the gateway only.
+        return session_token
     if spec.from_api_key:
         value = (config.api.api_key or "").strip()
         source = "this app's stored provider key"
@@ -107,8 +111,12 @@ def _env_value(spec: ContainerCredential, config: Config) -> str:
     return value
 
 
-async def prepare(route: RouteConfig, config: Config) -> Bundle:
+async def prepare(route: RouteConfig, config: Config, session_token: str = "") -> Bundle:
     """Assemble one session's credentials into a private directory.
+
+    `session_token`, when given, is what a `from_api_key` credential becomes:
+    the model gateway's token for this session, never the key it stands for
+    (see `gateway.py`).
 
     The caller owns the result and must call `cleanup()`, whatever happens to
     the session.
@@ -125,7 +133,7 @@ async def prepare(route: RouteConfig, config: Config) -> Bundle:
                         "a credential of kind 'env' must say what variable the harness "
                         "reads it as (`name`)."
                     )
-                value = _env_value(spec, config)
+                value = _env_value(spec, config, session_token)
                 if value:
                     lines.append(f"{spec.name}={value}")
                 continue

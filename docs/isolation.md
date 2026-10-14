@@ -82,12 +82,20 @@ exception is the test suite, which has no Docker (`tests/conftest.py`, and
 
 Every container Fabrika starts is on a network with no route anywhere: not to
 this machine, not to another feature's containers, not to the internet. What
-genuinely needs the internet — an agent calling its model provider, setup
-installing packages — gets it through one proxy, `fabrika-egress`, which
-forwards to **public addresses only**. Loopback, private ranges, link-local and
+genuinely needs the internet — setup installing packages, an agent fetching
+docs — gets it through one proxy, `fabrika-egress`, which forwards to **public
+addresses only**. Loopback, private ranges, link-local and
 Docker Desktop's range for the host (`192.168.65.0/24`) are refused. It resolves
 each name itself and connects to the address it checked, so a name pointing home
 does not get through either.
+
+An agent's model calls are the exception, and they do not go to the internet
+from the container at all. Its harness is told its provider is
+`http://models.fabrika.internal` and given a session token instead of a key;
+the proxy carries that one name, on port 80 only, to the model gateway inside
+Fabrika, which checks the token, puts the real key on and forwards to the
+route's provider. The key never enters the container. See
+[model-gateway.md](model-gateway.md).
 
 That is what keeps your own dev servers out of a build. A copy of the project
 on `localhost:8300` is the common case, and without the proxy a feature's
