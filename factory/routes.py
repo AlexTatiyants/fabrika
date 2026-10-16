@@ -26,7 +26,7 @@ from typing import Any, Sequence
 import httpx
 
 from . import gateway, procs
-from .config import Config, RoleConfig, RouteConfig, route_endpoint
+from .config import EFFORT_NAMES, Config, RoleConfig, RouteConfig, route_endpoint
 from .files import write_atomic
 from .meters import (DrawStore, MeterStore, WindowReading, read_from_disk, read_limit,
                      use_mirror)
@@ -145,6 +145,13 @@ class RouteStatus:
     last_refusal: dict[str, Any] = field(default_factory=dict)
 
     models: list[str] = field(default_factory=list)
+    #: The reasoning efforts this route can actually pass on to its model. A
+    #: route with an `effort:` map has the levels it maps -- a CLI says each
+    #: with its own flag, a local server with fields in the request body; the
+    #: aggregator takes them all; any other server is sent none (see
+    #: `LLM._payload`), and offering one there would be a setting that does
+    #: nothing.
+    efforts: list[str] = field(default_factory=list)
     # What the plan itself last said about its rolling windows. Read, not
     # counted -- the human uses the same plan, so anything this factory
     # computed would be short by however much they used.
@@ -184,7 +191,7 @@ class RouteStatus:
             "schema_completions", "installed", "version", "connected",
             "state", "detail",
             "checked_at", "retry_at", "last_refusal",
-            "models", "windows", "credits", "gauge_self_reads",
+            "models", "efforts", "windows", "credits", "gauge_self_reads",
             "default_model_ok",
             "resolved_model",
             "install_command", "setup_command",
@@ -192,6 +199,13 @@ class RouteStatus:
         )}
         body["usable"] = self.state == "ok"
         return body
+
+
+def route_efforts(route: RouteConfig) -> list[str]:
+    """Which reasoning efforts reach this route's model, in order."""
+    if route.kind == "cli" or route.effort:
+        return [e for e in EFFORT_NAMES if route.effort_for(e) is not None]
+    return list(EFFORT_NAMES) if route.dialect == "openrouter" else []
 
 
 def base_status(route: RouteConfig) -> RouteStatus:
@@ -216,6 +230,7 @@ def base_status(route: RouteConfig) -> RouteStatus:
         authors=route.authors(),
         billed=route.billed,
         models=list(route.models),
+        efforts=route_efforts(route),
         schema_completions=route.schema_completions,
         gauge_self_reads=bool(route.meter_sidecar_glob),
         default_model_ok=route.default_model_ok,
@@ -905,6 +920,10 @@ class RouteMonitor:
                 status.account_label = fresh.account_label
                 status.account_kind = fresh.account_kind
                 status.label = fresh.label
+                # The same failure, found the same way: a route checked before
+                # its thinking levels were written kept the cache's empty list,
+                # and the crew screen said it took no thinking setting.
+                status.efforts = fresh.efforts
                 if status.state == "ok":
                     status.detail = ok_detail(route)
                 # Re-measure the cheap half so an install lands immediately.

@@ -4093,3 +4093,43 @@ def test_a_session_on_a_local_route_is_leased_to_its_own_endpoint_with_no_key(tm
     assert f"LLM_API_KEY={lease.token}" in env_file.splitlines()
     assert f"LLM_BASE_URL={gateway.URL}" in session.argv
     assert config.api.api_key not in env_file and base not in " ".join(session.argv)
+
+
+def test_a_route_offers_only_the_thinking_efforts_that_reach_its_model():
+    """A CLI says an effort with its own flag, so it offers the ones it was
+    given; the aggregator takes them all; a plain OpenAI-compatible server --
+    a local one -- is sent none, so the console offers none for it rather than
+    a setting that does nothing."""
+    from factory.config import RouteConfig
+    from factory.routes import base_status, route_efforts
+
+    cli = RouteConfig(name="c", kind="cli", command=["t"], effort={
+        "low": {"args": ["--effort", "low"]}, "high": {"args": ["--effort", "high"]}})
+    assert route_efforts(cli) == ["low", "high"], "in the order the console offers them"
+    assert route_efforts(RouteConfig(name="c2", kind="cli", command=["t"])) == []
+    assert route_efforts(RouteConfig(name="agg", kind="api", dialect="openrouter")) == [
+        "none", "low", "medium", "high"]
+    local = RouteConfig(name="studio", kind="api", dialect="openai",
+                        base_url="http://localhost:8080/v1")
+    assert route_efforts(local) == [] and base_status(local).efforts == []
+    # And it reaches the console: the screen reads the survey's dicts, and a
+    # field left out of them reads there as "takes no thinking setting".
+    assert base_status(cli).as_dict()["efforts"] == ["low", "high"]
+
+
+def test_a_checked_route_s_thinking_levels_come_from_its_config_not_the_cache(tmp_path):
+    """The survey serves a checked route from its stored check. Its thinking
+    levels are a function of its config, so a route checked before its levels
+    were written -- or before the field existed -- still offers them."""
+    from factory.config import Config, RouteConfig
+    from factory.routes import RouteMonitor, RouteStatus
+
+    route = RouteConfig(name="studio", kind="api", auth="none", dialect="openai",
+                        base_url="http://127.0.0.1:9/v1", effort={
+                            "none": {"body": {"chat_template_kwargs": {"enable_thinking": False}}}})
+    config = Config(routes={"studio": route})
+    config.paths.evidence = str(tmp_path)
+    monitor = RouteMonitor(config, None)
+    monitor._checked["studio"] = RouteStatus(name="studio", state="ok", connected=True)
+    row = next(r for r in asyncio.run(monitor.survey()) if r["name"] == "studio")
+    assert row["efforts"] == ["none"]

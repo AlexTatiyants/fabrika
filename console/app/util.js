@@ -9,6 +9,19 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
 ));
 
+/* A model id as a person reads it. Most ids already are one. A local server
+   names its model by the file it loaded -- a path, an extension, and a shard
+   suffix when the file is split -- and every screen that showed that whole
+   string showed it as a model's name. What is left is the file's own name;
+   the full id is still what is written, and what a title shows on hover. */
+const MODEL_FILE = /\.(gguf|ggml|bin|safetensors)$/i;
+function modelName(id) {
+  let m = String(id ?? '');
+  if (!m.startsWith('/') && !MODEL_FILE.test(m)) return m;
+  m = m.split('/').filter(Boolean).pop() || m;
+  return m.replace(MODEL_FILE, '').replace(/-\d{5}-of-\d{5}$/, '') || m;
+}
+
 function rel(iso) {
   if (!iso) return '';
   const then = new Date(iso).getTime();

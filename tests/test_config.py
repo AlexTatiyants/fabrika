@@ -1520,6 +1520,21 @@ def test_a_model_written_on_a_levelled_role_is_a_pin_and_wins(editable_config):
     assert config.role("reviewer").pinned == []
 
 
+def test_part_of_a_side_can_run_on_another_provider(editable_config):
+    """One provider per side is where a crew starts, not a cage: a builder
+    pinned to another route runs there, and the rest of its side stays where
+    the side is. This is how a local server takes some of the building and not
+    all of it."""
+    config, _ = editable_config
+    _staff(config, worker={"level": "standard",
+                           "pin": {"route": "codex", "model": "gpt-5.6-sol"}})
+
+    assert config.route_for("worker").name == "codex"
+    assert config.role("worker").model == "gpt-5.6-sol"
+    assert config.route_for("integrator").name == "claude-code", "only the pinned agent moved"
+    assert config.role("worker").pinned == ["route", "model"]
+
+
 def test_without_staffing_a_level_changes_nothing():
     """The shipped example names a level on every role and no `staffing:`. Its
     roles must run on the models they name -- a level that silently moved
@@ -1877,3 +1892,79 @@ def test_only_the_aggregator_dialect_is_probed_at_key(tmp_path, monkeypatch):
 
     assert probed("openrouter") == ["key"]
     assert probed("openai") == ["models"]
+
+
+def test_a_route_that_says_thinking_in_the_body_is_sent_it_there():
+    """A local server is told an agent's thinking level through its chat
+    template's variables, merged into the request beside everything else --
+    a schema's `response_format` included -- and sent no aggregator field."""
+    from factory.config import RoleConfig, RouteConfig
+    from factory.llm import LLM
+    from factory.schemas import Spec
+
+    route = RouteConfig(name="studio", kind="api", dialect="openai", base_url="http://x/v1",
+                        effort={"none": {"body": {"chat_template_kwargs": {"enable_thinking": False}}},
+                                "low": {"body": {"chat_template_kwargs": {"reasoning_effort": "low"}}}})
+    config = load_config(ROOT / "factory.example.yaml")
+    llm = LLM(config)
+    messages = [{"role": "user", "content": "hi"}]
+    off = llm._payload(RoleConfig(name="r", model="m", reasoning_effort="none"),
+                       messages, Spec, None, route)
+    assert off["chat_template_kwargs"] == {"enable_thinking": False}
+    assert "reasoning" not in off and off["response_format"]["type"] == "json_schema"
+    low = llm._payload(RoleConfig(name="r", model="m", reasoning_effort="low"), messages, None, None, route)
+    assert low["chat_template_kwargs"] == {"reasoning_effort": "low"}
+    high = llm._payload(RoleConfig(name="r", model="m", reasoning_effort="high"), messages, None, None, route)
+    assert "chat_template_kwargs" not in high, "a level the route does not map adds nothing"
+    asyncio.run(llm.aclose())
+
+
+def test_a_session_is_told_its_agent_s_thinking_level():
+    """The OpenHands client sends `reasoning_effort: high` on every call unless
+    told otherwise, whatever the agent's level. A route with a body map gets the
+    level in the body and no top-level effort; the aggregator gets the level;
+    a CLI route says it with its own flags and gets nothing here."""
+    from factory.config import RouteConfig
+    from factory.executors import session_effort_env
+
+    config = load_config(ROOT / "factory.example.yaml")
+    config.role("worker").reasoning_effort = "none"
+    studio = RouteConfig(name="studio", kind="api", dialect="openai", effort={
+        "none": {"body": {"chat_template_kwargs": {"enable_thinking": False}}}})
+    assert session_effort_env(config, "worker", studio) == {
+        "LLM_REASONING_EFFORT": "",
+        "LLM_EXTRA_BODY": '{"chat_template_kwargs":{"enable_thinking":false}}'}
+    config.role("worker").reasoning_effort = "medium"
+    assert session_effort_env(config, "worker", studio) == {"LLM_REASONING_EFFORT": ""}, \
+        "an unmapped level is the model's default, not the client's `high`"
+    assert session_effort_env(config, "worker", config.route(config.default_route)) == {
+        "LLM_REASONING_EFFORT": "medium"}
+    plain = RouteConfig(name="plain", kind="api", dialect="openai")
+    assert session_effort_env(config, "worker", plain) == {}
+    assert session_effort_env(config, "worker", config.route("claude-code")) == {}
+
+    import inspect
+    from factory.harnesses import openhands_driver
+    driver = inspect.getsource(openhands_driver.main)
+    assert 'os.environ["LLM_REASONING_EFFORT"] or None' in driver
+    assert 'thinking["litellm_extra_body"]' in driver and "**thinking" in driver
+
+
+def test_a_route_with_a_body_map_offers_exactly_the_levels_it_maps():
+    from factory.config import RouteConfig
+    from factory.routes import route_efforts
+
+    studio = RouteConfig(name="studio", kind="api", dialect="openai", effort={
+        "high": {"body": {"x": 1}}, "none": {"body": {"y": 1}}})
+    assert route_efforts(studio) == ["none", "high"]
+
+
+def test_a_route_s_thinking_map_can_be_written_and_removed(editable_config):
+    from factory.config import load_config as _load, write_route_effort
+
+    config, tmp_path = editable_config
+    body = {"chat_template_kwargs": {"enable_thinking": False}}
+    write_route_effort(config, "codex", {"none": body})
+    assert _load(tmp_path / "factory.yaml").routes["codex"].effort_for("none").body == body
+    write_route_effort(config, "codex", {})
+    assert _load(tmp_path / "factory.yaml").routes["codex"].effort == {}

@@ -229,8 +229,8 @@ function modelSlot(r) {
   const known = defaultModel(r);
   const rest = known ? list.length - 1 : list.length;
   const pills = list.map((m) => (m === known
-    ? `<span class="pill is-default" title="Runs when a role names no model.">${esc(m)}</span>`
-    : `<span class="pill">${esc(m)}</span>`)).join('');
+    ? `<span class="pill is-default" title="Runs when a role names no model. ${esc(m)}">${esc(modelName(m))}</span>`
+    : `<span class="pill" title="${esc(m)}">${esc(modelName(m))}</span>`)).join('');
   return `<div class="hmodelslot">
     <p class="hcrew">${known ? `default <b class="mono">${esc(known)}</b>`
                              : `${list.length} model${list.length === 1 ? '' : 's'}`}${
@@ -421,7 +421,7 @@ function lanesSection() {
           return `<div class="lane-card">
             <div class="lane-head"><b>${esc(n)}</b>
               <span class="mono dim">${esc(l.route || '')}</span></div>
-            <div class="mono lane-model">${esc(l.model || '')}</div>
+            <div class="mono lane-model" title="${esc(l.model || '')}">${esc(modelName(l.model))}</div>
             ${l.note ? `<p class="lane-note">${esc(l.note)}</p>` : ''}
             <p class="lane-who">${who.length
               ? `${who.length} agent${who.length === 1 ? '' : 's'}: <span class="mono">${
@@ -617,40 +617,35 @@ function startEgress() {
    all a closed <select> shows -- and "opus-5" alone cannot tell you whether you
    picked the one metered against a subscription or the one billed per token.
    They are the same weights and not the same thing. */
-function modelOptions(role, draft) {
-  const rows = (state.routes || {}).routes || [];
+/* The role sheet's model chip, pressed: the picker, over the sheet. The sheet
+   is not redrawn -- it holds the prompt's editor -- so the chip is told what
+   was chosen directly, the way `syncChip` tells it after a field. */
+function roleModelPick(chip) {
+  const role = ((state.roles || {}).roles || []).find((r) => r.name === state.openRole);
+  if (!role) return;
+  const d = roleDraft(role);
   const fallback = (state.routes || {}).default || 'default';
-  const current = draft.route || fallback;
-  let seen = false;
-  const groups = rows.map((r) => {
-    const models = r.models || [];
-    // "Whatever this tool is configured to use" is a real answer, and the
-    // shortest path to a route that works: connect it, point an agent at it,
-    // and never look up an id. What ran is read back afterwards, so it does
-    // not become a mystery.
-    if (r.default_model_ok) models.unshift('');
-    if (!models.length) return '';
-    const why = r.schema_completions === false ? ' — cannot answer to a schema'
-      : r.state === 'ok' ? ''
-      : r.state === 'missing' ? ' — not installed'
-      : r.state === 'unauthenticated' ? ' — not signed in'
-      : r.state === 'unknown' ? ' — not checked' : ' — not working';
-    return `<optgroup label="${esc(r.label || r.name)}${esc(why)}">${models.map((m) => {
-      const on = current === r.name && draft.model === m;
-      if (on) seen = true;
-      const shown = m || 'its own default model';
-      const off = r.state === 'missing' || r.schema_completions === false;
-      return `<option value="${esc(r.name)}|${esc(m)}" ${on ? 'selected' : ''} ${
-        off ? 'disabled' : ''}>${esc(shown)} · via ${esc(r.label || r.name)}</option>`;
-    }).join('')}</optgroup>`;
-  }).join('');
-  // Whatever is configured, even when no route offers it. A picker that
-  // silently dropped the current value would show the wrong model as selected
-  // and save that on the next press of Save.
-  const here = `<optgroup label="Configured"><option value="${esc(current)}|${esc(draft.model)}"
-      ${seen ? '' : 'selected'}>${esc(draft.model || 'its own default model')} · via ${esc(
-        (routeState(current) || {}).label || current)}</option></optgroup>`;
-  return (seen ? '' : here) + groups;
+  const rows = ((state.routes || {}).routes || [])
+    .filter((r) => r.state !== 'missing' && r.schema_completions !== false);
+  const used = [];
+  ((state.roles || {}).roles || []).forEach((r) => {
+    const route = r.route || fallback;
+    if (r.model && !used.some((u) => u.route === route && u.model === r.model)) {
+      used.push({ route, model: r.model, why: `used by ${r.name}` });
+    }
+  });
+  openModelPicker(chip, {
+    routes: rows, route: d.route || fallback, roles: [role.name], used,
+    current: { route: d.route || fallback, model: d.model },
+    onPick: (route, model) => {
+      d.route = route;
+      d.model = model;
+      const v = chip.querySelector('.v');
+      if (v) v.textContent = `${modelName(model) || 'route default'} · ${(routeState(route) || {}).label || route}`;
+      chip.closest('.cfg').classList.add('dirty');
+      markSheetDirty();
+    },
+  });
 }
 
 function roleDraft(role) {
@@ -737,8 +732,8 @@ function roleRow(role) {
     <button class="role-row ${open ? 'open' : ''} ${role.enabled === false ? 'off' : ''}"
       data-open-role="${esc(n)}" aria-expanded="${open}" aria-haspopup="dialog">
       <span class="rr-name">${esc(n)}</span>
-      <span class="rr-model">${routeChip(role.route)}<span class="m mono">${
-        esc(role.model || 'route default')}</span>${role.follows_level
+      <span class="rr-model">${routeChip(role.route)}<span class="m mono" title="${esc(role.model || '')}">${
+        esc(modelName(role.model) || 'route default')}</span>${role.follows_level
           ? `<span class="rr-level mono" title="Its model comes from its level on the Agent configuration screen.">${esc(role.level)}</span>`
           : role.level && role.pinned && role.pinned.length
             ? '<span class="rr-level mono" title="Its own model, whatever its level says.">pinned</span>' : ''}${ROLE_BLURB[n]
@@ -749,7 +744,7 @@ function roleRow(role) {
       <span class="rr-num mono">${u.calls || 0}</span>
       <span class="rr-num mono">${meterCell(role)}</span>
       <span class="rr-fb mono" title="${role.fallback_model
-        ? `if ${esc(role.route || 'its route')} will not carry it: ${esc(role.fallback_model)} on ${esc(role.fallback_route)}`
+        ? `if ${esc(role.route || 'its route')} will not carry it: ${esc(modelName(role.fallback_model))} on ${esc(role.fallback_route)}`
         : 'no fallback — this agent stops the run if its route says no'}">${
         role.fallback ? esc(role.fallback) : '<span class="dim">—</span>'}</span>
     </button>`;
@@ -830,11 +825,11 @@ function roleSheetHtml(role) {
   const moved = (k) => String(d[k]) !== String(saved[k]);
 
   const rail = [
+    // No field to open: the chip opens the model picker, because a route
+    // with hundreds of models cannot be a dropdown (see app/model-picker.js).
     cfgChip('model_route', 'model',
-      `${d.model || 'route default'} · ${(routeState(d.route) || {}).label || d.route || 'default'}`,
-      `<select class="answer-field" data-role="${esc(n)}" data-key="model_route">
-         ${modelOptions(role, d)}</select>`,
-      d.model !== role.model || (d.route || '') !== (role.route || '')),
+      `${modelName(d.model) || 'route default'} · ${(routeState(d.route) || {}).label || d.route || 'default'}`,
+      '', d.model !== role.model || (d.route || '') !== (role.route || '')),
     cfgChip('temperature', 'temp', String(d.temperature),
       `<input class="answer-field" type="number" step="0.05" data-role="${esc(n)}"
          data-key="temperature" value="${esc(d.temperature)}">`, moved('temperature')),

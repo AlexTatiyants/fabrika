@@ -49,9 +49,9 @@ def register(app: FastAPI, ctx: Context) -> None:
             billed += row["spend"]["billed"]
             notional += row["spend"]["notional"]
             for route, split in row["spend"]["tokens"].items():
-                acc = tokens.setdefault(route, {"subscription": 0, "charged": 0})
-                acc["subscription"] += split["subscription"]
-                acc["charged"] += split["charged"]
+                acc = tokens.setdefault(route, {"subscription": 0, "charged": 0, "local": 0})
+                for kind in acc:
+                    acc[kind] += split.get(kind, 0)
             if state.stage in overview.WAITING_ON_YOU:
                 waiting.append(row)
             elif state.stage in overview.IN_FLIGHT:

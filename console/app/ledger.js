@@ -205,7 +205,7 @@ function projectLogScreen() {
         <span class="lr-time mono">${esc(r.at.slice(0, 19).replace('T', ' '))}</span>
         <span class="lr-kind">${esc(KIND_WORDS[r.kind] || r.kind)}</span>
         <span class="lr-role mono">${esc(r.role || '')}</span>
-        <span class="lr-model mono">${esc(r.model || '')}</span>
+        <span class="lr-model mono" title="${esc(r.model || '')}">${esc(modelName(r.model))}</span>
         <span class="lr-num mono">${bytes(r.payload_chars)}</span>
         <span class="rr-chev">${open ? '−' : '+'}</span>
       </button>` + (open && state.record && state.record.seq === r.seq
@@ -250,7 +250,7 @@ function logScreen() {
         <span class="lr-time mono">${esc(r.at.slice(11, 19))}</span>
         <span class="lr-kind">${esc(KIND_WORDS[r.kind] || r.kind)}</span>
         <span class="lr-role mono">${esc(r.role || '')}</span>
-        <span class="lr-model mono">${esc(r.model || '')}</span>
+        <span class="lr-model mono" title="${esc(r.model || '')}">${esc(modelName(r.model))}</span>
         <span class="lr-num mono" title="characters the agent was given">${bytes(r.prompt_chars)}</span>
         <span class="lr-num mono" title="characters it returned">${bytes(r.payload_chars)}</span>
         <span class="lr-num mono lr-cost" title="${cost

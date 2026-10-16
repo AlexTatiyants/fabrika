@@ -206,11 +206,20 @@ def main() -> int:
               "'none'", file=sys.stderr)
         return 2
 
+    # The agent's thinking level, as Fabrika says it for this route. Unset, the
+    # client's own default applies; set and empty, no top-level effort is sent
+    # (a local server is told its level in the body instead, below).
+    thinking: dict = {}
+    if "LLM_REASONING_EFFORT" in os.environ:
+        thinking["reasoning_effort"] = os.environ["LLM_REASONING_EFFORT"] or None
+    if os.environ.get("LLM_EXTRA_BODY"):
+        thinking["litellm_extra_body"] = json.loads(os.environ["LLM_EXTRA_BODY"])
     llm = LLM(
         model=args.model,
         api_key=api_key,
         base_url=os.environ.get("LLM_BASE_URL") or None,
         usage_id="worker",
+        **thinking,
     )
     agent = get_default_agent(llm=llm, cli_mode=True)
     # The repository's own rules, read the way OpenHands reads them: the SDK's

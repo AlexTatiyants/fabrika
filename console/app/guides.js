@@ -410,14 +410,21 @@ function routeWord(name) {
 }
 
 /* How the work was paid for, from the overview's per-route token split: the
-   share that went through a subscription, and any charged per token. */
+   share that went through a subscription, what ran on a model server of your
+   own, and any charged per token. Local is its own share: nobody bills it and
+   no plan's window covers it, so calling it either would be a guess. */
 function costSplit(spend) {
   const tokens = (spend || {}).tokens || {};
-  let sub = 0; let charged = 0;
-  Object.values(tokens).forEach((t) => { sub += t.subscription || 0; charged += t.charged || 0; });
-  const total = sub + charged;
-  return { tokens, sub, charged, total, pct: total ? Math.round((100 * sub) / total) : 100 };
+  let sub = 0; let charged = 0; let local = 0;
+  Object.values(tokens).forEach((t) => {
+    sub += t.subscription || 0; charged += t.charged || 0; local += t.local || 0;
+  });
+  const total = sub + charged + local;
+  return { tokens, sub, charged, local, total,
+           pct: total ? Math.round((100 * sub) / total) : 100 };
 }
+
+function routeTokens(t) { return (t.subscription || 0) + (t.charged || 0) + (t.local || 0); }
 
 function money(n) {
   const v = Number(n) || 0;
@@ -484,21 +491,26 @@ function costTile(ov) {
   const spend = ov.spend || {};
   const split = costSplit(spend);
   const charged = spend.billed || 0;
+  const unpaid = !split.charged && !charged;
   const status = !split.total && !charged ? 'No work yet'
-    : !split.charged && !charged ? 'All on subscriptions'
+    : unpaid && !split.local ? 'All on subscriptions'
+    : unpaid && !split.sub ? 'All on your own models'
+    : unpaid ? 'Nothing charged'
     : charged ? `${money(charged)} charged` : `${split.pct}% on subscriptions`;
   /* The same three lines as every other tile, so the row stays even: the
      sub line is the bar's key -- each route and its tokens -- and the bar sits
      thin at the foot. "Nothing charged" is the headline's to say; sessions
      from before tokens were recorded are in the tile's hover text. */
-  const routes = Object.entries(split.tokens).filter(([, t]) => (t.subscription || 0) + (t.charged || 0));
+  const routes = Object.entries(split.tokens).filter(([, t]) => routeTokens(t));
   const key = routes.map(([name, t], i) => `<span class="db-key"><i class="${
-    t.charged && !t.subscription ? 'chg' : i % 2 ? 'sub-b' : 'sub-a'}"></i>${esc(routeWord(name))} ${
-    tokenCount((t.subscription || 0) + (t.charged || 0))}</span>`);
+    t.charged && !t.subscription ? 'chg' : t.local && !t.subscription ? 'loc'
+      : i % 2 ? 'sub-b' : 'sub-a'}"></i>${esc(routeWord(name))} ${
+    tokenCount(routeTokens(t))}</span>`);
   if (split.charged) key.push(`<span class="db-key"><i class="chg"></i>${tokenCount(split.charged)} charged</span>`);
   const segs = [];
   routes.forEach(([name, t], i) => {
     if (t.subscription) segs.push([i % 2 ? 'sub-b' : 'sub-a', name, t.subscription]);
+    if (t.local) segs.push(['loc', name, t.local]);
     if (t.charged) segs.push(['chg', name, t.charged]);
   });
   const bar = split.total ? `<span class="db-bar" role="img" aria-label="${split.pct}% on subscriptions">${
@@ -508,15 +520,21 @@ function costTile(ov) {
      that means. Not hover text, which nobody finds. */
   const open = !!state.costInfo;
   const rows = routes.map(([name, t]) => `<tr><td>${esc(routeWord(name))}</td>
-      <td>${tokenCount(t.subscription || 0)}</td><td>${tokenCount(t.charged || 0)}</td></tr>`).join('');
+      <td>${tokenCount(t.subscription || 0)}</td>${split.local ? `<td>${tokenCount(t.local || 0)}</td>` : ''}
+      <td>${tokenCount(t.charged || 0)}</td></tr>`).join('');
   const panel = !open ? '' : `<div class="db-pop" role="dialog" aria-label="How the work was paid for">
       <p class="db-pop-h">How the work was paid for</p>
-      ${routes.length ? `<table class="db-pop-t"><tr><th>Route</th><th>On a subscription</th><th>Charged</th></tr>
-        ${rows}<tr class="tot"><td>All</td><td>${tokenCount(split.sub)}</td><td>${tokenCount(split.charged)}</td></tr></table>`
+      ${routes.length ? `<table class="db-pop-t"><tr><th>Route</th><th>On a subscription</th>${
+          split.local ? '<th>Your own model</th>' : ''}<th>Charged</th></tr>
+        ${rows}<tr class="tot"><td>All</td><td>${tokenCount(split.sub)}</td>${
+          split.local ? `<td>${tokenCount(split.local)}</td>` : ''}<td>${tokenCount(split.charged)}</td></tr></table>`
         : '<p>No tokens recorded yet.</p>'}
       <p>${charged ? `${money(charged)} was charged by routes billed per token.`
+        : split.local && !split.sub ? 'Nothing was charged: every token ran on a model server of your own.'
+        : split.local ? 'Nothing was charged: every token went through a subscription plan or a model server of your own.'
         : 'Nothing was charged: every token went through a subscription plan.'}
-        A subscription bills nothing per call, so no dollar figure is shown for it.</p>
+        A subscription bills nothing per call, and a model of your own bills nothing at all,
+        so no dollar figure is shown for either.</p>
     </div>`;
   return `<div class="db-tile db-still db-cost"><span class="lamp ${charged ? 'warn' : ''}"></span>
       <span class="db-area">Cost</span>

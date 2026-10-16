@@ -469,17 +469,29 @@ def test_the_accounts_station_offers_a_key_field_to_a_route_that_takes_one():
 
 # ---------------------------------------------------------------- a local server
 
-def _model_server(*, tools=True, n_ctx=131072):
-    """A stand-in for a model server: its model list, its context, a strict
-    schema answered, and a tool call made -- or refused, as a server started
-    without native tool calling refuses one."""
+#: A chat template that reads both thinking variables, and the effort values
+#: it accepts -- any other raises, as the measured one did.
+_THINKING_TEMPLATE = ("{%- if enable_thinking is defined and enable_thinking is false %}"
+                      "{%- set e = reasoning_effort|default('xhigh') %}")
+
+
+def _model_server(*, tools=True, n_ctx=131072, template=_THINKING_TEMPLATE,
+                  accepts=("low", "medium", "high")):
+    """A stand-in for a model server: its model list, its context and chat
+    template, a strict schema answered, and a tool call made -- or refused, as
+    a server started without native tool calling refuses one. An effort its
+    template does not accept fails the call with a 500."""
     def serve(req):
         ok = {"content-type": "application/json"}
         if req["path"] == "/props":
-            return 200, ok, [json.dumps({"default_generation_settings": {"n_ctx": n_ctx}}).encode()]
+            return 200, ok, [json.dumps({"default_generation_settings": {"n_ctx": n_ctx},
+                                         "chat_template": template}).encode()]
         if req["path"].endswith("/models"):
             return 200, ok, [json.dumps({"data": [{"id": "local-model"}]}).encode()]
         body = json.loads(req["body"] or b"{}")
+        effort = (body.get("chat_template_kwargs") or {}).get("reasoning_effort")
+        if effort is not None and effort not in accepts:
+            return 500, ok, [b'{"error": {"message": "Unexpected reasoning effort"}}']
         if body.get("tools"):
             if not tools:
                 return 500, ok, [b'{"error": {"message": "tools param requires a flag"}}']
@@ -523,7 +535,7 @@ def test_connect_checks_a_server_from_both_sides_and_says_what_to_do(editable_co
 
     good, seen = asyncio.run(scenario())
     assert [c["id"] for c in good["checks"]] == ["host", "sandbox", "models", "schema", "tools",
-                                                 "context"]
+                                                 "context", "thinking"]
     assert all(c["ok"] for c in good["checks"]), good["checks"]
     assert good["ok"] and good["can_add"] and good["models"] == ["local-model"]
     assert good["context_window"] == 131072
@@ -541,6 +553,12 @@ def test_connect_checks_a_server_from_both_sides_and_says_what_to_do(editable_co
     assert "refused before they are sent" in rows["context"]["detail"]
     assert rows["context"]["remedy"]["command"] == command
     assert not bad["ok"] and bad["can_add"], "a warning is the person's to weigh"
+    assert good["effort"] == {
+        "none": {"chat_template_kwargs": {"enable_thinking": False}},
+        "low": {"chat_template_kwargs": {"reasoning_effort": "low"}},
+        "medium": {"chat_template_kwargs": {"reasoning_effort": "medium"}},
+        "high": {"chat_template_kwargs": {"reasoning_effort": "high"}}}
+    assert "off, low, medium, high" in {c["id"]: c for c in good["checks"]}["thinking"]["detail"]
 
 
 def test_a_server_that_does_not_answer_stops_the_checks_that_need_it(editable_config):
@@ -560,7 +578,7 @@ def test_adding_a_server_writes_its_route_and_its_key_apart(editable_config, mon
     """Add server asks the server again rather than trusting the client, writes
     the route, keeps a key in the credentials file, and checks it so it shows as
     answering. A bad address is refused before anything is sent."""
-    from factory import gateway, routes
+    from factory import commissioning, gateway, routes
     from factory.config import load_config, read_credential
 
     config, tmp_path = editable_config
@@ -576,8 +594,12 @@ def test_adding_a_server_writes_its_route_and_its_key_apart(editable_config, mon
         route.context_window = route.context_window or 65536
         return route.context_window
 
+    async def thinking(cfg, base, key, model):
+        return {"none": {"chat_template_kwargs": {"enable_thinking": False}}}, "off"
+
     monkeypatch.setattr(routes, "list_models", listing)
     monkeypatch.setattr(gateway, "ensure_context_window", window)
+    monkeypatch.setattr(commissioning, "probe_thinking", thinking)
     client = open_client(config, tmp_path)
 
     refused = client.post("/api/local-servers", json={"base_url": "localhost:8080", "name": "x"})
@@ -591,6 +613,11 @@ def test_adding_a_server_writes_its_route_and_its_key_apart(editable_config, mon
     assert ("http://192.168.1.50:8080/v1", "server-secret") in asked
     route = load_config(tmp_path / "factory.yaml").routes["studio-mac"]
     assert route.context_window == 65536 and route.models == ["local-model"]
+    assert route.effort_for("none").body == {"chat_template_kwargs": {"enable_thinking": False}}
+    assert route.effort_for("low") is None, "only what the server was found to take"
+    import yaml as _yaml
+    block = _yaml.safe_load((tmp_path / "factory.yaml").read_text())["routes"]["studio-mac"]
+    assert "thinking_probe" not in block, "how to ask is the template's, not the route's"
     assert "server-secret" not in (tmp_path / "factory.yaml").read_text()
     assert read_credential(config, route.key_env) == "server-secret"
     setup = _settled(client)
@@ -609,3 +636,250 @@ def test_setup_offers_a_local_server_with_the_crew_page_s_form():
     assert "Studio Mac" in accounts and "192.168.1.50" in accounts
     crew = _setup_screen(_payload(local_servers=on, connected=["default", "studio-mac"]), at=3)
     assert "Studio Mac" in crew["html"], "a connected server can staff a side"
+
+
+def test_a_model_file_is_named_by_its_file_not_its_path():
+    """A local server names its model by the file it loaded. Every screen shows
+    the file's own name -- no directories, no extension, no shard suffix --
+    and keeps the whole id for what is written and for the hover text."""
+    import shutil
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    ids = ["/models/x/UD-IQ4_XS/Big-Model-UD-IQ4_XS-00001-of-00003.gguf",
+           "vendor/model-name", "sonnet", "small.gguf"]
+    out = subprocess.run(["node", "-e", _model_name_js()
+                          + f"console.log(JSON.stringify({json.dumps(ids)}.map(modelName)));"],
+                         capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    assert json.loads(out.stdout) == ["Big-Model-UD-IQ4_XS", "vendor/model-name", "sonnet", "small"]
+    app = app_js()
+    for where in ("${esc(modelName(m))}", "esc(modelName(r.model))", "const model = modelName(id);",
+                  "modelName(role.model)", "esc(modelName(r.id) || 'its own default model')"):
+        assert where in app, f"a screen still shows the raw id: {where}"
+
+
+def test_an_agent_can_be_pinned_to_a_model_on_another_route():
+    """The pin bar opens the model picker, on the selection's own side, with
+    every route on offer; choosing a model on another route pins it there, and
+    the chip says where it went. The effort carried is the level's on the route
+    pinned to, and only one that route can say."""
+    import shutil
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    data = {"roles": [{"name": "worker", "team": "build", "level": "standard"},
+                      {"name": "oracle", "team": "check", "level": "deep"}]}
+    routes = [{"name": "cloud", "account_label": "Cloud plan", "models": ["big", "small"],
+               "efforts": ["high"]},
+              {"name": "studio", "account_label": "Studio Mac", "kind": "api", "models": ["coder"],
+               "efforts": []},
+              {"name": "off", "enabled": False, "models": ["never"]}]
+    draft = {"staffing": {"build": "cloud", "check": "cloud", "neither": "build"},
+             "levels": {"cloud": {"standard": {"model": "big", "reasoning_effort": "high"}},
+                        "studio": {"standard": {"model": "coder", "reasoning_effort": "high"}}},
+             "roles": {"worker": {"level": "standard", "side": "", "pin": None},
+                       "oracle": {"level": "deep", "side": "", "pin": None}}}
+    script = (
+        "const esc = (s) => String(s ?? '').replace(/[&<>\"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));\n"
+        "let rendered = 0; const render = () => { rendered += 1; };\n"
+        "let opened = null; const openModelPicker = (anchor, opts) => { opened = opts; };\n"
+        f"const state = {{ ac: {{ data: {json.dumps(data)}, routes: {json.dumps(routes)}, "
+        f"draft: {json.dumps(draft)}, sel: ['worker'], preset: null }} }};\n"
+        + _model_name_js() + (ROOT / "console" / "app" / "agent-config.js").read_text()
+        + "\nconst bar = acSelbar();\n"
+        "agentConfigClick({ dataset: { ac: 'pin-pick' } }, {});\n"
+        "const offered = { route: opened.route, routes: opened.routes.map((r) => r.name), roles: opened.roles,"
+        " used: opened.used };\n"
+        "opened.onPick('studio', 'coder');\n"
+        "console.log(JSON.stringify({ bar, offered, pin: state.ac.draft.roles.worker.pin,"
+        " resolved: acResolve('worker'), chip: acChip('worker'), oracle: acResolve('oracle') }));\n")
+    out = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    got = json.loads(out.stdout)
+
+    assert 'data-ac="pin-pick"' in got["bar"] and "<select id=\"ac-pin\"" not in got["bar"]
+    assert got["offered"]["route"] == "cloud", "it opens on the agent's own side"
+    assert got["offered"]["routes"] == ["cloud", "studio"], "a switched-off route is not offered"
+    assert got["offered"]["roles"] == ["worker"], "what the agent needs decides the filters"
+    assert {"route": "studio", "model": "coder", "why": "standard level on Studio Mac"} in got["offered"]["used"]
+    assert got["pin"] == {"route": "studio", "model": "coder", "reasoning_effort": ""}, \
+        "the level's effort there is one the route cannot say, so none is carried"
+    assert got["resolved"]["route"] == "studio" and got["resolved"]["pinned"]
+    assert "pinned · Studio Mac · coder" in got["chip"]
+    assert got["oracle"]["route"] == "cloud", "the rest of the crew stays where its side is"
+
+
+def test_the_picker_filters_by_what_the_agents_need_and_never_by_what_it_does_not_know():
+    """Tool calls for a harness agent, a schema for all, room for the largest
+    call -- from the catalogue's `needs`. A fact a route does not report is
+    unknown, and an unknown never drops a model."""
+    import shutil
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    rows = [{"id": "v/tooled", "name": "Tooled", "vendor": "v", "context": 200000, "tools": True,
+             "structured": True, "thinking": True},
+            {"id": "v/no-tools", "name": "Plain", "vendor": "v", "context": 200000, "tools": False,
+             "structured": True, "thinking": False},
+            {"id": "v/small", "name": "Small", "vendor": "v", "context": 8000, "tools": True,
+             "structured": True, "thinking": False},
+            {"id": "listed", "name": "", "vendor": "", "context": None, "tools": None,
+             "structured": None, "thinking": None}]
+    needs = {"worker": {"tools": True, "structured": True, "context": 90000},
+             "reader": {"tools": False, "structured": True, "context": 30000}}
+    script = (
+        "const esc = (s) => String(s ?? '');\n" + _model_name_js()
+        + (ROOT / "console" / "app" / "model-picker.js").read_text()
+        + f"\nmpCatalogs.r = {{ models: {json.dumps(rows)}, needs: {json.dumps(needs)} }};\n"
+        "const ids = (f, q = '') => { mp = { route: 'r', q, filters: f, needs: mpNeeds(mpCatalogs.r, ['worker']) };"
+        " return mpVisible().map((r) => r.id); };\n"
+        "console.log(JSON.stringify({\n"
+        "  worker: mpNeeds(mpCatalogs.r, ['worker']), reader: mpNeeds(mpCatalogs.r, ['reader']),\n"
+        "  tools: ids({ tools: true, structured: true }), fits: ids({ fits: true }),\n"
+        "  thinking: ids({ thinking: true }), search: ids({}, 'plain'), words: ids({}, 'v tooled'),"
+        " all: ids({}) }));\n")
+    out = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    got = json.loads(out.stdout)
+    assert got["worker"] == {"tools": True, "structured": True, "context": 90000}
+    assert got["reader"]["tools"] is False
+    assert got["tools"] == ["v/tooled", "v/small", "listed"], "no tools is out; unknown stays"
+    assert got["fits"] == ["v/tooled", "v/no-tools", "listed"], "too small is out; unknown stays"
+    assert got["thinking"] == ["v/tooled", "listed"]
+    assert got["search"] == ["v/no-tools"], "searched by name as well as id"
+    assert got["words"] == ["v/tooled"], "each word is matched on its own, across the id's parts"
+    assert len(got["all"]) == 4
+
+def test_a_local_server_is_not_offered_as_a_subscription():
+    """A model server of one's own bills nothing and has no plan, so the side
+    picker says so, rather than filing it under whichever of the other two it
+    is not."""
+    import shutil
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    draft = {"staffing": {"build": "cloud", "check": "cloud", "neither": "build"},
+             "levels": {}, "roles": {}}
+    script = (
+        "const esc = (s) => String(s ?? '');\n"
+        f"const state = {{ ac: {{ draft: {json.dumps(draft)}, routes: [] }} }};\n"
+        + _model_name_js() + (ROOT / "console" / "app" / "agent-config.js").read_text()
+        + "\nconsole.log(JSON.stringify(['local', 'key', 'subscription'].map((k) => acProvButton("
+        "'build', { name: k, account_kind: k, harness_label: 'OpenHands' }))));\n")
+    out = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    local, key, plan = json.loads(out.stdout)
+    assert "local · no billing" in local and "subscription" not in local
+    assert "billed per token" in key and "subscription" in plan
+
+
+def test_a_pinned_agent_s_thinking_is_set_beside_its_pin():
+    """The thinking menu offers what every route in the selection can take,
+    says so when a route takes none, and choosing one holds each agent to the
+    model it runs now at that effort."""
+    import shutil
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    data = {"roles": [{"name": "worker", "team": "build", "level": "standard"},
+                      {"name": "integrator", "team": "build", "level": "standard"}]}
+    routes = [{"name": "cloud", "account_label": "Cloud plan", "models": ["big"],
+               "efforts": ["low", "medium", "high"]},
+              {"name": "studio", "account_label": "Studio Mac", "models": ["coder"], "efforts": []}]
+    draft = {"staffing": {"build": "cloud", "check": "cloud", "neither": "build"},
+             "levels": {"cloud": {"standard": {"model": "big", "reasoning_effort": "high"}}},
+             "roles": {"worker": {"level": "standard", "side": "", "pin": None},
+                       "integrator": {"level": "standard", "side": "",
+                                      "pin": {"route": "studio", "model": "coder",
+                                              "reasoning_effort": ""}}}}
+    script = (
+        "const esc = (s) => String(s ?? '').replace(/[&<>\"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));\n"
+        "const render = () => {};\n"
+        f"const state = {{ ac: {{ data: {json.dumps(data)}, routes: {json.dumps(routes)}, "
+        f"draft: {json.dumps(draft)}, sel: ['worker'], preset: null }} }};\n"
+        + _model_name_js() + (ROOT / "console" / "app" / "agent-config.js").read_text()
+        + "\nconst one = acEffortChoice(['worker']);\n"
+        "const local = acEffortChoice(['integrator']);\n"
+        "agentConfigChange({ id: 'ac-effort', value: 'mixed', dataset: {} });\n"
+        "const untouched = state.ac.draft.roles.worker.pin;\n"
+        "agentConfigChange({ id: 'ac-effort', value: 'low', dataset: {} });\n"
+        "console.log(JSON.stringify({ one, local, untouched, pin: state.ac.draft.roles.worker.pin }));\n")
+    out = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    got = json.loads(out.stdout)
+
+    assert '<option value="high" selected>high</option>' in got["one"], "shows what it runs now"
+    assert 'value="none"' not in got["one"], "only the efforts the route can take"
+    assert "Studio Mac takes no thinking setting" in got["local"] and "<select" not in got["local"]
+    assert got["untouched"] is None, "choosing the mixed marker changes nothing"
+    assert got["pin"] == {"route": "cloud", "model": "big", "reasoning_effort": "low"}
+
+
+def test_connect_keeps_only_the_thinking_levels_a_server_takes(editable_config):
+    """A level is kept when the template reads its variable and a request
+    carrying it is answered. One the template ignores would succeed and change
+    nothing; one it does not accept would fail every call made with it."""
+    from factory import commissioning
+
+    config, _ = editable_config
+
+    async def found(**server):
+        async with _upstream(_model_server(**server)) as (base, seen):
+            got = await commissioning.probe_thinking(config, base, "", "local-model")
+            return got, [r for r in seen if r["method"] == "POST"]
+
+    (picky, _), _ = asyncio.run(found(accepts=("low", "high")))
+    assert sorted(picky) == ["high", "low", "none"], "medium failed the call, so it is not offered"
+    (only_off, _), asked = asyncio.run(found(template="{% if enable_thinking %}{% endif %}"))
+    assert list(only_off) == ["none"] and len(asked) == 1, \
+        "a variable the template never reads is not even tried"
+    (nothing, said), asked = asyncio.run(found(template="{{ messages }}"))
+    assert nothing == {} and not asked and "model's own default" in said
+
+
+def test_a_route_s_models_are_read_from_its_server_kept_for_an_hour_and_said_as_rows(
+        editable_config, monkeypatch, open_client):
+    """An API route with no list of its own is asked at `/models` -- once, then
+    kept -- and each entry becomes a row with what the server says of it. A
+    fact it does not say is None, not False. A route with a list in its config
+    is that list. The endpoint adds what each agent needs of a model."""
+    from factory import catalog
+    from factory.config import RouteConfig
+
+    listing = {"data": [
+        {"id": "vendor/big", "name": "Vendor: Big", "context_length": 200000,
+         "pricing": {"prompt": "0.000003", "completion": "0.000015"},
+         "supported_parameters": ["tools", "response_format", "reasoning"]},
+        {"id": "vendor/plain", "name": "Vendor: Plain", "context_length": 32000,
+         "pricing": {"prompt": "0", "completion": "0"}, "supported_parameters": ["temperature"]},
+        {"id": "bare"}]}
+
+    async def scenario():
+        async with _upstream(lambda req: (200, {"content-type": "application/json"},
+                                          [json.dumps(listing).encode()])) as (base, seen):
+            route = RouteConfig(name="agg", kind="api", base_url=base, auth="none",
+                                dialect="openrouter")
+            catalog.forget()
+            first = await catalog.catalog(config, route)
+            again = await catalog.catalog(config, route)
+            fresh = await catalog.catalog(config, route, refresh=True)
+            return first, again, fresh, len(seen)
+
+    config, tmp_path = editable_config
+    first, again, fresh, asked = asyncio.run(scenario())
+    assert asked == 2, "asked once, kept, and asked again only on refresh"
+    assert first == again and first["source"] == "server" and not first["problem"]
+    bare, big, plain = first["models"]
+    assert big == {"id": "vendor/big", "name": "Vendor: Big", "vendor": "vendor", "context": 200000,
+                   "price_in": 3.0, "price_out": 15.0, "tools": True, "structured": True,
+                   "thinking": True}
+    assert (plain["tools"], plain["structured"], plain["thinking"]) == (False, False, False)
+    assert (bare["tools"], bare["context"], bare["price_in"]) == (None, None, None), \
+        "what the server does not say is unknown, not absent"
+
+    listed = asyncio.run(catalog.catalog(config, config.route("claude-code")))
+    assert listed["source"] == "config"
+    assert [r["id"] for r in listed["models"]] == list(config.route("claude-code").models)
+
+    _stub_machine(monkeypatch)
+    client = open_client(config, tmp_path)
+    body = client.get("/api/routes/claude-code/catalog").json()
+    assert body["needs"]["worker"]["tools"] and not body["needs"]["reader"]["tools"]
+    assert body["needs"]["reader"]["structured"] and body["needs"]["worker"]["context"] > 0
+    assert client.get("/api/routes/no-such/catalog").status_code == 404

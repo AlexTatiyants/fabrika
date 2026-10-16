@@ -162,8 +162,13 @@ async def ensure_context_window(route: Any, base_url: str = "", timeout_s: float
     url = f"{parts.scheme}://{parts.netloc}/{route.context_window_path.lstrip('/')}"
     if url in _unanswered and not retry:
         return 0
+    # With the route's key: a server started with one wants it on `/props`
+    # too, and without it the window reads as unknown on every call.
+    key = getattr(route, "api_key", "") or ""
     try:
-        async with httpx.AsyncClient(timeout=timeout_s) as client:
+        async with httpx.AsyncClient(
+                timeout=timeout_s,
+                headers={"Authorization": f"Bearer {key}"} if key else {}) as client:
             answer = await client.get(url)
         value = int(_dig(answer.json(), route.context_window_key) or 0)
     except (httpx.HTTPError, ValueError, TypeError):

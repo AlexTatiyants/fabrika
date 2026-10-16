@@ -300,6 +300,39 @@ Both deployments are the same configuration with a different URL:
 `http://192.168.1.50:8080/v1` when it runs on another. The gateway is on the
 host, so a LAN address or a literal IP is no longer a problem.
 
+### Thinking levels on a local server (built)
+
+A role's `reasoning_effort` reaches a local server through the server's own
+chat template, because nothing else did. Measured on one, the same puzzle, two
+runs per setting:
+
+- `chat_template_kwargs: {enable_thinking: false}` removed the model's
+  thinking every time. Through Fabrika's own client afterwards: 4 tokens and
+  0.7 s with thinking off, 62 tokens with it on.
+- The template's `reasoning_effort` (low, medium, its own top level) made no
+  difference that two runs could tell from run-to-run variation.
+- A value the template does not accept -- `none` -- failed the call with a
+  500, so the four levels cannot simply be passed through.
+- Top-level `reasoning_effort` and the aggregator's `reasoning` reached
+  nothing; unknown fields were ignored, not refused.
+
+So a route says each level as fields to merge into the request body
+(`effort: {none: {body: ...}}`), the way a CLI route says it as flags.
+Fabrika's own calls merge them in `LLM._payload`; an OpenHands session gets
+them through `LLM_EXTRA_BODY`, and is sent no top-level effort
+(`session_effort_env`). The gateway forwards the body as it is.
+
+Connect finds the map rather than guessing it. The `local_server` block's
+`thinking_probe` lists each level's fields and the template variable it
+depends on; a level is kept when the server's template (from `/props`) names
+that variable *and* a one-token request carrying it is answered. What is kept
+is written to the route on Add, and the crew screen offers exactly those
+levels -- or says the server takes none.
+
+The same change fixed the aggregator's sessions: the OpenHands client sends
+`reasoning_effort: high` by default, so every session on OpenRouter ran at
+high whatever its agent's level said. It is now sent the agent's level.
+
 ## Per harness
 
 | Route | Credential today | Through the gateway | Unknowns |

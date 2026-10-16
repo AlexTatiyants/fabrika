@@ -1981,14 +1981,17 @@ def test_the_console_reads_every_call_cost_through_the_billed_check():
 
 
 def test_the_model_picker_names_the_route_on_every_option():
-    """A closed <select> shows only the selected option's text, and `opus-5`
-    alone cannot say whether it is the copy metered against a plan or the one
-    billed per token."""
+    """`opus-5` alone cannot say whether it is the copy metered against a plan
+    or the one billed per token. The picker is opened on one route at a time,
+    named at its head, and what it sets is said as model and route together."""
     source = app_js()
-    assert "} · via ${esc(r.label || r.name)}" in source
-    assert "<optgroup" in source
-    # And the configured value survives even when no route lists it.
-    assert 'label="Configured"' in source
+    assert '<select class="mp-route" aria-label="Provider">' in source
+    assert "`<span class=\"mp-one\">${esc(mpRouteLabel(routes[0]))}</span>`" in source
+    assert "${modelName(model) || 'route default'} · ${(routeState(route) || {}).label || route}" in source
+    # And nothing is chosen for you: there is no list whose first entry a save
+    # could write when the configured model is not on it -- the draft holds
+    # what is set until a model is picked.
+    assert "function modelOptions" not in source
 
 
 def test_the_crew_table_can_say_turns_instead_of_dollars():
@@ -2000,7 +2003,7 @@ def test_the_crew_table_can_say_turns_instead_of_dollars():
 
 def test_the_picker_offers_the_route_s_own_default():
     source = app_js()
-    assert "if (r.default_model_ok) models.unshift('');" in source
+    assert "const own = route.default_model_ok ? [{ id: '', name: 'whatever the tool is set to use' }] : [];" in source
     assert "its own default model" in source
 
 
@@ -3678,6 +3681,10 @@ def test_the_cost_tile_says_how_the_work_was_paid_for_not_a_dollar_figure():
                  "db-bar", "db-key", 'data-cost-info="1"', "How the work was paid for"):
         assert said in tile, said
     assert "notional" not in tile, "the tile adds up what work would have cost on an API"
+    # A model server of one's own is neither: its tokens are their own share.
+    for said in ("'All on your own models'", "'Nothing charged'", "['loc', name, t.local]",
+                 "<th>Your own model</th>"):
+        assert said in tile, said
     assert "costTile(ov)," in app and "overviewTile('Spend'" not in app
     row = app.split("function waitingRow(f, pid) {", 1)[1].split("\n}\n", 1)[0]
     assert "all on plans" in row and "notional" not in row
@@ -4261,7 +4268,7 @@ def _crew_js(body: str):
     script = ("const state = {};\n"
               "const esc = (s) => String(s ?? '').replace(/[&<>\"]/g, (c) => "
               "({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));\n"
-              + source + "\n" + body)
+              + _model_name_js() + source + "\n" + body)
     out = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
     assert out.returncode == 0, out.stderr
     return json.loads(out.stdout)
@@ -4278,17 +4285,13 @@ const server = {name: 'studio-mac', label: 'Studio Mac', account_label: 'Studio 
 const idle = accountCard(server);
 state.roles = {roles: [{name: 'worker', route: 'studio-mac', enabled: true}]};
 const used = accountCard(server);
-state.routes = {routes: [server], default: 'default'};
-const options = modelOptions({name: 'worker'}, {route: 'default', model: 'x'});
-console.log(JSON.stringify({idle, used, options, tile: localServerTile()}));
+console.log(JSON.stringify({idle, used, tile: localServerTile()}));
 """)
     assert '<span class="hver mono">local</span>' in got["idle"]
     assert "no billing" in got["idle"] and "192.168.1.50:8080/v1" in got["idle"]
     assert "api key" not in got["idle"] and "billed per token" not in got["idle"]
     assert "not assigned to any agent" in got["idle"]
     assert "used by <b>1 agent</b>" in got["used"]
-    assert 'value="studio-mac|local-model"' in got["options"], \
-        "its models are offered on Agent configuration"
     assert "Add a local server" in got["tile"] and 'data-ls="open"' in got["tile"]
 
 

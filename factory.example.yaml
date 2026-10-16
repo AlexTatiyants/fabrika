@@ -655,6 +655,23 @@ local_server:
   # like this. `--jinja` turns on native tool calling. The largest prompts run
   # to about 30,000 tokens and a role asks for up to its `max_tokens` back
   # (48,000 on some), so `-c` has room for both.
+  # How Connect learns which thinking levels a server takes, so the crew
+  # screen offers exactly those. Fields at the top of a request reached no
+  # model on the server this was measured on; the chat template's own
+  # variables did, through `chat_template_kwargs` -- and a value the template
+  # does not accept failed the call with a 500. So a level is kept only when
+  # the server's template names the variable it uses (`needs`) *and* a
+  # one-token request carrying it is answered. What is kept is written to the
+  # route as its `effort:` map; a server that keeps none takes no thinking
+  # setting, and the crew screen says so.
+  thinking_probe:
+    template_path: /props
+    template_key: chat_template
+    levels:
+      none: {needs: enable_thinking, body: {chat_template_kwargs: {enable_thinking: false}}}
+      low: {needs: reasoning_effort, body: {chat_template_kwargs: {reasoning_effort: low}}}
+      medium: {needs: reasoning_effort, body: {chat_template_kwargs: {reasoning_effort: medium}}}
+      high: {needs: reasoning_effort, body: {chat_template_kwargs: {reasoning_effort: high}}}
   setup_command: llama-server --jinja -c 98304 --host 0.0.0.0 -m your-model.gguf
   setup_note: >-
     Restart the server with native tool calling on (--jinja) and a context

@@ -479,6 +479,17 @@ def _drop_empty_pairs(argv: list[str], template: list[str]) -> list[str]:
     return out
 
 
+def merge_body(into: dict[str, Any], extra: dict[str, Any]) -> dict[str, Any]:
+    """`extra`'s fields laid into a request body, nested objects merged rather
+    than replaced, so `chat_template_kwargs` from two places both survive."""
+    for key, value in extra.items():
+        if isinstance(value, dict) and isinstance(into.get(key), dict):
+            merge_body(into[key], value)
+        else:
+            into[key] = value
+    return into
+
+
 def strict_schema(model: Type[BaseModel]) -> dict[str, Any]:
     """Pydantic's JSON schema, hardened into the strict structured-output subset."""
     schema = model.model_json_schema()
@@ -690,6 +701,12 @@ class LLM:
                 "order": list(role.providers),
                 "allow_fallbacks": role.allow_fallbacks,
             }
+        # How this route is told the role's thinking level, when it says one
+        # in the request body: a local server's chat template, typically.
+        # Merged rather than set, so a level's fields sit beside the rest.
+        said = route.effort_for(role.reasoning_effort) if route is not None else None
+        if said is not None and said.body:
+            merge_body(payload, said.body)
         if schema is not None:
             payload["response_format"] = {
                 "type": "json_schema",

@@ -31,7 +31,8 @@ function teamOf(role) {
 /* `role` is the agent's name in config, which is what a click opens. The label
    is how it reads: `spec writer` is drawn with a space and configured as
    `spec_writer`, and a click keyed on the label opened nothing. */
-function diaNode(x, y, label, kind, model = '', role = label.replace(/ /g, '_')) {
+function diaNode(x, y, label, kind, id = '', role = label.replace(/ /g, '_')) {
+  const model = modelName(id);
   const w = diaWidth(label, model);
   const human = kind === 'gate';
   const yours = kind === 'panel';
@@ -55,7 +56,8 @@ function diaNode(x, y, label, kind, model = '', role = label.replace(/ /g, '_'))
       <text x="${x + w / 2}" y="${y + (model ? 15 : NODE_H / 2 + 4)}" text-anchor="middle"
         font-family="var(--mono)" font-size="10" fill="${color}">${esc(label)}</text>
       ${model ? `<text x="${x + w / 2}" y="${y + 28}" text-anchor="middle"
-        font-family="var(--mono)" font-size="8" fill="var(--ink-3)">${esc(model)}</text>` : ''}
+        font-family="var(--mono)" font-size="8" fill="var(--ink-3)">${esc(model)}${
+          model !== id ? `<title>${esc(id)}</title>` : ''}</text>` : ''}
     </g>`,
   };
 }

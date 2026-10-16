@@ -180,7 +180,8 @@ function acProvButton(side, route) {
       <span class="ac-radio"></span>
       <span><span class="ac-pn">${esc(route.account_label || route.label || route.name)}</span>
         <span class="ac-pv">via ${esc(route.harness_label || route.label || route.name)} · ${
-          esc(route.account_kind === 'key' ? 'billed per token' : 'subscription')}</span></span>
+          esc(route.account_kind === 'key' ? 'billed per token'
+            : route.account_kind === 'local' ? 'local · no billing' : 'subscription')}</span></span>
       <span class="ac-pstate">${off ? 'switched off' : ''}</span>
     </button>`;
 }
@@ -294,16 +295,14 @@ function acLevelsTable() {
         const cur = (d.levels[r] || {})[lv] || { model: '', reasoning_effort: '' };
         const pre = (presets[r] || {})[lv];
         const changed = pre && (pre.model !== cur.model || (pre.reasoning_effort || '') !== (cur.reasoning_effort || ''));
-        const models = [...new Set([...(acRoute(r).models || []), cur.model].filter(Boolean))];
         const n = Object.keys(d.roles).filter((x) => !d.roles[x].pin && d.roles[x].level === lv
           && acRouteOfSide(acSideOf(x)) === r).length;
         const was = acLevelWas(r, lv);
         return `<td class="${used.includes(r) ? '' : 'ac-unused'} ${was ? 'ac-changed' : ''}"><div class="ac-lv">
-          <select data-ac-route="${esc(r)}" data-ac-level="${lv}" data-ac-key="model"
-            aria-label="${esc(acRouteLabel(r))} ${name} model">
-            ${cur.model ? '' : '<option value="">— choose —</option>'}
-            ${models.map((m) => `<option ${m === cur.model ? 'selected' : ''}>${esc(m)}</option>`).join('')}
-          </select>
+          <button type="button" class="ac-pick" data-ac="level-pick" data-route="${esc(r)}"
+            data-level="${lv}" aria-haspopup="dialog" title="${esc(cur.model || '')}"
+            aria-label="${esc(acRouteLabel(r))} ${name} model: ${esc(cur.model || 'none chosen')}">${
+            esc(modelName(cur.model) || '— choose —')}</button>
           <select data-ac-route="${esc(r)}" data-ac-level="${lv}" data-ac-key="reasoning_effort"
             aria-label="${esc(acRouteLabel(r))} ${name} effort">
             ${AC_EFFORTS.map((e) => `<option value="${e}" ${e === (cur.reasoning_effort || '') ? 'selected' : ''}>${
@@ -331,7 +330,8 @@ function acChip(name) {
   return `<button type="button" class="ac-chip ${role.team} ${sel ? 'sel' : ''} ${was ? 'changed' : ''} ${role.enabled ? '' : 'off'}"
       draggable="true" data-ac="chip" data-name="${esc(name)}" aria-pressed="${sel}"
       title="${esc(name)}: ${esc(res.model || 'no model')}${res.effort ? ' · ' + esc(res.effort) : ''}${role.enabled ? '' : ' (switched off)'}">
-      ${esc(name)}${want.pin ? `<span class="ac-pin">pinned · ${esc(want.pin.model)}${
+      ${esc(name)}${want.pin ? `<span class="ac-pin">pinned · ${
+        want.pin.route !== acRouteOfSide(acSideOf(name)) ? esc(acRouteLabel(want.pin.route)) + ' · ' : ''}${esc(modelName(want.pin.model))}${
         want.pin.reasoning_effort ? ' · ' + esc(want.pin.reasoning_effort) : ''}</span>` : ''}${
         role.team === 'neither' && want.side ? '<span class="ac-moved">moved here</span>' : ''}${
         was ? `<span class="ac-was">was ${esc(was)}</span>` : ''}
@@ -356,7 +356,7 @@ function acBoard() {
       const levelWas = acLevelWas(route, lv);
       const here = names.filter((n) => acSideOf(n) === k && d.roles[n].level === lv);
       html += `<div class="ac-cell" data-ac-side="${k}" data-ac-level="${lv}" data-label="${sname} · ${name}">
-        <div class="ac-res ${k} ${levelWas ? 'changed' : ''}"><b>${esc(choice.model || 'no model')}</b>${
+        <div class="ac-res ${k} ${levelWas ? 'changed' : ''}"><b title="${esc(choice.model || '')}">${esc(modelName(choice.model) || 'no model')}</b>${
           choice.reasoning_effort ? ` · ${esc(choice.reasoning_effort)}` : ''}${
           levelWas ? `<span class="ac-was">was ${esc(levelWas)}</span>` : ''}</div>
         <div class="ac-chips">${here.length ? here.map(acChip).join('') : '<span class="ac-empty">nobody</span>'}</div>
@@ -366,12 +366,74 @@ function acBoard() {
   return `<div class="ac-board">${html}</div>`;
 }
 
+/* Every model the crew has already been given on each route, said as where it
+   is used: the picker lists them first, so a model chosen once is one click
+   away the next time. */
+function acUsedModels() {
+  const d = state.ac.draft;
+  const out = [];
+  const add = (route, model, why) => {
+    if (model && !out.some((u) => u.route === route && u.model === model)) out.push({ route, model, why });
+  };
+  Object.entries(d.levels || {}).forEach(([route, row]) => Object.entries(row || {}).forEach(([lv, c]) =>
+    add(route, c && c.model, `${lv} level on ${acRouteLabel(route)}`)));
+  Object.entries(d.roles || {}).forEach(([n, want]) => {
+    if (want.pin) add(want.pin.route, want.pin.model, `pinned for ${n}`);
+  });
+  return out;
+}
+
+/* Hold each selected agent to `model` on `route`. */
+function acPinTo(route, model) {
+  const ac = state.ac;
+  ac.preset = null;
+  ac.sel.forEach((n) => {
+    const res = acResolve(n);
+    // The effort goes with the agent's level on the route it is pinned to,
+    // when that route has one: an effort is a setting of one provider's
+    // models, and carrying another's across can name one it does not have.
+    const there = ((ac.draft.levels[route] || {})[ac.draft.roles[n].level]) || {};
+    const carried = route === res.route ? res.effort : (there.reasoning_effort || '');
+    // And only one the route can say: the side's effort is not the local
+    // server's, which takes none.
+    const effort = (acRoute(route).efforts || []).includes(carried) ? carried : '';
+    ac.draft.roles[n].pin = { route, model, reasoning_effort: effort };
+  });
+  render();
+}
+
+
+/* How hard the selected agents think, set beside the pin because it is part
+   of one: an agent given an effort its level does not say is held to its
+   model and that effort. Only the efforts that reach the model are offered --
+   every route the selection runs on has to take the one chosen -- and a route
+   that takes none says so, rather than offering a setting that does nothing. */
+function acEffortChoice(sel) {
+  const runs = sel.map((n) => acResolve(n));
+  const routes = [...new Set(runs.map((r) => r.route))];
+  const offered = routes.map((r) => acRoute(r).efforts || []);
+  const common = AC_EFFORTS.filter((e) => e && offered.every((o) => o.includes(e)));
+  if (!common.length) {
+    const none = routes.filter((r, i) => !offered[i].length).map(acRouteLabel);
+    return `<span class="ac-sl ac-note">${none.length
+      ? `${esc(none.join(', '))} takes no thinking setting`
+      : 'no thinking setting all of these take'}</span>`;
+  }
+  const now = new Set(runs.map((r) => r.effort || ''));
+  const current = now.size === 1 ? [...now][0] : null;
+  return `<span class="ac-sl">thinking</span>
+    <select id="ac-effort" aria-label="Thinking effort">
+      ${current === null ? '<option value="mixed" selected>— mixed —</option>' : ''}
+      <option value="" ${current === '' ? 'selected' : ''}>route default</option>
+      ${common.map((e) => `<option value="${e}" ${current === e ? 'selected' : ''}>${e}</option>`).join('')}
+    </select>`;
+}
+
 function acSelbar() {
   const sel = state.ac.sel;
   if (!sel.length) return '';
   const movable = sel.every((n) => acRole(n).team === 'neither');
   const pinned = sel.some((n) => state.ac.draft.roles[n].pin);
-  const route = sel.length === 1 ? acRouteOfSide(acSideOf(sel[0])) : '';
   return `<div class="ac-selbar">
     <span class="ac-count-sel">${sel.length} selected</span>
     <span class="ac-sl">level</span>
@@ -381,11 +443,10 @@ function acSelbar() {
     <span class="ac-seg">${AC_SIDES.map(([k, name]) => `<button type="button" data-ac="bulk-side"
         data-side="${k}" ${movable ? '' : 'disabled'}
         title="${movable ? '' : 'A builder stays a builder and a checker a checker. Only agents on neither side move.'}">${name}</button>`).join('')}</span>
-    ${route ? `<span class="ac-sl">pin to</span>
-      <select id="ac-pin" aria-label="Pin to a model">
-        <option value="">— model —</option>
-        ${(acRoute(route).models || []).map((m) => `<option>${esc(m)}</option>`).join('')}
-      </select>` : ''}
+    <span class="ac-sl">pin to</span>
+      <button type="button" class="btn btn-sm ac-pick" data-ac="pin-pick"
+        aria-haspopup="dialog">choose a model…</button>
+    ${acEffortChoice(sel)}
     ${pinned ? '<button type="button" class="btn btn-sm" data-ac="unpin">Unpin</button>' : ''}
     <span class="ac-grow"></span>
     <button type="button" class="btn btn-sm" data-ac="clear">Clear</button>
@@ -403,7 +464,7 @@ function acChanges() {
     rows.push(`<li><span class="mono">${esc(r.name)}</span><span>
       <span class="ac-from">${esc(r.model)}${was[2] ? ' · ' + esc(was[2]) : ''}</span>
       <span class="ac-arrow">→</span>
-      <span class="ac-to">${esc(now.model || 'no model')}${now.effort ? ' · ' + esc(now.effort) : ''}</span>
+      <span class="ac-to">${esc(modelName(now.model) || 'no model')}${now.effort ? ' · ' + esc(now.effort) : ''}</span>
       <span class="ac-why">${esc(why)}</span></span></li>`);
   });
   const dirty = acDirty();
@@ -529,7 +590,7 @@ function acSaved() {
   return acSavedCache.draft;
 }
 
-const acRun = (model, effort) => `${model || 'no model'}${effort ? ' · ' + effort : ''}`;
+const acRun = (model, effort) => `${modelName(model) || 'no model'}${effort ? ' · ' + effort : ''}`;
 
 /* What this agent runs now, if a write would change it; empty otherwise. */
 function acWas(name) {
@@ -617,6 +678,37 @@ function agentConfigClick(target, event) {
       break;
     }
     case 'save': return saveAgentConfig();
+    case 'pin-pick': {
+      const first = ac.sel[0];
+      openModelPicker(target, {
+        routes: ac.routes.filter((r) => acUsable(r.name)),
+        route: first ? (d.roles[first].pin || {}).route || acRouteOfSide(acSideOf(first)) : '',
+        roles: ac.sel,
+        used: acUsedModels(),
+        current: ac.sel.length === 1 ? { route: acResolve(first).route, model: acResolve(first).model } : null,
+        onPick: acPinTo,
+      });
+      return undefined;
+    }
+    case 'level-pick': {
+      const { route, level } = t;
+      openModelPicker(target, {
+        routes: [acRoute(route)],
+        route,
+        // The agents this level places on this route, for what they need.
+        roles: Object.keys(d.roles).filter((x) => !d.roles[x].pin && d.roles[x].level === level
+          && acRouteOfSide(acSideOf(x)) === route),
+        used: acUsedModels(),
+        current: { route, model: ((d.levels[route] || {})[level] || {}).model || '' },
+        onPick: (r, model) => {
+          ac.preset = null;
+          const row = d.levels[r] || (d.levels[r] = {});
+          row[level] = { model: '', reasoning_effort: '', ...(row[level] || {}), model };
+          render();
+        },
+      });
+      return undefined;
+    }
     default: return undefined;
   }
   render();
@@ -633,11 +725,11 @@ function agentConfigChange(target) {
     render();
     return true;
   }
-  if (target.id === 'ac-pin' && target.value) {
+  if (target.id === 'ac-effort' && target.value !== 'mixed') {
     ac.preset = null;
     ac.sel.forEach((n) => {
       const res = acResolve(n);
-      ac.draft.roles[n].pin = { route: res.route, model: target.value, reasoning_effort: res.effort };
+      ac.draft.roles[n].pin = { route: res.route, model: res.model, reasoning_effort: target.value };
     });
     render();
     return true;

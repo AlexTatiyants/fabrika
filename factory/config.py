@@ -193,10 +193,17 @@ class ContainerCredential(BaseModel):
 
 class RouteEffort(BaseModel):
     """How one route is told one reasoning level: arguments added to its
-    command, variables set in its environment, or both."""
+    command, variables set in its environment, fields added to the body of an
+    API route's requests, or any of them."""
 
     args: list[str] = Field(default_factory=list)
     env: dict[str, str] = Field(default_factory=dict)
+    # Merged into every request this route is sent at this level -- by this
+    # process for its own calls, and by the harness for a session's. How a
+    # local server's chat template is asked to think, for one: measured on one,
+    # the template's own variables are the only thing that reached the model,
+    # and a value the template does not accept failed the call outright.
+    body: dict[str, Any] = Field(default_factory=dict)
 
 
 class RouteConfig(BaseModel):
@@ -1213,6 +1220,12 @@ LEVEL_FIELDS: tuple[str, ...] = ("route", "model", "reasoning_effort")
 BUILDS: frozenset[str] = frozenset({
     "spec_writer", "architect", "worker", "integrator", "repairer", "simplifier"})
 CHECKS: frozenset[str] = frozenset({"spec_checker", "plan_checker", "oracle", "breaker"})
+#: The harness agents: the ones that write files and run them, in a session
+#: inside the unit's container (docs/agents.md, "Three kinds of agent"). Their
+#: model has to make tool calls; every agent's has to answer to a schema,
+#: because even a session's work is read back through one.
+SESSION_AGENTS: frozenset[str] = frozenset({
+    "worker", "integrator", "oracle", "breaker", "repairer", "simplifier"})
 
 
 def team_of(name: str, review: bool = False) -> str:
@@ -2585,6 +2598,9 @@ def write_route_enabled(config: Config, name: str, enabled: bool = True) -> Conf
 #: route's harness, where its context window is read, and how to start one.
 #: The console supplies the rest: a name, an address, an optional key.
 LOCAL_SERVER = "local_server"
+#: The key in that block saying how Connect finds the thinking settings a
+#: server takes. Read by Connect; never written into a route.
+THINKING_PROBE = "thinking_probe"
 
 
 def local_server_template(config: Config) -> dict[str, Any]:
@@ -2597,6 +2613,38 @@ def local_server_template(config: Config) -> dict[str, Any]:
         if isinstance(data.get(LOCAL_SERVER), dict):
             return dict(data[LOCAL_SERVER])
     return {}
+
+
+def thinking_probe(config: Config) -> dict[str, Any]:
+    """How to find which thinking levels a model server takes: from this file's
+    `local_server` block, or else the shipped example's, so a `factory.yaml`
+    written before the probe existed still gets it."""
+    probe = local_server_template(config).get(THINKING_PROBE)
+    if not isinstance(probe, dict):
+        example = example_config_path(config)
+        data = yaml.safe_load(example.read_text(encoding="utf-8")) if example else {}
+        probe = ((data or {}).get(LOCAL_SERVER) or {}).get(THINKING_PROBE)
+    return probe if isinstance(probe, dict) else {}
+
+
+def write_route_effort(config: Config, route_name: str,
+                       effort: dict[str, dict[str, Any]]) -> None:
+    """Set how a route is told each thinking level, as request-body fields.
+    An empty map removes it: the route then takes no thinking setting."""
+    if route_name not in config.routes:
+        raise ConfigError(f"no route named {route_name!r}")
+
+    def change(data):
+        block = data["routes"][route_name]
+        if effort:
+            block["effort"] = CommentedMap(
+                (level, _flow({"body": effort[level]})) for level in EFFORT_NAMES
+                if level in effort)
+        elif "effort" in block:
+            del block["effort"]
+
+    fresh = load_config(_rewrite(config, change))
+    config.routes[route_name] = fresh.routes[route_name]
 
 
 def local_route_name(name: str) -> str:
@@ -2612,7 +2660,8 @@ def local_key_env(route_name: str) -> str:
 
 
 def write_local_server(config: Config, *, name: str, base_url: str, models: list[str],
-                       context_window: int = 0, api_key: str = "") -> str:
+                       context_window: int = 0, api_key: str = "",
+                       effort: dict[str, dict[str, Any]] | None = None) -> str:
     """Add a model server of one's own as a route, and return its name.
 
     The block is the `local_server` template with this server's name, address,
@@ -2635,7 +2684,11 @@ def write_local_server(config: Config, *, name: str, base_url: str, models: list
     key_env = local_key_env(route_name) if key else ""
 
     def change(data):
-        block = CommentedMap(template)
+        block = CommentedMap((k, v) for k, v in template.items() if k != THINKING_PROBE)
+        if effort:
+            block["effort"] = CommentedMap(
+                (level, _flow({"body": effort[level]})) for level in EFFORT_NAMES
+                if level in effort)
         block.update(enabled=True, kind="api", label=name.strip(),
                      account_label=name.strip(), base_url=base_url,
                      auth="key" if key else "none", models=list(models))

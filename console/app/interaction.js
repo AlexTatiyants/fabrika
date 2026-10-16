@@ -106,6 +106,7 @@ async function dispatchMainClick(event) {
   if (target.dataset.closeSheet) return closeSheet();
   /* Reading becomes editing in place. No render: a rebuild here would throw
      away the very thing the press asked for, which is this field, focused. */
+  if (target.dataset.cfgOpen === 'model_route') return roleModelPick(target);
   if (target.dataset.cfgOpen) {
     const cell = target.closest('.cfg');
     const field = cell && cell.querySelector('.answer-field');

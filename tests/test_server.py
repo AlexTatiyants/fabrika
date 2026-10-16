@@ -612,13 +612,18 @@ def test_a_feature_s_spend_is_its_own_calls_not_the_console_s_running_total():
         # so a subscription's per-call figure stops reading as money charged.
         {"kind": "call", "payload": {"route": "claude-code", "cost_usd": 6.16}},
         {"kind": "call", "payload": {"route": "claude-code", "kind": "session", "billed": True}},
+        # A model server of one's own: neither charged nor on a plan.
+        {"kind": "call", "payload": {"route": "studio", "billed": False, "local": True,
+                                     "prompt_tokens": 400, "completion_tokens": 40}},
         {"kind": "usage", "payload": {"total_cost": 99.0, "notional_cost": 99.0}},
         {"kind": "call", "payload": "unreadable"},
     ]
     got = overview.spend(records, billed_routes={"default"})
     assert (got["billed"], got["notional"]) == (0.5, 8.41)
-    assert got["tokens"]["default"] == {"subscription": 0, "charged": 120}
-    assert got["tokens"]["codex"] == {"subscription": 980, "charged": 0}
+    assert got["tokens"]["default"] == {"subscription": 0, "charged": 120, "local": 0}
+    assert got["tokens"]["codex"] == {"subscription": 980, "charged": 0, "local": 0}
+    assert got["tokens"]["studio"] == {"subscription": 0, "charged": 0, "local": 440}, \
+        "a local model's tokens were counted as a subscription's"
 
     rows = [{"verdict": "send_back", "since": "2026-09-01"}, {"verdict": "ship_with_rulings", "since": "2026-09-20"},
             {"verdict": "ship_with_rulings", "since": "2026-09-10"}, {"since": "2026-08-01"}]

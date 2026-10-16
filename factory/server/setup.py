@@ -190,9 +190,11 @@ def register(app: FastAPI, ctx: Context) -> None:
         if not models:
             raise HTTPException(status_code=409, detail=problem or "The server lists no models.")
         window = await gateway.ensure_context_window(route, url, retry=True)
+        effort, _ = await cm.probe_thinking(cfg, url, route.api_key, models[0])
         try:
             name = write_local_server(cfg, name=body.name.strip(), base_url=url, models=models,
-                                      context_window=window, api_key=body.api_key)
+                                      context_window=window, api_key=body.api_key,
+                                      effort=effort)
         except ConfigError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from None
         routes.forget(name)

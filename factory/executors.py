@@ -266,6 +266,32 @@ def harness_spend(output: str) -> dict[str, Any] | None:
     return None
 
 
+def session_effort_env(config: Config, role: str, route) -> dict[str, str]:
+    """How a session on an API route is told its agent's thinking level.
+
+    The harness there is the OpenHands driver, whose client otherwise sends
+    `reasoning_effort: high` on every call whatever the agent's level says. A
+    route with an `effort:` map says the level in the request body
+    (`LLM_EXTRA_BODY`), and is sent no top-level effort, which reached no
+    model on the server this was measured on. The aggregator is sent the
+    level itself. Any other route is left as it was. Empty for a CLI route,
+    whose own flags already say it.
+    """
+    if route is None or route.kind != "api":
+        return {}
+    role_cfg = config.roles.get(role)
+    level = ((role_cfg.reasoning_effort if role_cfg else "") or "").strip().lower()
+    if route.effort:
+        said = route.effort_for(level)
+        env = {"LLM_REASONING_EFFORT": ""}
+        if said is not None and said.body:
+            env["LLM_EXTRA_BODY"] = json.dumps(said.body, separators=(",", ":"))
+        return env
+    if route.dialect == "openrouter" and level:
+        return {"LLM_REASONING_EFFORT": level}
+    return {}
+
+
 def read_spend_file(path: Path) -> dict[str, Any] | None:
     """The harness's running total, which survives being killed.
 
@@ -1491,6 +1517,8 @@ class CommandExecutor:
             argv += ["--env-file", str(bundle.env_file)]
         for name, value in route.container_env.items():
             argv += ["--env", f"{name}={fill(value)}"]
+        for name, value in session_effort_env(self.config, role, route).items():
+            argv += ["--env", f"{name}={value}"]
         # Where the services are, and anything else the session published.
         # Only reached the host path once: an agent in here was told to read
         # `FACTORY_URL_API` and had no such variable, because `docker exec`

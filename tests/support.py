@@ -31,6 +31,7 @@ CONSOLE_SCRIPTS = [
     "app/header.js",
     "app/steps.js",
     "app/util.js",
+    "app/model-picker.js",
     "app/rail.js",
     "app/agents.js",
     "app/local-server.js",

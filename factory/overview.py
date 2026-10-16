@@ -126,8 +126,11 @@ def spend(records: Sequence[Mapping[str, Any]],
         else:
             notional += cost
         n = int(payload.get("prompt_tokens") or 0) + int(payload.get("completion_tokens") or 0)
-        bucket = tokens.setdefault(route or "unknown", {"subscription": 0, "charged": 0})
-        bucket["charged" if is_billed else "subscription"] += n
+        # A local model is neither charged nor on a plan: nobody priced it.
+        bucket = tokens.setdefault(route or "unknown",
+                                   {"subscription": 0, "charged": 0, "local": 0})
+        bucket["charged" if is_billed else "local" if payload.get("local")
+               else "subscription"] += n
     return {"billed": round(billed, 2), "notional": round(notional, 2), "tokens": tokens}
 
 

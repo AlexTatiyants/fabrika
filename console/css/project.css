@@ -258,10 +258,12 @@ p.mc-foot { margin: 0; }
 .db-bar .sub-a { background: var(--green); }
 .db-bar .sub-b { background: var(--lamp-green); }
 .db-bar .chg { background: var(--lamp-amber); }
+.db-bar .loc { background: var(--ink-3); }
 .db-key { white-space: nowrap; }
 .db-key i { display: inline-block; width: 7px; height: 7px; border-radius: 1px; margin-right: .3rem; vertical-align: middle; }
 .db-key .sub-a { background: var(--green); } .db-key .sub-b { background: var(--lamp-green); }
 .db-key .chg { background: var(--lamp-amber); }
+.db-key .loc { background: var(--ink-3); }
 
 /* In day `--surface-lift` is the white floor, so a tile hovering there would
    vanish into it; it goes one step deeper instead. */

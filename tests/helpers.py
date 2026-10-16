@@ -1979,6 +1979,14 @@ def _upstream(respond):
     return serve()
 
 
+def _model_name_js() -> str:
+    """`modelName` and what it needs, out of util.js, for a test that runs one
+    screen's file on its own."""
+    util = (ROOT / "console" / "app" / "util.js").read_text()
+    start = util.index("const MODEL_FILE")
+    return util[start:util.index("\n}\n", start) + 3]
+
+
 def _dns_query(name: str, qtype: int = 1, ident: int = 0x1234) -> bytes:
     import struct
     labels = b"".join(bytes([len(p)]) + p.encode() for p in name.split(".")) + b"\0"
@@ -2667,6 +2675,7 @@ __all__ = [
     '_LEDGER',
     '_carry_once',
     '_upstream',
+    '_model_name_js',
     '_dns_query',
     '_polluted_sort',
     '_leaky_run',

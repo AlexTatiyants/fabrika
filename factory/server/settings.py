@@ -358,6 +358,24 @@ def register(app: FastAPI, ctx: Context) -> None:
         """
         return {"routes": await routes.survey(), "default": cfg.default_route}
 
+    @app.get("/api/routes/{name}/catalog")
+    async def route_catalog(name: str, refresh: bool = False) -> dict[str, Any]:
+        """A route's models as rows for the picker, and what each agent needs
+        of a model: tool calls for the harness agents, a schema for all, and
+        room for its largest call. Asked of the provider once an hour at most."""
+        from .. import catalog
+        from ..commissioning import context_needs
+        from ..config import SESSION_AGENTS
+
+        if name not in cfg.routes:
+            raise HTTPException(status_code=404, detail=f"no route named {name!r}")
+        body = await catalog.catalog(cfg, cfg.routes[name], refresh=refresh)
+        _, needs = context_needs(cfg)
+        body["needs"] = {role: {"tools": role in SESSION_AGENTS, "structured": True,
+                                "context": needs.get(role, 0)}
+                         for role in cfg.roles}
+        return body
+
     @app.get("/api/meters")
     async def route_meters() -> dict[str, Any]:
         """What each plan says is left, refreshed from disk. Costs nothing.

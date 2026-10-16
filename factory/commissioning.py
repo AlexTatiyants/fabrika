@@ -34,8 +34,9 @@ from typing import Any, Awaitable, Callable
 import httpx
 
 from . import containers, egress, gateway, procs
-from .config import (Config, RouteConfig, independence_problems, local_route_name,
-                     local_server_template, staffing_suggestions, write_staffing)
+from .config import (EFFORT_NAMES, Config, RouteConfig, independence_problems,
+                     local_route_name, local_server_template, staffing_suggestions,
+                     thinking_probe, write_staffing)
 from .files import write_atomic
 
 log = logging.getLogger(__name__)
@@ -440,12 +441,70 @@ async def connect_local_server(cfg: Config, base_url: str, api_key: str = "",
             None if not short else _restart(
                 route, "Give the server more context, or point only the other agents at it.")))
 
+    effort: dict[str, dict[str, Any]] = {}
+    if not model:
+        checks.append(_skipped("thinking", "Thinking levels", "there is no model to ask."))
+    else:
+        effort, detail = await probe_thinking(cfg, base, key, model)
+        checks.append(_check("thinking", "Thinking levels", True if effort else None, detail))
+
     return {"ok": all(c["ok"] is not False for c in checks) and reached,
             # A warning is the person's to weigh; a server that lists no model
             # has nothing to add.
             "can_add": bool(models),
             "base_url": base, "models": models or [], "context_window": window,
-            "checks": checks}
+            "effort": effort, "checks": checks}
+
+
+async def probe_thinking(cfg: Config, base: str, key: str, model: str
+                         ) -> tuple[dict[str, dict[str, Any]], str]:
+    """Which thinking levels a server takes, as the request-body fields that
+    say each, and a sentence saying what was found.
+
+    From the `thinking_probe` the `local_server` block carries: a level is kept
+    only when the server's chat template names the variable it sets and a
+    one-token request carrying it is answered. Both, because a template ignores
+    a variable it does not use -- the request succeeds and nothing changes --
+    and raises on a value it does not accept, failing every call made with it.
+    """
+    from urllib.parse import urlsplit
+
+    from .llm import merge_body
+
+    probe = thinking_probe(cfg)
+    levels = probe.get("levels") or {}
+    if not levels:
+        return {}, "Nothing here says how to ask a server about thinking."
+    parts = urlsplit(base)
+    where = f"{parts.scheme}://{parts.netloc}/{str(probe.get('template_path') or '').lstrip('/')}"
+    headers = {"Authorization": f"Bearer {key}"} if key else {}
+    async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, connect=10.0),
+                                 headers=headers) as client:
+        try:
+            answer = await client.get(where)
+            template = str(gateway._dig(answer.json(), str(probe.get("template_key") or "")) or "")
+        except (httpx.HTTPError, ValueError):
+            template = ""
+        if not template:
+            return {}, ("The server did not show its chat template, so agents on it think at "
+                        "the model's own default and the crew screen offers no level.")
+        kept: dict[str, dict[str, Any]] = {}
+        for level in EFFORT_NAMES:
+            spec = levels.get(level) or {}
+            body = spec.get("body") or {}
+            if not body or (spec.get("needs") and str(spec["needs"]) not in template):
+                continue
+            status, _, _ = await _post(client, f"{base}/chat/completions", merge_body(
+                {"model": model, "max_tokens": 1,
+                 "messages": [{"role": "user", "content": "ok"}]}, json.loads(json.dumps(body))))
+            if status == 200:
+                kept[level] = body
+    if not kept:
+        return {}, ("The server's chat template takes none of the thinking settings Fabrika "
+                    "knows, so agents on it think at the model's own default.")
+    said = ", ".join("off" if level == "none" else level for level in kept)
+    return kept, (f"Thinking can be set on this server: {said}. The crew screen offers "
+                  "these for agents on it.")
 
 
 # ---------------------------------------------------------------- harnesses

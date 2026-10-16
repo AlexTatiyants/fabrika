@@ -107,7 +107,7 @@ function phaseModels(log) {
 /* A provider routes on `vendor/name`; the part after the slash is the model,
    and that is the half people say out loud. Nothing here knows any particular
    one -- it is whatever the record was stamped with. */
-const shortModel = (m) => String(m || '').split('/').pop();
+const shortModel = (m) => modelName(m).split('/').pop();
 
 /* The model most of this run went to, and whether it went anywhere else.
    Naming a model only when the run used exactly one would give every station a
@@ -369,7 +369,7 @@ function timeline(d, allLog, opts = {}) {
       <span class="tl-track">
         <span class="tl-bar lane-${esc(lane)} ${esc(p.status)}" style="left:${left}%;width:${width}%"
           title="${esc(stepWord(p.name))} · ${dur(p.elapsed_s)}${p.detail ? ' · ' + esc(p.detail) : ''}${
-            (models[p.name] ? [...models[p.name]] : []).map((m) => ` · ${esc(m)}`).join('')
+            (models[p.name] ? [...models[p.name]] : []).map((m) => ` · ${esc(modelName(m))}`).join('')
           }"></span>
         ${calls.map((c) => `<span class="tl-mark" style="left:${pct(c.at)}%;
           --size:${(3 + (c.out / biggest) * 5).toFixed(1)}px"
