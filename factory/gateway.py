@@ -376,7 +376,7 @@ class Gateway:
                 request, body = await self._read(conn, reader)
                 if request is None:
                     break
-                await self._answer(conn, writer, request, body)
+                await self._answer(conn, reader, writer, request, body)
                 if h11.MUST_CLOSE in (conn.our_state, conn.their_state):
                     break
                 try:
@@ -426,8 +426,9 @@ class Gateway:
         await self._send(conn, writer, h11.Data(data=body))
         await self._send(conn, writer, h11.EndOfMessage())
 
-    async def _answer(self, conn: h11.Connection, writer: asyncio.StreamWriter,
-                      request: h11.Request, body: bytes) -> None:
+    async def _answer(self, conn: h11.Connection, reader: asyncio.StreamReader,
+                      writer: asyncio.StreamWriter, request: h11.Request,
+                      body: bytes) -> None:
         headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in request.headers}
         lease = self._lease_for(headers)
         if lease is None:
@@ -441,6 +442,42 @@ class Gateway:
                         lease.role, lease.route, problem)
             await self._refuse(conn, writer, status, problem)
             return
+        # The harness can go away while its call is in flight -- killed at
+        # `executor.timeout_s`, say. An unstreamed call sends nothing back
+        # until the model has finished, so nothing written would notice; the
+        # connection is watched instead, and the call upstream is cancelled
+        # when it closes. Otherwise a local server goes on generating for no
+        # one, holding one of its few slots until `api.timeout_s`.
+        forwarding = asyncio.create_task(self._forward(conn, writer, lease, request,
+                                                       headers, body))
+        watching = asyncio.create_task(self._hung_up(conn, reader))
+        try:
+            await asyncio.wait({forwarding, watching}, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            gone = watching.done() and not forwarding.done()
+            for task in (forwarding, watching):
+                task.cancel()
+            await asyncio.gather(forwarding, watching, return_exceptions=True)
+        if gone:
+            log.info("model gateway: %s on %s hung up mid-call; the call upstream "
+                     "was cancelled", lease.role, lease.route)
+            raise ConnectionError("the client closed the connection mid-call")
+        forwarding.result()
+
+    async def _hung_up(self, conn: h11.Connection, reader: asyncio.StreamReader) -> None:
+        """Returns when the client closes the connection. Anything it sends
+        meanwhile -- the start of its next request -- is kept for `_read`."""
+        while True:
+            try:
+                chunk = await reader.read(65536)
+            except (ConnectionError, OSError):
+                return
+            if not chunk:
+                return
+            conn.receive_data(chunk)
+
+    async def _forward(self, conn: h11.Connection, writer: asyncio.StreamWriter, lease: Lease,
+                       request: h11.Request, headers: dict[str, str], body: bytes) -> None:
         target = lease.base_url.rstrip("/") + request.target.decode("latin-1")
         upstream = [(k, v) for k, v in headers.items() if k not in _DROP_UP]
         upstream.append(("accept-encoding", "identity"))

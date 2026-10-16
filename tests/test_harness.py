@@ -3886,6 +3886,59 @@ def test_a_streamed_answer_comes_through_the_gateway_as_it_is_sent():
     assert lease.spend()["prompt_tokens"] == 9 and lease.spend()["cost_usd"] == 0.0001
 
 
+@pytest.mark.parametrize("sends", [b"", b"HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\n"
+                                        b"connection: close\r\n\r\ndata: {}\n\n"],
+                         ids=["before-headers", "mid-stream"])
+def test_a_harness_that_hangs_up_ends_its_call_upstream(sends):
+    """A harness killed mid-call takes its call with it. The model server is
+    told -- its connection closed -- within moments, whether it had answered
+    nothing yet (an unstreamed call, still generating) or was part way through
+    a stream. Otherwise a local server goes on generating for no one, holding
+    one of its few slots until the gateway's own timeout."""
+    import time as _time
+    from factory.gateway import Gateway
+
+    async def scenario():
+        heard, closed = asyncio.Event(), asyncio.Event()
+
+        async def never_finishes(reader, writer):
+            await reader.readuntil(b"\r\n\r\n")
+            writer.write(sends)
+            await writer.drain()
+            heard.set()
+            await reader.read()           # returns only when the gateway hangs up
+            closed.set()
+            writer.close()
+
+        upstream = await asyncio.start_server(never_finishes, "127.0.0.1", 0)
+        async with upstream:
+            gw = Gateway(timeout_s=60)
+            await gw.start("127.0.0.1", 0)
+            lease = gw.lease(role="worker", route="flash-next", key="k",
+                             base_url=f"http://127.0.0.1:{upstream.sockets[0].getsockname()[1]}")
+            reader, writer = await asyncio.open_connection("127.0.0.1", gw.port)
+            writer.write(b"POST /v1/chat/completions HTTP/1.1\r\nhost: models\r\n"
+                         + f"authorization: Bearer {lease.token}\r\n".encode()
+                         + b"content-length: 2\r\n\r\n{}")
+            await writer.drain()
+            await asyncio.wait_for(heard.wait(), timeout=5)
+            if sends:   # what was sent has arrived, and nothing more is coming
+                await asyncio.wait_for(reader.readuntil(b"data: {}\n\n"), timeout=5)
+            writer.close()
+            hung_up = _time.monotonic()
+            try:
+                await asyncio.wait_for(closed.wait(), timeout=5)
+            except asyncio.TimeoutError:
+                pass
+            told = _time.monotonic() - hung_up if closed.is_set() else None
+            await gw.stop()
+            return told
+
+    told = asyncio.run(scenario())
+    assert told is not None and told < 1.0, \
+        f"the model server was not told the harness had gone: {told}"
+
+
 def test_the_gateway_listens_on_this_machine_s_loopback_and_says_when_it_cannot():
     """Loopback only: nothing on the network can reach it, and only the egress
     proxy is pointed at it. A port something else holds is said, with the
