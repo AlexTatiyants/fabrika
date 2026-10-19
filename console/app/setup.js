@@ -107,6 +107,21 @@ const suMark = (cls, label) => `<span class="su-mark ${cls}" role="img" aria-lab
 const suCmd = (c) => `<div class="su-cmd"><span aria-hidden="true">$</span><code>${esc(c)}</code>
   <button type="button" class="btn btn-quiet btn-sm" data-copy="${esc(c)}">Copy</button></div>`;
 
+/* The fix a failed job came back with: said, shown to copy, and -- when
+   Fabrika can make it -- a button that sends the job's own flag back. */
+const suJobRemedy = (a, r) => `<div class="su-remedy red">${r.apply
+  ? suOpt(esc(r.title), esc(r.text),
+    `<button type="button" class="btn btn-sm" data-su="install-fix" data-route="${esc(a.name)}" data-fix="${esc(r.apply)}">${esc(r.button)}</button>`)
+  : `<p>${esc(r.text)}</p>`}${r.command ? suCmd(r.command) : ''}</div>`;
+
+/* Where a plan's sign-in can be a token its own setup command prints: a field
+   to store it, or a line saying the environment already gives one. */
+const suToken = (a) => (a.token_from_env
+  ? `<p>A token is set in the environment Fabrika was started from (<code>${esc(a.token_env)}</code>), and it is the one used.</p>`
+  : `<div class="su-field"><input type="password" id="su-token-${esc(a.name)}" autocomplete="off" spellcheck="false"
+      placeholder="paste the token ${esc(a.setup_command || '')} printed" aria-label="${esc(a.label || a.name)} token">
+    <button type="button" class="btn" data-su="route-token" data-route="${esc(a.name)}">Save and check</button></div>`);
+
 /* A fix Fabrika can make for you, said before it is made. */
 const suOpt = (title, what, button) => `<div class="su-opt"><span class="su-opt-t">${title}</span>
   <span class="su-opt-c">${what}</span><span class="su-opt-a">${button}</span></div>`;
@@ -214,6 +229,7 @@ function suProvider() {
 function suAccount(a) {
   const job = a.job && a.job.state === 'running' ? a.job : null;
   const failed = a.job && a.job.state === 'failed' ? a.job.detail : '';
+  const remedy = failed && a.job.remedy;
   const said = state.su.said[a.name];
   const kind = a.takes_key ? 'API key · billed per token' : 'subscription';
   const name = esc(a.label || a.name);
@@ -260,19 +276,28 @@ function suAccount(a) {
   } else if (a.state === 'unauthenticated') {
     pill = '<span class="pill pill-accent">needs you to sign in</span>';
     const steps = (a.setup_steps || []).map((s) => `<li>${esc(s)}</li>`).join('');
-    body = `Installed, and nobody has signed in. Signing in happens in a browser from your terminal, so it cannot be done from this page. Once per machine; Fabrika does not keep the token.
+    body = `Installed, and nobody has signed in. Signing in happens in a browser from your terminal, so it cannot be done from this page. Once per machine.
       ${steps ? `<ol class="su-steps">${steps}</ol>` : ''}${a.setup_command ? suCmd(a.setup_command) : ''}
+      ${a.token_env ? suToken(a) : ''}
       <div class="su-field"><button type="button" class="btn btn-sm" data-su="check" data-route="${esc(a.name)}">Check again</button></div>`;
   } else {
     // Installed, and either never checked or checked and refused for a
     // reason that is not a sign-in.
     lamp = a.state === 'error' || a.state === 'limited' ? 'red' : '';
     pill = `<span class="pill">${a.state === 'unknown' ? 'installed' : esc(a.state)}</span>`;
+    // A route that can take a token offers the field here too: "none of its
+    // credentials could be found" is an error, and the token is its answer.
+    const tokenFix = a.token_env && a.state === 'error';
+    const steps = tokenFix && !a.token_present ? (a.setup_steps || []).map((s) => `<li>${esc(s)}</li>`).join('') : '';
     body = `${a.state === 'unknown' ? `Installed${a.version ? `, version ${esc(a.version)}` : ''}. Check that it is signed in to your ${esc(a.account_label)} plan.` : esc(a.detail)}
+      ${steps ? `<ol class="su-steps">${steps}</ol>${a.setup_command ? suCmd(a.setup_command) : ''}` : ''}
+      ${tokenFix ? suToken(a) : ''}
       <div class="su-field"><button type="button" class="btn btn-sm" data-su="check" data-route="${esc(a.name)}">Check</button>
         <button type="button" class="btn btn-sm btn-quiet" data-su="decline" data-route="${esc(a.name)}">Not mine</button></div>`;
   }
-  if (failed && !job) body += `<p class="su-said bad">${esc(failed)}</p>`;
+  // A failed Check says what the card's own reading already says; once is enough.
+  if (failed && !job && failed !== a.detail) body += `<p class="su-said bad">${esc(failed)}</p>`;
+  if (remedy && !job) body += suJobRemedy(a, remedy);
   if (said && !job) body += `<p class="su-said ${said.ok ? 'ok' : 'bad'}">${esc(said.detail)}</p>`;
   return `<div class="su-acct"><div class="su-acct-h">${suMark(lamp, a.state || '')}<h3>${name}</h3>
       <span class="su-who">${esc(a.account_label)} · ${kind}</span><span class="su-st">${pill}</span></div>
@@ -549,6 +574,18 @@ async function setupClick(target) {
     }
     case 'install':
       await suPost(`/api/setup/routes/${encodeURIComponent(t.route)}/install`);
+      return suRefresh();
+    case 'route-token': {
+      const token = suValue(`su-token-${t.route}`);
+      if (!token) { toast('Paste the token first.'); return; }
+      await withBusy('Saving the token.', () =>
+        suPost(`/api/setup/routes/${encodeURIComponent(t.route)}/token`, { token }, 'PUT'));
+      delete su.said[t.route];
+      await suPost(`/api/setup/routes/${encodeURIComponent(t.route)}/check`);
+      return suRefresh();
+    }
+    case 'install-fix':
+      await suPost(`/api/setup/routes/${encodeURIComponent(t.route)}/install`, { [t.fix]: true });
       return suRefresh();
     case 'check':
       delete su.said[t.route];

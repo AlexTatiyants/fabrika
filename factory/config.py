@@ -13,6 +13,7 @@ import os
 from urllib.parse import urlparse
 import re
 import shutil
+import sys
 from pathlib import Path
 from typing import Any, Callable, Literal
 
@@ -156,14 +157,24 @@ class RoleConfig(BaseModel):
     pinned: list[str] = Field(default_factory=list)
 
 
+def has_display() -> bool:
+    """Whether a browser this machine opens would be in front of a person. A
+    Mac is taken to have one; Linux has one only with a display server to draw
+    on, which a server reached over SSH does not."""
+    if not sys.platform.startswith("linux"):
+        return True
+    return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+
+
 class ContainerCredential(BaseModel):
     """One credential, and where it comes from, for a session in a container.
 
     Three kinds, because the three harnesses measured here keep their sign-in
     in three different places and none of them can be talked out of it:
 
-      kind: env       a variable this process already has, or the provider key
-                      this app stores -- `name` is what the harness reads it as,
+      kind: env       a variable this process already has, else one stored in
+                      the credentials file beside factory.yaml, or the provider
+                      key this app stores -- `name` is what the harness reads it as,
                       `source` the variable to take it from (default: `name`),
                       and `from_api_key: true` takes this app's stored key.
       kind: file      a file on this machine (`path`), landed at `target` in
@@ -171,7 +182,7 @@ class ContainerCredential(BaseModel):
                       a harness that refreshes its own token inside a container
                       must not be able to rewrite what your terminal signs in
                       with.
-      kind: keychain   a macOS keychain item (`service`), landed at `target`.
+      kind: keychain  a macOS keychain item (`service`), landed at `target`.
                       Reading it may raise a system prompt the first time,
                       which is the OS asking the human, and correct.
 
@@ -487,6 +498,17 @@ class RouteConfig(BaseModel):
     setup_steps: list[str] = Field(default_factory=list)
     setup_note: str = ""
     docs_url: str = ""
+    # The sign-in for a machine with no screen of its own -- a server reached
+    # over SSH. A command that waits for the browser to come back to this
+    # machine's loopback cannot finish there, because the browser is somewhere
+    # else; a device flow can. Empty means `setup_command` works anywhere.
+    setup_command_headless: str = ""
+    setup_steps_headless: list[str] = Field(default_factory=list)
+    # The variable a token printed by `setup_command` is read as, for a route
+    # whose sign-in can be a token. Set, the card offers a field for it, and the
+    # token is stored beside factory.yaml like a key -- never in it -- for an
+    # `env` credential of the same name to hand in.
+    token_env: str = ""
 
     # --- authoring inside the unit's container -----------------------------
     #
@@ -554,6 +576,14 @@ class RouteConfig(BaseModel):
     # already running by the time a session starts and mounts are fixed when a
     # container is created.
     container_payload: dict[str, str] = Field(default_factory=dict)
+
+    def sign_in(self) -> tuple[str, list[str]]:
+        """The sign-in command and its steps, for this machine: the no-screen
+        ones where there is no screen and the route has them."""
+        if self.setup_command_headless and not has_display():
+            return (self.setup_command_headless,
+                    list(self.setup_steps_headless or self.setup_steps))
+        return self.setup_command, list(self.setup_steps)
 
     def completes(self) -> bool:
         return self.kind == "api" or bool(self.command)

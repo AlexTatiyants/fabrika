@@ -24,6 +24,8 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
+import re
 import shlex
 import shutil
 import sys
@@ -104,7 +106,8 @@ class Jobs:
         no loop to schedule on."""
         if self.running(name):
             return self._jobs[name]
-        job = {"state": "running", "detail": "", "started_at": time.time(), "finished_at": None}
+        job = {"state": "running", "detail": "", "remedy": None,
+               "started_at": time.time(), "finished_at": None}
         self._jobs[name] = job
 
         async def run() -> None:
@@ -116,6 +119,7 @@ class Jobs:
                 log.warning("setup job %s failed", name, exc_info=True)
                 job["state"] = "failed"
                 job["detail"] = str(exc)
+                job["remedy"] = getattr(exc, "remedy", None)
             finally:
                 job["finished_at"] = time.time()
 
@@ -193,19 +197,99 @@ async def start_docker(cfg: Config, wait_s: float = 120.0) -> str:
 
 # ---------------------------------------------------------------- accounts
 
-async def install_route(route: RouteConfig) -> str:
+class Remedied(RuntimeError):
+    """A failure that carries its fix, for the screen to offer: `text` says what
+    the fix does, `command` is shown to copy, and `apply`, when Fabrika can make
+    the fix itself, is the flag the button sends back to make it."""
+
+    def __init__(self, message: str, remedy: dict[str, str]) -> None:
+        super().__init__(message)
+        self.remedy = remedy
+
+
+#: Where npm installs for this user alone when its global folder is root's:
+#: the XDG home for programs, whose `bin` most Linux shells already put on PATH.
+NPM_USER_PREFIX = Path.home() / ".local"
+
+
+async def install_route(route: RouteConfig, *, npm_user_prefix: bool = False) -> str:
     """Run the route's own `install_command` on this machine -- the command its
-    card already shows, never anything a client sent."""
+    card already shows, never anything a client sent.
+
+    `npm_user_prefix` is the one fix a refused npm install offers, made only
+    when the button that said so is pressed: npm's prefix moves to
+    `NPM_USER_PREFIX`, in `~/.npmrc`, before the same command runs again."""
     argv = shlex.split(route.install_command or "")
     if not argv:
         raise RuntimeError(f"{route.label or route.name} names no install command.")
     if shutil.which(argv[0]) is None:
         raise RuntimeError(f"`{argv[0]}` is not on this machine, so `{route.install_command}` "
                            "cannot run. Install Node.js, then try again.")
+    if npm_user_prefix:
+        if argv[0] != "npm":
+            raise RuntimeError(f"`{route.install_command}` is not an npm install.")
+        prefix = ["npm", "config", "set", "prefix", str(NPM_USER_PREFIX)]
+        code, out = await _run(prefix, 60)
+        if code != 0:
+            raise RuntimeError(f"`{shlex.join(prefix)}` exited {code}:\n{out[-1500:]}")
     code, out = await _run(argv, 600)
     if code != 0:
+        denied = _npm_denied(argv, out)
+        if denied:
+            raise Remedied(
+                f"`{route.install_command}` was refused: npm installs for every user into "
+                f"{denied}, and only root can write there.",
+                {"title": "Install it into my home folder",
+                 "text": f"Fabrika points npm at {NPM_USER_PREFIX} instead, saved in ~/.npmrc, "
+                         "and installs again. Nothing outside your home folder changes, and "
+                         "nothing runs as root.",
+                 "command": f"npm config set prefix {NPM_USER_PREFIX}",
+                 "apply": "npm_user_prefix", "button": "Install there"})
         raise RuntimeError(f"`{route.install_command}` exited {code}:\n{out[-1500:]}")
+    unreachable = await _npm_bin_off_path(route, argv)
+    if unreachable:
+        binary = route.command[0]
+        raise Remedied(
+            f"`{route.install_command}` installed `{binary}` into {unreachable}, which is not "
+            "on the PATH Fabrika was started with, so Fabrika cannot find it.",
+            _path_remedy(unreachable))
     return f"Ran `{route.install_command}`."
+
+
+def _npm_denied(argv: list[str], out: str) -> str:
+    """The folder an npm install was refused, or "" when it was not refused."""
+    if argv[0] != "npm" or "EACCES" not in out:
+        return ""
+    found = re.search(r"\bpath:? '([^']+)'", out) or re.search(r"(?:mkdir|access) '([^']+)'", out)
+    return found.group(1) if found else "npm's global folder"
+
+
+async def _npm_bin_off_path(route: RouteConfig, argv: list[str]) -> Path | None:
+    """The folder npm put the route's program in, when this process cannot see
+    it there: an install that succeeds and a card that still says "not on this
+    machine" are the same failure, said once here with what to do about it."""
+    binary = route.command[0] if route.command else ""
+    if argv[0] != "npm" or not binary or "/" in binary or shutil.which(binary):
+        return None
+    code, out = await _run(["npm", "prefix", "-g"], 30)
+    if code != 0 or not out.strip():
+        return None
+    folder = Path(out.strip().splitlines()[-1]) / "bin"
+    return folder if (folder / binary).exists() else None
+
+
+def _path_remedy(folder: Path) -> dict[str, str]:
+    """How to put `folder` on Fabrika's PATH, for the way it was started. A
+    process cannot change the environment it was started from, so this is said,
+    not made."""
+    if os.environ.get("INVOCATION_ID"):
+        # systemd sets this for every unit it starts, and a unit's PATH is its own.
+        return {"text": "Fabrika was started by systemd. Add this line under [Service] in its "
+                        "unit, then run `systemctl --user daemon-reload` and restart it.",
+                "command": f"Environment=PATH={folder}:{os.environ.get('PATH', '')}"}
+    return {"text": "Add this line to your shell profile, then start Fabrika again from a "
+                    "new terminal.",
+            "command": f'export PATH="{folder}:$PATH"'}
 
 
 def route_takes_key(route: RouteConfig) -> bool:

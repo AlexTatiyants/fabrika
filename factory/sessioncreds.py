@@ -36,7 +36,8 @@ from pathlib import Path
 from typing import Sequence
 
 from . import procs
-from .config import Config, ContainerCredential, DockerConfig, RouteConfig, route_endpoint
+from .config import (Config, ContainerCredential, DockerConfig, RouteConfig, read_credential,
+                     route_endpoint)
 
 
 class CredentialError(RuntimeError):
@@ -106,15 +107,30 @@ def _env_value(spec: ContainerCredential, config: Config, session_token: str = "
                  else (config.api.api_key or "").strip())
         source = "this app's stored provider key"
     else:
-        source = spec.source or spec.name
-        value = (os.environ.get(source) or "").strip()
-        source = f"${source}"
+        name = spec.source or spec.name
+        # The environment wins, as it does for the provider key: a variable
+        # set where Fabrika was started is the one somebody meant.
+        value = (os.environ.get(name) or "").strip() or read_credential(config, name).strip()
+        source = f"${name}, or {name} stored beside factory.yaml"
     if not value and not spec.optional:
         raise CredentialError(
             f"credential {spec.name!r} comes from {source}, which is empty. A session "
             "started without it spends a turn to be told it is not signed in."
         )
     return value
+
+
+def _looked(spec: ContainerCredential) -> str:
+    """Where one credential was looked for and why it was not there. Never
+    anything about what a file or variable holds."""
+    if spec.kind == "env":
+        name = spec.source or spec.name
+        return f"${name} is not set where Fabrika was started, and none is stored"
+    if spec.kind == "file":
+        return f"{spec.path} is not on this machine"
+    if shutil.which("security") is None:
+        return f"the keychain item {spec.service!r} needs macOS, and this is not a Mac"
+    return f"the keychain has no item {spec.service!r}"
 
 
 async def prepare(route: RouteConfig, config: Config, session_token: str = "") -> Bundle:
@@ -180,14 +196,15 @@ async def prepare(route: RouteConfig, config: Config, session_token: str = "") -
         # do: it is a session that will start, spend a turn, and be told it is
         # not signed in.
         if route.container_credentials and not lines and not bundle.files:
-            looked = ", ".join(
-                spec.name or spec.service or spec.path or spec.kind
-                for spec in route.container_credentials
-            )
+            looked = "; ".join(_looked(spec) for spec in route.container_credentials)
+            fix = (f"Run `{route.setup_command}` and store the token it prints on the "
+                   "setup page, or sign the harness in on this machine."
+                   if route.token_env and route.setup_command else
+                   "Sign the harness in on this machine, or give the route a token in a "
+                   "variable.")
             raise CredentialError(
-                f"none of this route's credentials could be found ({looked}), so a "
-                "session in the container would run as nobody. Sign the harness in on "
-                "this machine, or give the route a token in a variable."
+                f"none of this route's credentials could be found -- {looked} -- so a "
+                f"session in the container would run as nobody. {fix}"
             )
 
         if lines:

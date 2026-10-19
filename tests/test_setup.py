@@ -372,6 +372,231 @@ def test_an_install_runs_only_the_command_the_route_names(editable_config, monke
     assert ran == [route.install_command.split()]
 
 
+#: npm's answer when its global folder is root's, as a system Node on Linux
+#: gives it -- measured on Fedora with `dnf install nodejs`.
+_NPM_EACCES = ("npm error code EACCES\nnpm error syscall mkdir\n"
+               "npm error path /usr/local/lib/node_modules\n"
+               "npm error Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules'\n"
+               "npm error   path: '/usr/local/lib/node_modules'\n")
+
+
+def _npm(monkeypatch, answers, *, on_path=True):
+    """Stand in for npm: `answers` maps an argv's first words to (exit, output),
+    and every argv run is recorded."""
+    from factory import commissioning
+    ran = []
+
+    async def run(argv, timeout):
+        ran.append(argv)
+        for words, answer in answers.items():
+            if argv[:len(words)] == list(words):
+                return answer
+        return 0, ""
+
+    monkeypatch.setattr(commissioning, "_run", run)
+    monkeypatch.setattr(commissioning.shutil, "which",
+                        lambda b: "/usr/bin/" + b if on_path or b == "npm" else None)
+    return ran
+
+
+def test_a_refused_npm_install_offers_to_install_into_the_home_folder(editable_config, monkeypatch):
+    """Not npm's forty lines: what was refused, and the one fix that needs no
+    root, said before it is made."""
+    import asyncio
+    from factory import commissioning
+
+    config, _ = editable_config
+    _npm(monkeypatch, {("npm", "i"): (243, _NPM_EACCES)})
+    with pytest.raises(commissioning.Remedied) as refused:
+        asyncio.run(commissioning.install_route(config.routes["codex"]))
+    assert "/usr/local/lib/node_modules" in str(refused.value)
+    assert "npm error" not in str(refused.value)
+    remedy = refused.value.remedy
+    assert remedy["apply"] == "npm_user_prefix"
+    assert remedy["command"] == f"npm config set prefix {commissioning.NPM_USER_PREFIX}"
+
+
+def test_the_home_folder_fix_moves_the_prefix_then_runs_the_same_install(editable_config, monkeypatch):
+    import asyncio
+    from factory import commissioning
+
+    config, _ = editable_config
+    route = config.routes["codex"]
+    ran = _npm(monkeypatch, {})
+    asyncio.run(commissioning.install_route(route, npm_user_prefix=True))
+    assert ran == [["npm", "config", "set", "prefix", str(commissioning.NPM_USER_PREFIX)],
+                   route.install_command.split()]
+    assert not any("sudo" in argv for argv in ran)
+
+
+def test_an_install_fabrika_cannot_see_says_how_to_put_it_on_path(editable_config, monkeypatch, tmp_path):
+    """The install succeeded and the card would still say "not on this
+    machine": a systemd unit's PATH has no ~/.local/bin. The fix depends on how
+    Fabrika was started, and only that one is offered."""
+    import asyncio
+    from factory import commissioning
+
+    config, _ = editable_config
+    route = config.routes["codex"]
+    (tmp_path / "bin").mkdir()
+    (tmp_path / "bin" / route.command[0]).write_text("")
+    _npm(monkeypatch, {("npm", "prefix", "-g"): (0, str(tmp_path))}, on_path=False)
+
+    monkeypatch.setenv("INVOCATION_ID", "abc")
+    with pytest.raises(commissioning.Remedied) as unseen:
+        asyncio.run(commissioning.install_route(route))
+    assert str(tmp_path / "bin") in str(unseen.value)
+    assert "apply" not in unseen.value.remedy
+    assert unseen.value.remedy["command"].startswith(f"Environment=PATH={tmp_path / 'bin'}:")
+
+    monkeypatch.delenv("INVOCATION_ID")
+    with pytest.raises(commissioning.Remedied) as unseen:
+        asyncio.run(commissioning.install_route(route))
+    assert unseen.value.remedy["command"] == f'export PATH="{tmp_path / "bin"}:$PATH"'
+
+
+def test_a_refused_install_comes_back_with_its_fix_and_the_fix_is_pressed(editable_config, monkeypatch, open_client):
+    """Through the server: the failed job carries the remedy, and the button's
+    flag reaches the install."""
+    from factory import commissioning
+
+    config, tmp_path = editable_config
+    _stub_machine(monkeypatch)
+    pressed = []
+
+    async def install(route, *, npm_user_prefix=False):
+        pressed.append(npm_user_prefix)
+        if not npm_user_prefix:
+            raise commissioning.Remedied("refused", {"apply": "npm_user_prefix", "text": "t"})
+        return "done"
+
+    monkeypatch.setattr(commissioning, "install_route", install)
+    client = open_client(config, tmp_path)
+    assert client.post("/api/setup/routes/codex/install").status_code == 200
+    job = _settled(client)["jobs"]["install:codex"]
+    assert job["state"] == "failed" and job["remedy"]["apply"] == "npm_user_prefix"
+    assert client.post("/api/setup/routes/codex/install",
+                       json={"npm_user_prefix": True}).status_code == 200
+    assert _settled(client)["jobs"]["install:codex"]["remedy"] is None
+    assert pressed == [False, True]
+
+
+def test_a_stored_token_reaches_the_container_and_the_environment_still_wins(editable_config, monkeypatch):
+    """`claude setup-token` prints a token and keeps nothing, so a machine with
+    no keychain had nowhere to put it but Fabrika's own environment. Stored on
+    the card, it now reaches the session the way a variable would."""
+    import asyncio
+    from factory.config import write_credential
+    from factory.sessioncreds import prepare
+
+    config, _ = editable_config
+    route = config.routes["claude-code"]
+    monkeypatch.delenv(route.token_env, raising=False)
+    write_credential(config, route.token_env, "stored-token")
+
+    def handed():
+        bundle = asyncio.run(prepare(route, config))
+        try:
+            return bundle.env_file.read_text()
+        finally:
+            bundle.cleanup()
+
+    assert handed() == f"{route.token_env}=stored-token\n"
+    monkeypatch.setenv(route.token_env, "from-env")
+    assert handed() == f"{route.token_env}=from-env\n"
+
+
+def test_the_shipped_claude_route_reads_the_sign_in_linux_keeps_in_a_file(editable_config):
+    """Linux has no keychain: Claude Code keeps its sign-in in a file. Both land
+    where the harness reads them, and the keychain, copied last, wins on a Mac."""
+    config, _ = editable_config
+    route = config.routes["claude-code"]
+    kinds = [c.kind for c in route.container_credentials]
+    assert kinds == ["env", "file", "keychain"], kinds
+    file, keychain = route.container_credentials[1:]
+    assert file.path == "~/.claude/.credentials.json" and file.optional
+    assert file.target == keychain.target
+    assert route.token_env == route.container_credentials[0].name
+
+
+def test_a_sign_in_found_nowhere_says_where_it_looked_and_what_fixes_it(editable_config, monkeypatch, tmp_path):
+    import asyncio
+    from factory import sessioncreds
+
+    config, _ = editable_config
+    route = config.routes["claude-code"]
+    route.container_credentials[1].path = str(tmp_path / "no-such-credentials.json")
+    monkeypatch.delenv(route.token_env, raising=False)
+    monkeypatch.setattr(sessioncreds.shutil, "which", lambda b: None)
+    with pytest.raises(sessioncreds.CredentialError) as missed:
+        asyncio.run(sessioncreds.prepare(route, config))
+    said = str(missed.value)
+    assert f"${route.token_env} is not set" in said
+    assert "no-such-credentials.json is not on this machine" in said
+    assert "this is not a Mac" in said
+    assert f"Run `{route.setup_command}`" in said
+
+
+def test_a_token_is_stored_from_the_card_unless_the_environment_already_gives_one(editable_config, monkeypatch, open_client):
+    from factory.config import read_credential
+
+    config, tmp_path = editable_config
+    _stub_machine(monkeypatch)
+    env = config.routes["claude-code"].token_env
+    monkeypatch.delenv(env, raising=False)
+    client = open_client(config, tmp_path)
+
+    assert client.put("/api/setup/routes/codex/token", json={"token": "t"}).status_code == 409
+    saved = client.put("/api/setup/routes/claude-code/token", json={"token": " minted \n"})
+    assert saved.status_code == 200 and saved.json()["ok"]
+    assert read_credential(config, env) == "minted"
+    assert "minted" not in saved.text
+    row = next(a for a in client.get("/api/setup").json()["accounts"] if a["name"] == "claude-code")
+    assert row["token_env"] == env and row["token_present"] and not row["token_from_env"]
+
+    monkeypatch.setenv(env, "from-env")
+    assert client.put("/api/setup/routes/claude-code/token", json={"token": "t"}).status_code == 409
+
+
+def _screen(monkeypatch, platform, **env):
+    """This machine, as `has_display` reads it."""
+    from factory import config as config_module
+    monkeypatch.setattr(config_module.sys, "platform", platform)
+    for name in ("DISPLAY", "WAYLAND_DISPLAY"):
+        monkeypatch.delenv(name, raising=False)
+    for name, value in env.items():
+        monkeypatch.setenv(name, value)
+
+
+def test_a_machine_with_no_screen_is_told_the_sign_in_that_can_finish_there(editable_config, monkeypatch, open_client):
+    """`codex login` waits for the browser to come back to 127.0.0.1:1455 on
+    this machine. On a server reached over SSH the browser is on another one,
+    and the redirect was refused. The device flow has no way back to need."""
+    from factory.routes import base_status
+
+    config, tmp_path = editable_config
+    codex = config.routes["codex"]
+
+    _screen(monkeypatch, "linux")
+    assert codex.sign_in()[0] == "codex login --device-auth"
+    assert any("--device-auth" in s for s in codex.sign_in()[1])
+    assert base_status(codex).setup_command == "codex login --device-auth"
+    _stub_machine(monkeypatch)
+    client = open_client(config, tmp_path)
+    row = next(a for a in client.get("/api/setup").json()["accounts"] if a["name"] == "codex")
+    assert row["setup_command"] == "codex login --device-auth", \
+        "the card says what this machine needs, not what a cached status said"
+
+    for platform, env in (("linux", {"DISPLAY": ":0"}), ("linux", {"WAYLAND_DISPLAY": "wayland-0"}),
+                          ("darwin", {})):
+        _screen(monkeypatch, platform, **env)
+        assert codex.sign_in() == (codex.setup_command, list(codex.setup_steps)), platform
+
+    _screen(monkeypatch, "linux")
+    claude = config.routes["claude-code"]
+    assert claude.sign_in()[0] == claude.setup_command, "a route with no other sign-in keeps its own"
+
+
 def test_setup_harness_layers_survive_the_boot_sweep():
     """Built before any project exists, on the plain agent image -- a sweep that
     kept only project layers would throw them away at every restart."""
@@ -463,6 +688,48 @@ def test_the_accounts_station_offers_a_key_field_to_a_route_that_takes_one():
     html = _setup_screen(_payload(), at=1)["html"]
     assert 'id="su-key-keyed"' in html and "Test and save" in html
     assert "signed in" in html
+
+
+def test_a_plan_that_found_no_sign_in_offers_the_token_field_and_one_never_checked_does_not():
+    def drawn(state, **over):
+        plan = {"name": "plan", "label": "A Plan", "harness_label": "A Plan", "account_label": "Company P",
+                "takes_key": False, "installed": True, "state": state, "connected": False,
+                "declined": False, "detail": "none of this route's credentials could be found",
+                "setup_command": "plan setup-token", "setup_steps": ["Run: plan setup-token"],
+                "token_env": "PLAN_TOKEN", "token_present": False, "token_from_env": False,
+                "job": None, **over}
+        return _setup_screen(_payload(accounts=[plan]), at=1)["html"]
+
+    html = drawn("error", job={"state": "failed", "detail": "none of this route's credentials could be found"})
+    assert 'id="su-token-plan"' in html and 'data-su="route-token"' in html
+    assert html.count("none of this route&#39;s credentials") + html.count("none of this route's credentials") == 1, \
+        "a failed Check that says what the card says is said once"
+    assert "Run: plan setup-token" in html
+    assert 'id="su-token-plan"' in drawn("unauthenticated")
+    assert 'id="su-token-plan"' not in drawn("unknown")
+    assert 'id="su-token-plan"' not in drawn("error", token_env="")
+    from_env = drawn("error", token_from_env=True, token_present=True)
+    assert 'id="su-token-plan"' not in from_env and "PLAN_TOKEN" in from_env
+
+
+def test_a_failed_install_draws_its_fix_and_a_button_only_for_one_fabrika_can_make():
+    def drawn(remedy):
+        missing = {"name": "cli", "label": "A CLI", "harness_label": "A CLI", "account_label": "Company C",
+                   "takes_key": False, "installed": False, "state": "missing", "connected": False,
+                   "declined": False, "install_command": "npm i -g c",
+                   "job": {"state": "failed", "detail": "refused", "remedy": remedy}}
+        return _setup_screen(_payload(accounts=[missing]), at=1)["html"]
+
+    html = drawn({"title": "Install it into my home folder", "text": "Moves the prefix.",
+                  "command": "npm config set prefix /home/me/.local",
+                  "apply": "npm_user_prefix", "button": "Install there"})
+    assert 'data-su="install-fix"' in html and 'data-fix="npm_user_prefix"' in html
+    assert "npm config set prefix /home/me/.local" in html
+
+    html = drawn({"text": "Add this line to your shell profile.",
+                  "command": 'export PATH="/home/me/.local/bin:$PATH"'})
+    assert 'data-su="install-fix"' not in html
+    assert "export PATH=&quot;/home/me/.local/bin:$PATH&quot;" in html
 
 
 

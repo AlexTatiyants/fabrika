@@ -177,6 +177,13 @@ class SetupKey(BaseModel):
     api_key: str = Field(min_length=1)
 
 
+class SetupToken(BaseModel):
+    """The token a subscription route's own setup command printed. Stored, then
+    proved by the Check that follows it."""
+
+    token: str = Field(min_length=1)
+
+
 class LocalServer(BaseModel):
     """A model server of one's own: where it is, what to call it, and a key
     only if it asks for one. Blank means it wants none."""
@@ -188,6 +195,12 @@ class LocalServer(BaseModel):
 
 class SetupDecline(BaseModel):
     declined: bool = True
+
+
+class SetupInstall(BaseModel):
+    """The fix a refused install offered, pressed. Nothing else: the command
+    that runs is still the route's own."""
+    npm_user_prefix: bool = False
 
 
 class SetupCrew(BaseModel):

@@ -21,9 +21,10 @@ from urllib.parse import urlsplit
 
 from .. import commissioning as cm
 from ..config import (ConfigError, api_key_source, local_server_template, mask_key,
-                      write_credential, write_executor_kind, write_local_server,
+                      read_credential, write_credential, write_executor_kind, write_local_server,
                       write_rework_limits, write_route_enabled)
-from .bodies import LocalServer, SetupCrew, SetupDecline, SetupKey, SetupLimits
+from .bodies import (LocalServer, SetupCrew, SetupDecline, SetupInstall, SetupKey,
+                     SetupLimits, SetupToken)
 from .context import Context
 
 
@@ -106,6 +107,15 @@ def register(app: FastAPI, ctx: Context) -> None:
                 "key_hint": mask_key(route.api_key),
                 "key_from_env": bool(route.key_env and os.environ.get(route.key_env)),
                 "key_checkable": bool(route.key_check_url),
+                # From the config, not the status: a status read back from the
+                # last session's cache predates any field added since, and was
+                # read on whatever machine wrote it.
+                "token_env": route.token_env,
+                "setup_command": route.sign_in()[0],
+                "setup_steps": route.sign_in()[1],
+                "token_present": bool(route.token_env and (os.environ.get(route.token_env)
+                                                           or read_credential(cfg, route.token_env))),
+                "token_from_env": bool(route.token_env and os.environ.get(route.token_env)),
                 "declined": status["name"] in memory["declined"],
                 "connected": status["name"] in connected,
                 "job": jobs.get(f"install:{status['name']}") or jobs.get(f"check:{status['name']}"),
@@ -218,13 +228,14 @@ def register(app: FastAPI, ctx: Context) -> None:
         return jobs.start("docker", work)
 
     @app.post("/api/setup/routes/{name}/install")
-    async def post_install(name: str) -> dict[str, Any]:
+    async def post_install(name: str, body: SetupInstall | None = None) -> dict[str, Any]:
         route = route_or_404(name)
         if not route.install_command:
             raise HTTPException(status_code=409, detail=f"{name} names no install command.")
+        fix = body or SetupInstall()
 
         async def work() -> str:
-            said = await cm.install_route(route)
+            said = await cm.install_route(route, npm_user_prefix=fix.npm_user_prefix)
             routes.forget(name)
             return said
         return jobs.start(f"install:{name}", work)
@@ -279,6 +290,24 @@ def register(app: FastAPI, ctx: Context) -> None:
         routes.forget(name)
         return {"ok": True, "detail": ("Key accepted and saved." if route.key_check_url
                                        else "Key saved. The first call will prove it.")}
+
+    @app.put("/api/setup/routes/{name}/token")
+    def put_token(name: str, body: SetupToken) -> dict[str, Any]:
+        """Store the token a route's setup command printed, where its `env`
+        credential reads it. Not proved here: the Check that follows makes one
+        real call with it, which is the only proof there is."""
+        route = route_or_404(name)
+        if not route.token_env:
+            raise HTTPException(status_code=409, detail=f"{name} takes no token.")
+        if os.environ.get(route.token_env):
+            raise HTTPException(
+                status_code=409,
+                detail=(f"{route.token_env} is set in the environment Fabrika was started from, "
+                        "and it wins. Unset it before storing a token here, or this one would "
+                        "be silently ignored."))
+        write_credential(cfg, route.token_env, body.token.strip())
+        routes.forget(name)
+        return {"ok": True, "detail": "Token saved beside factory.yaml, owner-only."}
 
     @app.post("/api/setup/routes/{name}/decline")
     def post_decline(name: str, body: SetupDecline) -> dict[str, Any]:

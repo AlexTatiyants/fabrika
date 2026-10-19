@@ -263,14 +263,18 @@ routes:
     setup_command: "claude setup-token"
     setup_note: >-
       The sign-in is an interactive browser handshake, so it cannot be done from
-      this page — it takes no flags and waits for a paste in a terminal. It is
-      once per machine, not per project, and nothing here stores the token.
+      this page. `claude setup-token` does it once and prints a long-lived token;
+      paste that here and Fabrika keeps it beside factory.yaml, owner-only, and
+      hands it to each session's container. A machine where Claude Code is
+      already signed in needs no token.
     setup_steps:
       - Open a terminal on this machine.
       - "Run: claude setup-token"
-      - It opens your browser. Sign in with the account that holds your subscription.
-      - Paste the code it gives you back into the terminal.
-      - Come back here and press Check.
+      - It opens your browser, or prints a link to open. Sign in with the account that holds your subscription.
+      - It prints a token. Paste it here.
+    # Where that token goes: stored beside factory.yaml, and read by the `env`
+    # credential of the same name below.
+    token_env: CLAUDE_CODE_OAUTH_TOKEN
     docs_url: https://docs.claude.com/en/docs/claude-code/setup
     # ---- file sessions: the half this tool is actually for -----------------
     #
@@ -328,13 +332,18 @@ routes:
       HOME: /agent-home
       NPM_CONFIG_CACHE: /agent-home/.npm
       XDG_CACHE_HOME: /agent-home/.cache
-    # Either of these is enough, and neither is required on its own: a token
+    # Any one of these is enough, and none is required on its own: a token
     # minted for a container is the better answer, and the sign-in this machine
-    # already has is the one that needs no extra step. A route whose
-    # credentials all miss is refused before the container is touched.
+    # already has is the one that needs no extra step -- in a file on Linux, in
+    # the keychain on a Mac. A route whose credentials all miss is refused
+    # before the container is touched.
     container_credentials:
       - kind: env
         name: CLAUDE_CODE_OAUTH_TOKEN
+        optional: true
+      - kind: file
+        path: ~/.claude/.credentials.json
+        target: /agent-home/.claude/.credentials.json
         optional: true
       - kind: keychain
         service: Claude Code-credentials
@@ -531,6 +540,18 @@ routes:
       - "Install it if you have not: npm i -g @openai/codex"
       - "Run: codex login"
       - Choose "Sign in with ChatGPT" and finish in the browser.
+      - Come back here and press Check.
+    # On a machine with no screen of its own -- a server reached over SSH --
+    # `codex login` cannot finish: it waits for the browser to come back to
+    # 127.0.0.1:1455 on this machine, and the browser is on another one. The
+    # device flow needs no way back. Codex prints the same advice itself.
+    setup_command_headless: "codex login --device-auth"
+    setup_steps_headless:
+      - Open a terminal on this machine.
+      - "Install it if you have not: npm i -g @openai/codex"
+      - "Run: codex login --device-auth"
+      - It prints a link and a code. Open the link on any device, sign in with ChatGPT, and enter the code.
+      - If ChatGPT will not take the code, turn on device code sign-in in its security settings and run the command again.
       - Come back here and press Check.
     docs_url: https://developers.openai.com/codex/cli
 

@@ -182,6 +182,7 @@ class RouteStatus:
     setup_steps: list[str] = field(default_factory=list)
     setup_note: str = ""
     docs_url: str = ""
+    token_env: str = ""
 
     def as_dict(self) -> dict[str, Any]:
         body = {k: getattr(self, k) for k in (
@@ -195,7 +196,7 @@ class RouteStatus:
             "default_model_ok",
             "resolved_model",
             "install_command", "setup_command",
-            "setup_steps", "setup_note", "docs_url",
+            "setup_steps", "setup_note", "docs_url", "token_env",
         )}
         body["usable"] = self.state == "ok"
         return body
@@ -235,10 +236,11 @@ def base_status(route: RouteConfig) -> RouteStatus:
         gauge_self_reads=bool(route.meter_sidecar_glob),
         default_model_ok=route.default_model_ok,
         install_command=route.install_command,
-        setup_command=route.setup_command,
-        setup_steps=list(route.setup_steps),
+        setup_command=route.sign_in()[0],
+        setup_steps=route.sign_in()[1],
         setup_note=route.setup_note,
         docs_url=route.docs_url,
+        token_env=route.token_env,
     )
 
 
@@ -450,7 +452,7 @@ async def check_connection(route: RouteConfig, llm: Any) -> RouteStatus:
             status.state = "unauthenticated"
             status.detail = (
                 f"{status.label} is installed but nobody is signed in. "
-                + (f"Run: {route.setup_command}" if route.setup_command else "")
+                + (f"Run: {route.sign_in()[0]}" if route.sign_in()[0] else "")
             )
         else:
             status.state = "error"
