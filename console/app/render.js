@@ -345,7 +345,7 @@ function syncHeader() {
 /* The gate-2 screens. Loaded on first visit and never on any other screen: a
    route nobody opens costs nothing. */
 const GATE2_VIEWS = ['calls', 'map', 'criterion', 'evidence', 'rework', 'questions', 'review',
-                     'objections', 'repairs', 'blindspots', 'file', 'dependencies'];
+                     'objections', 'repairs', 'blindspots', 'file', 'dependencies', 'system'];
 /* A settled or awaiting packet (`SETTLED_STAGES`) renders these with no view in
    the hash at all, so "is this screen ours" cannot be answered by the view alone. */
 /* Which of these screens this route wants, or null for the string-built ones.
@@ -435,6 +435,7 @@ function gate2Props() {
       repairs: () => f('repairs'),
       blindspots: () => f('blindspots'),
       dependencies: () => f('dependencies'),
+      system: () => f('system'),
       packet: () => f('packet'),
     },
     onReload: () => refresh(),
@@ -548,7 +549,7 @@ function renderFeatureBar() {
   const settled = ['accepted', 'rejected'].includes(d.state.stage);
   const running = d.state.stage !== 'awaiting_verdict';
   const PACKET_VIEWS = ['calls', 'map', 'evidence', 'review', 'objections',
-                        'repairs', 'rework', 'blindspots', 'file', 'dependencies'];
+                        'repairs', 'rework', 'blindspots', 'file', 'dependencies', 'system'];
   const actions = PACKET_VIEWS.includes(view) && d.packet
     ? `<button class="btn btn-quiet btn-sm" id="revalidate" ${running ? 'disabled' : ''}
          title="Measures this branch again from zero: the checks, the breaker, the panel and the finding ledger start from nothing. The code is not touched and the packet you are reading is kept. It takes as long as the last run and comes out of the same rework budget."

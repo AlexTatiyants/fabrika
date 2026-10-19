@@ -4,6 +4,7 @@ Split out of test_invariants.py, which keeps one test per invariant.
 """
 
 from helpers import *  # noqa: F403
+from factory import system_report
 
 
 def test_a_skipped_blind_test_is_a_known_and_stated_blind_spot():
@@ -452,6 +453,123 @@ def test_what_a_feature_changed_is_said_in_the_system_s_terms():
     assert "Adds a dependency from Web to Jobs." in lines
     assert any(line.startswith("One new file, all placed") for line in lines)
     assert any("route:GET /x" in line for line in lines)
+
+
+def _two_readings():
+    """A branch that adds tags to a cards app, read twice -- and a second
+    reading that regroups, renames and recounts code the branch never touched."""
+    AB = asbuilt_graph
+
+    def node(path, sub, blob, **kw):
+        return AB.FileNode(path=path, subsystem=sub, blob=blob, placed_by="graph", lines=kw.pop("lines", 60), **kw)
+
+    base = AB.AsBuilt(
+        commit="base",
+        files=[node("api/app.py", "api/app.py", "a1"), node("api/rank.py", "api/rank.py", "r1"),
+               node("api/setup.py", "api/setup.py", "s1"), node("web/ui.js", "web/ui.js", "u1"),
+               node("web/helpers.js", "web/ui.js", "h1"),
+               node("tests/factories.py", "", "f1", is_test=True, tested_by=[])],
+        edges=[AB.Edge(source="api/app.py", target="api/rank.py", kind="import"),
+               AB.Edge(source="api/rank.py", target="api/app.py", kind="import")],
+        subsystems=[AB.Subsystem(key="api/app.py", name="Cards API", code="CAP", files=["api/app.py"]),
+                    AB.Subsystem(key="api/rank.py", name="Ranking", code="RNK", files=["api/rank.py"]),
+                    AB.Subsystem(key="api/setup.py", name="Setup", code="SET", files=["api/setup.py"]),
+                    AB.Subsystem(key="web/ui.js", name="Web", code="WEB", files=["web/ui.js", "web/helpers.js"])],
+        ways_in=[AB.WayInNode(id="route:GET /cards", kind="route", name="/cards", method="GET", file="api/app.py",
+                              handler="list_cards"),
+                 AB.WayInNode(id="export:Old", kind="export", name="Old", file="web/ui.js")],
+        capabilities=[AB.Capability(key="manage", name="Manage cards", code="MCD", ways_in=["route:GET /cards"])])
+    head = AB.AsBuilt(
+        commit="head",
+        files=[node("api/app.py", "api/app.py", "a2", outside=["FastAPI"], entities_defined=["Card"]),
+               node("api/tags.py", "api/app.py", "t1", outside=["httpx"], entities_defined=["Tag"]),
+               node("api/rank.py", "api/setup.py", "r1"), node("api/setup.py", "api/setup.py", "s1"),
+               node("web/ui.js", "web/ui.js", "u1"), node("web/helpers.js", "api/app.py", "h1"),
+               node("tests/factories.py", "", "f2", is_test=True, tested_by=[])],
+        edges=[AB.Edge(source="api/app.py", target="api/rank.py", kind="import"),
+               AB.Edge(source="api/rank.py", target="api/app.py", kind="import"),
+               AB.Edge(source="api/tags.py", target="api/setup.py", kind="import"),
+               AB.Edge(source="api/setup.py", target="api/tags.py", kind="import")],
+        subsystems=[AB.Subsystem(key="api/app.py", name="Cards and tags", code="CAT",
+                                 files=["api/app.py", "api/tags.py", "web/helpers.js"]),
+                    AB.Subsystem(key="api/setup.py", name="Setup and ranking", code="SRK",
+                                 files=["api/rank.py", "api/setup.py"]),
+                    AB.Subsystem(key="web/ui.js", name="Web", code="WEB", files=["web/ui.js"])],
+        ways_in=[AB.WayInNode(id="route:GET /cards", kind="route", name="/cards", method="GET", file="api/app.py",
+                              handler="list_cards"),
+                 AB.WayInNode(id="route:POST /tags", kind="route", name="/tags", method="POST", file="api/tags.py",
+                              handler="add_tag"),
+                 AB.WayInNode(id="export:helper", kind="export", name="helper", file="web/helpers.js"),
+                 AB.WayInNode(id="export:make_tag", kind="export", name="make_tag", file="tests/factories.py")],
+        capabilities=[AB.Capability(key="edit", name="Edit cards", code="ECD", ways_in=["route:GET /cards"]),
+                      AB.Capability(key="tag", name="Tag cards", code="TGC", summary="Put tags on cards.",
+                                    ways_in=["route:POST /tags"])])
+    at = {("base", "api/app.py"): "class Card:\n    pass\ndef list_cards(): ...\n",
+          ("base", "web/helpers.js"): "export function helper() {}\n",
+          ("base", "tests/factories.py"): "def make_card(): ...\n",
+          ("head", "web/ui.js"): "export function Old() {}\n"}
+    return base, head, (lambda commit, path: at.get((commit, path)))
+
+
+def test_what_a_feature_changed_is_split_into_what_the_branch_did_and_what_the_reading_moved():
+    """A second reading merged two groups, renamed a capability, counted an
+    old export and named FastAPI for the first time -- on code nobody touched.
+    Listed beside the branch's work, that read as a feature that reorganised
+    the system when it added one route. Each difference is held to a fact:
+    the file's blob, the symbol's presence in the file at the base, the
+    lockfiles."""
+    base, head, read = _two_readings()
+    deps = {"changes": [{"name": "httpx", "kind": "added", "direct": True}]}
+    r = system_report.report(base, head, read, deps)
+
+    assert [c.name for c in r.capabilities_added] == ["Tag cards"], "only a capability whose every way in is new"
+    assert r.capabilities_before == ["Manage cards (MCD)"] and r.capabilities_after == ["Edit cards (ECD)"]
+    assert {(w.id, w.test) for w in r.ways_in_added} == {("route:POST /tags", False), ("export:make_tag", True)}
+    assert r.ways_in_recounted == ["export:helper"], "a symbol already in its file at the base is not new"
+    assert r.ways_in_uncounted == ["export:Old"] and not r.ways_in_removed, "still in its file at the head"
+    assert [e.name for e in r.entities_added] == ["Tag"] and r.entities_recounted == ["Card"]
+    assert r.packages_added == ["httpx"] and r.outside_named == ["FastAPI"]
+
+    groups = {g.code: g for g in r.groups}
+    assert groups["CAT"].lineage == "renamed" and groups["CAT"].was == ["Cards API (CAP)"]
+    assert groups["SRK"].lineage == "merged" and set(groups["SRK"].was) == {"Ranking (RNK)", "Setup (SET)"}
+    assert groups["CAT"].touched and not groups["SRK"].touched and not groups["WEB"].touched
+    assert [m.status for m in groups["CAT"].files] == ["added", "changed", "same"]
+    assert [(m.path, m.touched) for m in r.moves] == [("web/helpers.js", False)], \
+        "rank.py stayed with the group its old group became: that is a merge, not a move"
+    assert r.tests_touched == 1
+
+    mutual = next(h for h in r.health if h.kind == "mutual")
+    assert (mutual.before, mutual.after, mutual.direction) == ("2 links", "4 links", "worse"), \
+        "the same tangle under a new name is compared through the group it was"
+    lines = r.lines()
+    assert "New capability: Tag cards (TGC) -- Put tags on cards." in lines
+    assert "New ways in: POST /tags." in lines and "New packages: httpx." in lines
+    assert lines[-1].startswith("Not this branch: ")
+    assert not any("FastAPI" in line or "Edit cards" in line for line in lines[:-1])
+
+
+def test_the_feature_screen_serves_the_split_and_falls_back_to_the_bare_comparison(tmp_path):
+    from factory.server.as_built import _system_change_view
+
+    base, head, _ = _two_readings()
+    store = EvidenceStore(tmp_path / "ledger", "f-1")
+    assert _system_change_view(store, tmp_path) is None, "nothing is said before both readings exist"
+    for label, reading in (("base", base), ("head", head)):
+        target = store.artifact_dir("as-built") / f"{label}.json"
+        target.write_text(reading.model_dump_json(), encoding="utf-8")
+        store.append("as_built", {"label": label, "commit": reading.commit, "file": str(target.relative_to(store.dir))})
+    store.append("system_change", asbuilt_graph.system_change(base, head))
+    view = _system_change_view(store, tmp_path / "not-a-repo")
+    assert view["report"]["capabilities_added"][0]["name"] == "Tag cards"
+    assert view["report"]["packages_added"] is None, "no Dependencies record: the lockfiles were not read"
+    assert "FastAPI" in view["report"]["outside_named"]
+    assert any(line.startswith("Not this branch") for line in view["lines"])
+
+    store.append("system_change", asbuilt_graph.system_change(base, base.model_copy(update={"commit": "later"})))
+    bare = _system_change_view(store, tmp_path)
+    assert bare["report"] is None and bare["head"] == "later", \
+        "a comparison whose readings are not the ones on file is shown bare, not attributed from the wrong pair"
 
 
 def test_the_as_built_pages_link_down_and_back_up(tmp_path):

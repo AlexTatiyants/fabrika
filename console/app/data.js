@@ -391,6 +391,7 @@ async function route() {
     : params.security ? 'objections'
     : params.blindspots ? 'blindspots'
     : params.dependencies ? 'dependencies'
+    : params.system ? 'system'
     : params.repairs ? 'repairs'
     : params.rework ? 'rework'
     : params.packet ? 'packet'

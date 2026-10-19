@@ -53,11 +53,92 @@
 .ab-table td { padding: .5rem .8rem .5rem 0; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.45; }
 .ab-table .num { text-align: right; font-family: var(--mono); font-size: .8125rem; white-space: nowrap; }
 .ab-warn { color: var(--accent-ink); }
-.wm-system { margin: 0 0 1.1rem; padding: .7rem .9rem; background: var(--surface); border: 1px solid var(--line); border-radius: 2px; }
-.wm-system-h { margin: 0 0 .35rem; font-family: var(--mono); font-size: .6875rem; font-weight: 400; letter-spacing: .08em;
+/* The packet's System tab: what a branch changed in how the system is put
+   together, the branch's changes first and the second reading's folded below. */
+.sys-h { margin: 1.6rem 0 .5rem; font: 400 .6875rem/1.2 var(--mono); letter-spacing: .08em;
   text-transform: uppercase; color: var(--ink-3); }
-.wm-system ul { margin: 0; padding-left: 1.1rem; line-height: 1.5; }
-.wm-system-a { display: inline-block; margin-top: .35rem; font-size: .8125rem; color: var(--accent-ink); }
+.sys-sub { margin: 0 0 .8rem; color: var(--ink-2); font-size: .9375rem; line-height: 1.5; max-width: 62rem; }
+.sys-dim { color: var(--ink-3); font-family: var(--mono); font-size: .72rem; margin-left: .4rem; }
+.sys-adds { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px;
+  background: var(--line); border: 1px solid var(--line); border-radius: 2px; }
+.sys-add { background: var(--surface); padding: .85rem 1rem .9rem; min-width: 0; }
+.sys-add-n { font: 600 2rem/1 var(--display); color: var(--ink); }
+.sys-add-l { margin-top: .25rem; font: 400 .6875rem/1.3 var(--mono); letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3); }
+.sys-add ul { margin: .6rem 0 0; padding: 0; list-style: none; font-size: .8125rem; line-height: 1.5; color: var(--ink-2); }
+.sys-add code { font-size: .78rem; overflow-wrap: anywhere; }
+.sys-add-ok { color: var(--green); font-size: .8125rem; margin-top: .6rem; }
+.sys-add-note { color: var(--ink-3); font-size: .8125rem; margin-top: .6rem; }
+.sys-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .75rem; }
+.sys-g { background: var(--surface); border: 1px solid var(--line); border-radius: 2px; min-width: 0; }
+.sys-g-hit { border-color: var(--green-edge); box-shadow: inset 0 3px 0 var(--green); }
+.sys-g-hd { padding: .65rem .8rem .5rem; border-bottom: 1px solid var(--line); }
+.sys-g-code { font: 500 .6875rem/1 var(--mono); color: var(--ink-3); letter-spacing: .06em; }
+.sys-g-name { font: 600 1.05rem/1.2 var(--display); color: var(--ink); margin-top: .2rem; }
+.sys-g-tally { font: 400 .6875rem/1 var(--mono); color: var(--ink-3); margin-top: .35rem; }
+.sys-g ul { list-style: none; margin: 0; padding: .45rem .8rem .65rem; font: 400 .75rem/1.65 var(--mono); }
+.sys-f { display: flex; gap: .45rem; align-items: baseline; overflow-wrap: anywhere; }
+.sys-f i { font-style: normal; width: .8rem; text-align: center; flex: none; }
+.sys-f-add { color: var(--green-ink); font-weight: 500; }
+.sys-f-add i, b.sys-f-add { color: var(--green); }
+.sys-f-chg { color: var(--ink); }
+.sys-f-chg i, b.sys-f-chg { color: var(--amber); }
+.sys-f-same { color: var(--ink-3); }
+.sys-legend { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: .6rem; font: 400 .75rem/1 var(--mono); color: var(--ink-3); }
+.sys-legend b { font-weight: 500; margin-right: .3rem; }
+.sys-loose { margin: .6rem 0 0; font-size: .8125rem; color: var(--ink-2); }
+.sys-health { border: 1px solid var(--line); border-radius: 2px; }
+.sys-hr { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) 9rem; gap: 1rem; align-items: start;
+  padding: .7rem .9rem; background: var(--surface); border-bottom: 1px solid var(--line); }
+.sys-hr:last-child { border-bottom: 0; }
+.sys-hr .pill { justify-self: start; }
+.sys-hr-t { font-weight: 500; color: var(--ink); }
+.sys-hr-d { font-size: .8125rem; color: var(--ink-2); margin-top: .15rem; line-height: 1.5; }
+.sys-hr-ba { font: 500 .8125rem/1.4 var(--mono); text-align: right; color: var(--ink); white-space: nowrap; }
+.sys-hr-ba s { color: var(--ink-3); text-decoration: none; }
+.sys-hr-quiet { background: var(--surface-sunk); }
+.sys-hr-quiet .sys-hr-t { color: var(--ink-2); font-weight: 400; }
+.sys-ways { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: .75rem; }
+.sys-box { background: var(--surface); border: 1px solid var(--line); border-radius: 2px; padding: .75rem .9rem; min-width: 0; }
+.sys-box h5 { margin: 0 0 .5rem; font: 600 1rem/1.2 var(--display); color: var(--ink); }
+.sys-box p { margin: 0 0 .5rem; font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
+.sys-route { font: 400 .8125rem/1.8 var(--mono); overflow-wrap: anywhere; }
+.sys-route b { display: inline-block; min-width: 4.2rem; font-weight: 500; color: var(--accent-ink); }
+.sys-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.sys-chips code { background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 2px;
+  padding: .05rem .35rem; font-size: .75rem; color: var(--ink-2); }
+.sys-noise { margin-top: 1.6rem; border: 1px dashed var(--line-strong); border-radius: 2px; background: var(--surface-sunk); }
+.sys-noise > summary { cursor: pointer; list-style: none; padding: .75rem .9rem; display: flex; flex-wrap: wrap;
+  gap: .6rem; align-items: baseline; }
+.sys-noise > summary::-webkit-details-marker { display: none; }
+.sys-noise-t { font-weight: 500; color: var(--ink); }
+.sys-noise-m { margin-left: auto; font: 400 .75rem/1.3 var(--mono); color: var(--ink-3); }
+.sys-noise-b { padding: 0 .9rem .9rem; }
+.sys-noise-b > p { font-size: .875rem; color: var(--ink-2); line-height: 1.55; max-width: 62rem; margin: 0 0 .8rem; }
+.sys-moves { width: 100%; border-collapse: collapse; font-size: .8125rem; background: var(--surface);
+  border: 1px solid var(--line); margin-bottom: .8rem; }
+.sys-moves th { text-align: left; font: 400 .6875rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-3); padding: .55rem .7rem; border-bottom: 1px solid var(--line); }
+.sys-moves td { padding: .4rem .7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sys-moves tr:last-child td { border-bottom: 0; }
+.sys-moves td.f { font-family: var(--mono); font-size: .75rem; overflow-wrap: anywhere; }
+.sys-moves td.y { color: var(--ink); }
+.sys-moves td.n { color: var(--ink-3); }
+.sys-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: .75rem; }
+.sys-cols { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.sys-col-h { font: 400 .6875rem/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: .3rem; }
+.sys-cols ul { margin: 0; padding-left: 1.1rem; font-size: .8125rem; color: var(--ink-2); line-height: 1.6; }
+.sys-bare { padding-left: 1.1rem; line-height: 1.5; }
+.sys-foot { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: 1.4rem 0 2.5rem; padding-top: .7rem;
+  border-top: 1px solid var(--line); font: 400 .75rem/1.4 var(--mono); color: var(--ink-3); }
+.sys-foot a { color: var(--accent-ink); }
+@media (max-width: 900px) {
+  .sys-adds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sys-ways, .sys-cols { grid-template-columns: 1fr; }
+  .sys-hr { grid-template-columns: 1fr; }
+  .sys-hr-ba { text-align: left; }
+}
 /* An agent of the as-built that is working now, on the crew diagram and band. */
 .dia-agent.dia-live rect { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 4 3; animation: ab-march 1s linear infinite; }
 @keyframes ab-march { to { stroke-dashoffset: -14; } }

@@ -8,6 +8,8 @@ import asyncio
 from ...asbuilt import ProjectAsBuilt, feature_reading
 from ...config import ConfigError
 from ...asbuilt_graph import SystemChange, system_change
+from ... import system_report
+from ...system_report import SystemReport
 from ...packet_doc import packet_markdown, spec_markdown
 from ...sandbox import Sandbox
 from ...schemas import FeatureState, Packet, Spec
@@ -102,9 +104,11 @@ class CommitMixin:
         return task
 
     async def _as_built_change(self, store: EvidenceStore, state: FeatureState, sandbox: Sandbox,
-                               base_task: "asyncio.Task | None") -> SystemChange | None:
-        """The feature's head read against its base, compared. None when either
-        reading is missing -- the packet then simply has no such section."""
+                               base_task: "asyncio.Task | None") -> SystemReport | SystemChange | None:
+        """The feature's head read against its base, compared, and each
+        difference put down to the branch or to the second reading. None when
+        either reading is missing -- the packet then simply has no such
+        section; the bare comparison when only the attribution failed."""
         try:
             head_sha = sandbox.head()
             head_task = self._as_built_begin(store, head_sha, "head")
@@ -116,15 +120,22 @@ class CommitMixin:
                 return None
             change = system_change(base, head)
             store.append("system_change", change, role="orchestrator", spec_hash=state.spec_hash)
-            return change
         except Exception as exc:
             store.append("as_built_skipped", {"label": "change", "error": f"{type(exc).__name__}: {exc}"[:500]},
                          role="orchestrator")
             return None
+        try:
+            return system_report.report(base, head, system_report.git_reader(sandbox.path),
+                                        store.payload("dependencies"))
+        except Exception as exc:
+            store.append("as_built_skipped", {"label": "attribution",
+                                              "error": f"{type(exc).__name__}: {exc}"[:500]},
+                         role="orchestrator")
+            return change
 
     def _commit_packet(
         self, store: EvidenceStore, state: FeatureState, spec: Spec,
-        sandbox: Sandbox, packet: Packet, system_change: SystemChange | None = None,
+        sandbox: Sandbox, packet: Packet, system_change: SystemReport | SystemChange | None = None,
     ) -> None:
         """Write the packet onto the branch it argues about, in its own commit.
 

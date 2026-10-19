@@ -1680,6 +1680,34 @@ def test_the_packet_has_a_dependencies_tab_that_every_route_reaches():
         assert words in deps
 
 
+def test_what_a_feature_changed_in_the_system_has_its_own_tab_and_left_the_work_map():
+    """It sat at the top of the work map as one undivided list, where a second
+    reading's renamed groups read as the feature reorganising the system. The
+    map is about criteria and files; this is about the system, attributed. It
+    is reached from every list that names the packet's views, and the branch's
+    changes are drawn before what only moved because the code was read again."""
+    app = app_js()
+    ui = ROOT / "console" / "ui"
+    tabs = (ui / "tabs.js").read_text(encoding="utf-8")
+    index = (ui / "index.js").read_text(encoding="utf-8")
+    system = (ui / "system.js").read_text(encoding="utf-8")
+    workmap = (ui / "workmap.js").read_text(encoding="utf-8")
+    assert "view: 'system'" in tabs
+    assert tabs.index("view: 'dependencies'") < tabs.index("view: 'system'") < tabs.index("view: 'objections'")
+    assert "case 'system':" in index
+    for marker in ("const GATE2_VIEWS", "const PACKET_VIEWS"):
+        assert "'system'" in app.split(marker, 1)[1].split("];", 1)[0], f"{marker} does not know the tab"
+    assert "system: () => f('system')" in app and "params.system ? 'system'" in app
+    assert "system: 'what-it-changed-in-the-system'" in app
+    assert "system_change" not in workmap and "wm-system" not in workmap, "the work map still carries it"
+    body = system.split("export function System(", 1)[1]
+    assert body.index("<${Adds}") < body.index("<${Groups}") < body.index("<${NotThisBranch}"), \
+        "what the branch did comes before what the reading moved"
+    # Three states that are not a blank, and none of them is an attribution it does not have.
+    for words in ("Not read yet", "could not be split", "not this branch"):
+        assert words in system
+
+
 def test_the_project_shows_what_it_depends_on_and_the_policy_it_holds_features_to():
     app = app_js()
     server = factory_source("server")

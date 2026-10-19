@@ -132,20 +132,6 @@ function states(g) {
   ];
 }
 
-/* The same change in the system's terms rather than the file's: computed from
-   the as-built read at the commit the feature branched from and at its head.
-   Absent until both readings exist, and then only when something moved. */
-function SystemChange({ change, projectId }) {
-  if (!change || !(change.lines || []).length) return null;
-  return html`
-    <section class="wm-system">
-      <h4 class="wm-system-h">What this changes in the system</h4>
-      <ul>${change.lines.map((line) => html`<li key=${line}>${line}</li>`)}</ul>
-      ${projectId ? html`<a class="wm-system-a" href=${`#/${encodeURIComponent(projectId)}?gates=as-built`}>
-        The as-built of this project</a>` : null}
-    </section>`;
-}
-
 export function WorkMap({ data, hrefs }) {
   const g = graph(data);
   const bands = states(g);
@@ -277,7 +263,6 @@ export function WorkMap({ data, hrefs }) {
   return html`
     <div class="wrap">
       <p class="tab-lead">How each acceptance criterion connects to the files this run changed.</p>
-      <${SystemChange} change=${data.system_change} projectId=${(data.state || {}).project_id} />
 
       <div class="wm-gaps">
         ${bands.map((b) => html`

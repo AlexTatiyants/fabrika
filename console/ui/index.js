@@ -21,6 +21,7 @@ import { Questions } from './questions.js';
 import { Findings } from './findings.js';
 import { Repairs } from './repairs.js';
 import { Dependencies } from './dependencies.js';
+import { System } from './system.js';
 import { Start } from './start.js';
 import { Tabs, Verdict, tabsFor } from './tabs.js';
 
@@ -239,6 +240,7 @@ function Screen({ view, param, projectId, featureId, initial, hrefs, onReload, r
       case 'file': return html`<${FileView} ...${packetShared} path=${param} />`;
       case 'objections': return html`<${Findings} ...${shared} />`;
       case 'dependencies': return html`<${Dependencies} data=${initial.data} hrefs=${hrefs} />`;
+      case 'system': return html`<${System} data=${initial.data} />`;
       case 'blindspots': return html`
         <${BlindSpots} data=${initial.data} focus=${spot} onFile=${onFile} busy=${busy} />`;
       /* No flags, plan, budget or dispatch: the way out of the packet is on

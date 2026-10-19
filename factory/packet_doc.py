@@ -343,7 +343,8 @@ def packet_markdown(
 
     if system:
         # Beside "Counted": the same change, in the system's terms rather than
-        # the file's -- computed from the as-built at the base and at the head.
+        # the file's -- computed from the as-built at the base and at the head,
+        # what the branch caused first and what the second reading moved last.
         _section(lines, "What this changes in the system")
         lines += [f"- {line}" for line in system]
 

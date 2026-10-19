@@ -159,9 +159,10 @@ def register(app: FastAPI, ctx: Context) -> None:
             # which the Dependencies tab says, rather than showing none.
             "dependencies": store.payload("dependencies"),
             "packet": store.payload("packet"),
-            # What the feature changed in the system, in sentences -- from its
-            # as-built at the base and at the head. Null until both are read.
-            "system_change": _system_change_view(store.payload("system_change")),
+            # What the feature changed in the system -- from its as-built at the
+            # base and at the head, split into what the branch caused and what
+            # moved because the code was read again. Null until both are read.
+            "system_change": _system_change_view(store, project.repo_path),
             "writes": store.payload("writes"),
             # The command a human types to see the whole change. Derived from
             # the sandbox rather than read off a `writes` record: the build

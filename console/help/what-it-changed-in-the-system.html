@@ -1,0 +1,32 @@
+<p class="lead">The System tab says what a branch changed in how the system is put together: the capabilities,
+  ways in and data it added, where its code landed, and whether it left the code healthier or less healthy. It
+  separates what the branch did from what only looks different because the code was read a second time.</p>
+
+<h4>Where it comes from</h4>
+<p>Fabrika reads the code twice, alongside the run: once at the commit the branch started from and once at its
+  head. Each reading groups the files, names what the system can do, and lists its ways in and the outside systems
+  it talks to. The tab compares the two. It's empty until both readings exist, and it's never on the run's path:
+  a reading that fails doesn't fail the feature. Turn it off with <code>pipeline.as_built_on_features</code>.</p>
+
+<h4>What the branch did</h4>
+<ul>
+  <li><b>What it adds</b>: new capabilities, new ways in such as routes, new data entities, and new packages. A
+    capability counts as new only when every way into it is new.</li>
+  <li><b>Where the new code landed</b>: the groups as read at the head, each file marked added, changed or
+    untouched by this branch.</li>
+  <li><b>Health</b>: the reading's findings before and after — how much code no test reaches, and which groups
+    depend on each other, compared through what each group was before.</li>
+  <li><b>New ways in</b>: the ones a person uses, apart from helpers only the tests call.</li>
+</ul>
+
+<h4>What only looks different</h4>
+<p>Groups, capabilities and outside systems are names a model gives the code each time it reads it, so a second
+  reading can merge two groups or rename a capability on code nobody touched. Each difference is checked against
+  facts before it's shown as the branch's:</p>
+<ul>
+  <li>A way in or an entity is the branch's only if its name wasn't in its file at the starting commit.</li>
+  <li>A file moved only if it left the group its old group became; a group that kept its files and changed its
+    name was renamed, not changed.</li>
+  <li>An outside system is the branch's only if the lockfiles say it added the package.</li>
+</ul>
+<p>What fails those checks is folded away under <b>not this branch</b>, so you can still see it.</p>

@@ -19,6 +19,7 @@ import { AC_STATE, FocusTools, VERDICTS, blindSpots, callsFor, criteriaRows, dis
 } from './shared.js';
 import { PreviewButton } from './preview.js';
 import { dependencyTab } from './dependencies.js';
+import { systemTab } from './system.js';
 
 const VERDICT = Object.fromEntries(
   Object.entries(VERDICTS).map(([id, v]) => [id, `${v.word}.`]));
@@ -86,6 +87,11 @@ export function tabsFor(d, flags, traces) {
        vulnerable or under a license the project refused; amber for what nobody
        could look up or a person should rule on. */
     { view: 'dependencies', label: 'Dependencies', ...dependencyTab(d) },
+    /* What the branch changed in how the system is put together, from two
+       readings of the code. Computed like the facts beside it, but from a
+       model's reading, so it sits after them and before the arguments. Amber
+       when the branch left the system less healthy than it found it. */
+    { view: 'system', label: 'System', ...systemTab(d) },
     /* Every objection, security included. A Security tab beside this one
        would be keyed on a category the only prose reader is told not to use,
        so it would draw a zero while the findings it was for sat here. */

@@ -25,7 +25,7 @@ const HELP_FOR_VIEW = {
   intent: 'writing-the-intent', scout: 'writing-the-intent', questions: 'the-questions', spec: 'the-spec',
   build: 'watching-the-build', log: 'watching-the-build', review: 'your-calls', calls: 'your-calls',
   map: 'reading-the-work', criterion: 'reading-the-work', file: 'reading-the-work', evidence: 'evidence',
-  dependencies: 'evidence', objections: 'objections', blindspots: 'objections', repairs: 'the-repair-loop',
+  dependencies: 'evidence', system: 'what-it-changed-in-the-system', objections: 'objections', blindspots: 'objections', repairs: 'the-repair-loop',
   rework: 'the-repair-loop', packet: 'ruling-on-a-packet',
 };
 const HELP_FOR_STAGE = {

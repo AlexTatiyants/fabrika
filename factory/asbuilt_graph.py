@@ -1713,9 +1713,8 @@ def findings(reading: AsBuilt) -> list[Finding]:
 
     tests = [f for f in reading.files if f.is_test]
     if tests:
-        untested = [f for f in code if not f.tested_by and f.lines >= 50]
+        share, untested = untested_share(reading)
         if untested:
-            share = sum(f.lines for f in untested) / total
             out.append(Finding(kind="untested",
                                title=f"{round(share * 100)}% of the code is not reached by a test",
                                detail=f"{_count(len(untested), 'file')} of 50 lines or more that no test imports or calls; "
@@ -1749,6 +1748,16 @@ def findings(reading: AsBuilt) -> list[Finding]:
                            "not found in the code's own text. They are drawn dashed.",
                            paths=[]))
     return out
+
+
+def untested_share(reading: AsBuilt) -> tuple[float, list[FileNode]]:
+    """How much of the code a person wrote no test reaches, by lines, and which
+    files of 50 lines or more those are. One definition, so a finding and a
+    before-and-after comparison cannot count it two ways."""
+    code = [f for f in reading.files if f.kind == "code" and not f.is_test and not f.generated]
+    total = sum(f.lines for f in code) or 1
+    untested = [f for f in code if not f.tested_by and f.lines >= 50]
+    return sum(f.lines for f in untested) / total, untested
 
 
 def _count(n: int, noun: str) -> str:

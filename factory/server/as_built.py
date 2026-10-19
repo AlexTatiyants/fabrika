@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 
-from .. import asbuilt
+from .. import asbuilt, system_report
 from ..asbuilt import ProjectAsBuilt
 from ..asbuilt_graph import SystemChange
 
@@ -16,14 +17,41 @@ from .context import Context
 log = logging.getLogger(__name__)
 
 
-def _system_change_view(payload: Any) -> dict[str, Any] | None:
+#: Reports already worked out, by repository, commits and what the lockfiles
+#: said: the feature screen is fetched again on every refresh, and the answer
+#: cannot change while those do not.
+_REPORTS: dict[tuple, dict[str, Any]] = {}
+
+
+def _system_change_view(store: Any, repo_path: Any) -> dict[str, Any] | None:
+    """What the feature changed in the system, split into what the branch
+    caused and what moved because the code was read again. Null until both
+    readings exist; the old sentences alone for a ledger whose readings are
+    gone."""
+    payload = store.payload("system_change")
     if not payload:
         return None
     try:
         change = SystemChange.model_validate(payload)
     except ValueError:
         return None
-    return {"base": change.base, "head": change.head, "lines": change.lines()}
+    view: dict[str, Any] = {"base": change.base, "head": change.head, "lines": change.lines(), "report": None}
+    try:
+        base, head = asbuilt.feature_reading(store, "base"), asbuilt.feature_reading(store, "head")
+        if base is None or head is None or (base.commit, head.commit) != (change.base, change.head):
+            return view
+        deps = store.payload("dependencies")
+        key = (str(repo_path), base.commit, head.commit, json.dumps(deps, sort_keys=True, default=str))
+        if key not in _REPORTS:
+            if len(_REPORTS) > 32:
+                _REPORTS.clear()
+            _REPORTS[key] = system_report.report(base, head, system_report.git_reader(repo_path), deps) \
+                .model_dump(mode="json")
+        view["report"] = _REPORTS[key]
+        view["lines"] = system_report.SystemReport.model_validate(view["report"]).lines()
+    except Exception:  # an account for a reviewer: never worth the feature screen
+        log.warning("could not attribute what %s changed in the system", store.feature_id, exc_info=True)
+    return view
 
 
 def register(app: FastAPI, ctx: Context) -> None:
