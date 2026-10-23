@@ -427,6 +427,11 @@ The operator's right to stop the line, and the only control drawn as an object: 
 ### Marks (`ui/marks.js`)
 Two families of mark, and nothing wears both. **Results** on criteria are glyphs: ✓ verified (green), ✗ failing (red), ○ untested (amber), — no code (red). **Materiality** on files is a diamond: filled ◆ for novel, hollow ◇ for everything else. The two families differ in shape before colour, so the distinction holds for a reader without the colour channel. The four-class materiality ramp still sorts columns and draws the `.mat-mini` bar.
 
+### The Code View (branch packets)
+A branch packet reviews a branch Fabrika did not build, so it has no spec and no criteria to reach code through. Its code is reached through materiality instead. The diff is cut into **pieces**, one per function, setting or test, not one per git hunk. The pieces are grouped novel first, then conventional, then mechanical, then tests. Novel pieces are open, and everything else is folded. Every piece shows the reason for its class even when folded, because the classification is the claim. When unsure, a piece is classed novel. Each piece header carries its materiality diamond, its file and line, its counts, and links to the decisions and findings it embodies. Lines no test ran are marked in the gutter. Other parts of the packet link into pieces, not into files: the steps of a path, a finding's citation. A reader may re-sort by file, but materiality is the default order. Tests are a group of their own, outside the materiality ramp, and need a token of their own before this is built. Prototype: `prototypes/branch-packet.html`.
+
+**The Every Line Once Rule.** Every changed line belongs to exactly one piece, and this is checked in code, not trusted to the agent that cut the pieces. A view sorted by materiality that silently dropped lines would be a record that got shorter.
+
 ### Toast
 Fixed below the masthead and centred over the pane (not the window). Width is min(92vw, 560px), with a 2px radius and the popover shadow. Info toasts are inverted: `--paper` lettering on an `--ink` ground. Errors carry a red mono tag. Toasts rise 4px over 140ms.
 
@@ -454,6 +459,6 @@ Fixed below the masthead and centred over the pane (not the window). Width is mi
 - **Don't** put a shadow on a resting surface.
 - **Don't** set paragraphs in Saira Condensed or label buttons in the body face.
 - **Don't** use `--line` or `--line-strong` as a text colour.
-- **Don't** add a changed-file list to the review. Code is reached through the criterion that asked for it, or through "Not asked for".
+- **Don't** add a changed-file list to a feature packet. There, code is reached through the criterion that asked for it, or through "Not asked for". A branch packet has no criteria, so its code is reached through materiality instead (see The Code View). Neither packet shows the diff as a flat list of files.
 - **Don't** make the board scroll horizontally to show the line. Sixteen stations fit on one row.
 - **Don't** collapse the step strip and the lamps into one indicator.
