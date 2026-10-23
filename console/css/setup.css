@@ -145,7 +145,7 @@
 .su-acct-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .su-acct-h h3 { margin: 0; font-family: var(--display); font-size: 1.0625rem; font-weight: 600; }
 .su-who { font-family: var(--mono); font-size: var(--t-small); color: var(--ink-3); }
-.su-st { margin-left: auto; }
+.su-acct-h .su-st { margin-left: auto; }
 .su-body { margin: 6px 0 0 21px; font-size: .875rem; color: var(--ink-2); }
 .su-models { margin-top: 4px; font-family: var(--mono); font-size: var(--t-small); color: var(--ink-3); }
 .su-declined { padding: 8px 0; }
@@ -258,7 +258,7 @@
 @media (max-width: 640px) {
   .su-counts { margin-left: 0; }
   .su-nm { display: none; }
-  .su-st { display: none; }
+  .su-stn .su-st { display: none; }
   .su-strip span { font-size: 0; }
   .su-strip span.here { font-size: 9px; }
   .su-teams { grid-template-columns: 1fr; }
