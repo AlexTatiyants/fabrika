@@ -131,6 +131,7 @@ async function dispatchMainClick(event) {
     return render();
   }
   if (target.dataset.checkRoute) return checkRoute(target.dataset.checkRoute);
+  if (target.dataset.saveRouteToken) return saveRouteToken(target.dataset.saveRouteToken);
   if (target.dataset.applyCleanup) return applyCleanup(target.dataset.applyCleanup);
   if (target.dataset.costInfo) { state.costInfo = !state.costInfo; return render(); }
   if (target.dataset.reopenCleanup) return applyCleanup(target.dataset.reopenCleanup, true);
@@ -146,7 +147,7 @@ async function dispatchMainClick(event) {
   if (target.dataset.copy !== undefined) {
     // The one line a human has to run in a terminal, because none of these
     // tools can be signed into from a web page.
-    navigator.clipboard.writeText(target.dataset.copy).then(
+    copyText(target.dataset.copy).then(
       () => toast('Copied. Run it in a terminal, then press Check.'),
       () => toast(target.dataset.copy));
     return;
@@ -162,6 +163,7 @@ async function dispatchMainClick(event) {
   if (target.dataset.editSave) return saveEdits();
   if (target.dataset.moveDockerfile) return moveDockerfile();
   if (target.dataset.retireDockerfile) return retireDockerfile();
+  if (await branchClick(target)) return;
   if (target.dataset.historyFilter !== undefined) {
     state.historyFilter = target.dataset.historyFilter;
     return render();
@@ -194,8 +196,8 @@ async function dispatchMainClick(event) {
   if (target.dataset.copyDiffRec) {
     const r = ((((state.resurvey || {}).diff) || {}).recommendations || [])
       .find((x) => x.title === target.dataset.copyDiffRec);
-    if (r && navigator.clipboard) {
-      navigator.clipboard.writeText(recPrompt(r)).then(
+    if (r) {
+      copyText(recPrompt(r)).then(
         () => toast('Prompt copied. Give it to your coding agent in that repository, then re-survey.'),
         () => errorToast('Could not copy.'));
     }
@@ -203,8 +205,8 @@ async function dispatchMainClick(event) {
   }
   if (target.dataset.copyRec) {
     const r = liveRecommendations().find((x) => x.key === target.dataset.copyRec);
-    if (r && navigator.clipboard) {
-      navigator.clipboard.writeText(recPrompt(r)).then(
+    if (r) {
+      copyText(recPrompt(r)).then(
         () => toast('Prompt copied. Paste it into a session in that repository.'),
         () => errorToast('Could not copy.'));
     }
@@ -266,7 +268,7 @@ async function dispatchMainClick(event) {
   if (target.dataset.dxCopy) {
     const [name, i] = target.dataset.dxCopy.split(/:(?=\d+$)/);
     const fix = ((diagnosisOf({ name }) || {}).fixes || [])[Number(i)] || {};
-    return navigator.clipboard.writeText(fix.prompt || '').then(
+    return copyText(fix.prompt || '').then(
       () => toast('Copied. Give it to your coding agent, then run the checks again.'),
       () => toast('Could not copy; open it with Show it.'));
   }

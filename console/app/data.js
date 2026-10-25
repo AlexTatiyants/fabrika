@@ -194,6 +194,19 @@ async function loadProject(quiet) {
       `/api/projects/${encodeURIComponent(state.projectId)}/overview`).catch(() => null);
     if (ov) state.overview = { ...ov, project: state.projectId };
     if (projectSection() === 'as-built') await asBuiltLoad(state.projectId);
+    if (projectSection() === 'branches') {
+      const b = await api(
+        `/api/projects/${encodeURIComponent(state.projectId)}/branches`).catch(() => null);
+      if (b) state.branches = { ...b, project: state.projectId };
+    }
+    // A look at outside work: read on every refresh, so its stations light
+    // as the events that move them arrive.
+    if (state.view === 'branch' && typeof state.param === 'string') {
+      const slug = state.param;
+      const d = await api(`/api/projects/${encodeURIComponent(state.projectId)}/branches/${
+        encodeURIComponent(slug)}`).catch((e) => { if (!quiet) errorToast(e.message); return null; });
+      if (d) state.branchLook = { ...d, slug };
+    }
     if (projectSection() === 'history') {
       const h = await api(
         `/api/projects/${encodeURIComponent(state.projectId)}/history`).catch(() => null);
@@ -376,6 +389,8 @@ async function route() {
     else params[bit.slice(0, at)] = decodeURIComponent(bit.slice(at + 1));
   });
   state.fragment = fragment;
+  // Which tab of a look's packet is open: `?branch=<slug>&bp=code`.
+  state.bpTab = typeof params.bp === 'string' ? params.bp : null;
   pendingScroll = fragment || null;
   state.helpTopic = typeof params.help === 'string' ? params.help : HELP_START;
   // Settings is folded into the tabs; an old `?settings` link lands on Survey,
@@ -417,12 +432,14 @@ async function route() {
     : params.rework ? 'rework'
     : params.packet ? 'packet'
     : params.gates ? 'gates'
+    : params.branch ? 'branch'
     : STEP_IDS.find((id) => flags.includes(id)) || null;
   /* `?gates=checks` names a screen and which of its four sections is open, the
      same shape as `?criterion=AC-1`. */
   const param = params.criterion
     || (typeof params.evidence === 'string' ? params.evidence : null) || params.file
-    || (typeof params.gates === 'string' ? params.gates : null) || null;
+    || (typeof params.gates === 'string' ? params.gates : null)
+    || (typeof params.branch === 'string' ? params.branch : null) || null;
   if (view !== state.view || param !== state.param) {
     state.view = view; state.param = param;
     state.draft = null; state.editing = null; state.roleDraft = {}; state.openRole = null;

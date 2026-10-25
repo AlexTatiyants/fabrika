@@ -59,3 +59,13 @@ def has_commit(path: str | Path) -> bool:
     or a branch needs to be made from."""
     return shutil.which("git") is not None and out(["rev-parse", "--verify", "HEAD"], path,
                                                    timeout=20) is not None
+
+
+def merge_base(repo: str | Path, a: str, b: str) -> str:
+    """The commit `a` and `b` last shared, or "" when they share none.
+
+    What outside work is measured against. Not the tip of `main`: main
+    moves after a branch is cut, and a diff against where it is now would
+    credit the branch with undoing everything main did since.
+    """
+    return (out(["merge-base", a, b], Path(repo).expanduser().resolve(), timeout=30) or "").strip()

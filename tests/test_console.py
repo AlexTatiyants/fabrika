@@ -2386,7 +2386,8 @@ def test_a_project_opens_on_its_overview_and_checks_and_tests_are_tabs():
 
     steps = app.split("const PROJECT_STEPS = [", 1)[1].split("];", 1)[0]
     order = [m for m in re.findall(r"id: '(\w+)'", steps)]
-    assert order == ["overview", "checks", "tests", "guides", "survey", "environment", "history"], order
+    assert order == ["overview", "checks", "tests", "guides", "survey", "environment", "history",
+                     "branches"], order
     section = app.split("function projectSection()", 1)[1].split("\n}", 1)[0]
     assert "SECTION_STEP[want] ? want : 'overview'" in section, "a project opens somewhere other than its overview"
     ov = app.split("function overviewSection(p) {", 1)[1].split("\n}\n", 1)[0]
@@ -4355,3 +4356,19 @@ console.log(JSON.stringify({empty, scheme, lan, before, after}));
     assert 'data-copy="start-the-server --with-tools"' in got["after"]
     assert got["after"].index('data-ls="connect"') < got["after"].index('data-ls="add"'), \
         "Connect comes first"
+
+
+def test_every_section_the_project_page_draws_inside_its_guarded_block_is_one_the_guard_lets_through():
+    """The project page draws most sections inside a block shown only for the
+    tabs it names. A section placed in there whose tab the guard does not name
+    is a tab that opens on nothing: the branches tab did, for a day, with the
+    API answering and the page drawing none of it."""
+    screen = app_js().split("function projectScreen()", 1)[1]
+    guard = "${!['checks', 'tests', 'guides', 'overview', 'survey', 'history'].includes(sec) ? '' : `"
+    assert guard in screen, "the guarded block moved; point this test at it"
+    allowed = set(re.findall(r"'([\w-]+)'", guard))
+    block = screen.split(guard, 1)[1].split("${sec === 'results'", 1)[0]
+    drawn = set(re.findall(r"\$\{sec === '([\w-]+)' \?", block))
+    assert drawn and drawn <= allowed, f"drawn where the guard never shows them: {sorted(drawn - allowed)}"
+    assert "branchesSection(p)" in screen.split("${sec === 'results'", 1)[1], \
+        "the branches tab is not drawn at all"

@@ -692,7 +692,7 @@ function projectScreen() {
            the two questions would stand above the two headings that name them
            -- three statements of the same thing before a single row. The other sections
            keep theirs; they have no headings of their own. */''}
-      ${['checks', 'tests', 'guides', 'overview', 'history', 'as-built'].includes(sec) ? ''
+      ${['checks', 'tests', 'guides', 'overview', 'history', 'as-built', 'branches'].includes(sec) ? ''
         : ['survey', 'environment'].includes(sec) ? tabHead(sec, p) : `
         <h2 class="sec-title">${esc(SECTION_TITLE[sec])}</h2>
         <p class="sec-lede">${SECTION_LEDE[sec]}</p>`}
@@ -721,7 +721,7 @@ function projectScreen() {
            approve" would stand directly above "Running the checks", telling a
            person to do the thing already happening; and any other verdict here is
            about the run this one is replacing. The strip below is the state. */''}
-      ${['checks', 'tests', 'overview', 'history', 'as-built'].includes(sec) || !['act', 'wait'].includes(ruling.tone)
+      ${['checks', 'tests', 'overview', 'history', 'as-built', 'branches'].includes(sec) || !['act', 'wait'].includes(ruling.tone)
         || (state.projectRun && state.projectRun.phase !== 'resurvey') ? '' : `
       <div class="ruling ${esc(ruling.tone)}">
         <span class="r-lamp" aria-hidden="true">${icon(RULING_LAMP[ruling.tone], 'ic')}</span>
@@ -797,6 +797,9 @@ function projectScreen() {
       ${/* Outside the block above: the drift card and the checks' running
            strip are about the gate list, and the as-built is not. */''}
       ${sec === 'as-built' ? asBuiltSection(p) : ''}
+      ${/* Outside it too: outside work is about neither the gate list
+           nor the checks' state, and inside that block the tab drew nothing. */''}
+      ${sec === 'branches' ? branchesSection(p) : ''}
       ${sec === 'survey' || sec === 'environment'
         ? (state.editing === sec ? (sec === 'survey' ? surveyEditor() : environmentEditor())
           : projectPanels(p, env, survey, sec)) : ''}

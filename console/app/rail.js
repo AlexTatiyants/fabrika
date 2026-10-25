@@ -157,9 +157,11 @@ function renderPanel() {
       // Recency, not urgency. Ordering work across features is the human's call.
       const active = all.filter((f) => ACTIVE_STAGES.includes(f.stage));
       const settled = all.length - active.length;
+      // Outside work, beside the features: every look not yet ruled on.
+      const looks = (state.allBranches || []).filter((b) => b.project_id === p.project_id && b.stage !== 'ruled');
       const projectNeeds = p.stage === 'awaiting_approval';
       const isCurrent = p.project_id === state.projectId;
-      const isIdle = !active.length && !projectNeeds;
+      const isIdle = !active.length && !looks.length && !projectNeeds;
 
       // Collapsed by default; a project only earns the room to stay open by
       // having something in it that is actually calling. Opening or closing it
@@ -167,7 +169,8 @@ function renderPanel() {
       if (panelChoice.has(p.project_id)) {
         panelOpen.set(p.project_id, panelChoice.get(p.project_id));
       } else if (!panelOpen.has(p.project_id)) {
-        panelOpen.set(p.project_id, projectNeeds || active.some(isCalling));
+        panelOpen.set(p.project_id, projectNeeds || active.some(isCalling)
+          || looks.some((b) => b.stage === 'failed' || b.stage === 'awaiting_ruling'));
       }
       const open = panelOpen.get(p.project_id);
 
@@ -226,9 +229,25 @@ function renderPanel() {
         </div>`;
       }).join('');
 
+      const lookRows = looks.map((b) => {
+        const here = state.view === 'branch' && state.param === b.slug && state.projectId === b.project_id;
+        const detail = b.phase ? `${b.phase}…` : lookWord(b.stage);
+        const classes = ['panel-feature', 'panel-branch', b.stage === 'failed' ? 'failed' : '',
+          b.stage === 'awaiting_ruling' ? 'needs' : '', here ? 'current' : ''].filter(Boolean).join(' ');
+        return `<div class="${classes}">
+          <a class="pf-main" href="${branchHref(b.project_id, b.slug)}" ${here ? 'aria-current="page"' : ''}>
+            <span class="ftitle">${esc(b.branch)}</span>
+            <span class="fstage"><i class="fdot"></i>
+              <b class="fband">outside work</b><span class="fsep">·</span><span class="fdetail"
+                title="${esc(b.headline || b.error || detail)}">${esc(detail)}</span>
+            </span>
+          </a>
+        </div>`;
+      }).join('');
+
       const meta = projectNeeds
         ? 'repo ready'
-        : (active.length ? `${active.length}` : '');
+        : (active.length + looks.length ? `${active.length + looks.length}` : '');
       const displayName = p.name || p.project_id;
 
       return `<div class="panel-group ${open ? 'open' : ''}"
@@ -247,7 +266,7 @@ function renderPanel() {
           </a>
         </div>
         <div class="panel-group-body">
-          ${rows}
+          ${rows}${lookRows}
           ${isIdle
             ? `<a class="panel-quiet" href="#/${encodeURIComponent(p.project_id)}">nothing in flight</a>` : ''}
           ${settled

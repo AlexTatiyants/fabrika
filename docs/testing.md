@@ -42,6 +42,7 @@ skipped.
 | `tests/test_server.py` | the server's routes, what each answers and refuses |
 | `tests/test_console.py` | what each console screen draws, and its stylesheet |
 | `tests/test_asbuilt.py` | the as-built, read file by file |
+| `tests/test_branch.py` | branch packets: the way in, the cut, the checks and the screen |
 
 `tests/helpers.py` and `tests/support.py` hold what the test files share.
 
@@ -82,6 +83,7 @@ from there names the invariant it holds.
 | prop | Only the gate changes a human checked are applied; what they left unchecked is recorded as a rejection; accepting one clears the baseline; an `add` with no gate definition is refused rather than guessed at |
 | env | A feature runs the environment's setup before its gates; once per sandbox where the runner carries it, every round where it does not — a container's toolchain goes down with the image and its database with the volume — and again if a reverted round cleaned it away |
 | cfg | Editing a role preserves every comment, never writes to the shipped example, and cannot delete a pipeline role; an added review agent's findings reach the packet and cannot reach the verify lane; the orchestrator calls no review agent by literal name |
+| bp | A look at a branch Fabrika did not build moves nothing of the person's: every ref, the checkout's HEAD, its status and its worktrees are as they were, and what a formatter would rewrite is recorded, not committed; the base is where the branch left main, not where main is now; every changed line, added or removed, is in exactly one piece, and a join that would lose or double one is refused; a piece the rapporteur did not class, or gave no reason for, is novel; tests are classed by code; a check red at the merge base is inherited, not the branch's; the code view draws every piece once, novel open and the rest folded with its reason |
 
 ## What the suite cannot see
 

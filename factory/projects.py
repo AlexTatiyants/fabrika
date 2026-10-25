@@ -264,6 +264,18 @@ class Project:
     def feature_ids(self) -> list[str]:
         return list_feature_ids(self.features_root)
 
+    @property
+    def branches_root(self) -> Path:
+        """Where the looks at outside work are kept: one ledger per branch,
+        every look at it appended, so a later look can say what moved."""
+        return self.evidence_root / self.id / "branches"
+
+    def branch_store(self, slug: str) -> EvidenceStore:
+        return EvidenceStore(self.branches_root, slug)
+
+    def branch_slugs(self) -> list[str]:
+        return list_feature_ids(self.branches_root)
+
     # -- readiness --------------------------------------------------------
 
     def require_ready(self) -> None:

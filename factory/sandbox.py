@@ -222,6 +222,41 @@ class Sandbox:
         return cls(state, repo)
 
     @classmethod
+    def create_detached(
+        cls,
+        *,
+        repo: str | Path,
+        root: str | Path,
+        project_id: str,
+        name: str,
+        base_sha: str,
+        head_sha: str,
+        image: str = "",
+    ) -> "Sandbox":
+        """A checkout of a branch Fabrika did not build, at a pinned commit.
+
+        Detached, so no branch is made and none is moved: the branch belongs
+        to whoever built it, and a look at it writes nothing anywhere they
+        could see. `base_sha` is where the branch left the project's base, and
+        every diff this sandbox answers is from there to `head_sha`.
+        """
+        repo = Path(repo).expanduser().resolve()
+        if not has_commit(repo):
+            raise SandboxError(f"{repo} has no commits, so it has no branch to look at")
+        path = Path(root).expanduser().resolve() / project_id / "branches" / name
+        if path.exists():
+            raise SandboxError(f"a sandbox already exists at {path}; release it before recreating")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        result = _git(["worktree", "add", "--detach", str(path), head_sha], repo)
+        if result.returncode != 0:
+            raise SandboxError(f"git worktree add failed for {name}: {result.stderr.strip()}")
+        state = SandboxState(
+            feature_id=name, project_id=project_id, kind="worktree", path=str(path),
+            branch="", base_sha=base_sha, commit_sha=head_sha, image=image,
+        )
+        return cls(state, repo)
+
+    @classmethod
     def reopen(cls, state: SandboxState, repo: str | Path) -> "Sandbox":
         return cls(state, Path(repo))
 

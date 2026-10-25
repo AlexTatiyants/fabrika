@@ -199,6 +199,9 @@ function renderScreens() {
     html = logScreen();
   } else if (state.view === 'log' && !state.id) {
     html = projectLogScreen();
+  } else if (state.view === 'branch' && state.project) {
+    // Outside work's packet: its own screen, built from the look's record.
+    html = branchScreen();
   } else if (state.view === 'gates' && state.project) {
     // The gates, the baseline, the drift and the proposal, at any stage, not
     // only while a project is *not* ready: if the bench took the route once it
@@ -633,8 +636,11 @@ function managePolling() {
      stream is not connected. The yard is the exception -- looking at no project
      in particular means looking at all of them. */
   const here = (f) => !state.projectId || f.project_id === state.projectId;
+  const look = state.view === 'branch' && state.branchLook;
   const running = midIntake
     || (state.data && state.data.state.stage === 'writing_spec')
+    // A look, or a reading of its as-built, under way: no event says a reading finished.
+    || (look && (look.running || Object.values(look.readings || {}).some((x) => x.state === 'reading')))
     || state.allFeatures.some((f) => here(f) && !f.orphaned
                                      && ['building', 'intake', 'writing_spec'].includes(f.stage))
     || state.projects.some((p) => (!state.projectId || p.project_id === state.projectId)

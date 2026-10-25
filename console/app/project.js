@@ -35,16 +35,20 @@ const PROJECT_STEPS = [
   { id: 'environment', label: 'environment', has: (p) => !!p.environment },
   { id: 'as-built', label: 'as-built', has: () => true },
   { id: 'history', label: 'history', has: () => true },
+  /* Outside work: a branch built somewhere else, handed in for a look. */
+  { id: 'branches', label: 'outside work', has: () => true },
 ];
 
 /* The section each step opens, as it is written in the hash. */
 const PROJECT_SECTIONS = {
   overview: 'overview', survey: 'survey', environment: 'environment', checks: 'checks',
   tests: 'tests', guides: 'guides', results: 'results', history: 'history', 'as-built': 'as-built',
+  branches: 'branches',
 };
 const SECTION_STEP = {
   overview: 'overview', survey: 'survey', environment: 'environment', checks: 'checks',
   tests: 'tests', guides: 'guides', results: 'results', history: 'history', 'as-built': 'as-built',
+  branches: 'branches',
 };
 
 /* A step is a word; a section needs a heading and a sentence. Without them the
@@ -149,6 +153,8 @@ function projectBar(p, opts = {}) {
   /* On the start screen no section is open, so nothing in the strip is marked
      as where you are reading. */
   const at = state.view === 'gates' ? projectSection()
+    // A look at outside work is read from its tab, and says so.
+    : state.view === 'branch' ? 'branches'
     : state.view === 'log' && !state.id ? 'history' : '';
   // The tab you are reading: on the landing page too, where the name is not a
   // link because it would lead where you already are.

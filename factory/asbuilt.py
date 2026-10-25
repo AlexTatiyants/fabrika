@@ -1078,6 +1078,10 @@ class ProjectAsBuilt:
 
         def emit(phase: str, status: str, detail: str = "") -> None:
             self.background[key] = {"project": project.id, "feature": store.feature_id, "label": label,
+                                    # A look at outside work keeps its ledger under
+                                    # `branches/`, beside the features': said, so a
+                                    # look's reading is not called a feature's.
+                                    "outside": store.dir.parent.name == "branches",
                                     "phase": phase, "detail": detail, "role": _role_of(phase), "live": live,
                                     "at": _now()}
 
@@ -1114,7 +1118,8 @@ def now_running() -> list[dict[str, Any]]:
     for pid, r in ProjectAsBuilt.running.items():
         out.append({"project": pid, "feature": "", "label": "refresh", **_public(r)})
     for r in ProjectAsBuilt.background.values():
-        out.append({"project": r["project"], "feature": r["feature"], "label": r["label"], **_public(r)})
+        out.append({"project": r["project"], "feature": r["feature"], "label": r["label"],
+                    "outside": r.get("outside", False), **_public(r)})
     return out
 
 

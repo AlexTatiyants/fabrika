@@ -41,7 +41,12 @@ def _system_change_view(store: Any, repo_path: Any) -> dict[str, Any] | None:
         if base is None or head is None or (base.commit, head.commit) != (change.base, change.head):
             return view
         deps = store.payload("dependencies")
-        key = (str(repo_path), base.commit, head.commit, json.dumps(deps, sort_keys=True, default=str))
+        # Keyed on the readings, not only their commits: a commit read again --
+        # after a reading that left files unread -- is the same pair of commits
+        # with a different account of them, and the stale report was served on.
+        read = tuple(r.get("seq") for r in store.all("as_built")[-4:])
+        key = (str(store.dir), str(repo_path), base.commit, head.commit, read,
+               json.dumps(deps, sort_keys=True, default=str))
         if key not in _REPORTS:
             if len(_REPORTS) > 32:
                 _REPORTS.clear()

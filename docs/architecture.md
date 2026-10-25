@@ -58,6 +58,36 @@ What each gate asks of a person is in [gates.md](gates.md); how a feature is
 kept apart from every other one, and from this machine, is in
 [isolation.md](isolation.md).
 
+## Branch packets
+
+Not every piece of work can be specified up front. A new screen, a tricky
+algorithm or a data model is often worked out interactively, in whatever agent
+someone likes, and ends as a branch: **outside work**, in the factory's sense
+of work done off the line by someone else. A **look** takes that branch, and at most
+one sentence of intent, and hands back a branch packet. It runs a shorter
+line:
+
+```
+reader (base ∥ head) ∥ gates → attribution → rapporteur
+```
+
+The base is where the branch left the project's base ref. Fabrika checks the
+head out detached, in a worktree of its own, and nothing commits. A check that
+rewrites files has what it would rewrite recorded, then put back. The packet is
+a record in the branch's own ledger
+(`<evidence>/<project>/branches/<branch>/`), and every later look at the same
+branch is appended there. The branch, its ref and the person's checkout are
+left exactly as they were.
+
+With no criteria to reach code through, the diff is cut into **pieces**, one
+per function, setting or test, and read by materiality (`factory/pieces.py`).
+Code does the cut, and the rapporteur only classes each piece and says why.
+Every changed line is in exactly one piece. Code checks that, not the agent: a
+piece the rapporteur leaves unclassed is novel, and a join that would lose or
+double a line is refused. Review, breaker, decisions worked out from the code
+and the oracle (only with intent) are the next stretches of this line.
+`factory/pipeline/branch.py` is the orchestrator.
+
 ## Nothing is seeded
 
 There is no fixture: no fictional project written straight to the evidence

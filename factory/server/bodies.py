@@ -234,6 +234,13 @@ class NewFeature(BaseModel):
     allow_dirty: bool = False
 
 
+class NewLook(BaseModel):
+    """A branch Fabrika did not build, handed in for a look."""
+
+    branch: str = Field(min_length=1, description="A branch, or any commit, in the project's repository.")
+    intent: str = Field(default="", max_length=600, description="One sentence of what it was for, if anyone has one.")
+
+
 class CorrectionBody(BaseModel):
     correction: str = Field(min_length=1)
 

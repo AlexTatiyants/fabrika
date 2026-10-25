@@ -2581,7 +2581,9 @@ function asBuiltWorking(role) {
 }
 
 function asBuiltRunLine(r) {
-  const where = r.feature ? `${r.project}, feature ${r.feature} (${r.label === 'base' ? 'where it started' : 'its head'})`
+  const where = r.feature
+    ? `${r.project}, ${r.outside ? 'outside work' : 'feature'} ${r.feature} (${
+      r.label === 'base' ? (r.outside ? 'where it left the base' : 'where it started') : 'its head'})`
     : r.project;
   const flying = (role) => {
     const n = (r.inflight || {})[role] || 0;

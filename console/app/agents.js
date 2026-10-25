@@ -232,7 +232,16 @@ function pipelineDiagram(roles) {
     ['group', 'step'], agent('cartographer'), ['.fabrika/as-built', 'step'],
   ], 18);
   const now = asBuiltNow(roles);
-  const height = ASBUILT_Y + NODE_H + (now ? 40 : 26);
+
+  /* Outside work: a branch built somewhere else, looked at. The same reader
+     and rapporteur, with the project's checks and the cut between them as code
+     -- and no build, no oracle and no repair loop, so none is drawn. */
+  const OUTSIDE_Y = ASBUILT_Y + NODE_H + (now ? 40 : 26) + 24;
+  const outside = diaChain(88, OUTSIDE_Y, [
+    ['branch', 'step'], agent('reader'), ['checks', 'step'], ['attribution', 'step'],
+    ['the cut', 'step'], agent('rapporteur', 'agent'), ['your ruling', 'gate'],
+  ], 18);
+  const height = OUTSIDE_Y + NODE_H + 26;
 
   return `
     <div class="dia-scroll">
@@ -290,6 +299,9 @@ function pipelineDiagram(roles) {
       ${tag('as-built', 8, ASBUILT_Y + MID + 4)}${asBuilt.svg}
       ${tag('on your press, and beside each feature', asBuilt.end + 12, ASBUILT_Y + MID + 4)}
       ${now ? tag(now, 88, ASBUILT_Y + NODE_H + 22) : ''}
+      <line x1="8" y1="${OUTSIDE_Y - 20}" x2="${converge.end + 12}" y2="${OUTSIDE_Y - 20}" stroke="var(--line)"/>
+      ${tag('outside work', 8, OUTSIDE_Y + MID + 4)}${outside.svg}
+      ${tag('a branch built elsewhere; nothing written back to it', outside.end + 12, OUTSIDE_Y + MID + 4)}
     </svg>
     </div>
     <p class="dia-key mono">

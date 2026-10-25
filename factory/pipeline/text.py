@@ -78,6 +78,9 @@ AS_BUILT_WAIT_S = 600
 #: drop a task nobody awaits -- the kickoff reading outlives the intake that
 #: started it.
 _AS_BUILT_TASKS: set = set()
+#: The readings in flight, by ledger, label and commit: a second ask for the
+#: same reading is handed the one already running rather than starting another.
+_AS_BUILT_READING: dict = {}
 
 
 def _now() -> str:

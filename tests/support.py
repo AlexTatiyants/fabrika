@@ -45,6 +45,7 @@ CONSOLE_SCRIPTS = [
     "app/project-questions.js",
     "app/guides.js",
     "app/history.js",
+    "app/branches.js",
     "app/help.js",
     "app/project-screen.js",
     "app/intake.js",
@@ -80,6 +81,7 @@ STYLESHEETS = [
     "css/project.css",
     "css/asbuilt.css",
     "css/setup.css",
+    "css/branch.css",
 ]
 
 

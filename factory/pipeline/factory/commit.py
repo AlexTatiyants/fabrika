@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import asyncio
 
-from ...asbuilt import ProjectAsBuilt, feature_reading
+from ...asbuilt import ProjectAsBuilt, feature_reading, load_file
 from ...config import ConfigError
 from ...asbuilt_graph import SystemChange, system_change
 from ... import system_report
@@ -15,7 +15,7 @@ from ...sandbox import Sandbox
 from ...schemas import FeatureState, Packet, Spec
 from ...store import EvidenceStore
 
-from ..text import AS_BUILT_WAIT_S, _AS_BUILT_TASKS, _now
+from ..text import AS_BUILT_WAIT_S, _AS_BUILT_READING, _AS_BUILT_TASKS, _now
 from ..records import current_payload
 
 
@@ -89,9 +89,22 @@ class CommitMixin:
         """
         if not getattr(self.config.pipeline, "as_built_on_features", False) or not sha:
             return None
+        # Already being read: the same reading, not a second one beside it. A
+        # look that waited past its patience and asked again started a copy of
+        # a reading still running, and the two went on spending side by side.
+        running = _AS_BUILT_READING.get((str(store.dir), label, sha))
+        if running is not None and not running.done():
+            return running
         for r in store.all("as_built"):
             if (r.get("payload") or {}).get("label") == label and r["payload"].get("commit") == sha:
-                return None
+                # Read, and read whole. A reading whose reader failed on some of
+                # its files -- a sign-in that had lapsed, a plan at its limit --
+                # is kept, but it is not this commit read: taken as one, every
+                # later look at the same commit compared two readings with most
+                # of their files missing, and called that what the branch did.
+                done = load_file(store.dir / r["payload"].get("file", ""))
+                if done is not None and not (done.coverage.unread or []):
+                    return None
         try:
             self.config.role("reader")
             self.config.role("cartographer")
@@ -101,6 +114,9 @@ class CommitMixin:
         task = asyncio.create_task(reader.read_for_feature(self.project, store, sha, label))
         _AS_BUILT_TASKS.add(task)
         task.add_done_callback(_AS_BUILT_TASKS.discard)
+        key = (str(store.dir), label, sha)
+        _AS_BUILT_READING[key] = task
+        task.add_done_callback(lambda _t: _AS_BUILT_READING.pop(key, None))
         return task
 
     async def _as_built_change(self, store: EvidenceStore, state: FeatureState, sandbox: Sandbox,

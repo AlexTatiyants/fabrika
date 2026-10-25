@@ -23,7 +23,7 @@ from ..config import Config
 from ..git import head_sha
 from ..llm import LLM
 from ..onboarding import ProjectOnboarding
-from ..pipeline import Factory
+from ..pipeline import BranchReview, Factory
 from ..preview import Previews
 from ..projects import Project, ProjectError, ProjectRegistry
 from ..routes import RouteMonitor
@@ -104,6 +104,11 @@ class Context:
         """Built fresh per request so it never holds a stale project record."""
         return Factory(self.cfg, self.project_or_404(project_id), llm=self.llm,
                        on_progress=self.hub.publish)
+
+    def branch_review_for(self, project_id: str) -> BranchReview:
+        """`factory_for`, pointed at a branch Fabrika did not build."""
+        return BranchReview(self.cfg, self.project_or_404(project_id), llm=self.llm,
+                            on_progress=self.hub.publish)
 
     def onboarding(self) -> ProjectOnboarding:
         return ProjectOnboarding(self.cfg, self.registry, llm=self.llm, on_progress=self.hub.publish)

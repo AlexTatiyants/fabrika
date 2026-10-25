@@ -2553,6 +2553,129 @@ class Verdict(BaseModel):
 
 
 # --------------------------------------------------------------------------
+# branch packets -- a review of a branch Fabrika did not build
+#
+# Work done interactively in some other agent, handed in as a branch with no
+# spec. There are no criteria to reach its code through, so the diff is cut into
+# pieces -- one per function, setting or test -- and reached by materiality. The
+# cut is code; a model only says which class each piece is, and why.
+# --------------------------------------------------------------------------
+
+LookStage = Literal["reviewing", "awaiting_ruling", "ruled", "failed"]
+
+
+class BranchState(BaseModel):
+    """One branch's latest look. Every look at a branch goes into one ledger, so
+    `look` counts them and the earlier ones stay where they were written.
+
+    It carries the names the orchestrator's phase machinery reads -- `phases`,
+    `stage`, `spec_hash`, `rework_round`, `feature_id` -- so a look is recorded,
+    journalled and broadcast exactly as a feature's run is.
+    """
+
+    slug: str
+    project_id: str = ""
+    branch: str
+    intent: str = ""
+    look: int = 1
+    stage: LookStage = "reviewing"
+    base_ref: str = ""
+    base_sha: str = ""
+    head_sha: str = ""
+    created_at: str = Field(default_factory=_now)
+    updated_at: str = Field(default_factory=_now)
+    sandbox: SandboxState | None = None
+    phases: list[PhaseState] = Field(default_factory=list)
+    error: str = ""
+    # Always empty and always zero: a look has no spec and no repair rounds.
+    spec_hash: str = ""
+    rework_round: int = 0
+
+    @property
+    def feature_id(self) -> str:
+        """The name a look goes by on the event stream and in container names.
+        Prefixed, so a branch called like a feature is never mistaken for one."""
+        return f"branch-{self.slug}"
+
+
+PieceKind = Literal["function", "class", "setting", "module", "test", "lines", "file"]
+PieceClass = Literal["novel", "conventional", "mechanical", "generated", "tests"]
+
+
+class Piece(BaseModel):
+    """One unit of a branch's diff: a function, a setting, a test, or the lines
+    of a file no outline could divide. Every changed line is in exactly one."""
+
+    id: str
+    path: str = Field(description="The file at the head; for a deleted file, where it was.")
+    old_path: str = Field(default="", description="Where the file was at the base, when the branch moved it.")
+    symbol: str = Field(description="What the piece is: a function's name, a setting's key path, a line range.")
+    kind: PieceKind = "lines"
+    start: int = Field(default=0, description="First line of the unit at the head; 0 when it is gone there.")
+    end: int = 0
+    added: list[int] = Field(default_factory=list, description="Head line numbers this branch added.")
+    removed: list[int] = Field(default_factory=list, description="Base line numbers this branch removed.")
+    binary: bool = False
+    fresh: bool = Field(default=False, description=(
+        "The branch added this unit whole: nothing of it was there before. Otherwise it changed one that was."))
+    klass: PieceClass = "novel"
+    reason: str = ""
+    classed_by: Literal["code", "rapporteur", "default"] = "default"
+    joined: list[str] = Field(default_factory=list, description="The pieces of the cut this one was joined from.")
+    rows: list[list[Any]] = Field(default_factory=list, description=(
+        "What to draw: [op, base line, head line, text], op one of ' ', '-', '+', '~' "
+        "(a run of unchanged lines folded, its count in the text)."))
+
+
+class PieceCall(BaseModel):
+    id: str = Field(description="A piece id from the list you were given.")
+    klass: Literal["novel", "conventional", "mechanical", "generated"] = Field(description=(
+        "novel: a real choice a person has to read. conventional: the obvious way, following "
+        "what the repository already does. mechanical: forced by the language, the framework or "
+        "a rename; there was no choice. generated: a tool's output."))
+    reason: str = Field(description="Why this class, in one sentence a reader can check against the code.")
+
+
+class PieceJoin(BaseModel):
+    ids: list[str] = Field(description="Two or more adjacent pieces of one file that are one unit to a reader.")
+    reason: str = Field(description="Why they are one thing.")
+
+
+class PathStep(BaseModel):
+    label: str = Field(description="What happens at this step: a function, a handler, a button, a command, a file.")
+    note: str = Field(default="", description="A few words: what this step does, or what it was given.")
+    piece: str = Field(default="", description="The id of the piece this step is, when it is code in this branch. Empty for anything outside the branch's code.")
+
+
+class CodePath(BaseModel):
+    """One way the new code runs, from where it starts to where it leaves the code."""
+
+    title: str = Field(description="What a person does or sees, in a few words: \"A refused npm install\".")
+    said: str = Field(default="", description="One or two sentences on what happens along it.")
+    steps: list[PathStep] = Field(default_factory=list, description="In the order they run.")
+    then: str = Field(default="", description="When the path goes on after something happens -- a button pressed, a session started -- what that is, in a few words.")
+    then_steps: list[PathStep] = Field(default_factory=list, description="The steps after `then`, in order.")
+
+
+class Claim(BaseModel):
+    quote: str = Field(description="What a commit message says the branch does, in its words, shortened with … if long.")
+    tests: list[str] = Field(default_factory=list, description="The names of the tests that exercise it. Empty when none does.")
+
+
+class PieceJudgement(BaseModel):
+    """What the rapporteur says about the pieces of outside work."""
+
+    headline: str = Field(description="One sentence on what the branch built, for someone who will use it.")
+    summary: str = Field(description="What the branch is, as a whole, in two sentences at most. No verdict, no inventory.")
+    paths: list[CodePath] = Field(default_factory=list, description=(
+        "How the new code runs: two to four paths, most important first."))
+    claims: list[Claim] = Field(default_factory=list, description=(
+        "Every claim the commit messages make about what the branch does, each with the tests that show it."))
+    pieces: list[PieceCall] = Field(default_factory=list)
+    joins: list[PieceJoin] = Field(default_factory=list)
+
+
+# --------------------------------------------------------------------------
 # as-built -- the reader and the cartographer
 #
 # A standing account of a repository as it was actually built, for the person

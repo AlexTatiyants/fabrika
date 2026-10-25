@@ -228,6 +228,7 @@ from .recordings import (
 )
 from .helpers import _dedupe_writes, _round_unit_id, _renumber_decisions
 from .factory import Factory, ProgressCallback
+from .branch import BranchReview, branch_slug, LOOK_PHASES
 # Names imported from elsewhere rather than defined in this package, which code
 # and tests take from here.
 from ..containers import runner_for

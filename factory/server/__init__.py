@@ -32,7 +32,7 @@ from ..llm import LLM
 from ..preview import Previews
 from ..projects import ProjectRegistry
 from ..routes import RouteMonitor
-from . import (as_built, features, gate0, lifecycle, logs, preview, projects, proposal, readings, review,
+from . import (as_built, branches, features, gate0, lifecycle, logs, preview, projects, proposal, readings, review,
                settings, setup, static, summary, traces, version)
 from .bodies import (DISPOSITIONS, AdoptRecommendationBody, AnswersBody, CheckNameBody, CheckRunsBody,
                      CleanupPick, CorrectionBody, DiagnosisFixBody, EditorUpdate, FamilyBody, FlagBody,
@@ -131,6 +131,7 @@ def create_app(config: Config | None = None) -> FastAPI:
     settings.register(app, ctx)
     setup.register(app, ctx)
     features.register(app, ctx)
+    branches.register(app, ctx)
     preview.register(app, ctx)
     logs.register(app, ctx)
     lifecycle.register(app, ctx)

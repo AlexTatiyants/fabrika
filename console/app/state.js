@@ -33,6 +33,8 @@ const state = {
   projectRun: null,
   projects: [],
   allFeatures: [],
+  // Every look at outside work, in every project: the rail lists them too.
+  allBranches: [],
   // What the server says about itself: which editor to offer, where the
   // evidence lives. Fetched once at boot; absent until it lands.
   config: null,
