@@ -24,6 +24,42 @@ def test_the_docker_command_mounts_the_sandbox_and_cuts_the_network(tmp_path):
     assert "--user" in argv, "gates must not leave root-owned files in the worktree"
 
 
+def test_a_dockerfile_environment_s_variables_reach_its_containers_and_cannot_move_home(tmp_path, monkeypatch):
+    """A project's `env` is the container's, by its own description. Compose set
+    it; a Dockerfile environment accepted it, saved it and started every
+    container without it -- so a check that needed `APP_MODE=test` failed, and
+    the setting that said so looked like it had been applied. The runner's own
+    `HOME` is what keeps a gate writing inside the checkout, and stays."""
+    import asyncio
+
+    from factory import containers
+    from factory.containers import DockerRunner, runner_for
+    from factory.projects import ProjectRegistry
+    from factory.schemas import EnvironmentSpec
+
+    env = {"APP_MODE": "test", "GREETING": "two words", "HOME": "/elsewhere"}
+    argv = DockerRunner("img", "/work", _docker_config(), env=env).argv(
+        "pytest", cwd=tmp_path, network=False, name="t")
+    given = [argv[i + 1] for i, a in enumerate(argv) if a == "--env"]
+    assert "APP_MODE=test" in given and "GREETING=two words" in given, \
+        "the project's variables never reached the container"
+    assert "HOME=/elsewhere" not in given and "HOME=/work" in given, \
+        "a project setting moved the runner's HOME out of the checkout"
+    assert argv.index("--entrypoint") > max(i for i, a in enumerate(argv) if a == "--env")
+
+    async def built(project, docker):
+        return "img"
+
+    monkeypatch.setattr(containers, "build_image", built)
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    project = ProjectRegistry(tmp_path / "evidence").create(repo, "demo")
+    project.state.environment = EnvironmentSpec(kind="generate", dockerfile="FROM python:3.13-slim",
+                                                env={"APP_MODE": "test"})
+    runner, image = asyncio.run(runner_for(project, load_config(ROOT / "factory.example.yaml")))
+    assert (image, runner.env) == ("img", {"APP_MODE": "test"})
+
+
 def test_setup_gets_the_network_and_gates_do_not(tmp_path):
     """Both on a sealed network, never the default bridge -- which routes to this
     machine, where a developer's own copy of the project listens on its usual

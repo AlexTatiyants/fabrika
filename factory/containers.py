@@ -612,6 +612,11 @@ async def sweep_images(
 # --------------------------------------------------------------------------
 
 
+#: Variables a `DockerRunner` sets on its containers itself, which a project's
+#: `env` does not override.
+RUNNER_ENV = frozenset({"HOME", "NPM_CONFIG_CACHE", "XDG_CACHE_HOME"})
+
+
 class DockerRunner:
     """One container per command, the sandbox mounted, on a sealed network.
 
@@ -644,10 +649,14 @@ class DockerRunner:
     enforces_egress_policy = True
     carries_setup = False
 
-    def __init__(self, image: str, workdir: str, docker: DockerConfig) -> None:
+    def __init__(self, image: str, workdir: str, docker: DockerConfig,
+                 env: Mapping[str, str] | None = None) -> None:
         self.image = image
         self.workdir = workdir or "/work"
         self.docker = docker
+        #: The project's own variables (`EnvironmentSpec.env`), on every
+        #: container this runner starts. See `argv` for which ones it keeps.
+        self.env: dict[str, str] = dict(env or {})
         self._session: str = ""          # container held open for setup
         self.session_env: dict[str, str] = {}   # set while a test session is open
         self._sealed: str = ""           # no way out at all, created on demand
@@ -673,6 +682,17 @@ class DockerRunner:
             "--volume", f"{cwd}:{self.workdir}",
             "--workdir", self.workdir,
         ]
+        # The project's variables: what the app cannot start without and the
+        # repository does not hold. Compose has always set them; this runner
+        # did not, so a Dockerfile environment's `env` was accepted, saved and
+        # never seen by anything it was meant for. Not the ones this runner
+        # sets itself below: they are what keeps a gate writing inside the
+        # checkout rather than to `/`, and a project setting does not get to
+        # move that. A test session's own (`session_env`) is exported in the
+        # command, so it still wins over these.
+        for key, value in sorted(self.env.items()):
+            if key not in RUNNER_ENV:
+                argv += ["--env", f"{key}={value}"]
         for label in self.labels:
             argv += ["--label", label]
         if self.docker.run_as_host_user and hasattr(os, "getuid"):
@@ -1757,4 +1777,4 @@ async def runner_for(
             spec.image = await build_image(project, config.docker)
         return ComposeRunner(Path(project.state.repo), spec, name, config.docker), name
     image = await build_image(project, config.docker)
-    return DockerRunner(image, spec.workdir, config.docker), image
+    return DockerRunner(image, spec.workdir, config.docker, env=spec.env), image
