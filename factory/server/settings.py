@@ -19,6 +19,7 @@ from ..config import (api_key_source, ConfigError, credentials_path, delete_role
 from .bodies import (EditorUpdate, NewReviewAgent, PromptBody, ProviderUpdate, RoleUpdate,
                      StaffingUpdate)
 from .context import Context
+from .setup import with_token_present
 
 
 def register(app: FastAPI, ctx: Context) -> None:
@@ -356,7 +357,8 @@ def register(app: FastAPI, ctx: Context) -> None:
         Whether anyone is signed in is not measured here: that costs a turn
         against a real plan, and opening a screen is not consent to spend one.
         """
-        return {"routes": await routes.survey(), "default": cfg.default_route}
+        return {"routes": [with_token_present(cfg, r) for r in await routes.survey()],
+                "default": cfg.default_route}
 
     @app.get("/api/routes/{name}/catalog")
     async def route_catalog(name: str, refresh: bool = False) -> dict[str, Any]:
@@ -436,7 +438,7 @@ def register(app: FastAPI, ctx: Context) -> None:
         """
         if name not in cfg.routes:
             raise HTTPException(status_code=404, detail=f"no route {name!r}")
-        return await routes.refresh(name)
+        return with_token_present(cfg, await routes.refresh(name))
 
     @app.patch("/api/roles/{name}")
     def patch_role(name: str, body: RoleUpdate) -> dict[str, Any]:

@@ -547,15 +547,40 @@ def test_a_token_is_stored_from_the_card_unless_the_environment_already_gives_on
     client = open_client(config, tmp_path)
 
     assert client.put("/api/setup/routes/codex/token", json={"token": "t"}).status_code == 409
-    saved = client.put("/api/setup/routes/claude-code/token", json={"token": " minted \n"})
+    saved = client.put("/api/setup/routes/claude-code/token", json={"token": " sk-ant-oat01-minted \n"})
     assert saved.status_code == 200 and saved.json()["ok"]
-    assert read_credential(config, env) == "minted"
+    assert read_credential(config, env) == "sk-ant-oat01-minted"
     assert "minted" not in saved.text
     row = next(a for a in client.get("/api/setup").json()["accounts"] if a["name"] == "claude-code")
     assert row["token_env"] == env and row["token_present"] and not row["token_from_env"]
 
     monkeypatch.setenv(env, "from-env")
     assert client.put("/api/setup/routes/claude-code/token", json={"token": "t"}).status_code == 409
+
+
+def test_a_paste_that_is_not_a_token_is_refused_and_says_what_it_was(editable_config, monkeypatch, open_client):
+    """`claude setup-token` shows a code in the browser halfway through, and the
+    page says "paste this into Claude Code". Pasted into Fabrika instead, it was
+    stored as the token, the terminal never printed the real one, and every
+    session then failed to sign in. And a blank paste deleted the stored token
+    while the reply said it was saved."""
+    from factory.config import read_credential
+
+    config, tmp_path = editable_config
+    _stub_machine(monkeypatch)
+    route = config.routes["claude-code"]
+    monkeypatch.delenv(route.token_env, raising=False)
+    client = open_client(config, tmp_path)
+    url = "/api/setup/routes/claude-code/token"
+    assert client.put(url, json={"token": "sk-ant-oat01-real"}).status_code == 200
+
+    code = client.put(url, json={"token": "n108VWjoRBLb9oxT7KR3#I7JhqEQBT2N5ePr2hx"})
+    assert code.status_code == 422
+    assert "authentication code" in code.json()["detail"] and "terminal" in code.json()["detail"]
+    other = client.put(url, json={"token": "abc123"})
+    assert other.status_code == 422 and "starts with sk-ant-oat" in other.json()["detail"]
+    assert client.put(url, json={"token": "   "}).status_code == 422
+    assert read_credential(config, route.token_env) == "sk-ant-oat01-real", "a refused paste replaced the token"
 
 
 def _screen(monkeypatch, platform, **env):
@@ -688,6 +713,87 @@ def test_the_accounts_station_offers_a_key_field_to_a_route_that_takes_one():
     html = _setup_screen(_payload(), at=1)["html"]
     assert 'id="su-key-keyed"' in html and "Test and save" in html
     assert "signed in" in html
+
+
+def test_the_claude_route_asks_for_a_token_its_containers_can_carry(editable_config):
+    """Sessions run Claude Code in containers on a copy of this machine's
+    sign-in, and that sign-in refreshes itself: each refresh retires the copy,
+    and a session failed with "OAuth session expired and could not be
+    refreshed" while the card, checking this machine, said signed in. A token
+    from `claude setup-token` never refreshes, so it is what the card asks for."""
+    from factory.routes import base_status
+
+    config, _ = editable_config
+    route = config.routes["claude-code"]
+    assert route.sign_in()[0] == route.token_command == "claude setup-token"
+    assert route.token_env == "CLAUDE_CODE_OAUTH_TOKEN"
+    assert "refreshes" in route.setup_note
+    steps = " ".join(route.sign_in()[1])
+    assert "authentication code" in steps and "back into the terminal" in steps, \
+        "the steps skip the browser's code, which is the one thing people paste in the wrong place"
+    assert route.token_prefix == "sk-ant-oat" and "sk-ant-oat01-" in steps
+    assert base_status(route).as_dict()["token_command"] == "claude setup-token"
+
+
+def test_the_routes_card_has_somewhere_to_paste_the_token_its_steps_ask_for():
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    from support import CONSOLE_DIR
+
+    source = (CONSOLE_DIR / "app" / "routes.js").read_text(encoding="utf-8")
+    block = source[source.index("function setupBlock(r)"):source.index("/* When a check was made.")]
+    script = ("const esc = (s) => String(s ?? '');\n" + block + "\nconsole.log(JSON.stringify(["
+              "setupBlock({name: 'claude-code', state: 'unauthenticated', setup_command: 'claude auth login', "
+              "token_env: 'CLAUDE_CODE_OAUTH_TOKEN', token_command: 'claude setup-token', setup_steps: []}),"
+              "setupBlock({name: 'codex', state: 'unauthenticated', setup_command: 'codex login', setup_steps: []}),"
+              "setupBlock({name: 'claude-code', state: 'ok', token_env: 'CLAUDE_CODE_OAUTH_TOKEN', "
+              "token_command: 'claude setup-token', token_prefix: 'sk-ant-oat', "
+              "setup_steps: ['The browser shows an authentication code. Paste it into the terminal.']}),"
+              "setupBlock({name: 'codex', state: 'ok'})]));")
+    out = subprocess.run(["node", "--input-type=module", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    claude, codex, claude_green, codex_green = json.loads(out.stdout)
+    assert 'id="route-token-claude-code"' in claude and 'data-save-route-token="claude-code"' in claude
+    assert "paste the token claude setup-token printed" in claude
+    assert "route-token" not in codex, "a route that takes no token was offered a token field"
+    assert 'id="route-token-claude-code"' in claude_green, \
+        "a card green on this machine's sign-in hid the box its containers needed"
+    assert "authentication code" in claude_green, "a green card hid the steps that say where each paste goes"
+    assert "paste the line starting sk-ant-oat" in claude_green
+    assert codex_green == "", "a green route that takes no token grew a setup section"
+
+
+def test_a_working_route_with_its_token_stored_stops_asking_for_one(editable_config, monkeypatch, open_client):
+    """Once the token is saved and the check comes back green, the card has
+    nothing left to ask: it goes back to the size of every other working card."""
+    import shutil
+    import subprocess
+
+    config, tmp_path = editable_config
+    _stub_machine(monkeypatch)
+    env = config.routes["claude-code"].token_env
+    monkeypatch.delenv(env, raising=False)
+    client = open_client(config, tmp_path)
+    row = lambda: next(r for r in client.get("/api/routes").json()["routes"] if r["name"] == "claude-code")  # noqa: E731
+    assert row()["token_present"] is False
+    assert client.put("/api/setup/routes/claude-code/token", json={"token": "sk-ant-oat01-x"}).status_code == 200
+    assert row()["token_present"] is True
+
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    from support import CONSOLE_DIR
+
+    source = (CONSOLE_DIR / "app" / "routes.js").read_text(encoding="utf-8")
+    block = source[source.index("function setupBlock(r)"):source.index("/* When a check was made.")]
+    script = ("const esc = (s) => String(s ?? '');\n" + block + "\nconsole.log(JSON.stringify("
+              "setupBlock({name: 'claude-code', state: 'ok', token_env: 'CLAUDE_CODE_OAUTH_TOKEN', "
+              "token_present: true, setup_steps: ['x']})));")
+    out = subprocess.run(["node", "--input-type=module", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    assert json.loads(out.stdout) == "", "a working card with its token stored still asked for one"
 
 
 def test_a_plan_that_found_no_sign_in_offers_the_token_field_and_one_never_checked_does_not():

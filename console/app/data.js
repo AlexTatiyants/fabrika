@@ -134,15 +134,36 @@ function checkRoute(name) {
   });
 }
 
+/* A token a route's own setup command printed, stored beside factory.yaml
+   (owner-only) where its `env` credential reads it, then checked for real. */
+async function saveRouteToken(name) {
+  const field = document.getElementById(`route-token-${name}`);
+  const token = ((field || {}).value || '').trim();
+  if (!token) { toast('Paste the token first.'); return; }
+  await withBusy('Saving the token.', () => api(`/api/setup/routes/${encodeURIComponent(name)}/token`,
+    { method: 'PUT', body: JSON.stringify({ token }) }));
+  if (field) field.value = '';
+  await checkRoute(name);
+  // Confirmed: the card goes back to its small size, as every working one is.
+  const row = ((state.routes || {}).routes || []).find((r) => r.name === name);
+  if (row && row.state === 'ok' && state.openRoute === name) {
+    state.openRoute = null;
+    render();
+  }
+}
+
 async function loadProjects() {
   // The rail is on screen everywhere, so the whole picture is always loaded.
-  const [projects, features, version] = await Promise.all([
+  const [projects, features, version, branches] = await Promise.all([
     api('/api/projects').catch(() => null),
     api('/api/features').catch(() => null),
     // Whether the code answering us is the code on disk. Cheap, and the answer
     // decides whether anything else on the screen can be trusted.
     api('/api/version').catch(() => null),
+    // Looks at outside work, which the rail lists beside the features.
+    api('/api/branches').catch(() => null),
   ]);
+  if (branches !== null) state.allBranches = branches;
   /* `[]` is not the failure value: with it, a server that does not answer
      empties the rail and every screen built from it -- the yard goes to "no
      projects", and a project page falls through to a loading placeholder that

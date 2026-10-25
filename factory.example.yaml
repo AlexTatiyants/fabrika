@@ -118,7 +118,7 @@ routes:
         from_api_key: true
 
   claude-code:
-    # `claude setup-token` once, interactively, and this runs on the
+    # A token from `claude setup-token`, once, and this runs on the
     # subscription with no API key anywhere.
     kind: cli
     # How a role's `reasoning_effort` is said to this CLI. `none` turns thinking
@@ -262,19 +262,21 @@ routes:
     install_command: "npm i -g @anthropic-ai/claude-code"
     setup_command: "claude setup-token"
     setup_note: >-
-      The sign-in is an interactive browser handshake, so it cannot be done from
-      this page. `claude setup-token` does it once and prints a long-lived token;
-      paste that here and Fabrika keeps it beside factory.yaml, owner-only, and
-      hands it to each session's container. A machine where Claude Code is
-      already signed in needs no token.
+      Fabrika runs Claude Code in containers, and they need a token of their
+      own: one that lasts a year and never refreshes. Being signed in on this
+      machine is not enough -- that sign-in refreshes itself, and each refresh
+      breaks the copy a container was given. Fabrika keeps the token beside
+      factory.yaml, owner-only.
     setup_steps:
-      - Open a terminal on this machine.
-      - "Run: claude setup-token"
-      - It opens your browser, or prints a link to open. Sign in with the account that holds your subscription.
-      - It prints a token. Paste it here.
-    # Where that token goes: stored beside factory.yaml, and read by the `env`
-    # credential of the same name below.
+      - "In a terminal on this machine, run: claude setup-token"
+      - It prints a link. Open it in a browser and sign in with the account that holds your subscription.
+      - The browser shows an authentication code. Paste that code back into the terminal and press Enter. It does not go here.
+      - The terminal prints your token, a line starting sk-ant-oat01-. Paste that line in the box below and press Save and check.
+    # The token `token_command` prints, stored beside factory.yaml and read by
+    # the `env` credential of the same name below.
     token_env: CLAUDE_CODE_OAUTH_TOKEN
+    token_command: "claude setup-token"
+    token_prefix: "sk-ant-oat"
     docs_url: https://docs.claude.com/en/docs/claude-code/setup
     # ---- file sessions: the half this tool is actually for -----------------
     #

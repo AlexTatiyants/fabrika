@@ -28,6 +28,14 @@ from .bodies import (LocalServer, SetupCrew, SetupDecline, SetupInstall, SetupKe
 from .context import Context
 
 
+def with_token_present(cfg: Any, row: dict[str, Any]) -> dict[str, Any]:
+    """A route's row, saying whether the token its sessions need is stored --
+    so a card that is working, and has one, can stop asking for it."""
+    route = cfg.routes.get(row.get("name", ""))
+    env = route.token_env if route else ""
+    return {**row, "token_present": bool(env and (os.environ.get(env) or read_credential(cfg, env)))}
+
+
 def register(app: FastAPI, ctx: Context) -> None:
     cfg = ctx.cfg
     routes = ctx.routes
@@ -111,6 +119,8 @@ def register(app: FastAPI, ctx: Context) -> None:
                 # last session's cache predates any field added since, and was
                 # read on whatever machine wrote it.
                 "token_env": route.token_env,
+                "token_command": route.token_command,
+                "token_prefix": route.token_prefix,
                 "setup_command": route.sign_in()[0],
                 "setup_steps": route.sign_in()[1],
                 "token_present": bool(route.token_env and (os.environ.get(route.token_env)
@@ -305,7 +315,20 @@ def register(app: FastAPI, ctx: Context) -> None:
                 detail=(f"{route.token_env} is set in the environment Fabrika was started from, "
                         "and it wins. Unset it before storing a token here, or this one would "
                         "be silently ignored."))
-        write_credential(cfg, route.token_env, body.token.strip())
+        token = body.token.strip()
+        if not token:
+            # `write_credential` takes empty as "remove": a blank paste would
+            # delete the stored token and still answer "Token saved".
+            raise HTTPException(status_code=422, detail="Paste the token first.")
+        if route.token_prefix and not token.startswith(route.token_prefix):
+            said = (f"That is not the token: a token starts with {route.token_prefix}. "
+                    if "#" not in token else
+                    "That is the authentication code from the browser page, not the token. ")
+            raise HTTPException(status_code=422, detail=(
+                said + f"Paste the browser's code into the terminal where "
+                f"`{route.token_command or route.sign_in()[0]}` is waiting and press Enter; the terminal "
+                f"then prints the token, a line starting {route.token_prefix}. Paste that here."))
+        write_credential(cfg, route.token_env, token)
         routes.forget(name)
         return {"ok": True, "detail": "Token saved beside factory.yaml, owner-only."}
 

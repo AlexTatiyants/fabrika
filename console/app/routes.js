@@ -56,21 +56,37 @@ function meterCell(role) {
 }
 
 function setupBlock(r) {
-  if (r.state === 'ok') return '';
+  /* Green here is this machine's sign-in. A route whose sessions need a token
+     of their own still shows how to make one, and where it goes: a sign-in
+     that refreshes itself cannot be copied into a container and keep working. */
+  if (r.state === 'ok' && (!r.token_env || r.token_present)) return '';
   const steps = (r.setup_steps || []).map((x) => `<li>${esc(x)}</li>`).join('');
   const line = r.state === 'missing' ? (r.install_command || r.setup_command)
     : r.setup_command;
   return `
     <div class="hsetup">
+      ${r.state === 'ok' ? '<p class="hnote"><b>Signed in on this machine.</b> Sessions still need a token of their own:</p>' : ''}
       ${r.setup_note ? `<p class="hnote">${esc(r.setup_note)}</p>` : ''}
       ${line ? `<div class="hcopy">
         <code class="mono">${esc(line)}</code>
         <button class="btn btn-sm btn-quiet" data-copy="${esc(line)}">Copy</button>
       </div>` : ''}
       ${steps ? `<ol class="hsteps">${steps}</ol>` : ''}
+      ${r.token_env ? `<div class="htoken">
+        <input type="password" class="answer-field mono" id="route-token-${esc(r.name)}" autocomplete="off"
+          spellcheck="false" placeholder="${esc(tokenPlaceholder(r))}" aria-label="${esc(r.label || r.name)} token">
+        <button class="btn btn-sm" data-save-route-token="${esc(r.name)}">Save and check</button>
+      </div>` : ''}
       ${r.docs_url ? `<p class="small dim"><a href="${esc(r.docs_url)}"
          target="_blank" rel="noreferrer noopener">Documentation</a></p>` : ''}
     </div>`;
+}
+
+/* What goes in a token box, said as what to look for: the line the terminal
+   prints, not the code the browser shows halfway there. */
+function tokenPlaceholder(r) {
+  return r.token_prefix ? `paste the line starting ${r.token_prefix}… that the terminal printed`
+    : `paste the token ${r.token_command || r.setup_command || ''} printed`;
 }
 
 /* When a check was made. Shown rather than expired: a sign-in lasts weeks, and

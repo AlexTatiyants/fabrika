@@ -49,6 +49,12 @@
 .hcard.off { background: var(--surface-sunk); border-style: dashed; }
 .hcard.on  { border-color: var(--line-strong); }
 .hcard.open { grid-column: 1 / -1; }
+/* Open, a card has one more part than the seven rows it shares with its
+   neighbours -- how to connect -- and a subgrid has nowhere to put the eighth:
+   it was drawn into the last row, on top of the setup, so the buttons sat over
+   its Documentation link. Open, a card is a row of its own and needs no rows
+   shared with anything. */
+.hcard.open { grid-row: auto; grid-template-rows: none; }
 /* The nameplate. The version sits under the name rather than beside it:
    sharing a line, a longer version pushes a two-word name into a wrap and then
    wraps after it -- one card's head 48px against 24px for the rest. Given the
@@ -328,6 +334,11 @@
   flex: none; background: var(--panel-3); border-color: var(--rail); color: var(--paper);
 }
 .hcopy .btn:hover:not(:disabled) { background: var(--rail); border-color: var(--paper); color: var(--ink-reversed); }
+/* Where a token is pasted: an ordinary field on the card, not the dark strip
+   that holds a command to copy. */
+.htoken { display: flex; gap: .5rem; align-items: center; }
+.htoken input { flex: 1 1 auto; min-width: 0; }
+.htoken .btn { flex: none; }
 .hsteps {
   margin: 0; padding-left: 1.15rem; font-size: .8125rem;
   color: var(--ink-2); line-height: 1.55;

@@ -504,11 +504,20 @@ class RouteConfig(BaseModel):
     # else; a device flow can. Empty means `setup_command` works anywhere.
     setup_command_headless: str = ""
     setup_steps_headless: list[str] = Field(default_factory=list)
-    # The variable a token printed by `setup_command` is read as, for a route
+    # The variable a token printed by `token_command` is read as, for a route
     # whose sign-in can be a token. Set, the card offers a field for it, and the
     # token is stored beside factory.yaml like a key -- never in it -- for an
     # `env` credential of the same name to hand in.
     token_env: str = ""
+    # The command that prints that token. Not the sign-in: a machine where the
+    # tool is signed in the ordinary way (`setup_command`) needs no token, and
+    # telling everyone to make one sent a person whose sign-in had only lapsed
+    # off to mint a year-long credential and paste it somewhere.
+    token_command: str = ""
+    # What that token starts with. A paste that does not is refused with what
+    # it most likely was -- the code the browser shows halfway through, which
+    # belongs in the terminal -- rather than stored and failing a session later.
+    token_prefix: str = ""
 
     # --- authoring inside the unit's container -----------------------------
     #

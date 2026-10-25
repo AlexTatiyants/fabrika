@@ -183,6 +183,8 @@ class RouteStatus:
     setup_note: str = ""
     docs_url: str = ""
     token_env: str = ""
+    token_command: str = ""
+    token_prefix: str = ""
 
     def as_dict(self) -> dict[str, Any]:
         body = {k: getattr(self, k) for k in (
@@ -196,7 +198,7 @@ class RouteStatus:
             "default_model_ok",
             "resolved_model",
             "install_command", "setup_command",
-            "setup_steps", "setup_note", "docs_url", "token_env",
+            "setup_steps", "setup_note", "docs_url", "token_env", "token_command", "token_prefix",
         )}
         body["usable"] = self.state == "ok"
         return body
@@ -241,6 +243,8 @@ def base_status(route: RouteConfig) -> RouteStatus:
         setup_note=route.setup_note,
         docs_url=route.docs_url,
         token_env=route.token_env,
+        token_command=route.token_command,
+        token_prefix=route.token_prefix,
     )
 
 

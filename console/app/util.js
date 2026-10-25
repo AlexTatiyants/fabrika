@@ -98,6 +98,30 @@ function toast(message, kind = 'info') {
    harder to get wrong when the name says it. */
 function errorToast(message) { return toast(message, 'error'); }
 
+/* Text onto the clipboard, wherever the console is opened from.
+
+   `navigator.clipboard` exists only in a secure context: https, or a page on
+   localhost. A console opened over http from another machine -- a Linux box
+   reached by its address -- has none, and every Copy button threw. The old
+   way still works there: a selected text field and the copy command. Resolves
+   when the text was copied, rejects when neither way could. */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  return new Promise((resolve, reject) => {
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.appendChild(field);
+    field.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch (_) { copied = false; }
+    field.remove();
+    if (copied) resolve(); else reject(new Error('the browser would not copy'));
+  });
+}
+
 async function api(path, options) {
   /* `fetch` rejects when there was no answer at all -- the server is stopped,
      restarting, or unreachable. That is a different fact from any status it

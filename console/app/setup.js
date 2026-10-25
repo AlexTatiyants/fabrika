@@ -119,8 +119,17 @@ const suJobRemedy = (a, r) => `<div class="su-remedy red">${r.apply
 const suToken = (a) => (a.token_from_env
   ? `<p>A token is set in the environment Fabrika was started from (<code>${esc(a.token_env)}</code>), and it is the one used.</p>`
   : `<div class="su-field"><input type="password" id="su-token-${esc(a.name)}" autocomplete="off" spellcheck="false"
-      placeholder="paste the token ${esc(a.setup_command || '')} printed" aria-label="${esc(a.label || a.name)} token">
+      placeholder="${esc(a.token_prefix ? `paste the line starting ${a.token_prefix}… that the terminal printed`
+        : `paste the token ${a.token_command || a.setup_command || ''} printed`)}" aria-label="${esc(a.label || a.name)} token">
     <button type="button" class="btn" data-su="route-token" data-route="${esc(a.name)}">Save and check</button></div>`);
+
+/* Signed in here, and still not enough. Sessions run in containers on a copy of
+   this machine's sign-in, and that sign-in refreshes itself: each refresh
+   retires the copy, so a session meets "OAuth session expired and could not be
+   refreshed". A token that does not refresh is the one thing a copy can hold. */
+const suContainerToken = (a) => `<p class="su-say"><b>Signed in on this machine.</b> Sessions still need a token of
+  their own.</p>${(a.setup_steps || []).length
+    ? `<ol class="su-steps">${a.setup_steps.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}`;
 
 /* A fix Fabrika can make for you, said before it is made. */
 const suOpt = (title, what, button) => `<div class="su-opt"><span class="su-opt-t">${title}</span>
@@ -254,7 +263,8 @@ function suAccount(a) {
     pill = `<span class="pill pill-green">${a.takes_key ? 'key accepted' : 'signed in'}</span>`;
     body = `${a.takes_key ? `Billed per token${a.key_from_env ? ', on the key in the environment' : ''}, so the spend limit is a real ceiling on it.`
       : `Billed against your ${esc(a.account_label)} plan, not per token.`}${a.version ? ` Version ${esc(a.version)}.` : ''}
-      ${a.models && a.models.length ? `<div class="su-models">${a.models.map(esc).join(' · ')}</div>` : ''}`;
+      ${a.models && a.models.length ? `<div class="su-models">${a.models.map(esc).join(' · ')}</div>` : ''}
+      ${a.token_env && !a.token_present ? `${suContainerToken(a)}${suToken(a)}` : ''}`;
   } else if (a.installed === false) {
     pill = '<span class="pill">not installed</span>';
     body = `Not on this machine. Optional: use it if you already ${a.takes_key ? `have a ${esc(a.account_label)} key` : `pay for a ${esc(a.account_label)} plan`}.
