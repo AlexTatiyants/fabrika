@@ -4,6 +4,7 @@ send the work, and the verdict.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import anyio
@@ -11,11 +12,17 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 
 from ..pipeline import is_orphaned
 from ..projects import ProjectError
+from ..pull_requests import pr_target
 from ..sandbox import SandboxError
 from ..schemas import FeatureState
 
 from .bodies import DISPOSITIONS, FlagBody, RetagBody, RulingBody, VerdictBody
 from .context import Context
+
+log = logging.getLogger(__name__)
+
+#: Features whose pull request is being opened now, as (project, feature).
+_OPENING: set[tuple[str, str]] = set()
 
 
 def register(app: FastAPI, ctx: Context) -> None:
@@ -175,7 +182,7 @@ def register(app: FastAPI, ctx: Context) -> None:
         if plan.route == "accept":
             raise HTTPException(
                 status_code=409,
-                detail="nothing flagged needs work; accept the feature with a verdict")
+                detail="nothing flagged needs work; underwrite or drop the feature")
         # Guards run inline so a caller learns now, not from a phase that fails
         # in the background five seconds later.
         try:
@@ -197,10 +204,42 @@ def register(app: FastAPI, ctx: Context) -> None:
                 "budget": factory.rework_budget(feature_id)}
 
     @app.post("/api/projects/{project_id}/features/{feature_id}/verdict")
-    def post_verdict(project_id: str, feature_id: str, body: VerdictBody) -> dict[str, Any]:
+    def post_verdict(project_id: str, feature_id: str, body: VerdictBody,
+                     background: BackgroundTasks) -> dict[str, Any]:
         store_or_404(project_id, feature_id)
         if body.verdict not in ("accepted", "rejected"):
             raise HTTPException(status_code=422, detail="verdict must be 'accepted' or 'rejected'")
         anyio.from_thread.run(close_preview, project_id, feature_id, "your verdict")
         state = factory_for(project_id).record_verdict(feature_id, body.verdict, body.note)
+        # Accepted is underwritten, and what is underwritten ends as a pull
+        # request -- where the project says they go, and nowhere when it says
+        # nowhere: the screen then says what to set.
+        if body.verdict == "accepted" and not isinstance(pr_target(ctx.project_or_404(project_id)), str):
+            open_pr_later(background, project_id, feature_id)
         return state.model_dump(mode="json")
+
+    def open_pr_later(background: BackgroundTasks, project_id: str, feature_id: str) -> None:
+        async def run() -> None:
+            _OPENING.add((project_id, feature_id))
+            try:
+                await factory_for(project_id).open_pull_request(feature_id)
+            except Exception:  # recorded as pull_request_failed, and said on the screen
+                log.warning("the pull request for %s/%s was not opened", project_id, feature_id, exc_info=True)
+            finally:
+                _OPENING.discard((project_id, feature_id))
+        background.add_task(run)
+
+    @app.post("/api/projects/{project_id}/features/{feature_id}/pull-request")
+    def post_pull_request(project_id: str, feature_id: str, background: BackgroundTasks) -> dict[str, Any]:
+        """Open the accepted feature's pull request: again after it failed, or
+        now that the project says where they go."""
+        store = store_or_404(project_id, feature_id)
+        if (store.payload("state") or {}).get("stage") != "accepted":
+            raise HTTPException(status_code=409, detail="Only an underwritten feature is opened as a pull request.")
+        target = pr_target(ctx.project_or_404(project_id))
+        if isinstance(target, str):
+            raise HTTPException(status_code=409, detail=target)
+        if (project_id, feature_id) in _OPENING:
+            raise HTTPException(status_code=409, detail="Its pull request is being opened.")
+        open_pr_later(background, project_id, feature_id)
+        return {"started": True}

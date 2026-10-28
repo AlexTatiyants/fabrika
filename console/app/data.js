@@ -204,8 +204,20 @@ async function loadProject(quiet) {
     if (state.view === 'branch' && typeof state.param === 'string') {
       const slug = state.param;
       const d = await api(`/api/projects/${encodeURIComponent(state.projectId)}/branches/${
-        encodeURIComponent(slug)}`).catch((e) => { if (!quiet) errorToast(e.message); return null; });
+        encodeURIComponent(slug)}${state.bpLook ? `?look=${state.bpLook}` : ''}`)
+        .catch((e) => { if (!quiet) errorToast(e.message); return null; });
       if (d) state.branchLook = { ...d, slug };
+      /* A file shown whole is read once for the round it is at: a file at a
+         commit does not change, and the look is read again every refresh. */
+      const head = d && d.packet ? d.packet.head_sha : '';
+      const key = state.bpFile && head ? `${slug}|${head}|${state.bpFile}` : null;
+      if (key && (state.branchFile || {}).key !== key) {
+        const f = await api(`/api/projects/${encodeURIComponent(state.projectId)}/branches/${
+          encodeURIComponent(slug)}/file?path=${encodeURIComponent(state.bpFile)}${
+          state.bpLook ? `&look=${state.bpLook}` : ''}`)
+          .catch((e) => ({ problem: e.message }));
+        state.branchFile = { ...f, key };
+      }
     }
     if (projectSection() === 'history') {
       const h = await api(
@@ -289,8 +301,8 @@ function stageAnnouncement(data) {
       const f = (data.phases || []).find((p) => p.status === 'failed');
       return `${title}: the line stopped${f ? ` at ${f.name}` : ''}.`;
     }
-    case 'accepted': return `${title}: ruled accepted.`;
-    case 'rejected': return `${title}: sent back for revision.`;
+    case 'accepted': return `${title}: underwritten.`;
+    case 'rejected': return `${title}: dropped.`;
     default: return `${title}: ${STAGE_WORDS[stage] || stage}.`;
   }
 }
@@ -391,6 +403,10 @@ async function route() {
   state.fragment = fragment;
   // Which tab of a look's packet is open: `?branch=<slug>&bp=code`.
   state.bpTab = typeof params.bp === 'string' ? params.bp : null;
+  // Which round of outside work is shown: `&look=<n>`, or the latest.
+  state.bpLook = typeof params.look === 'string' && /^\d+$/.test(params.look) ? Number(params.look) : null;
+  // One file of it, whole, in The code: `&bp=code&bpfile=<path>`.
+  state.bpFile = typeof params.bpfile === 'string' && params.bpfile ? params.bpfile : null;
   pendingScroll = fragment || null;
   state.helpTopic = typeof params.help === 'string' ? params.help : HELP_START;
   // Settings is folded into the tabs; an old `?settings` link lands on Survey,

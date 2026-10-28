@@ -13,12 +13,15 @@ from typing import Any
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 
 from .. import branch_facts, git, pieces as cutting
-from ..pipeline.branch import LOOK_PHASES, BranchReview, reading_status, record_system_change
+from ..pipeline.branch import (LOOK_PHASES, BranchReview, compare_rounds, look_calls, reading_status,
+                               record_system_change, rounds_of)
 from ..schemas import Piece, PieceJudgement
 from ..projects import ProjectError
 
+from ..pull_requests import pr_target
 from .as_built import _system_change_view
-from .bodies import NewLook
+from .features import pull_request_view
+from .bodies import LookRuling, LookVerdict, NewLook
 from .context import Context
 
 log = logging.getLogger(__name__)
@@ -27,6 +30,9 @@ log = logging.getLogger(__name__)
 #: rather than kept from when the look ran, so a better detector reaches every
 #: packet already made. Cheap, and the same for a look whatever asks.
 _FACTS: dict[tuple[str, int, str], dict[str, Any]] = {}
+
+#: A file shown whole stops here: past it, the code view's pieces are the way in.
+_FILE_LINES = 5000
 
 
 def _facts_now(repo, packet: dict[str, Any], report: dict | None) -> dict[str, Any]:
@@ -55,6 +61,34 @@ def _facts_now(repo, packet: dict[str, Any], report: dict | None) -> dict[str, A
         return value
 
     return remap(facts)
+
+
+#: Looks whose tidy branch is being made now, as (project, slug).
+_TIDYING: set[tuple[str, str]] = set()
+#: Looks whose pull request is being opened now, as (project, slug).
+_PR_OPENING: set[tuple[str, str]] = set()
+#: Looks Fabrika is fixing now, as (project, slug).
+_FIXING: set[tuple[str, str]] = set()
+
+
+def _latest(store, kind: str, look: int) -> dict[str, Any] | None:
+    """The latest record of `kind` that belongs to look `look`."""
+    return next((r["payload"] for r in reversed(store.all(kind)) if r["payload"].get("look") == look), None)
+
+
+def _broken(claims: list, findings: dict[str, Any] | None) -> list:
+    """Each claim a failing probe named is broken, whatever its tests said:
+    a probe that goes red is a fact about the code, and a test that passes
+    beside it is a test of something else. Claims are CL-1 on, in order."""
+    if not findings:
+        return claims
+    by_claim: dict[str, list[str]] = {}
+    for probe in findings.get("probes") or []:
+        if probe.get("red"):
+            for claim in probe.get("claim_ids") or []:
+                by_claim.setdefault(claim, []).append(probe.get("finding") or probe["path"])
+    return [{**c, "state": "broken", "broken_by": by_claim[f"CL-{n}"]} if f"CL-{n}" in by_claim else c
+            for n, c in enumerate(claims, 1)]
 
 
 _CLAIMS: dict[tuple, list] = {}
@@ -135,7 +169,9 @@ def register(app: FastAPI, ctx: Context) -> None:
         key = f"branch-{slug}"
         with ctx.runs_lock:
             if (project_id, key) in ctx.runs:
-                raise HTTPException(status_code=409, detail="a look at this branch is already under way")
+                raise HTTPException(status_code=409, detail=(
+                    "its tidy branch is being made" if (project_id, slug) in _TIDYING
+                    else "a look at this branch is already under way"))
         try:
             state = review.open_look(body.branch, body.intent)
         except ProjectError as exc:
@@ -145,15 +181,129 @@ def register(app: FastAPI, ctx: Context) -> None:
                       rebaseline=False)
         return state.model_dump(mode="json")
 
-    @app.get("/api/projects/{project_id}/branches/{slug}")
-    def get_branch(project_id: str, slug: str) -> dict[str, Any]:
+    def look_or_404(project_id: str, slug: str):
+        review = review_for(project_id)
+        if not review.branch_store(slug).has("state"):
+            raise HTTPException(status_code=404, detail=f"no look at a branch {slug!r}")
+        if (project_id, f"branch-{slug}") in ctx.runs:
+            raise HTTPException(status_code=409, detail="This branch is being looked at or tidied; rule once it is done.")
+        return review
+
+    @app.post("/api/projects/{project_id}/branches/{slug}/rulings")
+    def rule(project_id: str, slug: str, body: LookRuling) -> dict[str, Any]:
+        """Your call on one finding: back to whoever built it, or a risk you accept."""
+        project_or_404(project_id)
+        try:
+            return look_or_404(project_id, slug).rule(slug, body.finding_id, body.ruling, body.note)
+        except ProjectError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @app.post("/api/projects/{project_id}/branches/{slug}/verdict")
+    def verdict(project_id: str, slug: str, body: LookVerdict, background: BackgroundTasks) -> dict[str, Any]:
+        """The look underwritten, or the branch sent back. Underwritten, it
+        ends as a pull request where the project says they go."""
+        project = project_or_404(project_id)
+        try:
+            record = look_or_404(project_id, slug).verdict(slug, body.verdict, body.note)
+        except ProjectError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        if record["verdict"] == "underwritten" and not isinstance(pr_target(project), str):
+            open_pr_later(background, project_id, slug)
+        return record
+
+    def open_pr_later(background: BackgroundTasks, project_id: str, slug: str) -> None:
+        async def run() -> None:
+            _PR_OPENING.add((project_id, slug))
+            try:
+                await review_for(project_id).open_pull_request(slug)
+            except Exception:  # recorded as pull_request_failed, and said on the screen
+                log.warning("the pull request for look %s was not opened", slug, exc_info=True)
+            finally:
+                _PR_OPENING.discard((project_id, slug))
+        background.add_task(run)
+
+    @app.post("/api/projects/{project_id}/branches/{slug}/fix")
+    def fix(project_id: str, slug: str, background: BackgroundTasks) -> dict[str, Any]:
+        """Fabrika fixes this round's defects on the work's own branch, then
+        looks at the result as the work's next round -- all under the work's
+        one key, so nothing else starts on it meanwhile."""
+        project_or_404(project_id)
+        review = look_or_404(project_id, slug)
+        store = review.branch_store(slug)
+        state = review.look_state(store)
+        if not look_calls(store, state.look)["send_back"]:
+            raise HTTPException(status_code=409, detail="Nothing is going back, so there is nothing to fix.")
+
+        async def work(_factory) -> None:
+            _FIXING.add((project_id, slug))
+            try:
+                await review_for(project_id).fix(slug)
+            finally:
+                _FIXING.discard((project_id, slug))
+            await review_for(project_id).run_look(slug)
+
+        ctx.start_run(background, project_id, f"branch-{slug}", work, rebaseline=False)
+        return {"started": True, "branch": state.working_branch or f"factory/outside/{slug}"}
+
+    @app.post("/api/projects/{project_id}/branches/{slug}/pull-request")
+    def pull_request(project_id: str, slug: str, background: BackgroundTasks) -> dict[str, Any]:
+        """Open the underwritten look's pull request: again after it failed,
+        or now that the project says where they go."""
         project = project_or_404(project_id)
         review = review_for(project_id)
         store = review.branch_store(slug)
         if not store.has("state"):
             raise HTTPException(status_code=404, detail=f"no look at a branch {slug!r}")
         state = review.look_state(store)
-        packet = store.payload("branch_packet")
+        if (_latest(store, "look_verdict", state.look) or {}).get("verdict") != "underwritten":
+            raise HTTPException(status_code=409, detail="Only an underwritten look is opened as a pull request.")
+        target = pr_target(project)
+        if isinstance(target, str):
+            raise HTTPException(status_code=409, detail=target)
+        if (project_id, slug) in _PR_OPENING:
+            raise HTTPException(status_code=409, detail="Its pull request is being opened.")
+        open_pr_later(background, project_id, slug)
+        return {"started": True}
+
+    @app.post("/api/projects/{project_id}/branches/{slug}/tidy")
+    def make_tidy(project_id: str, slug: str, background: BackgroundTasks) -> dict[str, Any]:
+        """Make the tidy branch for the latest look, after the response: the
+        cleanup and the checks it is fenced by take minutes. Under the look's
+        own key, so a tidy branch is never made while the branch is looked at,
+        nor a look started while one is made."""
+        project_or_404(project_id)
+        review = review_for(project_id)
+        store = review.branch_store(slug)
+        if not store.has("state"):
+            raise HTTPException(status_code=404, detail=f"no look at a branch {slug!r}")
+        plan = review.tidy_plan(store, review.look_state(store))
+        if not (plan["cleanup"] or plan["green"] or plan["red"]):
+            raise HTTPException(status_code=409, detail=(
+                "This look found nothing to put on a tidy branch: no cleanup, and no regression "
+                "probe worth keeping."))
+
+        async def tidy(_factory) -> None:
+            _TIDYING.add((project_id, slug))
+            try:
+                await review_for(project_id).make_tidy(slug)
+            finally:
+                _TIDYING.discard((project_id, slug))
+
+        ctx.start_run(background, project_id, f"branch-{slug}", tidy, rebaseline=False)
+        return {"branch": plan["branch"], "started": True}
+
+    @app.get("/api/projects/{project_id}/branches/{slug}")
+    def get_branch(project_id: str, slug: str, look: int | None = None) -> dict[str, Any]:
+        """The work, at one of its rounds: the latest, or `look`."""
+        project = project_or_404(project_id)
+        review = review_for(project_id)
+        store = review.branch_store(slug)
+        if not store.has("state"):
+            raise HTTPException(status_code=404, detail=f"no look at a branch {slug!r}")
+        state = review.look_state(store)
+        if (project_id, f"branch-{slug}") not in ctx.runs:
+            state = review.adopt_legacy_fix(store, state)
+        packet = (_latest(store, "branch_packet", look) if look else None) or store.payload("branch_packet")
         # A reading finished after the look did -- Read again -- leaves both
         # ends read and nothing yet comparing them.
         if (project_id, f"branch-{slug}") not in ctx.runs and all(
@@ -163,6 +313,8 @@ def register(app: FastAPI, ctx: Context) -> None:
             except Exception:  # an account of the system: never worth the page
                 log.warning("could not compare the readings of %s", slug, exc_info=True)
         system = _system_change_view(store, project.repo_path)
+        shown = (packet or {}).get("look", state.look)
+        findings = _latest(store, "look_findings", shown)
         if packet and packet.get("pieces"):
             key = (str(store.dir), packet.get("look", 0), packet.get("head_sha", ""))
             if key not in _FACTS:
@@ -173,7 +325,8 @@ def register(app: FastAPI, ctx: Context) -> None:
                 except Exception:  # what the look recorded is still worth showing
                     log.warning("could not work out what %s adds", slug, exc_info=True)
                     _FACTS[key] = packet.get("facts") or {}
-            packet = {**packet, "facts": _FACTS[key], "claims": _claims_now(project, store, packet, key)}
+            packet = {**packet, "facts": _FACTS[key],
+                      "claims": _broken(_claims_now(project, store, packet, key), findings)}
         order = [*LOOK_PHASES[:2], "attribution", *LOOK_PHASES[2:]]
         state.phases.sort(key=lambda p: order.index(p.name) if p.name in order else len(order))
         return {
@@ -186,8 +339,52 @@ def register(app: FastAPI, ctx: Context) -> None:
             "system": system,
             "readings": reading_status(store, state),
             "folders": _folders(project.repo_path, state.head_sha),
-            "running": (project_id, f"branch-{slug}") in ctx.runs,
+            "findings": findings,
+            "shown": shown,
+            "rounds": rounds_of(store),
+            "compared": compare_rounds(store, shown),
+            "calls": look_calls(store, shown),
+            "verdict": _latest(store, "look_verdict", shown),
+            "tidy": _latest(store, "tidy", shown),
+            "tidy_failed": _latest(store, "tidy_failed", shown),
+            "tidy_plan": {k: (len(v) if isinstance(v, list) else v)
+                          for k, v in review.tidy_plan(store, state).items()},
+            "tidying": (project_id, slug) in _TIDYING,
+            "fixing": (project_id, slug) in _FIXING,
+            "fix": _latest(store, "look_fix", shown),
+            "fix_failed": _latest(store, "look_fix_failed", shown),
+            **pull_request_view(project, store, opening=(project_id, slug) in _PR_OPENING, look=shown),
+            "running": (project_id, f"branch-{slug}") in ctx.runs
+                       and (project_id, slug) not in _TIDYING and (project_id, slug) not in _FIXING,
         }
+
+    @app.get("/api/projects/{project_id}/branches/{slug}/file")
+    def get_branch_file(project_id: str, slug: str, path: str, look: int | None = None) -> dict[str, Any]:
+        """One file the round changed, whole, as it is at the round's head,
+        with the lines the branch added in it. The code view is the branch's
+        pieces; this is the file they sit in. Only a file the round changed
+        can be read here."""
+        project = project_or_404(project_id)
+        store = review_for(project_id).branch_store(slug)
+        if not store.has("state"):
+            raise HTTPException(status_code=404, detail=f"no look at a branch {slug!r}")
+        packet = (_latest(store, "branch_packet", look) if look else None) or store.payload("branch_packet")
+        mine = [p for p in (packet or {}).get("pieces") or [] if p.get("path") == path]
+        if not mine:
+            raise HTTPException(status_code=404, detail=f"this round did not change {path!r}")
+        head = packet.get("head_sha", "")
+        if not any(p.get("start") for p in mine):
+            return {"path": path, "head_sha": head, "gone": True, "lines": [], "added": []}
+        done = git.run(["show", f"{head}:{path}"], project.repo_path, text=False)
+        if done is None or done.returncode != 0:
+            raise HTTPException(status_code=404, detail=f"{path!r} could not be read at {head[:7]}")
+        raw = done.stdout
+        if b"\0" in raw[:8192]:
+            return {"path": path, "head_sha": head, "binary": True, "lines": [], "added": []}
+        lines = raw.decode("utf-8", errors="replace").splitlines()
+        return {"path": path, "head_sha": head, "lines": lines[:_FILE_LINES],
+                "cut": max(0, len(lines) - _FILE_LINES),
+                "added": sorted({n for p in mine for n in p.get("added") or []})}
 
     @app.post("/api/projects/{project_id}/branches/{slug}/read")
     async def read_again(project_id: str, slug: str) -> dict[str, Any]:

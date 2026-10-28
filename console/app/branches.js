@@ -18,22 +18,38 @@ const BP_GROUPS = [
 ];
 
 /* The stations a look runs, in order. Attribution only runs when a check is
-   red, so a look with every check green never lights it. */
+   red, so a look with every check green never lights it. The last three are
+   the attack: probes written against the branch, a panel reading it with
+   their results, and the arbiter routing what they found. */
 const LOOK_STATIONS = [
   ['reader', 'Reader'], ['gates', 'Gates'], ['attribution', 'Attribution'], ['rapporteur', 'Rapporteur'],
+  ['breaker', 'Breaker'], ['review', 'Review'], ['arbiter', 'Arbiter'],
 ];
 
 /* A look's line in the shape `stationStrip` reads a feature's: every station,
    in order -- attribution among them, lit only when a check was red -- and a
    stage it understands, so a finished look reads as settled and a station
    with nothing to do as skipped rather than waiting. */
-function lookLine(s) {
+function lookLine(s, d = {}) {
   const has = (name) => (s.phases || []).find((p) => p.name === name);
   const phases = LOOK_STATIONS.map(([name]) => has(name) || { name, status: 'pending', detail: '', error: '' });
-  const stage = { reviewing: 'building', awaiting_ruling: 'awaiting_verdict', ruled: 'accepted',
-                  failed: 'failed' }[s.stage] || s.stage;
+  /* Sent back and being fixed, or fixed: the repair's own stations follow the
+     arbiter on the same line. A fix recorded before they had names of their
+     own ran its repair as `repairers`. */
+  const fixing = !!d.fixing;
+  if (fixing || d.fix || d.fix_failed || (s.phases || []).some((p) => p.name.startsWith('fix_'))) {
+    FIX_STATIONS.forEach(([name, old]) => phases.push(has(name) || (old && has(old) && { ...has(old), name })
+      || { name, status: 'pending', detail: '', error: '' }));
+  }
+  const stage = fixing ? 'building' : { reviewing: 'building', awaiting_ruling: 'awaiting_verdict', ruled: 'accepted',
+                                        failed: 'failed' }[s.stage] || s.stage;
   return { phases, state: { ...s, stage }, packet: null };
 }
+
+/* Fabrika's fix of a look sent back: repair what goes back, run every check
+   that passed and every probe, recheck what no probe shows, and make the
+   fix branch. A round that breaks a check that passed is thrown away. */
+const FIX_STATIONS = [['fix_repair', 'repairers'], ['fix_fence'], ['fix_recheck'], ['fix_branch']];
 
 function branchHref(projectId, slug) {
   return `#/${encodeURIComponent(projectId)}?branch=${encodeURIComponent(slug)}`;
@@ -55,7 +71,7 @@ function branchesSection(p) {
   const looked = (b.looked || []).map((x) => `
     <li><a class="bp-br" href="${branchHref(p.project_id, x.slug)}">
       <span class="bp-br-name">${esc(x.branch)}</span>
-      <span class="bp-br-meta">look ${x.look} · ${esc(lookWord(x.stage))}</span>
+      <span class="bp-br-meta">round ${x.look} · ${esc(lookWord(x.stage, x.verdict))}</span>
       ${x.headline ? `<span class="bp-br-sub">${esc(x.headline)}</span>`
         : x.error ? `<span class="bp-br-sub bad">${esc(x.error)}</span>` : ''}
     </a></li>`).join('');
@@ -85,8 +101,9 @@ function branchesSection(p) {
       : `<p class="empty">No branch has commits that ${esc(b.base_ref)} does not.</p>`}`;
 }
 
-function lookWord(stage) {
-  return { reviewing: 'looking', awaiting_ruling: 'packet ready', ruled: 'ruled', failed: 'failed' }[stage] || stage;
+function lookWord(stage, verdict = '') {
+  if (stage === 'ruled' && verdict) return { underwritten: 'underwritten', dropped: 'dropped' }[verdict] || 'sent back';
+  return { reviewing: 'looking', awaiting_ruling: 'your call', ruled: 'fixed', failed: 'failed' }[stage] || stage;
 }
 
 /* --------------------------------------------------------- the packet */
@@ -110,7 +127,7 @@ function branchScreen() {
   const again = s.stage === 'reviewing' ? '' : `<button type="button" class="btn btn-sm" id="look-again"
     title="Another look at the branch as it is now, kept beside this one. Nothing on the branch changes."
     >Look again</button>`;
-  const line = lookLine(s);
+  const line = lookLine(s, d);
   const plate = `
     <header class="board">
       <div class="hall">
@@ -134,18 +151,26 @@ function branchScreen() {
         <span>${esc(s.base_ref)} <b>${bpSha(s.base_sha)}</b> → <b>${bpSha(s.head_sha)}</b></span>
         ${stat ? `<span><b>${stat.files}</b> files · <span class="add">+${stat.added}</span>
           <span class="rem">−${stat.removed}</span></span>` : ''}
-        <span>${s.look === 1 ? 'first look at this branch' : `look ${s.look} at this branch`}</span>
+        <span>${s.working_branch ? `Fabrika's fixes on <b class="mono">${esc(s.working_branch)}</b>` : 'round 1'}</span>
       </div>
+      ${bpRounds(d, pid)}
     </div>`;
 
   if (s.stage === 'failed' && !d.current) {
     return `${plate}<div class="wrap"><div class="error-box" style="margin-top:1.5rem"><pre>${
       esc(s.error || 'The look stopped.')}</pre></div></div>`;
   }
-  if (!packet) {
+  /* A round is read whole or not at all. Its packet is written after the
+     rapporteur, but the breaker, the review panel and the arbiter are still
+     to come, and a packet shown then is a verdict band, tabs and counts for a
+     review that has not happened. Until the last station is done, the line
+     is the page. A round before this one is still there to open, on the
+     strip above. */
+  if (!packet || (d.current && s.stage === 'reviewing')) {
     return `${plate}<div class="wrap"><p class="empty" style="margin-top:1.5rem">Fabrika is looking at this
-      branch: reading it, running this project's checks on it, and cutting its diff into pieces. The
-      stations above light as each finishes.</p></div>`;
+      branch: reading it, running this project's checks on it, cutting its diff into pieces, and then
+      attacking it, with the breaker, the review panel and the arbiter. The stations above light as each
+      finishes, and the packet opens here when the last one has.</p></div>`;
   }
   const stale = !d.current
     ? `<p class="bp-stale">A newer look is ${s.stage === 'failed' ? 'stopped' : 'under way'}. Below is
@@ -159,25 +184,34 @@ function branchScreen() {
      tab at a time. The band's word is the one thing this look cannot claim yet
      -- there is no review in it to give a verdict -- so it says that, and the
      rapporteur's headline beside it says what was built. */
-  const tab = ['built', 'code', 'checks'].includes(state.bpTab) ? state.bpTab : 'built';
-  const href = (t) => `${branchHref(pid, s.slug)}&bp=${t}`;
+  const tab = ['built', 'findings', 'code', 'checks'].includes(state.bpTab) ? state.bpTab : 'built';
+  const found = d.findings || null;
+  const routes = (found && found.routes) || {};
+  const sendBack = ((d.calls || {}).send_back || Object.values(routes).filter((r) => r === 'send_back')).length;
+  const verdict = d.verdict;
+  const verdictWord = verdict ? ({ underwritten: 'Underwritten', dropped: 'Dropped' }[verdict.verdict] || 'Sent back')
+    : found ? (sendBack ? `${bpPlural(sendBack, 'defect')} going back` : 'Nothing going back') : 'Not reviewed';
+  const bandCls = verdict ? (verdict.verdict === 'underwritten' ? 'v-band-ship' : 'v-band-stop') : 'v-band-none';
+  const href = (t) => `${branchHref(pid, s.slug)}&bp=${t}${state.bpLook ? `&look=${state.bpLook}` : ''}`;
   const red = checks.results.some((r) => !r.passed);
   const tabs = [
     ['built', 'What it built', bpPlural(stat.files, 'file'), false],
+    ['findings', 'Findings', found ? `${sendBack} to send back` : 'not attacked', sendBack > 0],
     ['code', 'The code', `${lines.novel || 0} novel of ${total} lines`, false],
     ['checks', 'Checks', checks.results.length ? `${green} of ${checks.results.length}` : 'none', red],
   ].map(([t, label, count, alert]) => `
     <a class="tab" role="tab" href="${href(t)}" aria-selected="${tab === t}">${esc(label)}
-      <span class="mono tab-n">${esc(count)}</span>${alert ? '<span class="tab-dot" title="a check is red"></span>' : ''}</a>`).join('');
+      <span class="mono tab-n">${esc(count)}</span>${alert ? `<span class="tab-dot" title="${
+        t === 'findings' ? 'a defect goes back to whoever built it' : 'a check is red'}"></span>` : ''}</a>`).join('');
   /* Inside `g2`, as the review is, so the band and the tabs take the window's
      width rather than the column's. The band's ground is no verdict's: green
      ships, light green ships once you rule, red does not, and a look has no
      review to give any of the three. */
   return `${plate}
     <div class="g2">
-    <section class="v-band v-band-none">
+    <section class="v-band ${bandCls}">
       <div class="wrap v-in">
-        <span class="v-word">Not reviewed</span>
+        <span class="v-word">${verdictWord}</span>
         <p class="verdict-headline">${esc(packet.headline || 'The rapporteur gave no headline.')}</p>
         ${/* The review's reading mode: the rail, the masthead and the board fold
              away and the packet is the window. F and Esc, as there. */''}
@@ -188,10 +222,360 @@ function branchScreen() {
     <div class="wrap bp-tab">
       ${stale}
       ${tab === 'built' ? bpBuilt(packet, report, commits, href('code'), d) : ''}
-      ${tab === 'code' ? bpCode(packet, total) : ''}
+      ${tab === 'findings' ? bpFindings(d, packet, href('code')) : ''}
+      ${tab === 'code' ? (state.bpFile ? bpWholeFile(state.branchFile, state.bpFile, href('code'))
+        : bpCode(packet, total, href('code'))) : ''}
       ${tab === 'checks' ? bpRules(packet, checks) : ''}
     </div>
     </div>`;
+}
+
+/* ------------------------------------------------------------ findings */
+
+/* What the attack found, drawn as a feature's Your calls is: one shut row a
+   finding, its severity a word in its border's hue, its title, where it goes,
+   and what can be done about it on the row itself. Open, it is everyone's own
+   words with their names on them -- the arbiter's first -- then the probe
+   that showed it, and the files it names, linked into The code. Restatements
+   are inside the finding they restate, not beside it. */
+const BP_ROUTE_ORDER = ['send_back', 'you', 'cleanup', 'none'];
+const BP_ROUTE_WORD = { send_back: 'arbiter: send back', you: 'arbiter: your call', cleanup: 'arbiter: cleanup',
+  none: 'arbiter: not a defect' };
+
+function bpSaid(who, text, { lead = false, verbatim = true } = {}) {
+  if (!text) return '';
+  return `<div class="wl-q${lead ? ' wl-q-lead' : ''}"><span class="wl-who">${who}</span>
+    <p class="wl-said${verbatim ? ' wl-verbatim' : ''}">${esc(text)}</p></div>`;
+}
+
+function bpFindings(d, packet, codeHref) {
+  const found = d.findings;
+  if (!found) {
+    return '<p class="bp-sub">This look was not attacked: it ran before looks had a breaker and a review panel. Look again to attack it.</p>';
+  }
+  const ledger = found.ledger || {};
+  const records = Object.fromEntries((ledger.records || []).map((r) => [r.finding_id, r]));
+  const routeOf = (f) => (found.routes || {})[f.id] || 'you';
+  const probeOf = Object.fromEntries((found.probes || []).map((p) => [p.finding, p]));
+  const all = ledger.findings || [];
+  const restatedBy = {};
+  all.forEach((f) => {
+    const of = (records[f.id] || {}).duplicate_of;
+    if (of) (restatedBy[of] = restatedBy[of] || []).push(f);
+  });
+  const rows = all.filter((f) => !(records[f.id] || {}).duplicate_of)
+    .sort((a, b) => BP_ROUTE_ORDER.indexOf(routeOf(a)) - BP_ROUTE_ORDER.indexOf(routeOf(b))
+      || (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9));
+  const pieceOf = (path) => (packet.pieces || []).find((p) => p.path === path);
+  const tidy = d.tidy || {};
+  const onTidy = new Set([...((tidy.first || {}).files || []), ...((tidy.second || {}).files || [])]
+    .map((x) => x.split('/').pop()));
+  const calls = Object.fromEntries((((d.calls || {}).calls) || []).map((c) => [c.finding_id, c]));
+  const compared = d.compared || {};
+  const ruledLook = !!d.verdict || (d.state || {}).stage === 'ruled' || (d.shown && d.shown !== (d.state || {}).look);
+  const back = ((d.calls || {}).send_back || rows.filter((f) => routeOf(f) === 'send_back')).length;
+  const left = ((d.calls || {}).unruled || []).length;
+
+  const call = (f) => {
+    const r = records[f.id] || {};
+    const route = routeOf(f);
+    const probe = probeOf[f.id];
+    const also = restatedBy[f.id] || [];
+    const files = (f.files || []).map((path) => {
+      const p = pieceOf(path);
+      return p ? `<a class="mono" href="${esc(codeHref)}#piece-${esc(p.id)}">${esc(path)}</a>` : `<span class="mono">${esc(path)}</span>`;
+    }).join('');
+    return `<details class="wl-call wl-${esc(f.severity)}${route === 'none' ? ' wl-done' : ''}">
+      <summary class="wl-head">
+        <span class="wl-chev" aria-hidden="true">›</span>
+        <span class="wl-sev">${esc(f.severity)}</span>
+        <span class="wl-t">${bpSince(compared, f.id)}${esc(f.title)}${also.length ? `<span class="mono wl-x" title="${
+          also.length + 1} findings that say this">${also.length + 1}×</span>` : ''}</span>
+        <span class="wl-was" title="where the arbiter sent it">${esc(BP_ROUTE_WORD[route])}</span>
+        ${bpRuleActs(calls[f.id], ruledLook)}
+      </summary>
+      <div class="wl-body">
+        ${bpSaid('The arbiter', r.disposition_reason, { lead: true })}
+        ${bpSaid(f.id, f.detail)}
+        ${bpSaid('To fix it', f.recommendation)}
+        ${probe ? `<div class="wl-q"><span class="wl-who">The probe</span><p class="wl-said bp-plain">${
+          probe.red ? 'Fails today' : 'Passes'}${probe.claim_ids.length ? `, against ${probe.claim_ids.map(esc).join(', ')}` : ''}: <code>${
+          esc(probe.path)}</code>.${onTidy.has(probe.path.split('/').pop())
+          ? ` It is on <code>${esc((d.tidy_plan || {}).branch || '')}</code>; add it with the fix.` : ''}</p></div>` : ''}
+        ${f.evidence ? `<div class="wl-q"><span class="wl-who">It showed</span><details class="bp-probe">
+          <summary>${probe ? 'the probe, and what it printed' : 'the evidence'}</summary>
+          <pre class="f-ev">${esc(f.evidence)}</pre></details></div>` : ''}
+        ${also.length ? `<div class="wl-q"><span class="wl-who">Also found by</span><ul class="wl-sib">${
+          also.map((o) => `<li><span class="mono">${esc(o.id)}</span>${esc(o.title)}</li>`).join('')}</ul></div>` : ''}
+      </div>
+      <div class="wl-meta"><span>raised by ${esc(r.role || 'unrecorded')}</span>${files}${
+        (calls[f.id] ? calls[f.id].goes === 'send_back' : route === 'send_back')
+          ? `<button type="button" class="wl-act" data-bp-prompt="${esc(f.id)}">copy a prompt for this one</button>` : ''}</div>
+      ${bpRuleNote(f, calls[f.id], ruledLook)}
+    </details>`;
+  };
+
+  const passing = (found.probes || []).filter((p) => !p.red && !p.timed_out);
+  return `
+    <div class="wl-stand">
+      <p class="tab-lead">What the attack on this branch found, where each finding goes, and your call on it.</p>
+      <span class="wl-stand-n">${ruledLook ? '' : left ? `<b>${left}</b> ${left === 1 ? 'call' : 'calls'} waiting on you · ` : ''}${
+        back ? `<b>${back}</b> to send back` : '<b>Nothing</b> to send back'}</span>
+      ${back ? '<button type="button" class="btn btn-sm" id="look-send-back">Copy all as a prompt</button>' : ''}
+    </div>
+    ${bpFixedSince(compared)}
+    ${rows.length ? `<section class="block wl-list">${rows.map(call).join('')}</section>`
+      : `<p class="bp-sub">The breaker and the panel found nothing. ${esc((found.breaker || {}).note || '')}</p>`}
+    ${passing.length ? `<p class="bp-sub bp-passing">The breaker also wrote ${bpPlural(passing.length, 'probe')} that
+      ${passing.length === 1 ? 'passes' : 'pass'}, which proves nothing about the code${
+      passing.some((p) => p.promoted) ? ', and keeps the ones that held as tests worth adding' : ''}.</p>` : ''}
+    ${bpTidy(d)}
+    ${bpVerdict(d)}`;
+}
+
+/* What a finding is, against the round before: new, still there after
+   Fabrika's fix, a risk you accepted then (and still accept), or one whose
+   code changed since you did. Nothing in the first round. */
+function bpSince(compared, fid) {
+  const status = ((compared || {}).status || {})[fid];
+  const word = { new: 'new', still_there: 'still there', accepted_before: 'accepted before',
+                 changed_since_accepted: 'code changed' }[status];
+  return word ? `<span class="bp-since s-${esc(status)}" title="${esc(status === 'changed_since_accepted'
+    ? 'You accepted this last round; the code it is about has changed since, so it is your call again.'
+    : `Against round ${compared.previous}`)}">${word}</span>` : '';
+}
+
+/* Since the round before: what Fabrika fixed, and what it could not. */
+function bpFixedSince(compared) {
+  if (!compared || !compared.previous || !((compared.fixed || []).length || (compared.not_fixed || []).length)) return '';
+  const li = (xs, word) => xs.map((t) => `<li><span class="mono">${word}</span>${esc(t)}</li>`).join('');
+  return `<details class="bp-fixed-since"><summary>Since round ${compared.previous}: Fabrika fixed
+    ${compared.fixed.length}${compared.not_fixed.length ? `, and could not fix ${compared.not_fixed.length}` : ''}</summary>
+    <ul class="wl-sib">${li(compared.fixed, 'fixed')}${li(compared.not_fixed, 'not fixed')}</ul></details>`;
+}
+
+/* Your call on a finding, in the column Your calls rules in: back to whoever
+   built the branch, or a risk you accept and sign for. The one you made is
+   lit; until the look is ruled as a whole it can be changed. */
+function bpRuleActs(call, ruledLook) {
+  if (!call) return '<span class="wl-acts"></span>';
+  const mine = (call.ruling || {}).ruling;
+  if (ruledLook) {
+    return `<span class="wl-mine"><span class="pill ${call.goes === 'send_back' ? 'pill-red' : call.goes === 'accept' ? 'pill-amber' : ''}">${
+      call.goes === 'send_back' ? 'fix' : call.goes === 'accept' ? 'risk accepted' : 'not ruled'}</span></span>`;
+  }
+  const btn = (k, label, why) => `<button type="button" class="wl-act${mine === k ? ' on' : ''}" aria-pressed="${mine === k}"
+    data-bp-rule="${esc(call.finding_id)}:${k}" title="${esc(why)}">${label}</button>`;
+  return `<span class="wl-acts">${btn('send_back', 'fix', 'It goes back to be fixed: by Fabrika, or by whoever built it')}${
+    btn('accept', 'accept', 'A risk you accept and sign for, with your reason')}</span>`;
+}
+
+function bpRuleNote(f, call, ruledLook) {
+  if (!call) return '';
+  const mine = call.ruling;
+  if (ruledLook || mine) {
+    const word = (mine || {}).carried_from ? `You accepted this as a risk in round ${mine.carried_from}`
+      : (mine || {}).ruling === 'accept' ? 'You accepted this as a risk' : (mine || {}).ruling === 'send_back'
+        ? 'You sent this back to be fixed' : call.goes === 'send_back' ? 'Going back, as the arbiter routed it' : 'Not ruled on';
+    return `<div class="wl-ruled"><span class="wl-who">Your call</span>
+      <span class="wl-ruled-t">${esc(word)}${mine && mine.note ? `: ${esc(mine.note)}` : '.'}</span></div>`;
+  }
+  return `<div class="wl-note-row"><input class="wl-note" id="bp-note-${esc(f.id)}" placeholder="${
+    call.route === 'send_back' ? 'Why you accept it, if you do -- it goes on the record you sign'
+      : 'What you decide, and why'}" /></div>`;
+}
+
+/* The look ruled as a whole. To underwrite is to sign for the branch at
+   this head: every defect accepted by you as a risk, and every call made.
+   Sending it back needs one defect going back, and hands over the prompt. */
+function bpVerdict(d) {
+  const calls = d.calls || {};
+  if (!calls.found) return '';
+  const s = d.state || {};
+  const round = d.shown || s.look;
+  const latest = round === s.look;
+  const head = String((d.packet || {}).head_sha || s.head_sha || '').slice(0, 10);
+  const v = d.verdict;
+  const list = (xs) => `<ul class="wl-sib">${xs.map((x) => `<li><span class="mono">${esc(x.severity)}</span>${
+    esc(x.title)}${x.note ? ` <span class="dim">— ${esc(x.note)}</span>` : ''}</li>`).join('')}</ul>`;
+  if (v && v.verdict === 'underwritten') {
+    return `<section class="block bp-verdict ok"><h3 class="bp-verdict-h">You underwrote this work at round ${round},
+        <code>${esc(head)}</code>.</h3>
+      ${prLine(d, 'id="look-pr"')}
+      ${v.accepted.length ? `<p class="bp-sub">The risks you accepted:</p>${list(v.accepted)}` : '<p class="bp-sub">The attack left nothing to accept.</p>'}
+      ${v.note ? `<p class="bp-sub">${esc(v.note)}</p>` : ''}</section>`;
+  }
+  if (v && v.verdict === 'dropped') {
+    return `<section class="block bp-verdict back"><h3 class="bp-verdict-h">You dropped this work at round ${round}.</h3>
+      ${v.note ? `<p class="bp-sub">${esc(v.note)}</p>` : ''}</section>`;
+  }
+  // An earlier round: what came of it, and the way to the latest.
+  if (!latest) {
+    const fix = d.fix;
+    return `<section class="block bp-verdict"><h3 class="bp-verdict-h">Round ${round} of ${s.look}</h3>
+      <p class="bp-sub">${fix ? `${calls.send_back.length ? '' : ''}Fabrika fixed ${fix.fixed.length} of ${fix.targets.length}
+        on <code>${esc(fix.branch)}</code>, and the work moved on to round ${round + 1}.`
+        : v && v.verdict === 'sent_back' ? 'Sent back.' : 'The work has moved on since.'}
+        <a href="${branchHref(state.projectId, s.slug)}&bp=findings">Round ${s.look} →</a></p></section>`;
+  }
+  if (s.stage === 'reviewing') return '';
+  // Fixed, and the next round not opened yet: an earlier version left work
+  // here. The way on is to look at what Fabrika made.
+  if (s.stage === 'ruled' && d.fix) {
+    return `<section class="block bp-verdict"><h3 class="bp-verdict-h">Fabrika fixed ${d.fix.fixed.length} of
+        ${d.fix.targets.length} on <code>${esc(s.working_branch || d.fix.branch)}</code></h3>
+      <p class="bp-sub">Round ${s.look + 1} looks at what it made: the checks, the attack, and each finding against this round.</p>
+      <div class="bp-verdict-acts"><button type="button" class="btn btn-sm btn-primary" id="look-again">Look at it</button></div>
+    </section>`;
+  }
+  const back = (calls.send_back || []).length;
+  const open = (calls.unruled || []).length;
+  const can = !back && !open;
+  const sentBack = v && v.verdict === 'sent_back';  // an earlier version's ending, read as a round
+  return `${back || d.fixing || d.fix_failed || sentBack ? `<section class="block bp-verdict">
+      <h3 class="bp-verdict-h">Send back ${bpPlural(back, 'defect')}</h3>
+      <div class="bp-routes">${bpFixRoute(d)}
+        <div class="bp-route"><p><b>Or hand it back.</b> A prompt with every defect going back, your notes on them,
+          and the tests that show them. Fix them on <code>${esc(s.branch)}</code>, then look again.</p>
+          <button type="button" class="btn btn-sm" id="look-send-back">Copy the prompt</button></div></div></section>` : ''}
+    <section class="block bp-verdict">
+      <h3 class="bp-verdict-h">Or end it here, at round ${round}, <code>${esc(head)}</code></h3>
+      <p class="bp-sub">${can
+        ? `Every finding is accepted${(calls.accepted || []).length ? `: ${bpPlural(calls.accepted.length, 'risk')} you sign for` : ''}. You can underwrite it.`
+        : `To underwrite it, ${[back ? `accept the ${bpPlural(back, 'defect')} still going back` : '',
+            open ? `make the ${bpPlural(open, 'call')} waiting on you` : ''].filter(Boolean).join(', and ')}.`}</p>
+      <input class="wl-note bp-verdict-note" id="bp-verdict-note" placeholder="A note for the record, if you have one" />
+      <div class="bp-verdict-acts">
+        <button type="button" class="btn btn-sm${can ? ' btn-primary' : ''}" data-bp-verdict="underwritten">Underwrite</button>
+        <button type="button" class="btn btn-sm" data-bp-verdict="dropped">Drop it</button>
+      </div>
+    </section>`;
+}
+
+/* The rounds of the work, in a row: each round's head and what came of it,
+   and between two rounds, what Fabrika fixed. Each opens on its own. */
+function bpRounds(d, pid) {
+  const rounds = d.rounds || [];
+  const s = d.state || {};
+  if (rounds.length < 2 && !(rounds[0] || {}).fix) return '';
+  const shown = d.shown || s.look;
+  const said = (r) => (r.verdict === 'underwritten' ? 'underwritten' : r.verdict === 'dropped' ? 'dropped'
+    : !r.found ? (r.look === s.look && s.stage === 'reviewing' ? 'being looked at' : 'not attacked')
+    : r.send_back ? `${r.send_back} going back` : r.unruled ? `${r.unruled} waiting on you` : 'all accepted');
+  return `<nav class="bp-rounds" aria-label="Rounds of this work">${rounds.map((r) => `
+    <a class="bp-round${r.look === shown ? ' on' : ''}" href="${branchHref(pid, s.slug)}&look=${r.look}">
+      <b>Round ${r.look}</b><span class="mono">${r.working ? "Fabrika's branch" : 'your branch'} @${esc(r.head_sha.slice(0, 7))}</span>
+      <span>${esc(said(r))}</span></a>${r.fix ? `<span class="bp-round-fix">fixed ${r.fix.fixed} of ${r.fix.of} →</span>` : ''}`).join('')}
+  </nav>`;
+}
+
+/* The tidy branch, in a line: what Fabrika could put on a branch of its own
+   for you to take -- the tests its probes became, and any cleanup -- and,
+   once it has, where it is. */
+function bpTidy(d) {
+  const plan = d.tidy_plan || {};
+  const made = d.tidy;
+  const name = plan.branch || '';
+  const tests = (plan.green || 0) + (plan.red || 0);
+  if (!tests && !plan.cleanup) return '';
+  if (d.tidying) return `<p class="bp-sub bp-tidy-note">Making <code>${esc(name)}</code>…</p>`;
+  if (made) {
+    const files = [...((made.first || {}).files || []), ...((made.second || {}).files || [])];
+    return `<p class="bp-sub bp-tidy-note">Fabrika put ${bpPlural(files.length, 'file')} on <code>${esc(name)}</code>, a branch
+      of its own off this one: ${made.kept_cleanup ? 'the cleanup, and ' : ''}${bpPlural(tests, 'test')} from its probes${
+      plan.red ? ` (${plan.red} ${plan.red === 1 ? 'fails' : 'fail'} until the fix)` : ''}. Take what you want into
+      <code>${esc((d.state || {}).branch || '')}</code> with your fixes.</p>`;
+  }
+  const what = [plan.cleanup ? bpPlural(plan.cleanup, 'cleanup') : '', tests ? bpPlural(tests, 'test') : ''].filter(Boolean);
+  return `<p class="bp-sub bp-tidy-note">Fabrika can put ${esc(what.join(' and '))} on a branch of its own,
+    <code>${esc(name)}</code>, for you to take what you want from.
+    <button type="button" class="btn btn-sm" id="look-tidy">Make it</button></p>`;
+}
+
+/* What became of the pull request for what was underwritten, in one line:
+   opened, being opened, failed with a way to try again, or nowhere to open
+   it -- and then where to say where. A feature's and a look's alike. */
+function prLine(d, retryAttr) {
+  const pr = d.pull_request;
+  const failed = d.pull_request_failed;
+  const target = d.pr_target || {};
+  if (d.pr_opening) return '<p class="bp-pr-line">Opening the pull request…</p>';
+  if (pr && !failed) {
+    return `<p class="bp-pr-line ok">Pull request: <a href="${esc(pr.url)}" target="_blank" rel="noopener">${esc(pr.url)}</a>
+      <span class="dim">· <code>${esc(pr.branch)}</code> into <code>${esc(pr.base)}</code> on ${esc(pr.repo)}</span></p>`;
+  }
+  if (target.missing) {
+    return `<p class="bp-pr-line">No pull request: ${esc(target.missing)}
+      <a href="#/${encodeURIComponent(state.projectId)}?gates=survey">Project settings</a></p>`;
+  }
+  return `<p class="bp-pr-line bad">${failed ? `The pull request was not opened: ${esc(failed.error)}` : 'No pull request yet.'}
+    <button type="button" class="btn btn-sm" ${retryAttr}>${failed ? 'Try again' : 'Open it'}</button></p>`;
+}
+
+/* Sent back, two ways it can go: Fabrika fixes it on a branch of its own,
+   and looks at what it made; or the prompt, for whoever built it. */
+function bpFixRoute(d) {
+  const s = d.state || {};
+  const fix = d.fix;
+  const failed = d.fix_failed && (!fix || d.fix_failed.tip !== fix.tip) ? d.fix_failed : null;
+  const name = s.working_branch || `factory/outside/${s.slug}`;
+  if (d.fixing) {
+    return `<div class="bp-route"><p><b>Fabrika is fixing it</b> on <code>${esc(name)}</code>: repairing what goes back,
+      then every check that passed and every probe. The next round of this work starts when it is done.</p></div>`;
+  }
+  if (fix) {
+    const title = (fid) => (((d.calls || {}).calls || []).find((c) => c.finding_id === fid) || {}).title || fid;
+    return `<div class="bp-route made"><p><b>Fabrika fixed ${fix.fixed.length} of ${fix.targets.length}</b> on
+      <code>${esc(fix.branch)}</code>, in ${bpPlural(fix.rounds.length, 'round')}${
+      fix.rounds.some((r) => r.reverted) ? `, ${fix.rounds.filter((r) => r.reverted).length} thrown away for breaking a check` : ''}.</p>
+      ${fix.fixed.length ? `<ul class="wl-sib">${fix.fixed.map((f) => `<li><span class="mono">fixed</span>${esc(title(f))}</li>`).join('')}</ul>` : ''}
+      ${fix.not_fixed.length ? `<ul class="wl-sib">${fix.not_fixed.map((f) => `<li><span class="mono">not fixed</span>${esc(title(f))}</li>`).join('')}</ul>` : ''}
+      ${fix.next_look ? `<p><a href="${branchHref(state.projectId, s.slug)}&look=${fix.next_look}">Round ${fix.next_look} →</a></p>` : ''}</div>`;
+  }
+  return `<div class="bp-route"><p><b>Have Fabrika fix it.</b> It repairs what goes back on <code>${esc(name)}</code>, its
+    branch for this work, with the probes as the fence, then looks at the result as round ${s.look + 1}. Yours is not touched.</p>
+    ${failed ? `<p class="bp-q">The last try stopped: ${esc(failed.error)}</p>` : ''}
+    <button type="button" class="btn btn-sm btn-primary" id="look-fix">${failed ? 'Try again' : 'Fix it'}</button></div>`;
+}
+
+/* One prompt for whoever built the branch, or their agent: every defect the
+   arbiter sent back, with where it is, what showed it, and what would fix it.
+   Made here from the record, the same every time. */
+function bpSendBackPrompt(d, only = null) {
+  const found = d.findings || {};
+  const records = Object.fromEntries(((found.ledger || {}).records || []).map((r) => [r.finding_id, r]));
+  const probes = Object.fromEntries((found.probes || []).map((p) => [p.finding, p]));
+  // What goes back is what your calls send back: the arbiter's route where
+  // you made none, and a call of yours sending one back where you did.
+  const calls = Object.fromEntries((((d.calls || {}).calls) || []).map((c) => [c.finding_id, c]));
+  const goesBack = (f) => (calls[f.id] ? calls[f.id].goes === 'send_back' : (found.routes || {})[f.id] === 'send_back');
+  const back = ((found.ledger || {}).findings || []).filter((f) => goesBack(f)
+    && !(records[f.id] || {}).duplicate_of && (only === null || f.id === only))
+    .sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9));
+  // Where a probe is on the tidy branch, the path it has there: the one to add it at.
+  const tidy = d.tidy || {};
+  const onTidy = [...((tidy.first || {}).files || []), ...((tidy.second || {}).files || [])];
+  const tidyName = (d.tidy_plan || {}).branch || '';
+  const s = d.state || {};
+  const parts = [`# Fix what a review of \`${s.branch}\` found`, '',
+    `Fabrika looked at \`${s.branch}\` at ${String(s.head_sha || '').slice(0, 12)} and sends back ${bpPlural(back.length, 'defect')}, `
+    + 'the most severe first. Fix each one on the branch. Where a test shows a defect, it fails today and passes '
+    + 'once the defect is fixed: add it with the fix, so it keeps the defect from coming back.'];
+  back.forEach((f, i) => {
+    const p = probes[f.id];
+    parts.push('', `## ${i + 1}. ${f.title} (${f.severity})`, '', f.detail);
+    if ((f.files || []).length) parts.push('', `Where: ${f.files.map((x) => `\`${x}\``).join(', ')}`);
+    if (f.recommendation) parts.push('', `What would fix it: ${f.recommendation}`);
+    const note = ((calls[f.id] || {}).ruling || {}).note;
+    if (note) parts.push('', `From the person reviewing it: ${note}`);
+    if (p) {
+      const at = onTidy.find((x) => x.split('/').pop() === p.path.split('/').pop()) || p.path;
+      parts.push('', `Add this test at \`${at}\` with your fix. It fails today and passes once this is fixed.${
+        onTidy.includes(at) && tidyName ? ` It is also on \`${tidyName}\`, if you would rather take it from there.` : ''}`,
+      '', '```', p.contents.trimEnd(), '```');
+    } else if (f.evidence) parts.push('', 'What showed it:', '', '```', f.evidence.trimEnd(), '```');
+  });
+  return parts.join('\n');
 }
 
 /* A model's prose, made readable and nothing more: escaped, its `code` set as
@@ -222,7 +606,7 @@ function bpBuilt(packet, report, commits, codeHref, look = {}) {
     ['l-play', 'Key flows', (packet.paths || []).length, bpPaths(packet, codeHref)],
     ['l-layers', 'Where it landed', files, bpLanded(packet, report, codeHref, look)],
     ['mustdo', claims.length ? 'What it claims' : 'What its commits say',
-     claims.length || commits.length, bpClaims(packet, commits)],
+     claims.length || commits.length, bpClaims(packet, commits, codeHref)],
   ].filter(([, , , body]) => body && body.trim());
   return `
     <section class="bp-sec bp-doc" aria-label="What it built">
@@ -475,6 +859,25 @@ const BP_DATA = /(^|\/)(models?\.py|models\/|migrations?\/|alembic\/)|\.(prisma|
 const BP_REQUEST = /\b(GET|POST|PUT|PATCH|DELETE) \/[^\s,;)]*/;
 const BP_LANES = ['screen', 'client', 'server', 'data', 'outside'];
 
+/* A participant's name in lines of at most `room` characters, two at most:
+   broken between words where it can be, inside a word where one is longer
+   than a line, and cut with an ellipsis past the second. */
+function bpFitName(name, room) {
+  const words = String(name || '').split(/\s+/).filter(Boolean);
+  const out = [];
+  let cur = '';
+  words.forEach((w) => {
+    const next = cur ? `${cur} ${w}` : w;
+    if (next.length <= room) { cur = next; return; }
+    if (cur) out.push(cur);
+    cur = w;
+  });
+  if (cur) out.push(cur);
+  const lines = out.flatMap((l) => (l.length <= room ? [l] : l.match(new RegExp(`.{1,${room}}`, 'g'))));
+  if (lines.length > 2) return [lines[0], `${lines[1].slice(0, room - 1)}…`];
+  return lines.length ? lines : [''];
+}
+
 function bpFlow(packet, codeHref, at) {
   const pa = (packet.paths || [])[at];
   if (!pa) return { svg: '', html: '', who: [] };
@@ -501,7 +904,17 @@ function bpFlow(packet, codeHref, at) {
   const who = [...lines.values()].sort((x, y) => x.lane - y.lane || x.first - y.first).map((l) => ({
     ...l, name: !l.path ? l.label : stems[stem(l.path)] > 1 ? l.path.split('/').slice(-2).join('/').replace(/\.[^.]+$/, '') : stem(l.path),
   }));
-  const SP = 124, X0 = 44, TOP = 64, NOTE = 12 * 0.52, LINE = 15;
+  const SP = 124, X0 = 44, NOTE = 12 * 0.52, LINE = 15;
+  // A name fits its box: as many characters as 13px monospace holds in it, on
+  // up to two lines, and the whole name on hover. A step outside the
+  // branch's code is named by what it is ("Delete button onDelete"), which is
+  // rarely as short as a file. With any name on two lines, every box is drawn
+  // tall, so the lifelines start level.
+  const ROOM = Math.floor((SP - 26) / (13 * 0.6));
+  who.forEach((w) => { w.lines = bpFitName(w.name, ROOM); });
+  const tall = who.some((w) => w.lines.length > 1);
+  const TOP = tall ? 78 : 64;
+  const BOX = tall ? 54 : 40;
   const x = { you: X0 };
   who.forEach((w, i) => { x[w.key] = X0 + SP * (i + 1); });
   let W = X0 + SP * who.length + 60;
@@ -600,11 +1013,13 @@ function bpFlow(packet, codeHref, at) {
   const heads = [{ key: 'you', name: 'you', lane: -1 }, ...who].map((w) => {
     const cx = x[w.key];
     const out = w.lane === 4;
-    return `<g class="sq-who${w.key === 'you' ? ' you' : ''}${out ? ' out' : ''}"><title>${esc(w.path || (out ? "outside this branch's code" : 'the person using it'))}</title>
-      <rect x="${cx - SP / 2 + 8}" y="4" width="${SP - 16}" height="40" rx="3"/>
-      <text class="sq-name" x="${cx}" y="22" text-anchor="middle">${esc(w.name.length > 20 ? `${w.name.slice(0, 19)}…` : w.name)}</text>
-      <text class="sq-lane" x="${cx}" y="36" text-anchor="middle">${w.key === 'you' ? 'person' : BP_LANES[w.lane]}</text>
-      <path class="sq-life" d="M${cx},44 V${H}"/></g>`;
+    const lines = w.lines || [w.name];
+    const first = tall && lines.length === 1 ? 29 : 22;
+    return `<g class="sq-who${w.key === 'you' ? ' you' : ''}${out ? ' out' : ''}"><title>${esc(w.path || (out ? `${w.name}: outside this branch's code` : 'the person using it'))}</title>
+      <rect x="${cx - SP / 2 + 8}" y="4" width="${SP - 16}" height="${BOX}" rx="3"/>
+      ${lines.map((l, n) => `<text class="sq-name" x="${cx}" y="${first + n * 14}" text-anchor="middle">${esc(l)}</text>`).join('')}
+      <text class="sq-lane" x="${cx}" y="${BOX - 4}" text-anchor="middle">${w.key === 'you' ? 'person' : BP_LANES[w.lane]}</text>
+      <path class="sq-life" d="M${cx},${BOX + 4} V${H}"/></g>`;
   }).join('');
   const bars = Object.entries(active).map(([k, [top, bottom]]) =>
     `<rect class="sq-act" x="${x[k] - 5}" y="${top}" width="10" height="${bottom - top}"/>`).join('');
@@ -654,10 +1069,10 @@ function bpPaths(packet, codeHref) {
    its imports and loose module lines are counted, not named. */
 const BP_NOISE = /^(imports|module code)$|, top$/;
 
-function bpUnits(pieces, path) {
+function bpUnits(pieces, path, tests = false) {
   const units = new Map();
   let loose = 0;
-  pieces.filter((p) => p.path === path && p.klass !== 'tests').forEach((p) => {
+  pieces.filter((p) => p.path === path && (p.klass === 'tests') === tests).forEach((p) => {
     String(p.symbol).split(' · ').forEach((raw) => {
       if (BP_NOISE.test(raw)) { loose += 1; return; }
       const name = raw.replace(/, fields$/, '');
@@ -679,14 +1094,19 @@ function bpLanded(packet, report, codeHref, look = {}) {
     return `<span class="bp-gr-pm"><span class="a">+${a}</span>${r ? ` <span class="r">−${r}</span>` : ''}</span>`;
   };
   const SHOWN = 8;
-  const fileRow = (path) => {
-    const { units, loose } = bpUnits(pieces, path);
-    const chips = units.slice(0, SHOWN).map((u) => `
+  const fileRow = (path, test = false) => {
+    const { units, loose } = bpUnits(pieces, path, test);
+    // Every test of a test file is named: it is the list of what the branch tests.
+    const shown = test ? units.length : SHOWN;
+    const chips = units.slice(0, shown).map((u) => `
       <a class="bp-sym ${u.fresh ? 'add' : 'chg'}" href="${codeHref}#piece-${esc(u.id)}"
         title="${u.fresh ? 'added by this branch' : 'changed by this branch'}">${esc(u.name)}</a>`).join('');
-    const more = [units.length > SHOWN ? `${units.length - SHOWN} more` : '',
+    const more = [units.length > shown ? `${units.length - shown} more` : '',
       loose ? (units.length ? 'and its imports' : 'imports and module lines only') : ''].filter(Boolean).join(', ');
-    return `<div class="bp-file"><div class="bp-file-p">${esc(path)}${counts([path])}</div>
+    const fresh = test ? pieces.filter((p) => p.path === path && p.kind === 'test' && p.fresh).length : 0;
+    return `<div class="bp-file"><div class="bp-file-p"><a href="${esc(bpFileHref(codeHref, path))}"
+      title="the whole file, as it is at the head">${esc(path)}</a>${
+      fresh ? `<span class="bp-file-n">${bpPlural(fresh, 'new test')}</span>` : ''}${counts([path])}</div>
       <div class="bp-syms">${chips}${more ? `<span class="bp-sym-more">${esc(more)}</span>` : ''}</div></div>`;
   };
 
@@ -727,7 +1147,7 @@ function bpLanded(packet, report, codeHref, look = {}) {
         <span class="bp-gr-n">${g.total ? `${g.files.length} of ${g.total} files` : bpPlural(g.files.length, 'file')}</span>
         ${counts(g.files)}
         <span class="bp-gr-what">${esc(names.slice(0, 6).join(' · '))}${names.length > 6 ? ` +${names.length - 6}` : ''}</span></summary>
-      <div class="bp-gr-files">${g.files.map(fileRow).join('')}</div>
+      <div class="bp-gr-files">${g.files.map((f) => fileRow(f)).join('')}</div>
     </details>`;
   }).join('');
 
@@ -763,7 +1183,7 @@ function bpLanded(packet, report, codeHref, look = {}) {
   const testLine = testFiles.length ? `
     <details class="bp-tests-line"><summary><b>Tests:</b> ${bpPlural(testFiles.length, 'file')},
       ${bpPlural(newTests, 'new test')}</summary>
-      <p>${testFiles.map((f) => `<code>${esc(f)}</code>`).join(' ')}</p></details>` : '<p class="bp-untouched">No test file changed.</p>';
+      <div class="bp-tests-files">${testFiles.map((f) => fileRow(f, true)).join('')}</div></details>` : '<p class="bp-untouched">No test file changed.</p>';
   return `
     <p class="bp-sub bp-landed-lede">${lede}</p>
     <div class="bp-glist">${rows}</div>
@@ -774,32 +1194,57 @@ function bpLanded(packet, report, codeHref, look = {}) {
 
 /* What the commits claim, each against the tests that show it -- the only
    stated intent a branch with no spec has. */
-function bpClaims(packet, commits) {
+/* The piece a test a claim names is in, by its name: `test_x`, or a spec's
+   title, with a file or suite before it (`a.py::test_x`, `Card > adds`) let
+   go. Null for a test the branch did not touch, which has no piece. */
+function bpTestPiece(pieces, name) {
+  const bare = (x) => String(x).split(/::|\s+[>›]\s+/).pop().trim();
+  const want = bare(name);
+  return pieces.find((p) => p.klass === 'tests' && p.start
+    && String(p.symbol).split(' · ').some((sym) => sym === name || bare(sym) === want)) || null;
+}
+
+function bpClaims(packet, commits, codeHref = '') {
   const claims = packet.claims || [];
+  const pieces = packet.pieces || [];
+  // Each test opens its file, whole, at the test.
+  const test = (t) => {
+    const p = codeHref && bpTestPiece(pieces, t);
+    return p ? `<a href="${esc(bpFileHref(codeHref, p.path, p.start))}" title="${esc(p.path)}:${p.start}"><code>${esc(t)}</code></a>`
+      : `<code>${esc(t)}</code>`;
+  };
   if (!claims.length) {
     const said = commits.map((c) => `<li><code>${bpSha(c.sha)}</code> ${esc(c.message.split('\n')[0])}</li>`).join('');
     return `<p class="bp-sub">With no spec, the commit messages are the only stated intent this branch has.</p>
       <ul class="bp-looks">${said}</ul>`;
   }
-  const shown = claims.filter((c) => c.state === 'shown').length;
-  const mark = { shown: ['ok', '✓', 'shown by a test that ran green'],
+  const mark = { broken: ['bad', '✗', 'a probe written against it fails'],
+                 shown: ['ok', '✓', 'shown by a test that ran green'],
                  unproved: ['part', '◐', 'a test names it, and the tests did not run green'],
                  untested: ['none', '○', 'no test exercises it'] };
-  const rows = claims.map((c) => {
+  const row = (c) => {
     const [cls, glyph, word] = mark[c.state] || mark.untested;
-    const ev = [c.tests.map((t) => `<code>${esc(t)}</code>`).join(' · '),
-      c.missing.length ? `named but not in the branch: ${c.missing.map(esc).join(', ')}` : '',
-      !c.tests.length && !c.missing.length ? 'no test exercises it' : ''].filter(Boolean).join(' · ');
+    const ev = [(c.broken_by || []).length ? `<span class="ev-broke">broken by ${c.broken_by.map((b) => `<code>${esc(b)}</code>`).join(', ')}</span>` : '',
+      [c.tests.map(test).join(' · '),
+       c.missing.length ? `named but not in the branch: ${c.missing.map(esc).join(', ')}` : '',
+       !c.tests.length && !c.missing.length ? 'no test exercises it' : ''].filter(Boolean).join(' · ')].filter(Boolean).join('');
     return `<div class="bp-claim"><span class="mk ${cls}" role="img" aria-label="${esc(word)}">${glyph}</span>
       <q>${esc(c.quote)}</q><span class="ev">${ev}</span></div>`;
+  };
+  /* Grouped by what stands behind each claim, the ones that need you first: a
+     claim a probe broke, then one nothing tests, then one whose tests did not
+     run green, then what a test shows. Within a group, the commits' order. */
+  const groups = [['broken', 'Broken by a probe'], ['untested', 'No test exercises it'],
+    ['unproved', 'Named by a test that did not run green'], ['shown', 'Shown by a test']];
+  const state = (c) => (mark[c.state] ? c.state : 'untested');
+  const body = groups.map(([key, title]) => {
+    const these = claims.filter((c) => state(c) === key);
+    return these.length ? `<div class="bp-claim bp-claim-h">${title} · ${these.length}</div>${these.map(row).join('')}` : '';
   }).join('');
   return `
     <p class="bp-sub">With no spec, the commit messages are the only stated intent this branch has. Each claim in
       them is matched to the test that exercises it, or marked where none does.</p>
-    <div class="bp-claims">
-      <div class="bp-claim bp-claim-h">${bpPlural(claims.length, 'claim')} · ${shown} shown by a test</div>
-      ${rows}
-    </div>`;
+    <div class="bp-claims">${body}</div>`;
 }
 
 /* One sentence of a model's prose, inline: escaped, its `code` set as code. */
@@ -856,7 +1301,13 @@ function bpRows(rows) {
   }).join('');
 }
 
-function bpPiece(p) {
+/* The code tab on one file, whole: `&bpfile=<path>`, and `#L<n>` after it
+   for a line. */
+function bpFileHref(codeHref, path, line = 0) {
+  return `${codeHref}&bpfile=${encodeURIComponent(path)}${line ? `#L${line}` : ''}`;
+}
+
+function bpPiece(p, codeHref) {
   const novel = p.klass === 'novel';
   const where = p.start ? `${p.path}:${p.start}` : `${p.old_path || p.path} · gone at the head`;
   const counts = `<span class="a">+${p.added.length}</span> <span class="r">−${p.removed.length}</span>`;
@@ -866,7 +1317,9 @@ function bpPiece(p) {
         <span class="bp-umark ${novel ? 'mk-novel' : 'mk-boiler'}" role="img" aria-label="${esc(p.klass)}">${novel ? '◆' : '◇'}</span>
         <span class="bp-uhead"><span class="bp-utitle">${esc(p.symbol)}</span><span class="bp-upath">${esc(where)}${
           p.old_path && p.start ? ` · moved from ${esc(p.old_path)}` : ''}</span></span>
-        <span class="bp-ulinks">${p.classed_by === 'default' ? '<span class="bp-ulink">unclassed</span>' : ''}</span>
+        <span class="bp-ulinks">${p.classed_by === 'default' ? '<span class="bp-ulink">unclassed</span>' : ''}${
+          p.start && codeHref ? `<a class="bp-ulink" href="${esc(bpFileHref(codeHref, p.path, p.start))}"
+            title="${esc(p.path)}, whole, at the head">whole file</a>` : ''}</span>
         <span class="bp-ucount">${counts}</span>
         ${icon('l-chevron-right', 'ic bp-uchev')}
         <span class="bp-uwhy">${esc(p.reason)}</span>
@@ -877,7 +1330,35 @@ function bpPiece(p) {
     </details>`;
 }
 
-function bpCode(packet, total) {
+/* One file the round changed, whole, as it is at the head: what a piece sits
+   in. The lines the branch added are marked as they are in a piece. */
+function bpWholeFile(f, path, codeHref) {
+  const back = `<a class="bp-file-back" href="${esc(codeHref)}">← All of the code</a>`;
+  if (!f || f.path !== path && !f.problem) return `<section class="bp-sec">${back}<p class="empty">Loading ${esc(path)}…</p></section>`;
+  const head = `<div class="bp-file-head">${back}<h3 class="bp-file-name">${esc(path)}</h3>`;
+  if (f.problem) return `<section class="bp-sec">${head}</div><div class="error-box"><pre>${esc(f.problem)}</pre></div></section>`;
+  if (f.gone || f.binary) {
+    return `<section class="bp-sec">${head}</div><p class="empty">${f.gone ? 'This branch removes the file: there is nothing of it at the head.'
+      : 'A binary file. There are no lines to show.'}</p></section>`;
+  }
+  const added = new Set(f.added);
+  // The router owns the hash, so `:target` never matches: the line a link named is marked here.
+  const at = /^L(\d+)$/.exec(state.fragment || '');
+  const rows = f.lines.map((text, i) => `<div class="dl${added.has(i + 1) ? ' dl-add' : ''}${
+    at && +at[1] === i + 1 ? ' dl-at' : ''}" id="L${i + 1}">
+      <span class="dl-no">${i + 1}</span><span class="dl-txt">${esc(text) || ' '}</span></div>`).join('');
+  return `
+    <section class="bp-sec bp-whole" aria-label="${esc(path)}">
+      ${head}<p class="bp-sub">At ${bpSha(f.head_sha)}: ${bpPlural(f.lines.length + (f.cut || 0), 'line')}, ${
+        bpPlural(added.size, 'line')} of them added by this branch, marked green.</p></div>
+      <div class="bp-whole-rows"><div class="diff-rows">${rows}</div></div>
+      ${f.cut ? `<p class="bp-untouched">${bpPlural(f.cut, 'more line')} past here; the pieces in The code hold what the
+        branch changed in them.</p>` : ''}
+    </section>`;
+}
+
+function bpCode(packet, total, codeHref = '') {
+  const piece = (p) => bpPiece(p, codeHref);
   const pieces = packet.pieces || [];
   const lines = packet.lines || {};
   const byFile = state.bpOrder === 'file';
@@ -892,14 +1373,14 @@ function bpCode(packet, total) {
   if (byFile) {
     const files = [...new Set(pieces.map((p) => p.path))];
     units = files.map((f) => `<h3 class="bp-grp-file">${esc(f)}</h3>${pieces.filter((p) => p.path === f)
-      .sort((a, b) => (a.start || 1e9) - (b.start || 1e9)).map(bpPiece).join('')}`).join('');
+      .sort((a, b) => (a.start || 1e9) - (b.start || 1e9)).map(piece).join('')}`).join('');
   } else {
     units = BP_GROUPS.map(([k, label, sub]) => {
       const mine = pieces.filter((p) => p.klass === k);
       if (!mine.length) return '';
       const n = mine.reduce((a, p) => a + size(p), 0);
       return `<h3 class="bp-grp-h" data-klass="${k}">${esc(label)} <span>${bpPlural(mine.length, 'piece')} · ${n} lines</span></h3>
-        <p class="bp-grp-sub">${esc(sub)}</p>${mine.map(bpPiece).join('')}`;
+        <p class="bp-grp-sub">${esc(sub)}</p>${mine.map(piece).join('')}`;
     }).join('');
   }
   const refused = (packet.joins_refused || []).length
@@ -948,6 +1429,41 @@ async function lookAgain() {
   await refreshProject(true);
 }
 
+async function ruleFinding(findingId, ruling, note) {
+  const slug = (state.branchLook || {}).slug;
+  if (!slug) return;
+  await api(`/api/projects/${encodeURIComponent(state.projectId)}/branches/${encodeURIComponent(slug)}/rulings`,
+    { method: 'POST', body: JSON.stringify({ finding_id: findingId, ruling, note }) })
+    .catch((e) => errorToast(e.message));
+  await refreshProject(true);
+}
+
+async function ruleLook(verdict, note) {
+  const slug = (state.branchLook || {}).slug;
+  if (!slug) return;
+  await api(`/api/projects/${encodeURIComponent(state.projectId)}/branches/${encodeURIComponent(slug)}/verdict`,
+    { method: 'POST', body: JSON.stringify({ verdict, note }) })
+    .then(() => toast(verdict === 'underwritten' ? 'Underwritten.' : 'Dropped.'))
+    .catch((e) => errorToast(e.message));
+  await refreshProject(true);
+}
+
+async function lookPost(what, said) {
+  const slug = (state.branchLook || {}).slug;
+  if (!slug) return;
+  await api(`/api/projects/${encodeURIComponent(state.projectId)}/branches/${encodeURIComponent(slug)}/${what}`,
+    { method: 'POST' }).then(() => toast(said)).catch((e) => errorToast(e.message));
+  await refreshProject(true);
+}
+
+async function makeTidy() {
+  const slug = (state.branchLook || {}).slug;
+  if (!slug) return;
+  await api(`/api/projects/${encodeURIComponent(state.projectId)}/branches/${encodeURIComponent(slug)}/tidy`,
+    { method: 'POST' });
+  await refreshProject(true);
+}
+
 async function readAgain() {
   const slug = (state.branchLook || {}).slug;
   if (!slug) return;
@@ -960,6 +1476,30 @@ function branchClick(target) {
   if (target.id === 'look-start') return startLook().then(() => true);
   if (target.id === 'look-again') return lookAgain().then(() => true);
   if (target.id === 'look-read') return readAgain().then(() => true);
+  if (target.id === 'look-tidy') return makeTidy().then(() => true);
+  if (target.id === 'look-fix') return lookPost('fix', 'Fabrika is fixing it on a branch of its own.').then(() => true);
+  if (target.id === 'look-pr') return lookPost('pull-request', 'Opening the pull request.').then(() => true);
+  if (target.dataset.bpRule) {
+    const [fid, ruling] = target.dataset.bpRule.split(':');
+    const note = ((document.getElementById(`bp-note-${fid}`) || {}).value || '').trim();
+    ruleFinding(fid, ruling, note);
+    return true;
+  }
+  if (target.dataset.bpVerdict) {
+    const note = ((document.getElementById('bp-verdict-note') || {}).value || '').trim();
+    ruleLook(target.dataset.bpVerdict, note);
+    return true;
+  }
+  if (target.dataset.bpPrompt) {
+    const text = bpSendBackPrompt(state.branchLook || {}, target.dataset.bpPrompt);
+    copyText(text).then(() => toast('Copied: a prompt for this one finding.'), () => toast('Could not copy.'));
+    return true;
+  }
+  if (target.id === 'look-send-back') {
+    const text = bpSendBackPrompt(state.branchLook || {});
+    copyText(text).then(() => toast('Copied: a prompt for whoever built the branch.'), () => toast('Could not copy.'));
+    return true;
+  }
   if (target.dataset.lookPick !== undefined) {
     state.lookPick = state.lookPick === target.dataset.lookPick ? null : target.dataset.lookPick;
     render();

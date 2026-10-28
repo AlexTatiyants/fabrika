@@ -142,6 +142,12 @@ function surveyEditor() {
       ${edRow('Repository', edInput('repo', d.repo, live.length ? 'disabled' : ''),
         live.length ? `Can't move while ${live.length} feature${live.length === 1 ? ' is' : 's are'} in flight.` : '')}
       ${edRow('Features branch from', edInput('base_ref', d.base_ref))}
+      ${edRow('Pull requests go to', edInput('pr_remote', d.pr_remote, 'placeholder="origin"'),
+        'The remote what you underwrite is pushed to and opened as a pull request on. Empty: none are opened.')}
+      ${edRow('…into the branch', edInput('pr_base', d.pr_base, `placeholder="${esc(d.base_ref || 'main')}"`),
+        'Empty means the branch features start from.')}
+      ${edRow('…on GitHub as', edInput('pr_repo', d.pr_repo, 'placeholder="owner/name"'),
+        "Only if the remote's address does not say: read from it otherwise.")}
       ${edRow('Digest budget', edInput('digest_budget', d.digest_budget, 'type="number"'),
         'Characters of the repository the builders read.')}
     </div>`;
@@ -166,6 +172,7 @@ function saveEdits() {
       method: 'PATCH',
       body: JSON.stringify({
         name: d.name, repo: d.repo, base_ref: d.base_ref,
+        pr_remote: d.pr_remote.trim(), pr_base: d.pr_base.trim(), pr_repo: d.pr_repo.trim(),
         digest_budget: Number(d.digest_budget) || 120000,
         gates, environment,
       }),

@@ -368,7 +368,7 @@ export function Worklist({
                   escape=${left === 0 && html`
                     <p class="rw-note">
                       Or rule on the packet as it stands:
-                      ${' '}<a href=${hrefs.packet()}>the cord</a>, which accepts
+                      ${' '}<a href=${hrefs.packet()}>underwrite or drop it</a>, signing for
                       ${' '}${stats.blockers ?? 0} blocker${(stats.blockers ?? 0) === 1 ? '' : 's'}
                       ${' '}and ${stats.criteria_total - (stats.criteria_verified ?? 0)} unverified
                       ${' '}criteri${stats.criteria_total - (stats.criteria_verified ?? 0) === 1

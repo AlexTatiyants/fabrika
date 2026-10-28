@@ -562,8 +562,8 @@ function renderFeatureBar() {
          >Build again</button>
        ${settled ? '' : `<a class="btn btn-primary btn-sm"
          href="${featureHref(d.state.project_id, d.state.feature_id)}?packet#cord"
-         title="The ruling lives with the packet, next to the findings and blockers it accepts."
-         >Rule on this packet</a>`}`
+         title="The ruling lives with the packet, next to the findings and blockers you sign for with it."
+         >Underwrite or drop</a>`}`
     : barAction(view);
   setBar(featureBar(d, { actions }));
 }
@@ -640,7 +640,9 @@ function managePolling() {
   const running = midIntake
     || (state.data && state.data.state.stage === 'writing_spec')
     // A look, or a reading of its as-built, under way: no event says a reading finished.
-    || (look && (look.running || Object.values(look.readings || {}).some((x) => x.state === 'reading')))
+    || (state.data && state.data.pr_opening)
+    || (look && (look.running || look.tidying || look.fixing || look.pr_opening
+                 || Object.values(look.readings || {}).some((x) => x.state === 'reading')))
     || state.allFeatures.some((f) => here(f) && !f.orphaned
                                      && ['building', 'intake', 'writing_spec'].includes(f.stage))
     || state.projects.some((p) => (!state.projectId || p.project_id === state.projectId)

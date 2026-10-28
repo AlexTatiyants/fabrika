@@ -69,3 +69,32 @@ def merge_base(repo: str | Path, a: str, b: str) -> str:
     credit the branch with undoing everything main did since.
     """
     return (out(["merge-base", a, b], Path(repo).expanduser().resolve(), timeout=30) or "").strip()
+
+
+def create_branch(repo: str | Path, name: str, sha: str, *, replace: str = "") -> str:
+    """Point the branch `name` at `sha`, making it if it is not there. "" when
+    done, else why not.
+
+    A branch that is already there is moved only from `replace`, the commit
+    the caller made it at last time, and only while nobody has it checked out:
+    one somebody committed to since, or is working on, is theirs now. Nothing
+    else in the repository changes -- not the checkout, not its HEAD, not any
+    other ref.
+    """
+    root = Path(repo).expanduser().resolve()
+    ref = f"refs/heads/{name}"
+    current = (out(["rev-parse", "--verify", "-q", ref], root, timeout=30) or "").strip()
+    if current == sha:
+        return ""
+    if current and current != replace:
+        return (f"{name} is there already, at {current[:12]}, and Fabrika did not leave it there: "
+                "someone has committed to it. It was not moved.")
+    if current:
+        checked = out(["worktree", "list", "--porcelain"], root, timeout=30) or ""
+        if f"branch {ref}" in checked.splitlines():
+            return f"{name} is checked out, so it was not moved under whoever is working on it."
+    done = run(["update-ref", "-m", "fabrika: tidy branch", ref, sha, current or "0" * 40], root, timeout=30)
+    if done is None or done.returncode != 0:
+        return f"could not point {name} at {sha[:12]}: {(done.stderr if done else '').strip()[:200]}"
+    return ""
+

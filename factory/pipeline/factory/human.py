@@ -338,6 +338,55 @@ class HumanMixin:
         self._emit(state)
         return state
 
+    # -- the pull request -----------------------------------------------
+
+    async def open_pull_request(self, feature_id: str) -> dict[str, Any]:
+        """The accepted feature's branch, pushed and opened as a pull request
+        where the project says they go. The body is made from the record: the
+        spec, each criterion and how it stands, and what you ruled at gate 2."""
+        from ... import pull_requests
+        from ...schemas import Spec
+
+        store = self.store_for(feature_id)
+        state = self.state_of(store)
+        if state.stage != "accepted":
+            raise ProjectError("Only an underwritten feature is opened as a pull request.")
+        branch = state.sandbox.branch if state.sandbox else ""
+        sha = (state.sandbox.commit_sha if state.sandbox else "") or ""
+        if branch and not sha:
+            from ... import git
+            sha = (git.out(["rev-parse", f"refs/heads/{branch}"], self.project.repo_path) or "").strip()
+        if not branch or not sha:
+            raise ProjectError("This feature has no branch to open a pull request from.")
+        spec = Spec.model_validate(store.payload("spec") or {"title": feature_id, "intent": ""})
+        packet = Packet.model_validate(store.payload("packet")) if store.payload("packet") else None
+        verdict = store.payload("verdict") or {}
+        lines = [spec.summary or spec.intent, "",
+                 f"Built by Fabrika and underwritten at gate 2, at `{sha[:12]}`."]
+        if verdict.get("note"):
+            lines += ["", f"> {verdict['note']}"]
+        if spec.acceptance_criteria:
+            status = {t.criterion_id: t.status for t in (packet.trace if packet else [])}
+            lines += ["", "## What it was held to", ""]
+            lines += [f"- **{c.id}** {c.title or c.statement}"
+                      + (f" -- {status[c.id].replace('_', ' ')}" if c.id in status and status[c.id] != "traced" else "")
+                      for c in spec.acceptance_criteria]
+        dismissed = [f for f in self.flags(feature_id) if f.disposition == "dismissed"]
+        if dismissed:
+            lines += ["", "## Risks accepted at gate 2", ""]
+            lines += [f"- {f.anchor + ': ' if f.anchor else ''}{f.text}" for f in dismissed]
+        try:
+            opened = await pull_requests.open_pr(self.project, branch=branch, sha=sha, title=spec.title,
+                                                 body="\n".join(lines))
+        except pull_requests.PullRequestError as exc:
+            store.append("pull_request_failed", {"branch": branch, "sha": sha, "error": str(exc), "at": _now()},
+                         role="orchestrator")
+            self._emit(state)
+            raise
+        store.append("pull_request", opened, role="orchestrator")
+        self._emit(state)
+        return opened
+
     # -- discarding -------------------------------------------------------
 
     def delete_feature(self, feature_id: str, *, delete_branch: bool = False) -> dict[str, Any]:

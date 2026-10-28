@@ -10429,7 +10429,8 @@ def test_a_finding_s_citation_is_checked_against_the_guide_by_code():
 def test_every_review_is_held_to_what_it_cites_before_it_is_recorded():
     src = inspect.getsource(pipeline.Factory._review_panel)
     assert src.index("self._verify_citations(store, state, merged.findings)") < src.index('store.append("review", merged')
-    simplify = inspect.getsource(pipeline.Factory._simplify_round)
+    # The round's core, which a look's tidy branch shares.
+    simplify = inspect.getsource(pipeline.Factory._simplify_writes)
     assert "The rule:" in simplify, "the simplifier is not given the rule it is closing"
     reviewer = (ROOT / "factory" / "roles" / "reviewer.md").read_text()
     assert "**quoted word for word**" in reviewer

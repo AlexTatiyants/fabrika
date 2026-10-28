@@ -35,6 +35,10 @@ class ProjectUpdate(BaseModel):
     #: What this project takes on as a dependency. Not part of what the
     #: baseline measured, so changing it does not send the project back.
     dependency_policy: DependencyPolicy | None = None
+    #: Where pull requests go. Not part of what the baseline measured either.
+    pr_remote: str | None = None
+    pr_base: str | None = None
+    pr_repo: str | None = None
 
 
 class CheckRunsBody(BaseModel):
@@ -239,6 +243,21 @@ class NewLook(BaseModel):
 
     branch: str = Field(min_length=1, description="A branch, or any commit, in the project's repository.")
     intent: str = Field(default="", max_length=600, description="One sentence of what it was for, if anyone has one.")
+
+
+class LookRuling(BaseModel):
+    """Your call on one finding of a look."""
+
+    finding_id: str = Field(min_length=1)
+    ruling: str = Field(description="send_back, or accept: a risk you sign for.")
+    note: str = Field(default="", max_length=2000)
+
+
+class LookVerdict(BaseModel):
+    """A look ruled as a whole."""
+
+    verdict: str = Field(description="underwritten, or sent_back.")
+    note: str = Field(default="", max_length=2000)
 
 
 class CorrectionBody(BaseModel):

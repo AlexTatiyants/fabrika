@@ -164,6 +164,11 @@ async function dispatchMainClick(event) {
   if (target.dataset.moveDockerfile) return moveDockerfile();
   if (target.dataset.retireDockerfile) return retireDockerfile();
   if (await branchClick(target)) return;
+  if (target.dataset.featurePr) {
+    await api(`/api/projects/${encodeURIComponent(state.projectId)}/features/${encodeURIComponent(state.id)}/pull-request`,
+      { method: 'POST' }).then(() => toast('Opening the pull request.')).catch((e) => errorToast(e.message));
+    return refresh(true);
+  }
   if (target.dataset.historyFilter !== undefined) {
     state.historyFilter = target.dataset.historyFilter;
     return render();
@@ -418,6 +423,11 @@ async function dispatchMainClick(event) {
 }
 
 main.addEventListener('click', onMainClick);
+// A button on a shut row acts without opening it: the row's <summary> would
+// otherwise take the same click as a toggle.
+main.addEventListener('click', (event) => {
+  if (event.target.closest('summary .wl-act')) event.preventDefault();
+});
 if (featureBarEl) featureBarEl.addEventListener('click', onMainClick);
 // The rail is anchors, which need no handler -- except that it carries a
 // button. Without this the discard on a row arms nothing and does nothing,

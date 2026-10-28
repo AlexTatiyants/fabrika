@@ -662,6 +662,7 @@ class BreakerTest(BaseModel):
     #: same `exit -9`, the same nothing. On a run capped at two rounds, that
     #: is 1801s in round 1 and 1801s again in round 2.
     quarantined_in_round: int | None = Field(default=None, description="The round this probe was killed on the clock, after which it is not run again.")
+    claim_ids: list[str] = Field(default_factory=list, description="Only in a look at outside work: the claims (CL-1, CL-2, ...) this probe attacks. Leave it empty anywhere else.")
 
 
 class BreakerSuite(BaseModel):
@@ -686,6 +687,7 @@ class BreakerTestAccount(BaseModel):
     targets: list[str] = Field(default_factory=list, description="The files or symbols this test attacks.")
     kind: ProbeKind = Field(default="demonstration", description="`regression` only if this probe still passes once the defect is fixed -- then it is re-run every round and kept in the project's suite. `demonstration` if it proves the defect is there now and would stop meaning anything afterwards; it runs once and is deleted. If you cannot say which, it is a demonstration.")
     passes_when: str = Field(default="", description="For a `regression` probe: what a correct implementation does when this runs, in one line. Required for `regression` -- a probe whose author cannot state this is a demonstration, and saying so costs nothing.")
+    claim_ids: list[str] = Field(default_factory=list, description="Only in a look at outside work: the claims (CL-1, CL-2, ...) this probe attacks. Leave it empty anywhere else.")
 
 
 class BreakerAccount(BaseModel):
@@ -2223,6 +2225,12 @@ class ProjectState(BaseModel):
     name: str = ""
     repo: str = Field(default="", description="Absolute path to the base repository on this machine.")
     base_ref: str = "HEAD"
+    #: Where pull requests go: what is underwritten -- a feature accepted, a
+    #: look at outside work underwritten -- is pushed to this remote and opened
+    #: as a PR into this base. Empty, and nothing is pushed: the screen says so.
+    pr_remote: str = Field(default="", description="The remote pull requests are opened on, e.g. origin.")
+    pr_base: str = Field(default="", description="The branch they go into. Empty means base_ref, when it is a branch.")
+    pr_repo: str = Field(default="", description="owner/name on GitHub. Empty means read from the remote's URL.")
     stage: Literal["surveying", "awaiting_approval", "ready", "failed"] = "surveying"
     created_at: str = Field(default_factory=_now)
     updated_at: str = Field(default_factory=_now)
@@ -2582,6 +2590,14 @@ class BranchState(BaseModel):
     base_ref: str = ""
     base_sha: str = ""
     head_sha: str = ""
+    #: The work is worked in rounds, and Fabrika's fixes go on a branch of its
+    #: own: `working_branch` at `working_head`, off the person's branch, never
+    #: on it. Empty until the first fix. `theirs_head` is the person's branch
+    #: as last taken in: commits they add after it are merged in before the
+    #: next round.
+    working_branch: str = ""
+    working_head: str = ""
+    theirs_head: str = ""
     created_at: str = Field(default_factory=_now)
     updated_at: str = Field(default_factory=_now)
     sandbox: SandboxState | None = None

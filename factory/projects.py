@@ -2608,6 +2608,13 @@ class ProjectRegistry:
             if getattr(project.state, key) == value:
                 continue
 
+            if key == "pr_remote" and value:
+                from . import git
+                if git.out(["remote", "get-url", str(value)], project.repo_path) is None:
+                    raise ProjectError(f"This repository has no remote called {value!r}.")
+            if key == "pr_repo" and value and not re.fullmatch(r"[\w.-]+/[\w.-]+", str(value)):
+                raise ProjectError(f"{value!r} is not owner/name.")
+
             if key == "repo":
                 repo_path = Path(str(value)).expanduser().resolve()
                 if not repo_path.is_dir():

@@ -16,7 +16,7 @@ import {
 const ROUTE = {
   reopen_spec: { title: 'Gate 1 reopens', cls: 'bad', cta: 'Reopen gate 1 with these notes' },
   repair: { title: 'Repair round details', cls: 'go', cta: 'Send to the repair loop' },
-  accept: { title: 'Nothing left to fix', cls: 'ok', cta: 'Accept this feature' },
+  accept: { title: 'Nothing left to fix', cls: 'ok', cta: 'Underwrite this feature' },
   /* Not a route: the calls that decide it are not all in. The route is
      computed from your flags, and with none filed it comes out as `accept` --
      "Nothing left to fix. Nothing flagged." -- even under a count of ten
@@ -84,7 +84,7 @@ function Filed({ flags, onRetag, busy, titleOf }) {
       ${going.map(row)}
       ${kept.length > 0 && html`
         <div class="rw-kept-h">
-          <b>Dismissed</b> kept in the record, with your reason — no work for the loop
+          <b>Accepted</b> kept in the record, with your reason — no work for the loop
         </div>`}
       ${kept.map(row)}
     </div>`;

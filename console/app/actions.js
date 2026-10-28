@@ -562,8 +562,9 @@ function cordSection(d, packet, settled) {
     return `<section class="cord cord-settled">
       <div class="cord-body">
         <h2>The line has been ruled on</h2>
-        <p>This packet was ruled <b>${esc(d.state.stage)}</b> ${esc(rel((d.verdict || {}).at))}.
+        <p>This packet was <b>${esc(STAGE_WORDS[d.state.stage] || d.state.stage)}</b> ${esc(rel((d.verdict || {}).at))}.
           Everything above is kept as it was read.</p>
+        ${d.state.stage === 'accepted' ? prLine(d, 'data-feature-pr="1"') : ''}
       </div>
     </section>`;
   }
@@ -571,18 +572,18 @@ function cordSection(d, packet, settled) {
   return `<section class="cord" id="cord">
     <div class="cord-in">
       <div class="cord-body">
-        <h2>Restart the line, or send it back</h2>
+        <h2>Underwrite it, or drop it</h2>
         <p>${esc(stats.criteria_verified)} of ${esc(stats.criteria_total)} requirements were made,
           ${esc(stats.orphan_requirements || 0)} have no part at all, and
           ${esc(stats.blockers)} blocker${stats.blockers === 1 ? '' : 's'} stand.
           <a href="#" data-help-open="ruling-on-a-packet">What each one does</a></p>
         <div class="acts">
-          <button class="btn btn-stop" id="verdict-reject">Pull the cord — send it back</button>
-          <button class="btn" id="verdict-accept">Release the line — accept</button>
+          <button class="btn" id="verdict-accept">Underwrite it — open the pull request</button>
+          <button class="btn btn-stop" id="verdict-reject">Drop it</button>
         </div>
 
         <div class="consequence-panel" id="cq-rejected" hidden>
-          <p class="cq-h">Sending it back records your ruling: the feature is rejected.</p>
+          <p class="cq-h">Dropping it records your ruling: the feature is dropped.</p>
           <ul>
             <li>Nothing runs. The branch <span class="mono">${esc(branch)}</span> and its checkout
               are left standing, so you can look at what was built.</li>
@@ -592,24 +593,26 @@ function cordSection(d, packet, settled) {
             <li>To start over, <b>Build again</b>.</li>
           </ul>
           <div class="acts">
-            <button class="btn btn-stop" id="verdict-go" data-value="rejected">Send it back</button>
+            <button class="btn btn-stop" id="verdict-go" data-value="rejected">Drop it</button>
             <button class="btn btn-quiet" id="verdict-cancel">Not yet</button>
           </div>
         </div>
 
         <div class="consequence-panel" id="cq-accepted" hidden>
-          <p class="cq-h">Releasing the line cannot be taken back.</p>
+          <p class="cq-h">Underwriting cannot be taken back.</p>
           <ul>
-            <li><span class="mono">${esc(branch)}</span> is accepted as it stands.</li>
+            <li><span class="mono">${esc(branch)}</span> is underwritten as it stands, and opened as a
+                pull request where this project's settings say they go. With nowhere set, nothing
+                leaves this machine.</li>
             <li><b>${esc(stats.blockers)}</b> blocker${stats.blockers === 1 ? '' : 's'} and
                 <b>${esc(openFindings)}</b> unrepaired finding${openFindings === 1 ? '' : 's'}
-                are accepted with it, and stay on the record with your reason beside them.</li>
+                are signed for with it, and stay on the record with your reason beside them.</li>
             <li>${esc(stats.orphan_requirements || 0)} requirement${(stats.orphan_requirements || 0) === 1 ? '' : 's'}
                 that nothing on disk satisfies ${(stats.orphan_requirements || 0) === 1 ? 'is' : 'are'}
-                accepted unbuilt.</li>
+                signed for unbuilt.</li>
           </ul>
           <div class="acts">
-            <button class="btn btn-danger" id="verdict-go" data-value="accepted">Accept, with all of that standing</button>
+            <button class="btn btn-danger" id="verdict-go" data-value="accepted">Underwrite, with all of that standing</button>
             <button class="btn btn-quiet" id="verdict-cancel">Not yet</button>
           </div>
         </div>

@@ -30,6 +30,16 @@ from ..protection import is_protected
 from ..packet import what_landed
 
 
+def breaker_section(breaker: BreakerReport) -> str:
+    """The probes run against the code, for a reviewer: the adversary can cite
+    a real failing test instead of describing an experiment it could not run.
+    A feature's evidence and a look's share it."""
+    return ("---\n\n# Adversarial probes run against this implementation\n\n"
+            + _json(breaker.model_dump(mode="json"), 12_000)
+            + "\n\nA failing probe is a fact. A passing one proves nothing and is not "
+            "verification of anything.")
+
+
 class ContextMixin:
     # ---- writing --------------------------------------------------------
 
@@ -106,13 +116,7 @@ class ContextMixin:
     ) -> str:
         extra: list[str] = []
         if breaker is not None and (breaker.ran or breaker.note):
-            # The adversary can cite a real failing test instead of
-            # describing an experiment it could not run.
-            extra.append(
-                "---\n\n# Adversarial probes run against this implementation\n\n"
-                + _json(breaker.model_dump(mode="json"), 12_000)
-                + "\n\nA failing probe is a fact. A passing one proves nothing and is not "
-                "verification of anything.")
+            extra.append(breaker_section(breaker))
         if records:
             extra.append(
                 "---\n\n# What has already been found and what became of it\n\n"

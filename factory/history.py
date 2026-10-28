@@ -274,7 +274,7 @@ def feature_events(features: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]
             elif record.get("kind") == "verdict":
                 ruled = (record.get("payload") or {}).get("verdict")
                 out.append(_event(None, at=record.get("at", ""), kind="feature", actor="you",
-                                  title="You accepted" if ruled == "accepted" else "You rejected",
+                                  title="You underwrote it" if ruled == "accepted" else "You dropped it",
                                   feature_id=fid, feature=title))
     return out
 

@@ -68,7 +68,7 @@ one sentence of intent, and hands back a branch packet. It runs a shorter
 line:
 
 ```
-reader (base ∥ head) ∥ gates → attribution → rapporteur
+reader (base ∥ head) ∥ gates → attribution → rapporteur → breaker → review → arbiter
 ```
 
 The base is where the branch left the project's base ref. Fabrika checks the
@@ -78,6 +78,68 @@ a record in the branch's own ledger
 (`<evidence>/<project>/branches/<branch>/`), and every later look at the same
 branch is appended there. The branch, its ref and the person's checkout are
 left exactly as they were.
+
+The last three are the **attack**, the feature line's breaker, review panel
+and arbiter, given a stand-in spec. The stand-in is built from the commits'
+claims (`CL-1` onwards, `look_spec`), and `roles/branch_attack.md` tells each
+role it is a stand-in. Probes are written and run in the look's own worktree.
+A red probe breaks the claim it names. Nothing is repaired: the arbiter sends a
+defect back to whoever built the branch, as a prompt made from the record. It
+sends a cleanup to the **tidy branch**, and a call only the person can make to
+the person.
+
+The tidy branch is made only on a press (`make_tidy`), as
+`factory/tidy/<branch>` off the look's head. Its first commit holds the
+simplifier's cleanup and the regression probes that pass. That commit is held
+first to a fence: every check that passed at the head and every passing probe
+must pass on it, or the cleanup is thrown away and the probes go on alone. A
+second commit holds the probes that fail today, so taking the branch keeps the
+checks green until the fix. Fabrika moves that ref only from where it left it.
+
+A look ends in a **verdict**, made by the person and kept in the ledger. On
+each finding sent back or routed to them, they rule `send_back` or `accept`
+(`look_ruling`). A defect nobody ruled on still goes back. To **underwrite**
+the branch at its head, every defect must be accepted as a risk and every call
+made. The record (`look_verdict`) keeps the head and each accepted risk with
+its reason. Sending it back needs one defect going back; it is a round, below.
+The prompt for whoever built it follows the rulings, and carries what the person
+said on each.
+
+Underwritten work ends as a **pull request** (`factory/pull_requests.py`). That
+holds for a look underwritten, and for a feature underwritten at gate 2. It goes
+where the project says: its `pr_remote`, `pr_base` and `pr_repo` settings.
+Fabrika pushes exactly the underwritten commit, never with force. It opens the
+PR with `gh`, or updates the body of the one already open for that branch. A
+project with nowhere set records the verdict and says what to set. Nothing is
+merged locally.
+
+Outside work is **one item per branch, worked in rounds**. Each look is a
+round. A round looks at the work's head: the person's branch until Fabrika has
+fixed anything, then Fabrika's own working branch, `factory/outside/<branch>`.
+That branch is off the person's, and the person's branch is never written to.
+Commits they add between rounds are merged into the working branch before the
+next round. Where those commits conflict with Fabrika's fixes, the round does
+not start, and it names the files.
+
+**Sending work back is a round, not an ending.** There are two ways to send
+it back:
+- **Fabrika fixes it** (`BranchReview.fix`). It runs the shared repair rounds
+  (`RoundsMixin._repair_rounds`): the look's probes are committed first as the
+  fence, each fix is committed under what it fixes, and a round that breaks a
+  check that passed is thrown away. The working branch then moves, and the
+  next round opens.
+- **The person takes the prompt** and looks again.
+
+Each round is compared with the one before (`compare_rounds`): what was
+fixed, and each finding new, still there, or accepted before. A risk accepted
+last round is carried forward, unless the code it is about changed.
+
+The only endings, for outside work and for features alike, are to
+**underwrite** (which opens the pull request) or to **drop** it. A feature
+keeps its stored stages, `accepted` and `rejected`; every screen says
+*underwritten* and *dropped*. A call on a finding reads **fix** or **accept**
+on both screens: a feature's `repair` and `dismissed` flags, a look's
+`send_back` and `accept` rulings.
 
 With no criteria to reach code through, the diff is cut into **pieces**, one
 per function, setting or test, and read by materiality (`factory/pieces.py`).

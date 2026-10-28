@@ -647,6 +647,46 @@ def test_accepting_a_feature_drops_the_checkout_and_keeps_the_branch(factory):
     assert f"factory/{state.feature_id}" in branches, "the branch is the deliverable"
 
 
+def test_accepting_a_feature_opens_its_pr_from_its_branch(factory, tmp_path, monkeypatch):
+    """Accepted is underwritten, and what is underwritten ends as a pull
+    request: the feature's own branch, at its tip, into the base, with the
+    spec and its criteria as the body. A `gh` that refuses is recorded, and
+    the screen has it to say."""
+    from factory import pull_requests
+
+    f, _llm, _events, repo = factory
+    state = asyncio.run(f.run_intake("build a widget that spins", "Widget"))
+    asyncio.run(f.finalize_spec(state.feature_id, {"Q-1": "clockwise"}))
+    f.approve_spec(state.feature_id)
+    asyncio.run(f.run_build(state.feature_id))
+    f.record_verdict(state.feature_id, "accepted")
+
+    git = lambda *a, cwd=repo: subprocess.run(["git", *a], cwd=cwd, capture_output=True, text=True,  # noqa: E731
+                                              check=True).stdout.strip()
+    bare = tmp_path / "remote.git"
+    git("init", "-q", "--bare", str(bare), cwd=tmp_path)
+    git("remote", "add", "origin", str(bare))
+    f.project.state.pr_remote, f.project.state.pr_repo = "origin", "me/demo"
+    f.project.state.pr_base = git("rev-parse", "--abbrev-ref", "HEAD")
+    asked = []
+    real = pull_requests._run
+
+    async def gh(argv, cwd, input=None):
+        if argv[0] != "gh":
+            return await real(argv, cwd, input)
+        asked.append((argv, input))
+        return 0, "" if argv[1:3] == ["pr", "list"] else "https://github.com/me/demo/pull/9"
+
+    monkeypatch.setattr(pull_requests, "_run", gh)
+    opened = asyncio.run(f.open_pull_request(state.feature_id))
+    branch = f"factory/{state.feature_id}"
+    assert opened["branch"] == branch and git("rev-parse", f"refs/heads/{branch}", cwd=bare) == opened["sha"]
+    body = next(text for argv, text in asked if argv[1:3] == ["pr", "create"])
+    assert "What it was held to" in body and "underwritten at gate 2" in body
+    store = f.store_for(state.feature_id)
+    assert store.payload("pull_request")["url"] == "https://github.com/me/demo/pull/9"
+
+
 def test_an_added_review_agent_contributes_findings_to_the_packet(tmp_path):
     """The one place the pipeline is pluggable: an extra agent over the same
     evidence, whose findings cannot be dropped by the rapporteur."""

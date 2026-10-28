@@ -18,6 +18,9 @@ function startDraft() {
     name: p.name || '',
     repo: p.repo || '',
     base_ref: p.base_ref || 'HEAD',
+    pr_remote: p.pr_remote || '',
+    pr_base: p.pr_base || '',
+    pr_repo: p.pr_repo || '',
     digest_budget: p.digest_budget || 120000,
     gates: JSON.parse(JSON.stringify(p.gates || [])),
     environment: JSON.parse(JSON.stringify(p.environment || {

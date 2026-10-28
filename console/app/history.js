@@ -216,7 +216,7 @@ function overviewSection(p) {
       <div><h3 class="db-h">Finished <span class="db-count">${ov ? ov.finished_total : 0}</span></h3>
         ${ov && ov.finished.length ? ov.finished.map((f) => `<p class="db-row"><a href="#/${
           encodeURIComponent(pid)}/${encodeURIComponent(f.feature_id)}">${esc(f.title)}</a>
-          <span class="dim">${f.stage === 'accepted' ? 'accepted' : 'sent back'} · ${esc(rel(f.since))}</span></p>`).join('')
+          <span class="dim">${f.stage === 'accepted' ? 'underwritten' : 'dropped'} · ${esc(rel(f.since))}</span></p>`).join('')
           : '<p class="db-empty">Nothing ruled on yet.</p>'}</div>
     </section>`;
 }

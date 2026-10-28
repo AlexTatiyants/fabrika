@@ -1339,7 +1339,12 @@ def test_every_failure_record_the_pipeline_writes_is_read_back():
     source = factory_source("pipeline")
     written = set(re.findall(r'store\.append\(\s*"([a-z_]*_failed)"', source))
     # `verify_lane_failed` has its own handling upstream and is deliberately out.
-    written -= {"verify_lane_failed", "sandbox_release_failed"}
+    # `tidy_failed` is a look's, not a feature's: the look's page reads it back
+    # and says it in the tidy branch's panel.
+    # So are `look_fix_failed` and `pull_request_failed`: each is said on the
+    # screen it was pressed from, with a way to try again.
+    written -= {"verify_lane_failed", "sandbox_release_failed", "tidy_failed", "look_fix_failed",
+                "pull_request_failed"}
     assert written, "no failure records are written any more; this test is stale"
     unread = sorted(written - set(pipeline.AGENT_FAILURES))
     assert not unread, f"these failures are recorded and never reach a finding: {unread}"

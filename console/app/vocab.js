@@ -36,8 +36,8 @@ const STAGES = Object.freeze({
   awaiting_verdict: {
     word: 'awaiting verdict', band: 'review', step: 'review', gate: 'feature review · you',
     gateStep: 'review', active: true, needsYou: true, settled: true, pill: 'pill-accent' },
-  accepted: { word: 'accepted', band: 'review', step: 'review', settled: true, pill: 'pill-green' },
-  rejected: { word: 'rejected', band: 'review', step: 'review', settled: true, pill: '' },
+  accepted: { word: 'underwritten', band: 'review', step: 'review', settled: true, pill: 'pill-green' },
+  rejected: { word: 'dropped', band: 'review', step: 'review', settled: true, pill: '' },
   failed: { word: 'failed', band: 'review', step: 'build', active: true, pill: 'pill-red' },
 });
 
@@ -75,5 +75,6 @@ const RAIL_VERDICT = Object.fromEntries(
 /* A step of a run as a person reads it, where the pipeline's own name for it
    is not the word the rest of the console uses. The crew page and the help
    call the project's checks "checks"; the step that runs them is `gates`. */
-const STEP_WORD = Object.freeze({ gates: 'checks' });
+const STEP_WORD = Object.freeze({ gates: 'checks', fix_repair: 'repair', fix_fence: 'checks + probes',
+  fix_recheck: 'recheck', fix_branch: 'fix branch' });
 const stepWord = (name) => STEP_WORD[name] || name;

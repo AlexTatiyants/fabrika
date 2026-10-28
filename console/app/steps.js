@@ -31,6 +31,9 @@ const PHASE_GROUPS = [
   { key: 'validate', label: 'validate', names: ['oracle', 'gates', 'attribution', 'qa', 'breaker'] },
   { key: 'review', label: 'review',
     names: ['review', 'arbiter', 'repairers', 'simplifier', 'rapporteur'] },
+  /* A look sent back and fixed by Fabrika: the repair loop's steps on a
+     branch of its own, after the look's arbiter. */
+  { key: 'fix', label: 'fix', names: ['fix_repair', 'fix_fence', 'fix_recheck', 'fix_branch'] },
 ];
 
 const STEPS = [

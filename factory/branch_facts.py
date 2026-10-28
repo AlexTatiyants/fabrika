@@ -71,7 +71,12 @@ def _one(found: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
 
 def routes(pieces: Sequence[Piece], report: dict | None) -> list[dict[str, Any]]:
     """Ways in the branch added or changed: handlers it cut as `VERB /path`, and
-    whatever the as-built credits it with that no handler here already says."""
+    whatever the as-built credits it with that no handler here already says.
+
+    Not a module's exports, which the as-built lists among its ways in but
+    leaves out of every count of them: a constant, a class or a test factory
+    is something code imports, not a way in for a person or a client. Nor a
+    way in only a test declares."""
     out = []
     for p in pieces:
         m = _ROUTE.match(p.symbol)
@@ -79,6 +84,8 @@ def routes(pieces: Sequence[Piece], report: dict | None) -> list[dict[str, Any]]
             out.append({"name": p.symbol, "state": "added" if p.fresh else "changed", "piece": p.id})
     named = {f["name"].split(" ", 1)[-1] for f in out}
     for w in (report or {}).get("ways_in_added") or []:
+        if w.get("kind") == "export" or w.get("test"):
+            continue
         if w.get("name") and w["name"] not in named:
             out.append({"name": f"{w.get('method') + ' ' if w.get('method') else ''}{w['name']}",
                         "state": "added", "piece": ""})

@@ -183,6 +183,7 @@ def assemble_breaker_suite(
             targets=list(entry.targets) if entry else [],
             kind=kind,
             passes_when=passes_when,
+            claim_ids=list(entry.claim_ids) if entry else [],
         ))
 
     notes = [account.notes] if account and account.notes else []

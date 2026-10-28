@@ -231,7 +231,7 @@ function renderPanel() {
 
       const lookRows = looks.map((b) => {
         const here = state.view === 'branch' && state.param === b.slug && state.projectId === b.project_id;
-        const detail = b.phase ? `${b.phase}…` : lookWord(b.stage);
+        const detail = `round ${b.look} · ${b.phase ? `${b.phase}…` : lookWord(b.stage, b.verdict)}`;
         const classes = ['panel-feature', 'panel-branch', b.stage === 'failed' ? 'failed' : '',
           b.stage === 'awaiting_ruling' ? 'needs' : '', here ? 'current' : ''].filter(Boolean).join(' ');
         return `<div class="${classes}">

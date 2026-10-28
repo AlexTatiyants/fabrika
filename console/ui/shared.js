@@ -63,9 +63,9 @@ export const send = (url, body) =>
 export const DISPOSITIONS = ['repair', 'dismissed'];
 
 export const TAG = {
-  repair: { label: 'repair', pill: 'pill-accent',
+  repair: { label: 'fix', pill: 'pill-accent',
     consequence: 'the repair loop makes the narrowest change that resolves it' },
-  dismissed: { label: 'dismiss', pill: '',
+  dismissed: { label: 'accept', pill: '',
     consequence: 'no work for the repair loop — your reason stays on the record' },
   /* Not choosable: what the factory did with a repair, shown back. */
   oracle: { label: 'sent to the oracle', pill: 'pill-accent',

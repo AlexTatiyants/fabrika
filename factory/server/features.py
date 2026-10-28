@@ -16,10 +16,33 @@ from ..schemas import FeatureState
 from ..workspace import unchecked_levels
 
 from .as_built import _system_change_view
+from .review import _OPENING
 from .bodies import NewFeature
 from .context import Context
 
 log = logging.getLogger(__name__)
+
+
+def pull_request_view(project, store, *, opening: bool, look: int | None = None) -> dict[str, Any]:
+    """What became of the pull request for what was underwritten: opened, the
+    last try failed, being opened now -- and where the project says they go,
+    or why it says nowhere."""
+    from ..pull_requests import pr_target
+
+    def latest(kind: str):
+        return next((r for r in reversed(store.all(kind))
+                     if look is None or (r.get("payload") or {}).get("look") == look), None)
+
+    opened, failed = latest("pull_request"), latest("pull_request_failed")
+    target = pr_target(project)
+    return {
+        "pull_request": opened["payload"] if opened else None,
+        # Only a failure after the last success is still news.
+        "pull_request_failed": failed["payload"] if failed and (not opened or failed["seq"] > opened["seq"]) else None,
+        "pr_opening": opening,
+        "pr_target": ({"remote": target.remote, "base": target.base, "repo": target.repo}
+                      if not isinstance(target, str) else {"missing": target}),
+    }
 
 
 def register(app: FastAPI, ctx: Context) -> None:
@@ -178,6 +201,7 @@ def register(app: FastAPI, ctx: Context) -> None:
             "usage": store.payload("usage"),
             "rulings": store.payloads("ruling"),
             "verdict": store.payload("verdict"),
+            **pull_request_view(project, store, opening=(project_id, feature_id) in _OPENING),
             "flags": [f.model_dump(mode="json") for f in flags],
             "rework": rework.model_dump(mode="json"),
             "budget": factory.rework_budget(feature_id),

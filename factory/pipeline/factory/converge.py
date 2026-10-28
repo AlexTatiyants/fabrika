@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import time
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence
 
 from ...llm import RateLimited
 from ... import dependencies, gateway
@@ -392,8 +392,13 @@ class ConvergeMixin:
         self, store: EvidenceStore, state: FeatureState, spec: Spec, sandbox: Sandbox,
         ledger: FindingLedger, target_ids: list[str], protected: list[str], round_index: int,
         oracle_paths: Sequence[str] = (),
+        message: Callable[[list[str]], str] | None = None,
     ) -> tuple[list[WorkerOutput], list[FileWrite], list[str], str, RepairPlan | None, list[str]]:
         """Plan a round of repairs, then make them. Nothing here changes the spec.
+
+        `message`, given the findings this round attempts, says what the round's
+        commit is called -- where the commits are read by people other than
+        this factory, as on outside work's branch.
 
         Gate 1 froze the contract, and a loop that could reopen it would produce
         a packet arguing against something no human approved. A finding that can
@@ -563,7 +568,8 @@ class ConvergeMixin:
             # part of the change the packet describes.
             landed = [f for f in allowed if f.path in set(applied)]
             commit_sha = sandbox.commit(
-                f"factory: repair round {round_index} for {spec.title}\n\nspec {state.spec_hash}")
+                message(attempted) if message is not None
+                else f"factory: repair round {round_index} for {spec.title}\n\nspec {state.spec_hash}")
             store.append("writes", {
                 "applied": list(applied), "rejected": rejected,
                 "protected_refused": refused, "stage": f"repair-{round_index}",
@@ -612,83 +618,14 @@ class ConvergeMixin:
                 return None, [], [], ""
 
             findings = [ledger.findings[fid] for fid in target_ids if fid in ledger.findings]
-            files = sorted({path for f in findings for path in f.files})
-            if not files:
-                # A write boundary is the only thing keeping this pass to the
-                # code it was asked about. Without one there is nothing to
-                # bound it to, and a simplifier turned loose on a whole tree is
-                # the failure this role is most capable of.
-                phase.detail = f"{len(findings)} finding(s) name no file"
-                store.append("simplify_skipped", {
-                    "findings": target_ids,
-                    "reason": "no finding named a file, so there is no write boundary",
-                }, role="orchestrator", spec_hash=state.spec_hash)
-                return None, [], [], ""
-
-            work = WorkUnit(
-                id="simplify",
-                title="simplify what the panel found harder to read than it needs to be",
-                objective=(
+            done = await self._simplify_writes(
+                store, state, spec, sandbox, findings, protected, phase, objective=(
                     "Close the findings below and nothing else. The behaviour of this code "
                     "must not change: the project's checks, the blind acceptance suite and "
-                    "every adversarial probe are run again after you."),
-                files_expected=list(files),
-                **self._unit_guidance(store, state, "simplifier", list(files)),
-                notes="\n\n".join([
-                    "The findings this pass must close:\n" + "\n\n".join(
-                        f"- {f.id} [{f.category}]: {f.title}\n  {f.detail}"
-                        + (f"\n  Evidence: {f.evidence}" if f.evidence else "")
-                        # The rule it breaks, so each change closes a named
-                        # rule rather than a taste.
-                        + (f"\n  The rule: {f.cites.ref} -- \"{f.cites.quote}\""
-                           if f.cites and f.cites.source == "guide" and f.cite_verified else "")
-                        for f in findings),
-                    "Read-only paths, refused before they land: "
-                    + (", ".join(protected[:60]) or "(none)"),
-                ]),
-            )
-            phase.detail = f"{len(findings)} finding(s) · {len(files)} file(s)"
-            seen: list[tuple[str, str]] = []
-            try:
-                output = await self.executor.run(
-                    work, spec, "", self.role_prompt("simplifier"), sandbox.path,
-                    role="simplifier",
-                    on_prompt=lambda label, text: seen.append((label, text)),
-                    environment=self.unit_env(f"{state.feature_id}-simplify", role="simplifier"),
-                    on_environment=self.env_recorder(
-                        store, state, unit=work.id, role="simplifier"),
-                    on_guides=self._guides_recorder(store, "simplifier", list(work.files_expected)))
-            except Exception as exc:
-                # Never fatal. Everything this pass could have improved is
-                # already built, reviewed and green; taking the run down here
-                # would trade a packet for nothing.
-                store.append("simplify_failed", {
-                    "error": str(exc), "findings": target_ids,
-                }, role="simplifier", spec_hash=state.spec_hash)
-                phase.detail = "did not run"
+                    "every adversarial probe are run again after you."))
+            if done is None:
                 return None, [], [], ""
-            finally:
-                for label, text in seen:
-                    store.append("simplify_prompt", {"unit_id": work.id, "which": label},
-                                 role="simplifier", spec_hash=state.spec_hash,
-                                 meta={"unit_id": work.id, "which": label}, prompt=text)
-
-            # INV-12, at the door, exactly as for a repair. An agent that may
-            # delete things is the last one that should be able to delete the
-            # measurement.
-            allowed: list[FileWrite] = []
-            refused: list[str] = []
-            for f in _dedupe_writes(list(output.files)):
-                if is_protected(
-                    f.path, protected, self.config,
-                    self._own_blind_dirs(state) + self._breaker_own_dirs(state),
-                    self._project_files.get(state.feature_id, ()),
-                ):
-                    refused.append(f.path)
-                else:
-                    allowed.append(f)
-            applied, rejected = self._apply_writes(sandbox, allowed, spec=spec)
-            landed = [f for f in allowed if f.path in set(applied)]
+            output, landed, refused, applied, rejected = done
             commit_sha = sandbox.commit(
                 f"factory: simplify for {spec.title}\n\nspec {state.spec_hash}") if landed else ""
             store.append("writes", {
@@ -701,6 +638,92 @@ class ConvergeMixin:
                 + (f" · {len(refused)} refused as protected" if refused else "")
                 if landed else "changed nothing")
             return output, landed, refused, commit_sha
+
+    async def _simplify_writes(
+        self, store: EvidenceStore, state: FeatureState, spec: Spec, sandbox: Sandbox,
+        findings: Sequence[Finding], protected: list[str], phase, *, objective: str,
+    ) -> tuple[WorkerOutput, list[FileWrite], list[str], list[str], list[str]] | None:
+        """The simplifier, run over `findings` and held at the door: what it
+        wrote, applied, and what was refused as protected. None when it did not
+        run. Committing is the caller's -- a feature commits on its own branch,
+        and a look's tidy branch commits only once its fence has held.
+        Returns `(output, landed, refused, applied, rejected)`."""
+        target_ids = [f.id for f in findings]
+        files = sorted({path for f in findings for path in f.files})
+        if not files:
+            # A write boundary is the only thing keeping this pass to the
+            # code it was asked about. Without one there is nothing to
+            # bound it to, and a simplifier turned loose on a whole tree is
+            # the failure this role is most capable of.
+            phase.detail = f"{len(findings)} finding(s) name no file"
+            store.append("simplify_skipped", {
+                "findings": target_ids,
+                "reason": "no finding named a file, so there is no write boundary",
+            }, role="orchestrator", spec_hash=state.spec_hash)
+            return None
+
+        work = WorkUnit(
+            id="simplify",
+            title="simplify what the panel found harder to read than it needs to be",
+            objective=objective,
+            files_expected=list(files),
+            **self._unit_guidance(store, state, "simplifier", list(files)),
+            notes="\n\n".join([
+                "The findings this pass must close:\n" + "\n\n".join(
+                    f"- {f.id} [{f.category}]: {f.title}\n  {f.detail}"
+                    + (f"\n  Evidence: {f.evidence}" if f.evidence else "")
+                    # The rule it breaks, so each change closes a named
+                    # rule rather than a taste.
+                    + (f"\n  The rule: {f.cites.ref} -- \"{f.cites.quote}\""
+                       if f.cites and f.cites.source == "guide" and f.cite_verified else "")
+                    for f in findings),
+                "Read-only paths, refused before they land: "
+                + (", ".join(protected[:60]) or "(none)"),
+            ]),
+        )
+        phase.detail = f"{len(findings)} finding(s) · {len(files)} file(s)"
+        seen: list[tuple[str, str]] = []
+        try:
+            output = await self.executor.run(
+                work, spec, "", self.role_prompt("simplifier"), sandbox.path,
+                role="simplifier",
+                on_prompt=lambda label, text: seen.append((label, text)),
+                environment=self.unit_env(f"{state.feature_id}-simplify", role="simplifier"),
+                on_environment=self.env_recorder(
+                    store, state, unit=work.id, role="simplifier"),
+                on_guides=self._guides_recorder(store, "simplifier", list(work.files_expected)))
+        except Exception as exc:
+            # Never fatal. Everything this pass could have improved is
+            # already built, reviewed and green; taking the run down here
+            # would trade a packet for nothing.
+            store.append("simplify_failed", {
+                "error": str(exc), "findings": target_ids,
+            }, role="simplifier", spec_hash=state.spec_hash)
+            phase.detail = "did not run"
+            return None
+        finally:
+            for label, text in seen:
+                store.append("simplify_prompt", {"unit_id": work.id, "which": label},
+                             role="simplifier", spec_hash=state.spec_hash,
+                             meta={"unit_id": work.id, "which": label}, prompt=text)
+
+        # INV-12, at the door, exactly as for a repair. An agent that may
+        # delete things is the last one that should be able to delete the
+        # measurement.
+        allowed: list[FileWrite] = []
+        refused: list[str] = []
+        for f in _dedupe_writes(list(output.files)):
+            if is_protected(
+                f.path, protected, self.config,
+                self._own_blind_dirs(state) + self._breaker_own_dirs(state),
+                self._project_files.get(state.feature_id, ()),
+            ):
+                refused.append(f.path)
+            else:
+                allowed.append(f)
+        applied, rejected = self._apply_writes(sandbox, allowed, spec=spec)
+        landed = [f for f in allowed if f.path in set(applied)]
+        return output, landed, refused, applied, rejected
 
     async def _converge(
         self, store: EvidenceStore, state: FeatureState, spec: Spec, plan: Plan,

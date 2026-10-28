@@ -604,6 +604,9 @@ function projectPanels(p, env, survey, which) {
         ${factRow('name', `<b>${esc(p.name || p.project_id)}</b>`)}
         ${factRow('repository', `<span class="mono">${esc(p.repo)}</span>`)}
         ${factRow('features branch from', `<b class="mono">${esc(p.base_ref)}</b>`)}
+        ${factRow('pull requests go to', p.pr_remote
+          ? `<span class="mono">${esc(p.pr_remote)}${p.pr_repo ? ` (${esc(p.pr_repo)})` : ''} → ${esc(p.pr_base || p.base_ref)}</span>`
+          : '<span class="warn">nowhere yet — what you underwrite stays a branch until this is set</span>')}
         ${dirty ? factRow('uncommitted changes', `<span class="warn">yes — a feature branches from the
           last commit, so these would not be in it</span>`) : ''}
         ${factRow('what it is', survey && survey.summary ? `<p>${esc(survey.summary)}</p>` : '')}

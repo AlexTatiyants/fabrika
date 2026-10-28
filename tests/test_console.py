@@ -4372,3 +4372,23 @@ def test_every_section_the_project_page_draws_inside_its_guarded_block_is_one_th
     assert drawn and drawn <= allowed, f"drawn where the guard never shows them: {sorted(drawn - allowed)}"
     assert "branchesSection(p)" in screen.split("${sec === 'results'", 1)[1], \
         "the branches tab is not drawn at all"
+
+
+def test_the_ending_is_called_underwrite_or_drop_on_both_screens():
+    """A feature at gate 2 and outside work end the same two ways, and say so
+    in the same words: underwrite (which opens the pull request) or drop. The
+    calls on a finding read fix or accept on both. The stored values stay as
+    they were -- only what a person reads changed."""
+    app = ROOT / "console" / "app"
+    cord = (app / "actions.js").read_text()
+    look = (app / "branches.js").read_text()
+    vocab = (app / "vocab.js").read_text()
+    shared = (ROOT / "console" / "ui" / "shared.js").read_text()
+    for gone in ("Release the line", "Pull the cord", "Accept, with all of that standing"):
+        assert gone not in cord, f"gate 2 still says {gone!r}"
+    assert "Underwrite it — open the pull request" in cord and ">Drop it</button>" in cord
+    assert ">Underwrite</button>" in look and ">Drop it</button>" in look
+    assert "accepted: { word: 'underwritten'" in vocab and "rejected: { word: 'dropped'" in vocab
+    assert "Rule on this packet" not in (app / "render.js").read_text()
+    assert "repair: { label: 'fix'" in shared and "dismissed: { label: 'accept'" in shared
+    assert "btn('send_back', 'fix'" in look and "btn('accept', 'accept'" in look
