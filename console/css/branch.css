@@ -544,12 +544,46 @@ a.bp-node:hover { border-color: var(--ink-3); }
 .bp-verdict-acts { display: flex; gap: .5rem; margin-top: .6rem; }
 .bp-verdict .wl-sib { margin-top: .3rem; }
 
-/* What became of the pull request, and the two ways a look sent back goes. */
-.bp-pr-line { margin: .55rem 0 0; font-size: var(--t-body); color: var(--ink-2); }
-.bp-pr-line.ok a { color: var(--accent-ink); }
-.bp-pr-line.bad { color: var(--ink); }
-.bp-pr-line code { font-family: var(--mono); font-size: .8em; }
-.bp-pr-line .btn { margin-left: .5rem; vertical-align: baseline; }
+/* A box that ends the work: a head of what came of it and its facts, then
+   rows -- the pull request, the risks you accepted, your note -- each ruled
+   off from the last. */
+.bp-verdict.ruled { padding: 0; }
+.bp-verdict.ruled > * { padding: .8rem 1.1rem; }
+.bp-verdict.ruled > * + * { border-top: 1px solid var(--line); }
+.bp-v-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem .9rem; }
+.bp-verdict:not(.ruled) .bp-v-head { margin-bottom: .1rem; }
+.bp-v-word { font: 700 var(--t-meta)/1 var(--cond); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-2); }
+.bp-v-word.ok { color: var(--green); }
+.bp-v-word.back { color: var(--red); }
+.bp-v-facts { font-size: var(--t-small); color: var(--ink-2); }
+.bp-v-facts code { font: 400 .95em var(--mono); color: var(--ink); }
+.bp-v-dot { margin: 0 .45rem; color: var(--ink-3); }
+.bp-v-label { margin: 0 0 .45rem; font: 700 var(--t-label)/1 var(--cond); letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink-3); }
+.bp-v-note { margin: 0; font-size: var(--t-body); color: var(--ink); line-height: 1.5; max-width: 74ch; }
+.bp-risks { margin: 0; padding: 0; list-style: none; }
+.bp-risks li { display: grid; grid-template-columns: 4.4rem minmax(0, 1fr) minmax(0, 18rem); gap: .9rem; align-items: baseline;
+  padding: .3rem 0; }
+.bp-risk-t { justify-self: start; padding: 0; border: 0; background: none; font: inherit; font-size: var(--t-body);
+  color: var(--ink); text-align: left; cursor: pointer; }
+.bp-risk-t:hover { text-decoration: underline; text-underline-offset: 2px; }
+.bp-risk-why { font-size: var(--t-small); color: var(--ink-2); }
+.bp-risk-why.none { color: var(--ink-3); font-style: italic; }
+@media (max-width: 760px) { .bp-risks li { grid-template-columns: 4.4rem minmax(0, 1fr); }
+  .bp-risk-why { grid-column: 2; } }
+
+/* What became of the pull request: where it goes, and the one thing to do
+   about it, on the right. */
+.pr-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.2rem; }
+.pr-row-t { flex: 1 1 18rem; min-width: 0; }
+.pr-row-h { margin: 0; font-size: var(--t-body); font-weight: 600; color: var(--ink); }
+.pr-row-h a { color: var(--accent-ink); }
+.pr-row.bad .pr-row-h { color: var(--red); }
+.pr-row-d { margin: .15rem 0 0; font-size: var(--t-small); color: var(--ink-2); overflow-wrap: anywhere; }
+.pr-row-d code { font: 400 .95em var(--mono); color: var(--ink); }
+.cord-body .pr-row { margin-top: .8rem; padding-top: .8rem; border-top: 1px solid var(--line); }
+
+/* The two ways a look sent back goes. */
 .bp-routes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin-top: .9rem; }
 .bp-route { padding: .7rem .85rem; border: 1px solid var(--line); border-radius: 2px; background: var(--surface-lift); }
 .bp-route p { margin: 0 0 .5rem; font-size: var(--t-body); color: var(--ink-2); line-height: 1.5; }

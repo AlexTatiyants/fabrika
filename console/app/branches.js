@@ -288,7 +288,7 @@ function bpFindings(d, packet, codeHref) {
       const p = pieceOf(path);
       return p ? `<a class="mono" href="${esc(codeHref)}#piece-${esc(p.id)}">${esc(path)}</a>` : `<span class="mono">${esc(path)}</span>`;
     }).join('');
-    return `<details class="wl-call wl-${esc(f.severity)}${route === 'none' ? ' wl-done' : ''}">
+    return `<details id="bp-f-${esc(f.id)}" class="wl-call wl-${esc(f.severity)}${route === 'none' ? ' wl-done' : ''}">
       <summary class="wl-head">
         <span class="wl-chev" aria-hidden="true">›</span>
         <span class="wl-sev">${esc(f.severity)}</span>
@@ -400,18 +400,20 @@ function bpVerdict(d) {
   const latest = round === s.look;
   const head = String((d.packet || {}).head_sha || s.head_sha || '').slice(0, 7);
   const v = d.verdict;
-  const list = (xs) => `<ul class="wl-sib">${xs.map((x) => `<li><span class="mono">${esc(x.severity)}</span>${
-    esc(x.title)}${x.note ? ` <span class="dim">— ${esc(x.note)}</span>` : ''}</li>`).join('')}</ul>`;
+  const signed = (x) => [`Round ${round}`, `commit <code>${esc(String(x.head_sha || head).slice(0, 7))}</code>`, bpWhen(x.at)];
+  const note = v && v.note ? `<div><p class="bp-v-label">Your note</p><p class="bp-v-note">${esc(v.note)}</p></div>` : '';
   if (v && v.verdict === 'underwritten') {
-    return `<section class="block bp-verdict ok"><h3 class="bp-verdict-h">You underwrote this work at round ${round},
-        commit <code>${esc(head)}</code>.</h3>
-      ${prLine(d, 'id="look-pr"')}
-      ${v.accepted.length ? `<p class="bp-sub">The risks you accepted:</p>${list(v.accepted)}` : '<p class="bp-sub">The attack left nothing to accept.</p>'}
-      ${v.note ? `<p class="bp-sub">${esc(v.note)}</p>` : ''}</section>`;
+    return `<section class="block bp-verdict ok ruled">
+      ${bpVerdictHead('Underwritten', 'ok', signed(v))}
+      ${prLine(d, 'id="look-pr"', s.working_branch || s.branch)}
+      <div>${v.accepted.length ? `<p class="bp-v-label">${bpPlural(v.accepted.length, 'risk')} you accepted</p>${bpRisks(v.accepted)}`
+        : '<p class="bp-v-label">Nothing to accept: the attack found no defects</p>'}</div>
+      ${note}</section>`;
   }
   if (v && v.verdict === 'dropped') {
-    return `<section class="block bp-verdict back"><h3 class="bp-verdict-h">You dropped this work at round ${round}.</h3>
-      ${v.note ? `<p class="bp-sub">${esc(v.note)}</p>` : ''}</section>`;
+    return `<section class="block bp-verdict back ruled">
+      ${bpVerdictHead('Dropped', 'back', signed(v))}
+      ${note}</section>`;
   }
   // An earlier round: what came of it, and the way to the latest.
   if (!latest) {
@@ -443,7 +445,7 @@ function bpVerdict(d) {
           and the tests that show them. Fix them on <code>${esc(s.branch)}</code>, then look again.</p>
           <button type="button" class="btn btn-sm" id="look-send-back">Copy the prompt</button></div></div></section>` : ''}
     <section class="block bp-verdict">
-      <h3 class="bp-verdict-h">Or end it here, at round ${round}, commit <code>${esc(head)}</code></h3>
+      ${bpVerdictHead('Or end it here', '', [`Round ${round}`, `commit <code>${esc(head)}</code>`])}
       <p class="bp-sub">${can
         ? `Every finding is accepted${(calls.accepted || []).length ? `: ${bpPlural(calls.accepted.length, 'risk')} you sign for` : ''}. You can underwrite it.`
         : `To underwrite it, ${[back ? `accept the ${bpPlural(back, 'defect')} still going back` : '',
@@ -454,6 +456,28 @@ function bpVerdict(d) {
         <button type="button" class="btn btn-sm" data-bp-verdict="dropped">Drop it</button>
       </div>
     </section>`;
+}
+
+/* The head of a box that ends the work: what came of it, in a word, then
+   the facts -- the round, the commit, and when you signed. */
+function bpVerdictHead(word, tone, facts) {
+  return `<header class="bp-v-head"><span class="bp-v-word${tone ? ` ${tone}` : ''}">${esc(word)}</span>
+    <span class="bp-v-facts">${facts.filter(Boolean).join('<span class="bp-v-dot">·</span>')}</span></header>`;
+}
+
+function bpWhen(at) {
+  const t = at ? new Date(at) : null;
+  return t && !Number.isNaN(t.getTime())
+    ? esc(t.toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })) : '';
+}
+
+/* The risks you signed for, one to a row: severity as the findings show it,
+   the title, which opens its finding, and your reason. */
+function bpRisks(xs) {
+  return `<ul class="bp-risks">${xs.map((x) => `<li class="wl-${esc(x.severity)}">
+    <span class="wl-sev">${esc(x.severity)}</span>
+    <button type="button" class="bp-risk-t" data-bp-find="${esc(x.finding_id || '')}">${esc(x.title)}</button>
+    <span class="bp-risk-why${x.note ? '' : ' none'}">${esc(x.note || 'no reason given')}</span></li>`).join('')}</ul>`;
 }
 
 /* The rounds of the work, in a row: each round's head and what came of it,
@@ -496,24 +520,33 @@ function bpTidy(d) {
     <button type="button" class="btn btn-sm" id="look-tidy">Make it</button></p>`;
 }
 
-/* What became of the pull request for what was underwritten, in one line:
-   opened, being opened, failed with a way to try again, or nowhere to open
-   it -- and then where to say where. A feature's and a look's alike. */
-function prLine(d, retryAttr) {
+/* What became of the pull request for what was underwritten, as a row: where
+   it goes, and opened, being opened, failed with a way to try again, or
+   nowhere to open it and where to say where. A feature's and a look's alike. */
+function prLine(d, retryAttr, from = '') {
   const pr = d.pull_request;
   const failed = d.pull_request_failed;
   const target = d.pr_target || {};
-  if (d.pr_opening) return '<p class="bp-pr-line">Opening the pull request…</p>';
+  const where = (branch, base, repo) => [branch ? `<code>${esc(branch)}</code> into` : 'Into',
+    `<code>${esc(base || 'the base')}</code>`, repo ? `on ${esc(repo)}` : ''].filter(Boolean).join(' ');
+  const row = (tone, title, detail, act = '') => `<div class="pr-row${tone ? ` ${tone}` : ''}">
+    <div class="pr-row-t"><p class="pr-row-h">${title}</p>${detail ? `<p class="pr-row-d">${detail}</p>` : ''}</div>${act}</div>`;
+  if (d.pr_opening) return row('', 'Opening the pull request…', where(from, target.base, target.repo));
   if (pr && !failed) {
-    return `<p class="bp-pr-line ok">Pull request: <a href="${esc(pr.url)}" target="_blank" rel="noopener">${esc(pr.url)}</a>
-      <span class="dim">· <code>${esc(pr.branch)}</code> into <code>${esc(pr.base)}</code> on ${esc(pr.repo)}</span></p>`;
+    const n = (String(pr.url || '').match(/\/pull\/(\d+)/) || [])[1];
+    return row('ok', `<a href="${esc(pr.url)}" target="_blank" rel="noopener">Pull request${n ? ` #${n}` : ''} ↗</a>`,
+      where(pr.branch, pr.base, pr.repo));
   }
   if (target.missing) {
-    return `<p class="bp-pr-line">No pull request: ${esc(target.missing)}
-      <a href="#/${encodeURIComponent(state.projectId)}?gates=survey">Project settings</a></p>`;
+    return row('', 'No pull request', esc(target.missing),
+      `<a class="btn btn-sm" href="#/${encodeURIComponent(state.projectId)}?gates=survey">Project settings</a>`);
   }
-  return `<p class="bp-pr-line bad">${failed ? `The pull request was not opened: ${esc(failed.error)}` : 'No pull request yet.'}
-    <button type="button" class="btn btn-sm" ${retryAttr}>${failed ? 'Try again' : 'Open it'}</button></p>`;
+  if (failed) {
+    return row('bad', 'The pull request wasn’t opened', esc(failed.error),
+      `<button type="button" class="btn btn-sm" ${retryAttr}>Try again</button>`);
+  }
+  return row('', 'Pull request not opened yet', where(from, target.base, target.repo),
+    `<button type="button" class="btn btn-sm btn-primary" ${retryAttr}>Open pull request</button>`);
 }
 
 /* Sent back, two ways it can go: Fabrika fixes it on a branch of its own,
@@ -1483,6 +1516,11 @@ function branchClick(target) {
   if (target.id === 'look-tidy') return makeTidy().then(() => true);
   if (target.id === 'look-fix') return lookPost('fix', 'Fabrika is fixing it on a branch of its own.').then(() => true);
   if (target.id === 'look-pr') return lookPost('pull-request', 'Opening the pull request.').then(() => true);
+  if (target.dataset.bpFind !== undefined) {
+    const row = document.getElementById(`bp-f-${target.dataset.bpFind}`);
+    if (row) { row.open = true; row.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return true;
+  }
   if (target.dataset.bpRule) {
     const [fid, ruling] = target.dataset.bpRule.split(':');
     const note = ((document.getElementById(`bp-note-${fid}`) || {}).value || '').trim();

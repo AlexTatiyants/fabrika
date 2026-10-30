@@ -774,7 +774,7 @@ def test_the_findings_tab_says_where_each_finding_goes_and_the_prompt_holds_only
       }}));
     """)
     tab = got["tab"]
-    rows = re.findall(r'<details class="wl-call wl-(\w+)( wl-done)?">.*?<span class="wl-t">([^<]*)', tab, re.S)
+    rows = re.findall(r'<details [^>]*?class="wl-call wl-(\w+)( wl-done)?">.*?<span class="wl-t">([^<]*)', tab, re.S)
     assert [title for _sev, _done, title in rows] == [
         "A sixth widget is let in", "Nothing says what a widget is for", "The limit is written twice",
         "The name could be shorter"], "the rows are not in the order a reader acts on them"
@@ -919,6 +919,37 @@ def test_the_pull_request_line_says_what_became_of_it_and_a_look_sent_back_offer
     assert "fabrika/outside/explore" in got["sent"]
     assert "Fabrika fixed 1 of 1" in got["fixed"] and "branch=explore&amp;look=2" in got["fixed"].replace("&look", "&amp;look")
     assert 'id="look-fix"' not in got["fixed"]
+
+
+def test_an_underwritten_round_says_what_was_signed_where_its_pull_request_goes_and_each_risk_s_reason(tmp_path):
+    """The box that ends the work heads with what came of it and its facts --
+    round, commit, when -- then the pull request as a row with where it goes and
+    the one thing to do, then each accepted risk with its severity and your
+    reason, or that you gave none. A risk opens its finding."""
+    ruled = {"state": {"branch": "card-tags", "slug": "card-tags", "head_sha": "74947611543b", "look": 1},
+             "calls": {"found": True, "calls": [], "send_back": [], "accepted": [], "unruled": []},
+             "pr_target": {"remote": "origin", "base": "main", "repo": "me/demo"},
+             "verdict": {"verdict": "underwritten", "head_sha": "74947611543b", "at": "2026-10-28T23:08:08+00:00",
+                         "note": "", "accepted": [
+                             {"finding_id": "reviewer-1", "title": "Some names cannot be removed", "severity": "major",
+                              "note": "rare in practice"},
+                             {"finding_id": "reviewer-4", "title": "Unused tags left behind", "severity": "minor",
+                              "note": ""}]}}
+    dropped = {**ruled, "verdict": {**ruled["verdict"], "verdict": "dropped", "note": "not worth it"}}
+    got = _branch_js(f"""
+      state.projectId = 'demo';
+      console.log(JSON.stringify({{ ruled: bpVerdict({json.dumps(ruled)}), dropped: bpVerdict({json.dumps(dropped)}),
+        feature: prLine({{ pr_target: {{ base: 'main', repo: 'me/demo' }} }}, 'data-feature-pr="1"', 'fabrika/f-1') }}));
+    """)
+    box = got["ruled"]
+    assert ">Underwritten<" in box and "Round 1" in box and "commit <code>7494761</code>" in box
+    assert "<code>card-tags</code> into <code>main</code> on me/demo" in box
+    assert 'id="look-pr"' in box and "Open pull request" in box
+    assert "2 risks you accepted" in box
+    assert 'data-bp-find="reviewer-1"' in box and "rare in practice" in box and "no reason given" in box
+    assert box.index("major") < box.index("Some names cannot be removed") < box.index("rare in practice")
+    assert ">Dropped<" in got["dropped"] and "not worth it" in got["dropped"] and "pull request" not in got["dropped"].lower()
+    assert "<code>fabrika/f-1</code> into <code>main</code>" in got["feature"] and 'data-feature-pr="1"' in got["feature"]
 
 
 def test_a_claim_a_failing_probe_names_is_broken_whatever_its_tests_said(tmp_path, monkeypatch):

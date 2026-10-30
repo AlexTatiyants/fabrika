@@ -564,7 +564,7 @@ function cordSection(d, packet, settled) {
         <h2>The line has been ruled on</h2>
         <p>This packet was <b>${esc(STAGE_WORDS[d.state.stage] || d.state.stage)}</b> ${esc(rel((d.verdict || {}).at))}.
           Everything above is kept as it was read.</p>
-        ${d.state.stage === 'accepted' ? prLine(d, 'data-feature-pr="1"') : ''}
+        ${d.state.stage === 'accepted' ? prLine(d, 'data-feature-pr="1"', (d.sandbox || {}).branch) : ''}
       </div>
     </section>`;
   }
