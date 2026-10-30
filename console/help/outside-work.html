@@ -1,0 +1,53 @@
+<p class="lead">Outside work is a branch built somewhere else, in another agent or by another person, and handed to
+  Fabrika to review. It has no spec, so Fabrika works out what the branch does, runs your checks on it, attacks it,
+  and leaves the ending to you: underwrite it or drop it.</p>
+
+<h4>Bringing a branch</h4>
+<p>Open a project's <b>Outside work</b> tab. It lists every branch with commits its base doesn't have. Pick one,
+  say in a sentence what it was for if you like, and press <b>Look at it</b>. The branch is checked out on its own.
+  Nothing on it changes, and neither does your checkout. Each branch is one item, listed under <b>Looked at</b>
+  with the round it's on. Looking at it again starts that item's next round, not a new item.</p>
+
+<h4>What a round runs</h4>
+<p>The stations light on the line at the top of the page, and the packet opens on its Findings tab when the last
+  one is done:</p>
+<ul>
+  <li><b>The cut</b>: code, not a model, cuts the diff into pieces, so every changed line is in exactly one.</li>
+  <li><b>Reader</b>: the as-built is read at both ends of the branch, so what it adds can be said in the system's
+    own terms.</li>
+  <li><b>Checks</b>: the project's approved checks run at the branch's head, in the project's own environment.
+    Where a formatter would rewrite a file, that's recorded and put back. Nothing is committed.</li>
+  <li><b>Attribution</b>: a check that's red runs again where the branch left its base, to say whether the branch
+    broke it or inherited it.</li>
+  <li><b>Rapporteur</b>: classes each piece, writes what the branch is, and reads its commits for the claims they
+    make.</li>
+  <li><b>Breaker</b>, <b>review</b> and <b>arbiter</b>: the attack. See <a data-help="outside-work-findings">Findings
+    and your calls</a>.</li>
+</ul>
+<p>The <a data-help="the-crew">crew page</a> draws the same line, with the models each agent runs on.</p>
+
+<h4>What was built</h4>
+<p>The branch written up the way a spec would be: what it is, and what it was handed in as. Then:</p>
+<ul>
+  <li><b>What it adds</b>: components, routes and tables, in the system's terms.</li>
+  <li><b>Key flows</b>: how the new code runs, end to end.</li>
+  <li><b>Where it landed</b>: the files by group, then its tests, a list of files, each with the tests it adds.
+    A file's name opens the whole file.</li>
+  <li><b>What it claims</b>: each claim its commits make, grouped by what stands behind it, worst first. It's
+    <i>broken by a probe</i>, <i>no test exercises it</i>, <i>named by a test that did not run green</i>, or
+    <i>shown by a test</i>. A test's name opens its file at that test.</li>
+</ul>
+
+<h4>The code</h4>
+<p>Every changed line, cut into pieces and classed: <i>novel</i> (a real choice someone has to read, open by
+  default), <i>conventional</i>, <i>mechanical</i>, <i>generated</i> and <i>tests</i>. Each piece says why it was
+  classed the way it was, and a piece the rapporteur was unsure about is classed novel. Order the pieces by
+  materiality or by file. <b>whole file</b> opens the file as it is at the head, with the lines the branch added
+  marked.</p>
+
+<h4>Checks</h4>
+<p>One row per check: passed, failed or couldn't run. A red check says whose it is, from the run at the base. It
+  also says where it fired: on lines the branch wrote, or on lines that were there before.</p>
+
+<p>What happens after the attack, round by round, is in <a data-help="outside-work-rounds">Rounds, fixes and the
+  ending</a>.</p>

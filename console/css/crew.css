@@ -9,6 +9,8 @@
 .dia-agent { cursor: pointer; }
 .dia-agent:hover rect { stroke: var(--ink); }
 .dia-agent.open rect { stroke: var(--ink); stroke-width: 2; }
+.dia-help { cursor: pointer; }
+.dia-help:hover text { fill: var(--ink); text-decoration: underline; }
 
 .dia-key {
   display: flex; gap: 1.1rem; flex-wrap: wrap;

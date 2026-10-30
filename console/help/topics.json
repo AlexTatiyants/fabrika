@@ -96,6 +96,23 @@
       ]
     },
     {
+      "title": "Outside work",
+      "topics": [
+        {
+          "slug": "outside-work",
+          "title": "Outside work"
+        },
+        {
+          "slug": "outside-work-findings",
+          "title": "Findings and your calls"
+        },
+        {
+          "slug": "outside-work-rounds",
+          "title": "Rounds, fixes and the ending"
+        }
+      ]
+    },
+    {
       "title": "Checking the work",
       "topics": [
         {

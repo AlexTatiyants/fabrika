@@ -237,6 +237,7 @@ def register(app: FastAPI, ctx: Context) -> None:
                 ("oracle_collect_command", body.oracle_collect_command),
                 ("oracle_runtime", body.oracle_runtime),
                 ("dependency_policy", body.dependency_policy),
+                ("pr_remote", body.pr_remote), ("pr_base", body.pr_base), ("pr_repo", body.pr_repo),
             ) if value is not None
         }
         try:

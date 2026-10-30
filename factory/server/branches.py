@@ -13,7 +13,7 @@ from typing import Any
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 
 from .. import branch_facts, git, pieces as cutting
-from ..pipeline.branch import (LOOK_PHASES, BranchReview, compare_rounds, look_calls, reading_status,
+from ..pipeline.branch import (LOOK_PHASES, WORK_PREFIX, BranchReview, compare_rounds, look_calls, reading_status,
                                record_system_change, rounds_of)
 from ..schemas import Piece, PieceJudgement
 from ..projects import ProjectError
@@ -243,7 +243,7 @@ def register(app: FastAPI, ctx: Context) -> None:
             await review_for(project_id).run_look(slug)
 
         ctx.start_run(background, project_id, f"branch-{slug}", work, rebaseline=False)
-        return {"started": True, "branch": state.working_branch or f"factory/outside/{slug}"}
+        return {"started": True, "branch": state.working_branch or f"{WORK_PREFIX}{slug}"}
 
     @app.post("/api/projects/{project_id}/branches/{slug}/pull-request")
     def pull_request(project_id: str, slug: str, background: BackgroundTasks) -> dict[str, Any]:

@@ -72,6 +72,24 @@ def test_a_project_with_nowhere_for_pull_requests_says_what_to_set(tmp_path):
         _set(config, project, pr_remote="upstream")
 
 
+def test_the_settings_screen_saves_where_pull_requests_go(tmp_path):
+    """The console's settings editor sends the three fields to the project's
+    PATCH; the route once dropped them, so saving them changed nothing."""
+    from fastapi.testclient import TestClient
+
+    from factory.server import create_app
+
+    config, project, repo = _brought(tmp_path)
+    _remote(tmp_path, repo, url="https://github.com/me/demo.git")
+    client = TestClient(create_app(config))
+    said = client.patch(f"/api/projects/{project.id}", json={"pr_remote": "origin", "pr_base": "main"})
+    assert said.status_code == 200, said.text
+    assert (said.json()["pr_remote"], said.json()["pr_base"]) == ("origin", "main")
+    target = pull_requests.pr_target(ProjectRegistry(config.evidence_path).get(project.id))
+    assert (target.remote, target.base, target.repo) == ("origin", "main", "me/demo")
+    refused = client.patch(f"/api/projects/{project.id}", json={"pr_remote": "upstream"})
+    assert refused.status_code == 422 and "no remote called" in refused.text
+
 def test_the_repository_is_read_from_a_github_address():
     for url in ("https://github.com/me/demo.git", "git@github.com:me/demo.git", "https://github.com/me/demo"):
         assert pull_requests._GITHUB.search(url).group("repo") == "me/demo"

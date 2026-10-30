@@ -453,7 +453,7 @@ def _tidy_look(tmp_path, cleanup):
 def _theirs(repo):
     """Everything of the person's: the snapshot without Fabrika's own tidy refs."""
     snap = _snapshot(repo)
-    snap["refs"] = "\n".join(line for line in snap["refs"].splitlines() if "refs/heads/factory/tidy/" not in line)
+    snap["refs"] = "\n".join(line for line in snap["refs"].splitlines() if "refs/heads/fabrika/tidy/" not in line)
     return snap
 
 
@@ -469,7 +469,7 @@ def test_the_tidy_branch_holds_the_cleanup_and_green_probes_then_red_probes_on_t
     record = asyncio.run(review.make_tidy("explore"))
     assert _theirs(repo) == before, "making the tidy branch moved something of the person's"
 
-    tidy = "refs/heads/factory/tidy/explore"
+    tidy = "refs/heads/fabrika/tidy/explore"
     assert _git(repo, "rev-parse", tidy) == record["tip"]
     subjects = _git(repo, "log", "--format=%s", f"refs/heads/explore..{tidy}").splitlines()
     assert subjects == ["Probes that fail until what they found is fixed",
@@ -492,7 +492,7 @@ def test_a_cleanup_that_turns_a_check_red_is_thrown_away_and_the_probes_still_la
     _project, repo, review, _store, _stub = _tidy_look(tmp_path, broken)
     record = asyncio.run(review.make_tidy("explore"))
     assert not record["kept_cleanup"] and record["fence"]["moved"] == ["limit"]
-    tidy = "refs/heads/factory/tidy/explore"
+    tidy = "refs/heads/fabrika/tidy/explore"
     first = set(_git(repo, "show", "--name-only", "--format=", f"{tidy}~1").splitlines())
     assert first == {"tests/breaker/test_turn.py"}, "the cleanup that broke a check was kept"
     assert _git(repo, "show", f"{tidy}:app/core.py") == BRANCH["app/core.py"].rstrip("\n")
@@ -504,7 +504,7 @@ def test_a_tidy_branch_someone_committed_to_is_not_moved(tmp_path):
     tidier = BRANCH["app/core.py"].replace("LIMIT = 5", "LIMIT = 5  # one place")
     _project, repo, review, _store, _stub = _tidy_look(tmp_path, tidier)
     asyncio.run(review.make_tidy("explore"))
-    tidy = "refs/heads/factory/tidy/explore"
+    tidy = "refs/heads/fabrika/tidy/explore"
     tree = _git(repo, "rev-parse", f"{tidy}^{{tree}}")
     theirs = _git(repo, "commit-tree", tree, "-p", _git(repo, "rev-parse", tidy), "-m", "mine now")
     _git(repo, "update-ref", tidy, theirs)
@@ -537,7 +537,7 @@ def _fix_look(tmp_path, fixed_core):
 
 def test_a_fix_moves_the_item_s_own_working_branch_and_starts_its_next_round(tmp_path):
     """Sending work back to Fabrika is a round of the same work, not a new
-    piece of it. The fix goes on the work's own branch, factory/outside/<branch>,
+    piece of it. The fix goes on the work's own branch, fabrika/outside/<branch>,
     off this round's head -- never on the person's branch: the probes first,
     as tests, then each fix under what it fixes. Then the next round of the same
     work opens, at the fixed head: one item, two rounds, no second entry."""
@@ -546,10 +546,10 @@ def test_a_fix_moves_the_item_s_own_working_branch_and_starts_its_next_round(tmp
     before = _theirs(repo)
     record = asyncio.run(review.fix("explore"))
     snap = _theirs(repo)
-    snap["refs"] = "\n".join(x for x in snap["refs"].splitlines() if "refs/heads/factory/outside/" not in x)
+    snap["refs"] = "\n".join(x for x in snap["refs"].splitlines() if "refs/heads/fabrika/outside/" not in x)
     assert snap == before, "fixing it moved something of the person's"
 
-    work = "refs/heads/factory/outside/explore"
+    work = "refs/heads/fabrika/outside/explore"
     assert _git(repo, "rev-parse", work) == record["tip"]
     subjects = _git(repo, "log", "--format=%s", f"refs/heads/explore..{work}").splitlines()
     assert subjects[-1] == "Add tests from Fabrika's review of explore" and len(subjects) == 2
@@ -561,7 +561,7 @@ def test_a_fix_moves_the_item_s_own_working_branch_and_starts_its_next_round(tmp
     assert any(r == "repairer" and "In a look at outside work" in sys for r, _p, sys in stub.asked)
 
     state = review.look_state(store)
-    assert (state.look, state.head_sha, state.working_branch) == (2, record["tip"], "factory/outside/explore")
+    assert (state.look, state.head_sha, state.working_branch) == (2, record["tip"], "fabrika/outside/explore")
     assert state.stage == "reviewing" and record["next_look"] == 2
     assert list(review.project.branch_slugs()) == ["explore"], "the fix became a second piece of work"
 
@@ -597,7 +597,7 @@ def test_your_new_commits_are_merged_into_the_working_branch_before_a_round(tmp_
     _git(repo, "checkout", "-q", "main")
     theirs = _git(repo, "rev-parse", "explore")
     state = review.open_look("explore")
-    work = _git(repo, "rev-parse", "refs/heads/factory/outside/explore")
+    work = _git(repo, "rev-parse", "refs/heads/fabrika/outside/explore")
     assert state.look == 3 and state.head_sha == work and state.theirs_head == theirs
     assert _git(repo, "log", "-1", "--format=%s", work) == "Merge your commits from explore"
     assert "MAX_WIDGETS" in _git(repo, "show", f"{work}:app/core.py")
@@ -609,7 +609,7 @@ def test_your_new_commits_are_merged_into_the_working_branch_before_a_round(tmp_
     _git(repo, "checkout", "-q", "main")
     with pytest.raises(ProjectError, match="conflict with Fabrika's fixes.*app/core.py"):
         review.open_look("explore")
-    assert _git(repo, "rev-parse", "refs/heads/factory/outside/explore") == work, "a clash moved the branch"
+    assert _git(repo, "rev-parse", "refs/heads/fabrika/outside/explore") == work, "a clash moved the branch"
 
 
 def test_round_two_says_what_was_fixed_and_carries_forward_what_you_accepted_unless_its_code_changed(tmp_path):
@@ -655,7 +655,7 @@ def look_calls_of(review, store):
 def test_a_fix_an_earlier_version_made_on_its_own_branch_becomes_the_work_s_working_branch(tmp_path):
     """An earlier version fixed work on factory/fix/<branch>, and looked at it as
     a second item. Opened now, that branch becomes the work's own -- moved to
-    factory/outside/<branch> -- and the next round of the same work looks at it;
+    fabrika/outside/<branch> -- and the next round of the same work looks at it;
     the second item leaves the list."""
     config, project, repo = _brought(tmp_path)
     review, store, _packet = _look(config, project)
@@ -666,8 +666,8 @@ def test_a_fix_an_earlier_version_made_on_its_own_branch_becomes_the_work_s_work
                               "tip": tip, "targets": [], "fixed": [], "not_fixed": [], "rounds": []},
                  role="orchestrator")
     state = review.adopt_legacy_fix(store, review.look_state(store))
-    assert (state.working_branch, state.working_head) == ("factory/outside/explore", tip)
-    assert _git(repo, "rev-parse", "refs/heads/factory/outside/explore") == tip
+    assert (state.working_branch, state.working_head) == ("fabrika/outside/explore", tip)
+    assert _git(repo, "rev-parse", "refs/heads/fabrika/outside/explore") == tip
     assert "factory/fix/explore" not in _git(repo, "branch", "--list", "factory/*")
     nxt = review.open_look("explore")
     assert (nxt.look, nxt.head_sha) == (2, tip)
@@ -678,7 +678,7 @@ def test_the_rounds_strip_and_each_finding_say_where_the_work_has_been():
     two, what Fabrika fixed; each finding against the round before."""
     look = {"state": {"slug": "explore", "look": 2, "stage": "awaiting_ruling"}, "shown": 2, "rounds": [
         {"look": 1, "head_sha": "abc1234567", "working": False, "found": True, "send_back": 3, "unruled": 0,
-         "accepted": 1, "verdict": "", "fix": {"fixed": 2, "of": 3, "branch": "factory/outside/explore"}},
+         "accepted": 1, "verdict": "", "fix": {"fixed": 2, "of": 3, "branch": "fabrika/outside/explore"}},
         {"look": 2, "head_sha": "def7654321", "working": True, "found": True, "send_back": 1, "unruled": 0,
          "accepted": 1, "verdict": "", "fix": None}]}
     compared = {"previous": 1, "fixed": ["A", "B"], "not_fixed": ["C"],
@@ -706,7 +706,7 @@ def test_a_fix_that_breaks_a_check_that_passed_is_reverted_and_the_finding_stays
     record = asyncio.run(review.fix("explore"))
     assert record["rounds"] and all(r["reverted"] and r["broke"] == ["limit"] for r in record["rounds"])
     assert record["fixed"] == [] and len(record["not_fixed"]) == 1
-    work = "refs/heads/factory/outside/explore"
+    work = "refs/heads/fabrika/outside/explore"
     assert "MAX_WIDGETS" not in _git(repo, "show", f"{work}:app/core.py"), "a fix that broke a check was kept"
 
 
@@ -761,7 +761,7 @@ def test_the_findings_tab_says_where_each_finding_goes_and_the_prompt_holds_only
     sent back and nothing that went anywhere else; a row's own prompt holds
     that one. The tidy branch is a line, not a panel."""
     look = {"state": {"branch": "explore", "head_sha": "abc123def456"}, "findings": _found(),
-            "tidy_plan": {"cleanup": 1, "green": 0, "red": 1, "branch": "factory/tidy/explore"}}
+            "tidy_plan": {"cleanup": 1, "green": 0, "red": 1, "branch": "fabrika/tidy/explore"}}
     got = _branch_js(f"""
       const d = {json.dumps(look)};
       console.log(JSON.stringify({{
@@ -798,13 +798,13 @@ def test_the_findings_tab_says_where_each_finding_goes_and_the_prompt_holds_only
     both = _branch_js(f"""
       console.log(JSON.stringify(bpSendBackPrompt({{ state: {{ branch: 'explore', head_sha: 'abc' }},
         findings: {json.dumps(found)}, tidy: {json.dumps(tidy)},
-        tidy_plan: {{ branch: 'factory/tidy/explore' }} }})));
+        tidy_plan: {{ branch: 'fabrika/tidy/explore' }} }})));
     """)
     assert both.index("## 1. A sixth widget is let in (blocker)") < both.index("## 2. Nothing says what"), \
         "the defects are not most severe first"
     assert "Add this test at `web/acceptance/branch_x_regression/test_limit.py`" in both
-    assert "It is also on `factory/tidy/explore`" in both
-    assert "factory/tidy/explore" in got["made"] and "2 files" in got["made"] and 'id="look-tidy"' not in got["made"]
+    assert "It is also on `fabrika/tidy/explore`" in both
+    assert "fabrika/tidy/explore" in got["made"] and "2 files" in got["made"] and 'id="look-tidy"' not in got["made"]
 
 
 def test_a_look_is_underwritten_only_once_every_finding_is_accepted_and_sent_back_with_its_calls(
@@ -916,7 +916,7 @@ def test_the_pull_request_line_says_what_became_of_it_and_a_look_sent_back_offer
     assert "HTTP 403" in lines["failed"] and 'id="look-pr"' in lines["failed"] and "Try again" in lines["failed"]
     assert "nowhere for pull requests" in lines["nowhere"] and "Project settings" in lines["nowhere"]
     assert 'id="look-fix"' in got["sent"] and 'id="look-send-back"' in got["sent"]
-    assert "factory/outside/explore" in got["sent"]
+    assert "fabrika/outside/explore" in got["sent"]
     assert "Fabrika fixed 1 of 1" in got["fixed"] and "branch=explore&amp;look=2" in got["fixed"].replace("&look", "&amp;look")
     assert 'id="look-fix"' not in got["fixed"]
 
@@ -944,10 +944,10 @@ def test_a_claim_a_failing_probe_names_is_broken_whatever_its_tests_said(tmp_pat
     monkeypatch.setattr(BranchReview, "make_tidy", make_tidy)
     project.branch_store("explore").append("look_findings", _found(), role="orchestrator")
     made = client.post(f"/api/projects/{project.id}/branches/explore/tidy")
-    assert made.status_code == 200 and made.json()["branch"] == "factory/tidy/explore" and pressed == ["explore"]
+    assert made.status_code == 200 and made.json()["branch"] == "fabrika/tidy/explore" and pressed == ["explore"]
     view = client.get(f"/api/projects/{project.id}/branches/explore").json()
     assert view["findings"]["routes"]["breaker-limit"] == "send_back"
-    assert view["tidy_plan"] == {"cleanup": 1, "green": 0, "red": 1, "branch": "factory/tidy/explore"}
+    assert view["tidy_plan"] == {"cleanup": 1, "green": 0, "red": 1, "branch": "fabrika/tidy/explore"}
 
 
 # ==========================================================================
@@ -1043,6 +1043,21 @@ def test_a_look_is_started_on_a_branch_and_refused_on_one_that_is_not_there(tmp_
     listed = client.get(f"/api/projects/{project.id}/branches").json()
     assert [b["branch"] for b in listed["looked"]] == ["explore"] and listed["candidates"] == []
     assert client.get(f"/api/projects/{project.id}/branches/nope").status_code == 404
+
+
+def test_fabrika_s_own_branches_under_either_prefix_are_not_outside_work(tmp_path, monkeypatch):
+    """Fabrika names its branches `fabrika/`; an earlier version named them
+    `factory/`. Both are its own, so neither is offered as outside work, and
+    looking at one is refused."""
+    client, project, repo, started = _branch_app(tmp_path, monkeypatch)
+    _git(repo, "branch", "fabrika/feature-1", "explore")
+    _git(repo, "branch", "factory/feature-0", "explore")
+    listed = client.get(f"/api/projects/{project.id}/branches").json()
+    assert [c["branch"] for c in listed["candidates"]] == ["explore"]
+    for own in ("fabrika/feature-1", "factory/feature-0"):
+        refused = client.post(f"/api/projects/{project.id}/branches", json={"branch": own})
+        assert refused.status_code == 409 and "Fabrika's own" in refused.json()["detail"], own
+    assert started == []
 
 
 def test_a_reading_that_stopped_is_said_and_can_be_read_again(tmp_path, monkeypatch):
@@ -1343,7 +1358,7 @@ def test_a_look_s_line_is_every_station_in_order_in_the_shape_the_feature_strip_
 def test_a_commit_whose_reading_left_files_unread_is_read_again(tmp_path):
     """A look whose reader lost its sign-in kept a reading with most files
     missing, and the next look at the same commit took that as the commit read:
-    its "what it built" said 0 groups and 0 ways in. A reading with unread files
+    its "what was built" said 0 groups and 0 ways in. A reading with unread files
     is kept, and is read again; a whole one is not."""
     from factory.asbuilt_graph import AsBuilt, Coverage
 
@@ -1844,3 +1859,45 @@ def test_the_map_s_lines_are_read_from_the_code(tmp_path):
         "the screen's call through the client was not followed, or took the next function's method"
     assert links["endpoint_data"] == [["GET /api/tags", "tags"]], \
         "a model named only as a type was counted as touched, or a helper's use was missed"
+
+
+def test_the_crew_draws_outside_work_as_rounds_that_end_only_in_underwriting_or_dropping():
+    """The crew page's outside-work line is what a round runs: the reading,
+    the checks and the cut, the attack, your calls, and the ending -- with the
+    fix as a loop on Fabrika's own branch back into the next round. Its help
+    is a group of its own, and the `?` key reaches it from the screens."""
+    import shutil
+
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    from support import CONSOLE_DIR
+
+    util = (CONSOLE_DIR / "app" / "util.js").read_text(encoding="utf-8").split("\nfunction rel(")[0]
+    agents = (CONSOLE_DIR / "app" / "agents.js").read_text(encoding="utf-8")
+    names = ["reader", "rapporteur", "breaker", "arbiter", "repairer", "simplifier", "oracle", "worker"]
+    script = ("var state = {roles: {roles: []}}; function asBuiltWorking() { return false; }\n"
+              "function asBuiltNow() { return ''; }\n" + util + "\n" + agents + "\n"
+              f"const roles = {json.dumps([{'name': n, 'model': 'm'} for n in names])}"
+              ".concat([{name: 'reviewer', kind: 'review', model: 'm'}]);\n"
+              "process.stdout.write(JSON.stringify(pipelineDiagram(roles)));")
+    out = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, out.stderr
+    svg = json.loads(out.stdout)
+    outside = svg[svg.index('data-help-open="outside-work"'):]
+    labels = re.findall(r'font-size="10"[^>]*>([^<]+)</text>', outside)
+    assert labels == ["branch", "reader", "checks", "attribution", "the cut", "rapporteur", "breaker", "reviewer",
+                      "arbiter", "your calls", "underwrite or drop",
+                      "repairer", "checks and probes", "fabrika/outside/&lt;branch&gt;"], labels
+    assert "yours is never written to" in outside and "the next round" in outside
+    assert "your ruling" not in svg, "the old ending is still drawn"
+
+    help_dir = CONSOLE_DIR / "help"
+    groups = {g["title"]: [t["slug"] for t in g["topics"]]
+              for g in json.loads((help_dir / "topics.json").read_text())["groups"]}
+    assert groups["Outside work"] == ["outside-work", "outside-work-findings", "outside-work-rounds"]
+    rounds = (help_dir / "outside-work-rounds.html").read_text()
+    for said in ("fabrika/outside/&lt;branch&gt;", "Merge your commits from", "<b>Underwrite</b>", "<b>Drop it</b>"):
+        assert said in rounds, said
+    help_js = (CONSOLE_DIR / "app" / "help.js").read_text()
+    assert "branches: 'outside-work'" in help_js
+    assert "state.view === 'branch'" in help_js and "'outside-work-findings'" in help_js

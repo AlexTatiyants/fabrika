@@ -395,7 +395,7 @@ html { scroll-behavior: smooth; }
 .bp-intent { flex: 1 1 22rem; min-width: 0; height: 2rem; padding: 0 .6rem; font: 400 .875rem/1 var(--body, inherit);
   color: var(--ink); background: var(--paper); border: 1px solid var(--line-strong); border-radius: 2px; }
 .bp-intent:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-/* The commits on a packet's What it built. */
+/* The commits on a packet's What was built. */
 .bp-looks { margin: .4rem 0 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: 2px;
   background: var(--surface); }
 .bp-looks li { padding: .55rem .9rem; border-bottom: 1px solid var(--line); font-size: var(--t-body); color: var(--ink-2); }
@@ -423,7 +423,7 @@ html { scroll-behavior: smooth; }
 .v-band-none { background: var(--surface-sunk); border-top-color: var(--line-strong); --vb-ink: var(--ink); }
 .v-band-none .verdict-headline { font-weight: 400; }
 
-/* What it built takes the window, as the band and the tabs above it do. */
+/* What was built takes the window, as the band and the tabs above it do. */
 .g2 .bp-tab { max-width: none; padding-left: var(--gutter); padding-right: var(--gutter); }
 .bp-tab .bp-lead, .bp-tab .bp-sub, .bp-tab .bp-grp-sub, .bp-tab .bp-uwhy { max-width: none; }
 .bp-summary p { margin: 0 0 .6rem; font-size: 1.0625rem; line-height: 1.55; color: var(--ink); }
@@ -510,7 +510,7 @@ a.bp-node:hover { border-color: var(--ink-3); }
 .bp-adds-also { margin-top: .75rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
 .bp-adds-note { margin-top: .5rem; }
 
-/* What it built is read as the spec is: the spec's section heads and its
+/* What was built is read as the spec is: the spec's section heads and its
    contents rail, the document taking the window's width beside it. */
 .bp-doc .doc { margin-top: .6rem; }
 .bp-doc .doc-sec:first-child .sec-head { margin-top: .9rem; }
@@ -538,7 +538,7 @@ a.bp-node:hover { border-color: var(--ink-3); }
 .bp-verdict.ok { border-left: 3px solid var(--green); }
 .bp-verdict.back { border-left: 3px solid var(--red); }
 .bp-verdict-h { margin: 0; font: 600 1.0625rem/1.25 var(--display); color: var(--ink); }
-.bp-verdict-h code { font-family: var(--mono); font-size: .8em; }
+.bp-verdict-h code { font: 400 .875em var(--mono); color: var(--ink-2); }
 .bp-verdict .bp-sub { margin: .45rem 0 0; }
 .bp-verdict-note { margin-top: .7rem; }
 .bp-verdict-acts { display: flex; gap: .5rem; margin-top: .6rem; }

@@ -34,7 +34,7 @@ from ..containers import DockerError, runner_for
 from ..gates import restore_tracked, run_gate, run_gates, run_setup, test_session, tracked_changes
 from ..isolation import IsolationError
 from ..projects import ProjectError
-from ..sandbox import BRANCH_PREFIX, Sandbox, SandboxError, resolve_ref
+from ..sandbox import BRANCH_PREFIX, LEGACY_BRANCH_PREFIX, Sandbox, SandboxError, is_own_branch, resolve_ref
 from ..schemas import (AcceptanceCriterion, BranchState, BreakerReport, BreakerSuite, GateReport, GateResult,
                        PhaseState, Piece, PieceJudgement, QAReport, Spec, TestFileCommand)
 from ..store import EvidenceStore
@@ -54,9 +54,9 @@ LOOK_PHASES = ("reader", "gates", "rapporteur", "breaker", "review", "arbiter")
 #: Where a look's tidy branch goes: Fabrika's own name, never the branch under
 #: review. One per branch looked at, moved by a later press of the same look.
 TIDY_PREFIX = f"{BRANCH_PREFIX}tidy/"
-#: Where Fabrika fixes a branch sent back to it: a branch of its own off the
-#: look's head, never the one under review, then looked at like any other.
-FIX_PREFIX = f"{BRANCH_PREFIX}fix/"
+#: Where an earlier version fixed a branch sent back to it: a branch of its own
+#: off the look's head, never the one under review, then looked at like any other.
+FIX_PREFIX = f"{LEGACY_BRANCH_PREFIX}fix/"
 #: Where outside work's fixes go: one branch per item, Fabrika's own, off the
 #: person's branch and moved round by round. (`FIX_PREFIX` is where an earlier
 #: version put them, one branch per fix; adopted on sight.)
@@ -311,7 +311,7 @@ class BranchReview(RoundsMixin, Factory):
                 state = self.look_state(store)
             except (KeyError, ValueError):
                 continue
-            if state.branch.startswith(BRANCH_PREFIX):
+            if is_own_branch(state.branch):
                 # A look at one of Fabrika's own branches: what an earlier
                 # version made of a fix. The work it belongs to carries it.
                 continue
@@ -331,7 +331,7 @@ class BranchReview(RoundsMixin, Factory):
 
     def candidate_branches(self) -> list[dict[str, Any]]:
         """Local branches with work past the project's base, for the form that
-        starts a look. Fabrika's own `factory/` branches are its features'."""
+        starts a look. Fabrika's own `fabrika/` branches are its features'."""
         repo = self.project.repo_path
         listed = git.out(["for-each-ref", "--format=%(refname:short)%1f%(objectname)%1f%(committerdate:iso-strict)"
                           "%1f%(contents:subject)", "refs/heads"], repo, timeout=30) or ""
@@ -339,7 +339,7 @@ class BranchReview(RoundsMixin, Factory):
         out = []
         for line in listed.splitlines():
             bits = line.split("\x1f")
-            if len(bits) != 4 or bits[0].startswith("factory/"):
+            if len(bits) != 4 or is_own_branch(bits[0]):
                 continue
             ahead = git.out(["rev-list", "--count", f"{base}..{bits[1]}"], repo, timeout=30)
             try:
@@ -372,7 +372,7 @@ class BranchReview(RoundsMixin, Factory):
         repo = self.project.repo_path
         if not branch:
             raise ProjectError("name a branch to look at")
-        if branch.startswith(BRANCH_PREFIX):
+        if is_own_branch(branch):
             raise ProjectError(f"{branch} is one of Fabrika's own branches: look at the branch it was made from")
         try:
             theirs = resolve_ref(repo, branch)
@@ -417,7 +417,7 @@ class BranchReview(RoundsMixin, Factory):
     def adopt_legacy_fix(self, store: EvidenceStore, state: BranchState) -> BranchState:
         """Work fixed by an earlier version of this, on `factory/fix/<branch>`
         with a second item looking at it, carries on as this work's own
-        working branch: the ref is moved to `factory/outside/<branch>`, and the
+        working branch: the ref is moved to `fabrika/outside/<branch>`, and the
         next round of this work looks at it."""
         if state.working_branch:
             return state
@@ -904,7 +904,7 @@ class BranchReview(RoundsMixin, Factory):
         """This round's defects, fixed by Fabrika on the work's own branch.
 
         The repair rounds (`RoundsMixin._repair_rounds`) on Fabrika's working
-        branch, `factory/outside/<branch>`, from this round's head: the probes
+        branch, `fabrika/outside/<branch>`, from this round's head: the probes
         the look kept are committed first, as the fence, and each fix is
         committed under what it fixes. The working branch is then moved to the
         result -- the person's branch never is -- and the next round of the

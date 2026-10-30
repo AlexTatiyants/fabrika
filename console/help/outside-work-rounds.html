@@ -1,0 +1,54 @@
+<p class="lead">Outside work is worked in rounds until you underwrite it or drop it. Sending a defect back doesn't
+  end the work. It's how the next round starts.</p>
+
+<h4>Sending it back</h4>
+<p>While anything is going back, the foot of the Findings tab offers two ways to fix it:</p>
+<ul>
+  <li><b>Fix it</b>: Fabrika fixes it, on <span class="mono">fabrika/outside/&lt;branch&gt;</span>. That branch is
+    its own for this work, made from yours at the first fix and moved forward each round after. First it commits
+    the probes, as <i>Add tests from Fabrika's review of &lt;branch&gt;</i>. They are the fence. Then the repairer
+    fixes what's going back, with your note as its objective. Then every check that passed and every probe runs
+    again:
+    <ul>
+      <li>A repair that breaks something that held before is thrown away.</li>
+      <li>A probe settles the finding it shows.</li>
+      <li>The agent that raised each other finding checks it again.</li>
+    </ul>
+    Each fix is committed under what it fixes. It's bounded like a feature's loop, by
+    <span class="mono">rework.max_rounds</span> and <span class="mono">rework.max_attempts_per_finding</span>.
+    When it's done, the next round opens by itself, at the fixed head.</li>
+  <li><b>Copy the prompt</b>: every defect going back, with your notes and the tests that show them, for whoever
+    built the branch. Fix them on your branch, then press <b>Look again</b>.</li>
+</ul>
+<p>Your branch is never written to, either way.</p>
+
+<h4>Your new commits</h4>
+<p>Once Fabrika has a branch for the work, a round looks at that branch. If you've committed to yours since, the
+  next round merges your new commits into Fabrika's branch first, as <i>Merge your commits from
+  &lt;branch&gt;</i>. If they conflict with its fixes, nothing is merged and the round doesn't start. It names the
+  files instead: merge <span class="mono">fabrika/outside/&lt;branch&gt;</span> into your branch, settle them there,
+  and look again. Fabrika's own commits are never read as claims. Only yours are.</p>
+
+<h4>The rounds</h4>
+<p>Once there's more than one round, a strip under the line shows each one: its head, on your branch or Fabrika's,
+  and what came of it, with what Fabrika fixed between rounds. Select a round to read it as it was. The latest is
+  shown by default.</p>
+
+<h4>The ending</h4>
+<ul>
+  <li><b>Underwrite</b>: you sign for the work at this round's head. Every finding has to be accepted first, and
+    every call made. Until then, the box above the button says what's left. Fabrika opens a pull request where the project's
+    settings say pull requests go. It's opened from Fabrika's branch if it fixed anything, and from yours if not,
+    at the commit you underwrote. Its body holds:
+    <ul>
+      <li>what the branch is;</li>
+      <li>the checks that passed;</li>
+      <li>the claims a test shows;</li>
+      <li>every risk you accepted, with your reason;</li>
+      <li>what Fabrika fixed, round by round.</li>
+    </ul>
+    With nowhere set, nothing leaves this machine. Merging it is yours: Fabrika never merges.</li>
+  <li><b>Drop it</b>: the work is recorded <i>dropped</i>. Every branch stays where it is.</li>
+</ul>
+<p>Neither can be taken back. A feature ends the same two ways: see <a data-help="ruling-on-a-packet">Ruling on
+  the packet</a>.</p>

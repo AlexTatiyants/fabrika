@@ -17,7 +17,7 @@ const HELP_START = 'how-fabrika-works';
 /* A project tab's `?`, and the `?` key on that tab. */
 const HELP_FOR = {
   checks: 'checks', tests: 'test-levels', guides: 'guides', survey: 'survey', environment: 'environment',
-  history: 'history',
+  history: 'history', branches: 'outside-work',
 };
 /* A feature's screens: the view in the hash when there is one, and otherwise
    the stage, which is what picks the screen. */
@@ -155,6 +155,8 @@ function helpForHere() {
     const view = state.view || mountedView();
     return HELP_FOR_VIEW[view] || HELP_FOR_STAGE[state.data.state.stage] || HELP_START;
   }
+  // A look at outside work: its findings, or how it is read.
+  if (state.view === 'branch') return !state.bpTab || state.bpTab === 'findings' ? 'outside-work-findings' : 'outside-work';
   if (state.view === 'start') return 'writing-the-intent';
   if (state.view === 'log') return 'history';
   const p = (state.project || {}).project;

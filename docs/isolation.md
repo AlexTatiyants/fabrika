@@ -8,7 +8,7 @@ does, and everything it wrote, off this machine. The module docstring of
 ## Worktrees
 
 Every feature gets a git worktree at `<sandboxes>/<project>/<feature>`, on a
-branch `factory/<feature-id>` cut from the project's base ref. Workers, the
+branch `fabrika/<feature-id>` cut from the project's base ref. Workers, the
 integrator, the file writes, the blind tests and the gates all happen in there.
 The project's own working tree is never touched.
 
@@ -16,7 +16,7 @@ Because a worktree shares the object database with the repository it came from,
 the finished work is already a ref in your normal checkout:
 
 ```bash
-git diff main...factory/<feature-id>
+git diff main...fabrika/<feature-id>
 ```
 
 Nothing to export, nothing to copy back. Accepting a feature drops the checkout

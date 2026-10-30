@@ -1157,7 +1157,7 @@ def _branch(tmp_path, base_files: dict, then: dict):
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(body)
     state = SandboxState(feature_id="f", project_id="p", kind="worktree",
-                         path=str(repo), branch="factory/x", base_sha=base)
+                         path=str(repo), branch="fabrika/x", base_sha=base)
     return Sandbox(state, repo)
 
 

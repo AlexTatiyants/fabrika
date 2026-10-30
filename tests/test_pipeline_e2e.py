@@ -446,7 +446,7 @@ def test_a_full_run_reaches_a_packet(factory):
         "a blind test landed in the project's own test tree"
 
     # what the human gets is a branch, visible from the normal checkout
-    assert final.sandbox.branch == f"factory/{state.feature_id}"
+    assert final.sandbox.branch == f"fabrika/{state.feature_id}"
     assert final.sandbox.commit_sha
     branches = subprocess.run(
         ["git", "branch", "--list"], cwd=repo, capture_output=True, text=True
@@ -644,7 +644,7 @@ def test_accepting_a_feature_drops_the_checkout_and_keeps_the_branch(factory):
     branches = subprocess.run(
         ["git", "branch", "--list"], cwd=repo, capture_output=True, text=True
     ).stdout
-    assert f"factory/{state.feature_id}" in branches, "the branch is the deliverable"
+    assert f"fabrika/{state.feature_id}" in branches, "the branch is the deliverable"
 
 
 def test_accepting_a_feature_opens_its_pr_from_its_branch(factory, tmp_path, monkeypatch):
@@ -679,7 +679,7 @@ def test_accepting_a_feature_opens_its_pr_from_its_branch(factory, tmp_path, mon
 
     monkeypatch.setattr(pull_requests, "_run", gh)
     opened = asyncio.run(f.open_pull_request(state.feature_id))
-    branch = f"factory/{state.feature_id}"
+    branch = f"fabrika/{state.feature_id}"
     assert opened["branch"] == branch and git("rev-parse", f"refs/heads/{branch}", cwd=bare) == opened["sha"]
     body = next(text for argv, text in asked if argv[1:3] == ["pr", "create"])
     assert "What it was held to" in body and "underwritten at gate 2" in body
@@ -978,7 +978,7 @@ def test_discarding_a_feature_keeps_the_branch(factory):
     branches = subprocess.run(
         ["git", "branch", "--list"], cwd=repo, capture_output=True, text=True
     ).stdout
-    assert f"factory/{state.feature_id}" in branches, "the branch survives by default"
+    assert f"fabrika/{state.feature_id}" in branches, "the branch survives by default"
     assert state.feature_id not in [x["feature_id"] for x in f.features()]
 
 
@@ -992,7 +992,7 @@ def test_discarding_can_take_the_branch_too_when_asked(factory):
     branches = subprocess.run(
         ["git", "branch", "--list"], cwd=repo, capture_output=True, text=True
     ).stdout
-    assert f"factory/{state.feature_id}" not in branches
+    assert f"fabrika/{state.feature_id}" not in branches
 
 
 def test_a_running_feature_cannot_be_discarded(factory):

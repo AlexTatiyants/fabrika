@@ -65,7 +65,8 @@ function branchesSection(p) {
   const b = state.branches && state.branches.project === p.project_id ? state.branches : null;
   const lede = `<p class="sec-lede">Work built outside Fabrika -- in any agent, by anyone -- and handed in as a
     branch. Pick one: it is checked out on its own, run through this project's checks and cut into
-    pieces to read. Nothing on the branch, and nothing in your checkout, changes.</p>`;
+    pieces to read. Nothing on the branch, and nothing in your checkout, changes.
+    <a href="#" data-help-open="outside-work">How it works</a></p>`;
   if (!b) return `<h2 class="sec-title">Outside work</h2>${lede}<p class="empty">Reading the branches…</p>`;
   const day = (at) => (at ? new Date(at).toLocaleDateString([], { day: 'numeric', month: 'short' }) : '');
   const looked = (b.looked || []).map((x) => `
@@ -184,7 +185,9 @@ function branchScreen() {
      tab at a time. The band's word is the one thing this look cannot claim yet
      -- there is no review in it to give a verdict -- so it says that, and the
      rapporteur's headline beside it says what was built. */
-  const tab = ['built', 'findings', 'code', 'checks'].includes(state.bpTab) ? state.bpTab : 'built';
+  // Findings first, as a feature's review opens on Your calls: what waits on
+  // you before what was built.
+  const tab = ['findings', 'built', 'code', 'checks'].includes(state.bpTab) ? state.bpTab : 'findings';
   const found = d.findings || null;
   const routes = (found && found.routes) || {};
   const sendBack = ((d.calls || {}).send_back || Object.values(routes).filter((r) => r === 'send_back')).length;
@@ -195,8 +198,8 @@ function branchScreen() {
   const href = (t) => `${branchHref(pid, s.slug)}&bp=${t}${state.bpLook ? `&look=${state.bpLook}` : ''}`;
   const red = checks.results.some((r) => !r.passed);
   const tabs = [
-    ['built', 'What it built', bpPlural(stat.files, 'file'), false],
     ['findings', 'Findings', found ? `${sendBack} to send back` : 'not attacked', sendBack > 0],
+    ['built', 'What was built', bpPlural(stat.files, 'file'), false],
     ['code', 'The code', `${lines.novel || 0} novel of ${total} lines`, false],
     ['checks', 'Checks', checks.results.length ? `${green} of ${checks.results.length}` : 'none', red],
   ].map(([t, label, count, alert]) => `
@@ -318,7 +321,8 @@ function bpFindings(d, packet, codeHref) {
   const passing = (found.probes || []).filter((p) => !p.red && !p.timed_out);
   return `
     <div class="wl-stand">
-      <p class="tab-lead">What the attack on this branch found, where each finding goes, and your call on it.</p>
+      <p class="tab-lead">What the attack on this branch found, where each finding goes, and your call on it.
+        <a href="#" data-help-open="outside-work-findings">How it works</a></p>
       <span class="wl-stand-n">${ruledLook ? '' : left ? `<b>${left}</b> ${left === 1 ? 'call' : 'calls'} waiting on you · ` : ''}${
         back ? `<b>${back}</b> to send back` : '<b>Nothing</b> to send back'}</span>
       ${back ? '<button type="button" class="btn btn-sm" id="look-send-back">Copy all as a prompt</button>' : ''}
@@ -394,13 +398,13 @@ function bpVerdict(d) {
   const s = d.state || {};
   const round = d.shown || s.look;
   const latest = round === s.look;
-  const head = String((d.packet || {}).head_sha || s.head_sha || '').slice(0, 10);
+  const head = String((d.packet || {}).head_sha || s.head_sha || '').slice(0, 7);
   const v = d.verdict;
   const list = (xs) => `<ul class="wl-sib">${xs.map((x) => `<li><span class="mono">${esc(x.severity)}</span>${
     esc(x.title)}${x.note ? ` <span class="dim">— ${esc(x.note)}</span>` : ''}</li>`).join('')}</ul>`;
   if (v && v.verdict === 'underwritten') {
     return `<section class="block bp-verdict ok"><h3 class="bp-verdict-h">You underwrote this work at round ${round},
-        <code>${esc(head)}</code>.</h3>
+        commit <code>${esc(head)}</code>.</h3>
       ${prLine(d, 'id="look-pr"')}
       ${v.accepted.length ? `<p class="bp-sub">The risks you accepted:</p>${list(v.accepted)}` : '<p class="bp-sub">The attack left nothing to accept.</p>'}
       ${v.note ? `<p class="bp-sub">${esc(v.note)}</p>` : ''}</section>`;
@@ -439,7 +443,7 @@ function bpVerdict(d) {
           and the tests that show them. Fix them on <code>${esc(s.branch)}</code>, then look again.</p>
           <button type="button" class="btn btn-sm" id="look-send-back">Copy the prompt</button></div></div></section>` : ''}
     <section class="block bp-verdict">
-      <h3 class="bp-verdict-h">Or end it here, at round ${round}, <code>${esc(head)}</code></h3>
+      <h3 class="bp-verdict-h">Or end it here, at round ${round}, commit <code>${esc(head)}</code></h3>
       <p class="bp-sub">${can
         ? `Every finding is accepted${(calls.accepted || []).length ? `: ${bpPlural(calls.accepted.length, 'risk')} you sign for` : ''}. You can underwrite it.`
         : `To underwrite it, ${[back ? `accept the ${bpPlural(back, 'defect')} still going back` : '',
@@ -518,7 +522,7 @@ function bpFixRoute(d) {
   const s = d.state || {};
   const fix = d.fix;
   const failed = d.fix_failed && (!fix || d.fix_failed.tip !== fix.tip) ? d.fix_failed : null;
-  const name = s.working_branch || `factory/outside/${s.slug}`;
+  const name = s.working_branch || `fabrika/outside/${s.slug}`;
   if (d.fixing) {
     return `<div class="bp-route"><p><b>Fabrika is fixing it</b> on <code>${esc(name)}</code>: repairing what goes back,
       then every check that passed and every probe. The next round of this work starts when it is done.</p></div>`;
@@ -585,7 +589,7 @@ function bpProse(text) {
     .map((para) => `<p>${esc(para.trim()).replace(/`([^`\n]+)`/g, '<code>$1</code>')}</p>`).join('');
 }
 
-/* What it built, as the mockup has it: what the work is, what it adds to the
+/* What was built, as the mockup has it: what the work is, what it adds to the
    system, how the new code runs, where it landed, and what its commits claim
    against the tests that show it. Every name links to its piece in The code. */
 function bpBuilt(packet, report, commits, codeHref, look = {}) {
@@ -609,7 +613,7 @@ function bpBuilt(packet, report, commits, codeHref, look = {}) {
      claims.length || commits.length, bpClaims(packet, commits, codeHref)],
   ].filter(([, , , body]) => body && body.trim());
   return `
-    <section class="bp-sec bp-doc" aria-label="What it built">
+    <section class="bp-sec bp-doc" aria-label="What was built">
       ${packet.summary ? `<div class="bp-summary">${bpProse(packet.summary)}</div>` : ''}
       ${packet.intent ? `<p class="bp-sub">Handed in as: <i>${esc(packet.intent)}</i></p>` : ''}
       <div class="doc">

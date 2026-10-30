@@ -89,7 +89,7 @@ sends a cleanup to the **tidy branch**, and a call only the person can make to
 the person.
 
 The tidy branch is made only on a press (`make_tidy`), as
-`factory/tidy/<branch>` off the look's head. Its first commit holds the
+`fabrika/tidy/<branch>` off the look's head. Its first commit holds the
 simplifier's cleanup and the regression probes that pass. That commit is held
 first to a fence: every check that passed at the head and every passing probe
 must pass on it, or the cleanup is thrown away and the probes go on alone. A
@@ -115,7 +115,7 @@ merged locally.
 
 Outside work is **one item per branch, worked in rounds**. Each look is a
 round. A round looks at the work's head: the person's branch until Fabrika has
-fixed anything, then Fabrika's own working branch, `factory/outside/<branch>`.
+fixed anything, then Fabrika's own working branch, `fabrika/outside/<branch>`.
 That branch is off the person's, and the person's branch is never written to.
 Commits they add between rounds are merged into the working branch before the
 next round. Where those commits conflict with Fabrika's fixes, the round does

@@ -27,7 +27,15 @@ from .git import has_commit
 from .schemas import SandboxState
 from .workspace import NOT_A_REPORT, NOT_FABRIKA, NOT_RUNNER_OUTPUT, PathEscape, is_runner_output, SKIP_DIRS, SKIP_SUFFIXES, safe_join
 
-BRANCH_PREFIX = "factory/"
+#: Every branch Fabrika makes is named under this. Branches an earlier version
+#: made are under `LEGACY_BRANCH_PREFIX`, and are still Fabrika's own.
+BRANCH_PREFIX = "fabrika/"
+LEGACY_BRANCH_PREFIX = "factory/"
+
+
+def is_own_branch(name: str) -> bool:
+    """Whether `name` is one of Fabrika's branches, by either prefix."""
+    return name.startswith((BRANCH_PREFIX, LEGACY_BRANCH_PREFIX))
 GIT_TIMEOUT = 180
 
 

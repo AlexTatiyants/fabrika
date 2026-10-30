@@ -1,0 +1,45 @@
+<p class="lead">Every round of outside work is attacked the way a feature's review is, without a spec: probes
+  written against it, a review panel and the arbiter. What they find is on the <b>Findings</b> tab, and you call each
+  finding fix or accept.</p>
+
+<h4>The attack</h4>
+<ul>
+  <li><b>Breaker</b>: writes probes, which are tests aimed first at the claims no test shows yet, and runs them in
+    the project's environment. They're written in the round's own worktree and never on the branch. A probe that
+    fails today shows a defect, and passes once the defect is fixed.</li>
+  <li><b>Review</b>: the same review agents a feature has, set on the <a data-help="the-crew">crew page</a>. They
+    read the branch against its claims, with the checks and what the probes did.</li>
+  <li><b>Arbiter</b>: routes every finding. A defect is <i>sent back</i> to whoever built the branch. What only a
+    person can decide is <i>your call</i>. A tidy-up is <i>cleanup</i>. What isn't wrong is <i>not a defect</i>.
+    Nothing is repaired during the attack.</li>
+</ul>
+
+<h4>A finding</h4>
+<p>Each row shows the finding's severity, its title and where the arbiter sent it. Findings that say the same thing
+  are gathered under one row. Open a row to read the arbiter's account first, then each agent's own words, the
+  probe that showed it and what it printed, and the files it names, linked into The code.</p>
+
+<h4>Your call</h4>
+<ul>
+  <li><b>fix</b>: it goes back, to be fixed by Fabrika or by whoever built the branch.</li>
+  <li><b>accept</b>: a risk you sign for. Your note is your reason. It stays on the record and goes into the pull
+    request.</li>
+</ul>
+<p>A defect the arbiter sent back stays going back until you accept it. Calls can be changed until the round
+  ends. <b>Copy all as a prompt</b>, or <b>copy a prompt for this one</b> on a row, hands what's going back to
+  whoever will fix it.</p>
+
+<h4>Against the round before</h4>
+<p>From the second round on, each finding is marked against the round before. It's <i>new</i>, <i>still there</i>
+  after a fix, <i>accepted before</i>, or <i>code changed</i>. Above the rows, <b>Since round N</b> lists what
+  Fabrika fixed, and what it couldn't.</p>
+<p>A risk you accepted carries forward: the same finding in the next round is accepted again, with your note, and
+  says which round you accepted it in. The exception is when the files it names changed between the two rounds'
+  heads. Then it's marked <i>code changed</i>, and it's your call again.</p>
+
+<h4>The tidy branch</h4>
+<p>When the attack found cleanup, or wrote probes worth keeping as tests, Fabrika can put them on a branch of its
+  own, <span class="mono">fabrika/tidy/&lt;branch&gt;</span>. Press <b>Make it</b>, then take what you want from it.
+  A probe that fails there keeps failing until the fix that it tests.</p>
+
+<p>What to do with what's going back is in <a data-help="outside-work-rounds">Rounds, fixes and the ending</a>.</p>

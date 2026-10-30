@@ -233,19 +233,64 @@ function pipelineDiagram(roles) {
   ], 18);
   const now = asBuiltNow(roles);
 
-  /* Outside work: a branch built somewhere else, looked at. The same reader
-     and rapporteur, with the project's checks and the cut between them as code
-     -- and no build, no oracle and no repair loop, so none is drawn. */
+  /* Outside work: a branch built somewhere else, worked in rounds. A round
+     reads it, runs the project's checks on it and cuts it into pieces for the
+     rapporteur, then attacks it -- the breaker, the same review panel, the
+     arbiter -- with no spec, no oracle and no build. Your calls follow, and
+     the work ends only by being underwritten or dropped. Fixing it is the loop
+     underneath: on Fabrika's own branch, never yours, and back into the line
+     as the next round. */
   const OUTSIDE_Y = ASBUILT_Y + NODE_H + (now ? 40 : 26) + 24;
-  const outside = diaChain(88, OUTSIDE_Y, [
-    ['branch', 'step'], agent('reader'), ['checks', 'step'], ['attribution', 'step'],
-    ['the cut', 'step'], agent('rapporteur', 'agent'), ['your ruling', 'gate'],
+  const OUTSIDE_FIX_Y = OUTSIDE_Y + NODE_H + 42;
+  const panel = review.length
+    ? review.map((r, i) => [r.name, 'agent', i ? 'none' : undefined, r.model || '', r.name])
+    : [['no review agents', 'step']];
+  const look = diaChain(88, OUTSIDE_Y, [
+    ['branch', 'step'], agent('reader'), ['checks', 'step'], ['attribution', 'step'], ['the cut', 'step'],
+    agent('rapporteur', 'agent'), agent('breaker'), ...panel, agent('arbiter'),
   ], 18);
-  const height = OUTSIDE_Y + NODE_H + 26;
+  const callsX = look.end + 18;
+  const ending = diaChain(callsX, OUTSIDE_Y, [['your calls', 'gate'], ['underwrite or drop', 'gate']], 18);
+  const callsCx = callsX + diaWidth('your calls') / 2;
+  const branchCx = 88 + diaWidth('branch') / 2;
+  const fixMid = OUTSIDE_FIX_Y + MID;
+  /* The fix, right to left as it runs: out of your calls, through the
+     repairer and everything that held before, onto Fabrika's branch -- and
+     from there into the line again, as the next round's head. */
+  let fx = callsCx + diaWidth('repairer', modelName(modelOf('repairer'))) / 2;
+  const fixNodes = [
+    ['repairer', has('repairer'), modelOf('repairer')], ['checks and probes', 'step', ''],
+    ['fabrika/outside/<branch>', 'step', ''],
+  ].map(([label, kind, model], i) => {
+    const x = fx - diaWidth(label, modelName(model));
+    const n = diaNode(x, OUTSIDE_FIX_Y, label, kind, model);
+    const arrow = i ? `<line x1="${fx + 15}" y1="${fixMid}" x2="${fx + 5}" y2="${fixMid}"
+      stroke="var(--line-strong)" marker-end="url(#dia-arrow)"/>` : '';
+    fx = x - 18;
+    return arrow + n.svg;
+  });
+  const fixLeft = fx + 18;
+  const outside = {
+    end: ending.end,
+    svg: `${look.svg}
+      <line x1="${look.end + 3}" y1="${OUTSIDE_Y + MID}" x2="${callsX - 5}" y2="${OUTSIDE_Y + MID}"
+        stroke="var(--line-strong)" marker-end="url(#dia-arrow)"/>
+      ${ending.svg}
+      <path d="M${callsCx} ${OUTSIDE_Y + NODE_H} L${callsCx} ${OUTSIDE_FIX_Y - 6}"
+        fill="none" stroke="var(--line-strong)" marker-end="url(#dia-arrow)"/>
+      ${tag('fix it', callsCx + 6, OUTSIDE_Y + NODE_H + 24)}
+      ${fixNodes.join('')}
+      <path d="M${fixLeft - 3} ${fixMid} L${branchCx} ${fixMid} L${branchCx} ${OUTSIDE_Y + NODE_H + 6}"
+        fill="none" stroke="var(--line-strong)" marker-end="url(#dia-arrow)"/>
+      ${tag('the next round · your new commits merged in first', branchCx + 10, fixMid - 6)}
+      ${tag('a fix that breaks what held before is thrown away', fixLeft, OUTSIDE_FIX_Y + NODE_H + 16)}`,
+  };
+  const height = OUTSIDE_FIX_Y + NODE_H + 40;
+  const width = Math.max(900, converge.end + 20, outside.end + 20);
 
   return `
     <div class="dia-scroll">
-    <svg viewBox="0 0 ${Math.max(900, converge.end + 20)} ${height}" class="dia" role="img"
+    <svg viewBox="0 0 ${width} ${height}" class="dia" role="img"
       aria-label="Agents in a fixed order: two lanes that cannot see each other, a repair loop
         the orchestrator bounds, and three human rulings.">
       <defs>
@@ -300,8 +345,8 @@ function pipelineDiagram(roles) {
       ${tag('on your press, and beside each feature', asBuilt.end + 12, ASBUILT_Y + MID + 4)}
       ${now ? tag(now, 88, ASBUILT_Y + NODE_H + 22) : ''}
       <line x1="8" y1="${OUTSIDE_Y - 20}" x2="${converge.end + 12}" y2="${OUTSIDE_Y - 20}" stroke="var(--line)"/>
-      ${tag('outside work', 8, OUTSIDE_Y + MID + 4)}${outside.svg}
-      ${tag('a branch built elsewhere; nothing written back to it', outside.end + 12, OUTSIDE_Y + MID + 4)}
+      <a data-help-open="outside-work" class="dia-help">${tag('outside work', 8, OUTSIDE_Y + MID + 4)}</a>${outside.svg}
+      ${tag('a branch built elsewhere · yours is never written to', 88, OUTSIDE_FIX_Y + NODE_H + 16)}
     </svg>
     </div>
     <p class="dia-key mono">
