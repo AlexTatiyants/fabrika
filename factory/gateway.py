@@ -45,7 +45,7 @@ import logging
 import math
 import secrets
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any, Callable, Sequence
 from urllib.parse import urlsplit
 
 import h11
@@ -198,6 +198,12 @@ class Lease:
     context_window: int = 0
     #: The run's ceiling and its spend so far, when one applies. See `BUDGET`.
     budget: tuple[float, Callable[[], float]] | None = field(default=None, repr=False)
+    #: The only paths forwarded, each with whatever is below it; empty is all.
+    paths: tuple[str, ...] = ()
+    #: Whether what the gateway saw is the session's spend. Not for a harness
+    #: on a plan: its own envelope carries the plan's window gauge, which a
+    #: spend file from here would take the place of.
+    records_spend: bool = True
     calls: int = 0
     prompt_tokens: int = 0
     completion_tokens: int = 0
@@ -214,6 +220,13 @@ class Lease:
         self.completion_tokens += _int(usage.get("completion_tokens",
                                                  usage.get("output_tokens")))
         self.cost_usd += _float(usage.get("cost"))
+
+    def forwards(self, target: str) -> bool:
+        """Whether a request for `target` (path and query) may go upstream."""
+        if not self.paths:
+            return True
+        path = target.split("?", 1)[0]
+        return any(path == p or path.startswith(p.rstrip("/") + "/") for p in self.paths)
 
     def refusal(self, body: bytes) -> tuple[int, str]:
         """Why this call must not be sent, as a status and a sentence, or
@@ -243,8 +256,8 @@ class Lease:
 
     def spend(self) -> dict[str, Any] | None:
         """What this session used, in the shape a spend file has, or None if
-        it made no call at all."""
-        if not self.calls:
+        it made no call at all or its spend is the harness's to report."""
+        if not self.calls or not self.records_spend:
             return None
         return {"cost_usd": round(self.cost_usd, 6), "prompt_tokens": self.prompt_tokens,
                 "completion_tokens": self.completion_tokens, "model": self.model,
@@ -350,11 +363,12 @@ class Gateway:
 
     def lease(self, *, role: str, route: str, base_url: str, key: str,
               headers: dict[str, str] | None = None, context_window: int = 0,
-              budget: tuple[float, Callable[[], float]] | None = None) -> Lease:
+              budget: tuple[float, Callable[[], float]] | None = None,
+              paths: Sequence[str] = (), records_spend: bool = True) -> Lease:
         token = TOKEN_PREFIX + secrets.token_urlsafe(24)
         lease = Lease(token=token, role=role, route=route, base_url=base_url, key=key,
                       headers=dict(headers or {}), context_window=context_window,
-                      budget=budget)
+                      budget=budget, paths=tuple(paths), records_spend=records_spend)
         self.leases[token] = lease
         return lease
 
@@ -435,6 +449,10 @@ class Gateway:
             await self._refuse(conn, writer, 401,
                                "not a session token this gateway issued, or its session "
                                "has ended")
+            return
+        if not lease.forwards(request.target.decode("latin-1")):
+            await self._refuse(conn, writer, 404,
+                               f"route {lease.route!r} forwards only {', '.join(lease.paths)}")
             return
         status, problem = lease.refusal(body)
         if status:
@@ -558,16 +576,21 @@ async def stop() -> None:
         await held[1].stop()
 
 
-def leases_its_key(route: Any) -> bool:
-    """Whether a route's session would be handed a key this app holds -- the
-    provider key, or the route's own, or none at all on a route with
-    `auth: none`.
+def leased_credential(route: Any) -> Any:
+    """The credential of a route's session that stays in this process, or None.
 
-    That key is the one a session never gets any more: it gets a session token
-    for the gateway instead, and the gateway forwards to the route's own
-    endpoint. A route that signs in some other way -- its own token, a file,
-    the keychain -- is not changed here (yet: see docs/model-gateway.md for the
-    order those go in).
+    Either the key this app holds for the route (`from_api_key`: the provider
+    key, the route's own, or none at all with `auth: none`), forwarded to the
+    route's own endpoint; or a sign-in of the harness's own (`upstream`), such
+    as a subscription token, forwarded to where it says. The session gets a
+    session token for the gateway in its place. A file or keychain sign-in is
+    still copied into the container (see docs/model-gateway.md).
     """
-    return any(spec.kind == "env" and spec.from_api_key
-               for spec in getattr(route, "container_credentials", []) or [])
+    return next((spec for spec in getattr(route, "container_credentials", []) or []
+                 if spec.kind == "env" and (spec.from_api_key or spec.upstream)), None)
+
+
+def leases_its_key(route: Any) -> bool:
+    """Whether a route's session is handed a session token in place of a
+    credential this app holds. See `leased_credential`."""
+    return leased_credential(route) is not None

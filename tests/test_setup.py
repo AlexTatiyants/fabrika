@@ -506,26 +506,31 @@ def test_a_stored_token_reaches_the_container_and_the_environment_still_wins(edi
     assert handed() == f"{route.token_env}=from-env\n"
 
 
-def test_the_shipped_claude_route_reads_the_sign_in_linux_keeps_in_a_file(editable_config):
-    """Linux has no keychain: Claude Code keeps its sign-in in a file. Both land
-    where the harness reads them, and the keychain, copied last, wins on a Mac."""
+def test_the_shipped_claude_route_keeps_its_token_out_of_the_container(editable_config):
+    """The token the card stores is the route's one credential, and it goes
+    through the model gateway: the container gets a session token for it and
+    the gateway as its base URL. The sign-in this machine has is not copied in,
+    because a copy is readable by everything the agent runs."""
     config, _ = editable_config
     route = config.routes["claude-code"]
-    kinds = [c.kind for c in route.container_credentials]
-    assert kinds == ["env", "file", "keychain"], kinds
-    file, keychain = route.container_credentials[1:]
-    assert file.path == "~/.claude/.credentials.json" and file.optional
-    assert file.target == keychain.target
-    assert route.token_env == route.container_credentials[0].name
+    assert [c.kind for c in route.container_credentials] == ["env"]
+    token = route.container_credentials[0]
+    assert token.name == route.token_env and token.optional
+    assert token.upstream.startswith("https://") and token.upstream_paths
+    assert token.base_url_env
 
 
 def test_a_sign_in_found_nowhere_says_where_it_looked_and_what_fixes_it(editable_config, monkeypatch, tmp_path):
     import asyncio
     from factory import sessioncreds
+    from factory.config import ContainerCredential
 
     config, _ = editable_config
     route = config.routes["claude-code"]
-    route.container_credentials[1].path = str(tmp_path / "no-such-credentials.json")
+    route.container_credentials.append(ContainerCredential(
+        kind="file", path=str(tmp_path / "no-such-credentials.json"), target="/x", optional=True))
+    route.container_credentials.append(ContainerCredential(
+        kind="keychain", service="some-item", target="/x", optional=True))
     monkeypatch.delenv(route.token_env, raising=False)
     monkeypatch.setattr(sessioncreds.shutil, "which", lambda b: None)
     with pytest.raises(sessioncreds.CredentialError) as missed:

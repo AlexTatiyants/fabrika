@@ -35,7 +35,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Sequence
 
-from . import procs
+from . import gateway, procs
 from .config import (Config, ContainerCredential, DockerConfig, RouteConfig, read_credential,
                      route_endpoint)
 
@@ -94,8 +94,8 @@ async def _keychain(service: str, *, optional: bool = False) -> bytes:
 
 def _env_value(spec: ContainerCredential, config: Config, session_token: str = "",
                route: RouteConfig | None = None) -> str:
-    if spec.from_api_key and session_token:
-        # The provider key itself stays in this process. What the harness
+    if (spec.from_api_key or spec.upstream) and session_token:
+        # The credential itself stays in this process. What the harness
         # reads in its place is good for one session, at the gateway only.
         return session_token
     if spec.from_api_key:
@@ -120,6 +120,32 @@ def _env_value(spec: ContainerCredential, config: Config, session_token: str = "
     return value
 
 
+def secret(spec: ContainerCredential, config: Config, route: RouteConfig) -> str:
+    """The real value of an `env` credential, for the gateway to put on. Empty
+    when an optional one is not there; a missing required one raises."""
+    return _env_value(spec, config, "", route)
+
+
+async def upstream_lease(route: RouteConfig, config: Config, role: str):
+    """A gateway lease for the route's `upstream` credential, as (gateway,
+    lease), or (None, None) when it has none or none is stored.
+
+    Forwarded to the upstream on its paths only. Its spend stays the harness's
+    to report -- its envelope carries the plan's window gauge -- and no dollar
+    budget is put on a route nobody bills by the token. Raises
+    `gateway.GatewayError` when the gateway cannot start."""
+    spec = gateway.leased_credential(route)
+    if spec is None or not spec.upstream:
+        return None, None
+    key = secret(spec, config, route)
+    if not key:
+        return None, None
+    gw = await gateway.ensure(config)
+    return gw, gw.lease(role=role, route=route.name, base_url=spec.upstream, key=key,
+                        budget=gateway.BUDGET.get() if route.billed else None,
+                        paths=spec.upstream_paths, records_spend=False)
+
+
 def _looked(spec: ContainerCredential) -> str:
     """Where one credential was looked for and why it was not there. Never
     anything about what a file or variable holds."""
@@ -136,9 +162,9 @@ def _looked(spec: ContainerCredential) -> str:
 async def prepare(route: RouteConfig, config: Config, session_token: str = "") -> Bundle:
     """Assemble one session's credentials into a private directory.
 
-    `session_token`, when given, is what a `from_api_key` credential becomes:
-    the model gateway's token for this session, never the key it stands for
-    (see `gateway.py`).
+    `session_token`, when given, is what a `from_api_key` or `upstream`
+    credential becomes: the model gateway's token for this session, never the
+    credential it stands for (see `gateway.py`).
 
     The caller owns the result and must call `cleanup()`, whatever happens to
     the session.
@@ -158,6 +184,8 @@ async def prepare(route: RouteConfig, config: Config, session_token: str = "") -
                 value = _env_value(spec, config, session_token, route)
                 if value:
                     lines.append(f"{spec.name}={value}")
+                if value and session_token and spec.upstream and spec.base_url_env:
+                    lines.append(f"{spec.base_url_env}={gateway.URL}")
                 continue
 
             if not spec.target:
@@ -197,8 +225,11 @@ async def prepare(route: RouteConfig, config: Config, session_token: str = "") -
         # not signed in.
         if route.container_credentials and not lines and not bundle.files:
             looked = "; ".join(_looked(spec) for spec in route.container_credentials)
+            # A sign-in on this machine helps only a route that copies one in.
+            signs_in_here = any(s.kind != "env" for s in route.container_credentials)
             fix = (f"Run `{route.setup_command}` and store the token it prints on the "
-                   "setup page, or sign the harness in on this machine."
+                   "setup page" + (", or sign the harness in on this machine."
+                                   if signs_in_here else ".")
                    if route.token_env and route.setup_command else
                    "Sign the harness in on this machine, or give the route a token in a "
                    "variable.")

@@ -36,7 +36,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import AsyncIterator, Mapping, Sequence
 
-from . import procs
+from . import gateway, procs
 from . import sessioncreds
 from .config import Config, RouteConfig
 from .containers import (HARNESS_ROOT, HOST_UNREACHABLE, NAME_PREFIX, DockerError,
@@ -176,6 +176,7 @@ async def completion_box(route: RouteConfig, config: Config,
             "--entrypoint", "sh", image, "-c", "sleep infinity"]
 
     bundle = None
+    gw, lease = None, None
     scratch = Path(tempfile.mkdtemp(prefix="factory-answer-"))
     started = False
     try:
@@ -184,9 +185,13 @@ async def completion_box(route: RouteConfig, config: Config,
             raise IsolationError(f"could not start a container for route {route.name!r}: {out[-600:]}")
         started = True
         try:
-            bundle = await sessioncreds.prepare(route, config)
+            # A sign-in with an `upstream` stays here, as a session's does:
+            # the box is handed a session token for the gateway in its place.
+            gw, lease = await sessioncreds.upstream_lease(route, config, "completion")
+            bundle = await sessioncreds.prepare(route, config,
+                                                lease.token if lease is not None else "")
             await sessioncreds.install(bundle, name, docker)
-        except sessioncreds.CredentialError as exc:
+        except (sessioncreds.CredentialError, gateway.GatewayError) as exc:
             raise IsolationError(str(exc)) from None
         yield Box(container=name, docker=docker.binary,
                   env_file=_env_file(route_env, scratch),
@@ -197,6 +202,8 @@ async def completion_box(route: RouteConfig, config: Config,
             await _docker([docker.binary, "rm", "-f", name], timeout=60)
         if bundle is not None:
             bundle.cleanup()
+        if lease is not None:
+            gw.revoke(lease)
         for leftover in scratch.glob("*"):
             leftover.unlink(missing_ok=True)
         scratch.rmdir()

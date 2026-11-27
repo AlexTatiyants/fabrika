@@ -1,10 +1,10 @@
 # The model gateway
 
-**Status: steps 1 and 2 built.** The gateway, session tokens, the proxy's
+**Status: steps 1 to 3 built.** The gateway, session tokens, the proxy's
 special case and OpenHands sessions through them are in (`factory/gateway.py`),
 and so are per-route endpoints, keyless local routes, context windows, the
-gateway's refusals and "Add a local server" on the crew page and in setup.
-Steps 3 to 6
+gateway's refusals and "Add a local server" on the crew page and in setup, and
+Claude Code sessions on a subscription token. Steps 4 to 6
 are proposed. The page says what was wrong, the rule that fixes it, and the
 order to build it in.
 
@@ -37,8 +37,8 @@ not the original, deleted afterwards — but once it is there, everything in the
 container can read it: the agent's own shell commands, a test it runs, and the
 postinstall script of any package it installs. The container can reach any
 public address. The egress proxy logs where a stolen key went; it does not stop
-it going. (Step 1 closed this for OpenHands; the CLI routes still copy their
-sign-ins in.)
+it going. (Step 1 closed this for OpenHands and step 3 for Claude Code; Codex still
+copies its sign-in in.)
 
 ### One fence doing two jobs
 
@@ -338,7 +338,7 @@ high whatever its agent's level said. It is now sent the agent's level.
 | Route | Credential today | Through the gateway | Unknowns |
 |---|---|---|---|
 | default (OpenHands) | `LLM_API_KEY` in an env file | `LLM_BASE_URL` → gateway, `LLM_API_KEY` = session token, model prefix `openai/` | LiteLLM prices nothing behind an `openai/` prefix, so the driver's `accumulated_cost` goes to zero; the gateway's count replaces it |
-| Claude Code | OAuth token or keychain entry copied in | `ANTHROPIC_BASE_URL` → gateway, `CLAUDE_CODE_OAUTH_TOKEN` = session token; gateway swaps in the real OAuth bearer | Whether the plan's terms allow it. Measured end to end with the real sign-in: works |
+| Claude Code | Built (step 3): the stored `claude setup-token` token stays in Fabrika | `ANTHROPIC_BASE_URL` → gateway, `CLAUDE_CODE_OAUTH_TOKEN` = session token; gateway swaps in the real OAuth bearer | Whether the plan's terms allow it. Measured end to end with the real sign-in: works |
 | Codex | `~/.codex/auth.json` copied in, refreshed inside | A custom model provider with `requires_openai_auth = true` and `wire_api = "responses"`, pointed at the gateway; a planted `auth.json` holding the session token; gateway swaps in the real bearer and owns the refresh | Whether the plan's terms allow it. Measured end to end with the real sign-in: works. Not `OPENAI_BASE_URL` or `chatgpt_base_url`: both measured, neither moves the model call |
 | Google's CLI | Its API key in the completion box's env file | Its base URL → gateway | None known; completions only |
 
@@ -448,7 +448,19 @@ left beside the new one.
    below, and sending every `strict_schema()` to a real server, remain. The
    OpenHands driver changed (it reads `LLM_AUTH`), so the default harness
    layer rebuilds once.
-3. **Claude Code**, if step 0 says it can.
+3. **Claude Code. Built.** An `env` credential with an `upstream` stays in
+   this process like the provider key, for sessions and for the containers
+   CLI completions answer from alike: the harness reads a session token in
+   its place and the gateway in `base_url_env`, and the gateway forwards to the
+   upstream with the real token on. `upstream_paths` limits what it forwards
+   (`/v1/messages` for Claude Code), so a session token cannot reach the
+   account's other endpoints, such as the ones that mint credentials. The
+   harness's own envelope stays the session's spend record, because it carries
+   the plan's window gauge, and no dollar budget is put on a route a plan
+   pays for. The shipped route no longer copies this machine's sign-in
+   (`~/.claude/.credentials.json`, the keychain) into containers; a
+   `kind: file` or `kind: keychain` credential still can, as an exception.
+   Not yet run: a full session through the real proxy since it was built.
 4. **Codex**, if step 0 says it can.
 5. **Google's CLI.**
 6. **INV-14 strict.** Whatever is left in `container_credentials` is an
@@ -471,6 +483,13 @@ In the repo's own suites, each persisting:
   only and names the setting when its port is taken. The shipped default route
   opens a session with a session token in its env file, the gateway as its
   base URL, the key nowhere, and the token dead after close.
+- **Step 3 added**, in the same place: the shipped Claude Code route opens a
+  session with a session token and the gateway in its env file, the real token
+  nowhere, the lease on the upstream with its paths and no budget, and no
+  spend file from the gateway; a completion box gets the same, its lease
+  revoked when the answer is in; a lease with paths forwards those and refuses
+  the rest before the upstream sees them; an `upstream` on anything but one
+  `env` credential per route is refused when the config is read.
 - **Step 2 added**, in the same place: a spent budget and an oversized prompt
   refused before the upstream sees them, and a refused call not counted; a
   session on a local server's route leased to its own endpoint with no key,

@@ -1399,6 +1399,12 @@ class CommandExecutor:
             return None
         return route if route.authors_in_container() else None
 
+    async def _gateway(self):
+        try:
+            return await gateway.ensure(self.config)
+        except gateway.GatewayError as exc:
+            raise ExecutorError(str(exc)) from exc
+
     async def _open_container_session(
         self, role: str, route, prepared, template: Sequence[str], *,
         task_file: Path, spend_file: Path, model: str = "",
@@ -1430,19 +1436,26 @@ class CommandExecutor:
         # gateway forwards to this route's own endpoint with this route's own
         # key -- or none, on a route with `auth: none`. With a key needed and
         # none stored there is nothing to lease, and `prepare` says so as before.
+        #
+        # A harness's own sign-in with an `upstream` -- a subscription token --
+        # is kept here the same way (`sessioncreds.upstream_lease`).
         gw, lease = None, None
-        base, key, headers = route_endpoint(self.config, route)
-        if (key or not route.needs_key) and gateway.leases_its_key(route):
+        spec = gateway.leased_credential(route)
+        if spec is not None and spec.upstream:
             try:
-                gw = await gateway.ensure(self.config)
+                gw, lease = await sessioncreds.upstream_lease(route, self.config, role)
             except gateway.GatewayError as exc:
                 raise ExecutorError(str(exc)) from exc
-            # The local server is asked from here, on the host -- the same
-            # side the gateway reaches it from.
-            window = await gateway.ensure_context_window(route, base)
-            lease = gw.lease(role=role, route=route.name, base_url=base, key=key,
-                             headers=headers, context_window=window,
-                             budget=gateway.BUDGET.get())
+        elif spec is not None:
+            base, key, headers = route_endpoint(self.config, route)
+            if key or not route.needs_key:
+                gw = await self._gateway()
+                # The local server is asked from here, on the host -- the same
+                # side the gateway reaches it from.
+                window = await gateway.ensure_context_window(route, base)
+                lease = gw.lease(role=role, route=route.name, base_url=base, key=key,
+                                 headers=headers, context_window=window,
+                                 budget=gateway.BUDGET.get())
         try:
             bundle = await sessioncreds.prepare(
                 route, self.config, lease.token if lease is not None else "")

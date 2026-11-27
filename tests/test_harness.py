@@ -4086,6 +4086,149 @@ def test_a_route_that_signs_in_its_own_way_is_not_leased(tmp_path, monkeypatch):
             task_file=tmp_path / "t.md", spend_file=tmp_path / "spend.json"))
 
 
+def test_a_subscription_token_stays_here_and_the_session_gets_a_session_token(tmp_path, monkeypatch):
+    """The shipped Claude Code route, as configured: its harness reads its token
+    from `CLAUDE_CODE_OAUTH_TOKEN` and its endpoint from `ANTHROPIC_BASE_URL`.
+    In the container those are a session token and the gateway, and the real
+    token appears nowhere a container can read. The lease goes to the route's
+    upstream, model calls only, with no dollar budget a plan is not billed
+    against -- and the spend is left to the harness, whose envelope carries the
+    plan's window gauge."""
+    from factory import gateway
+    from factory.config import load_config
+    from factory.executors import CommandExecutor
+
+    config = load_config(ROOT / "factory.example.yaml")
+    config.docker.gateway_port = 0
+    real = "sk-ant-oat01-a-token-that-must-stay-here"
+    monkeypatch.setenv("CLAUDE_CODE_OAUTH_TOKEN", real)
+    executor = CommandExecutor(llm=None, config=config)
+    route = config.route("claude-code")
+    spec = gateway.leased_credential(route)
+
+    async def scenario():
+        token = gateway.BUDGET.set((1.0, lambda: 0.0))
+        try:
+            session = await executor._open_container_session(
+                "worker", route, _Prepared(), route.container_session_command,
+                task_file=tmp_path / "t.md", spend_file=tmp_path / "spend.json")
+        finally:
+            gateway.BUDGET.reset(token)
+        env_file = session.bundle.env_file.read_text()
+        session.lease.observe({"input_tokens": 50, "output_tokens": 5}, "m")
+        session.spend_in_container = ""
+        await session.collect_spend()
+        await session.close()
+        await gateway.stop()
+        return session, env_file
+
+    session, env_file = asyncio.run(scenario())
+    assert real not in env_file and real not in " ".join(session.argv)
+    assert f"CLAUDE_CODE_OAUTH_TOKEN={session.lease.token}" in env_file.splitlines()
+    assert f"ANTHROPIC_BASE_URL={gateway.URL}" in env_file.splitlines()
+    assert session.lease.base_url == spec.upstream and session.lease.key == real
+    assert session.lease.paths == tuple(spec.upstream_paths)
+    assert session.lease.budget is None, "a plan is not held to the dollar budget"
+    assert not (tmp_path / "spend.json").exists(), "the harness's own envelope is the record"
+
+
+def test_a_completion_box_gets_a_session_token_in_place_of_the_subscription_token(monkeypatch):
+    """A CLI completion answers from a container of its own, and its sign-in is
+    kept out of it the same way a session's is: the box reads a session token
+    and the gateway, and the token is dead once the answer is in."""
+    from factory import agentbox, gateway
+    from factory.config import load_config
+
+    config = load_config(ROOT / "factory.example.yaml")
+    config.docker.gateway_port = 0
+    real = "sk-ant-oat01-a-token-that-must-stay-here"
+    monkeypatch.setenv("CLAUDE_CODE_OAUTH_TOKEN", real)
+    route = config.route("claude-code")
+    ran: list[list[str]] = []
+
+    async def docker(argv, timeout=120.0):
+        ran.append(list(argv))
+        return 0, ""
+
+    async def nothing(*a, **k):
+        return ""
+
+    async def image(*a, **k):
+        return "fabrika-harness:test"
+
+    async def subnet(*a, **k):
+        return "10.212.4.0/22"
+
+    for name, stub in (("_docker", docker), ("create_sealed", nothing), ("open_egress", nothing),
+                       ("harness_image", image), ("subnet_of", subnet)):
+        monkeypatch.setattr(agentbox, name, stub)
+
+    async def scenario():
+        async with agentbox.completion_box(route, config, {}) as box:
+            handed = box.bundle_env.read_text()
+            gw = await gateway.ensure(config)
+            live = [lease for lease in gw.leases.values() if lease.route == "claude-code"]
+        revoked = not gw.leases
+        await gateway.stop()
+        return handed, live, revoked
+
+    handed, live, revoked = asyncio.run(scenario())
+    assert len(live) == 1 and live[0].key == real
+    assert real not in handed and real not in json.dumps(ran)
+    assert f"CLAUDE_CODE_OAUTH_TOKEN={live[0].token}" in handed.splitlines()
+    assert f"ANTHROPIC_BASE_URL={gateway.URL}" in handed.splitlines()
+    assert revoked, "the box's session token outlived its answer"
+
+
+def test_a_lease_with_paths_forwards_those_and_refuses_the_rest():
+    """A session token is good for model calls and nothing else the upstream
+    answers: an account's other endpoints, which could mint a credential that
+    outlives the session, are refused here and never reach it."""
+    import httpx
+    from factory.gateway import Gateway
+
+    async def scenario():
+        async with _upstream(lambda req: (200, {"content-type": "application/json"},
+                                          [b'{"ok": true}'])) as (base, seen):
+            gw = Gateway(timeout_s=10)
+            await gw.start("127.0.0.1", 0)
+            # The host alone, as an upstream like `https://api.anthropic.com` is.
+            host = base.removesuffix("/api/v1")
+            lease = gw.lease(role="worker", route="claude-code", base_url=host, key="real",
+                             paths=["/v1/messages"])
+            got = {}
+            async with httpx.AsyncClient() as client:
+                for path in ("/v1/messages?beta=true", "/v1/messages/count_tokens",
+                             "/v1/messagesx", "/api/oauth/claude_cli/create_api_key"):
+                    got[path] = (await client.post(
+                        f"http://127.0.0.1:{gw.port}{path}",
+                        headers={"authorization": f"Bearer {lease.token}"})).status_code
+            await gw.stop()
+            return got, [s["path"] for s in seen]
+
+    got, seen = asyncio.run(scenario())
+    assert got == {"/v1/messages?beta=true": 200, "/v1/messages/count_tokens": 200,
+                   "/v1/messagesx": 404, "/api/oauth/claude_cli/create_api_key": 404}
+    assert seen == ["/v1/messages?beta=true", "/v1/messages/count_tokens"]
+
+
+def test_an_upstream_is_only_for_one_env_credential_of_a_route():
+    """Said when factory.yaml is read rather than found in a session: a file or
+    keychain sign-in cannot be swapped by the gateway, and a session holds one
+    lease, so two credentials through it would leave one in the container."""
+    from pydantic import ValidationError
+    from factory.config import ContainerCredential, RouteConfig
+
+    with pytest.raises(ValidationError):
+        ContainerCredential(kind="file", path="~/x", target="/x", upstream="https://a.example")
+    with pytest.raises(ValidationError):
+        ContainerCredential(kind="env", name="T", upstream="api.example")
+    with pytest.raises(ValidationError):
+        RouteConfig(name="r", container_credentials=[
+            {"kind": "env", "name": "LLM_API_KEY", "from_api_key": True},
+            {"kind": "env", "name": "T", "upstream": "https://a.example"}])
+
+
 def test_the_gateway_refuses_what_cannot_fit_or_cannot_be_paid_for_before_sending_it():
     """Two refusals made from numbers in factory.yaml, before the upstream sees
     anything: a prompt and `max_tokens` larger than the route's context window,

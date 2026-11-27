@@ -334,23 +334,27 @@ routes:
       HOME: /agent-home
       NPM_CONFIG_CACHE: /agent-home/.npm
       XDG_CACHE_HOME: /agent-home/.cache
-    # Any one of these is enough, and none is required on its own: a token
-    # minted for a container is the better answer, and the sign-in this machine
-    # already has is the one that needs no extra step -- in a file on Linux, in
-    # the keychain on a Mac. A route whose credentials all miss is refused
-    # before the container is touched.
+    # The token minted for containers, kept out of them. The session reads a
+    # session token as `CLAUDE_CODE_OAUTH_TOKEN` and the model gateway as
+    # `ANTHROPIC_BASE_URL`; the gateway puts the real token back on and
+    # forwards to Anthropic -- model calls only, so the session token cannot
+    # be spent on the account's other endpoints. Claude Code believes it is
+    # signed in to a plan, which is what the swap needs (measured in
+    # docs/model-gateway.md, step 0).
+    #
+    # The sign-in this machine already has (`~/.claude/.credentials.json`, or
+    # the keychain item `Claude Code-credentials` on a Mac) can still be copied
+    # in with a `kind: file` or `kind: keychain` credential, at the cost of
+    # putting it, refresh token and all, where everything the agent runs can
+    # read it. Not done here. With no token stored the route is refused before
+    # the container is touched, and says how to make one.
     container_credentials:
       - kind: env
         name: CLAUDE_CODE_OAUTH_TOKEN
         optional: true
-      - kind: file
-        path: ~/.claude/.credentials.json
-        target: /agent-home/.claude/.credentials.json
-        optional: true
-      - kind: keychain
-        service: Claude Code-credentials
-        target: /agent-home/.claude/.credentials.json
-        optional: true
+        upstream: https://api.anthropic.com
+        upstream_paths: [/v1/messages]
+        base_url_env: ANTHROPIC_BASE_URL
 
     session_command:
       - claude

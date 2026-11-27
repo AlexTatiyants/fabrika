@@ -20,7 +20,7 @@ from typing import Any, Callable, Literal
 import yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .files import write_atomic
 from .schemas import Gate
@@ -190,6 +190,13 @@ class ContainerCredential(BaseModel):
     required, and a missing one fails before the container is touched -- a
     harness that starts without its credential does not fail, it burns a turn
     and answers "please sign in".
+
+    `upstream` keeps an `env` credential out of the container altogether. The
+    harness is handed a session token in its place, and `base_url_env` (the
+    variable it reads its endpoint from) is pointed at the model gateway, which
+    puts the real value back on and forwards to `upstream`. `upstream_paths`
+    are the only paths it forwards there, so the session token cannot be
+    spent on anything but model calls. See `gateway.py`.
     """
 
     kind: Literal["env", "file", "keychain"] = "env"
@@ -200,6 +207,19 @@ class ContainerCredential(BaseModel):
     service: str = ""
     target: str = ""
     optional: bool = False
+    upstream: str = ""
+    upstream_paths: list[str] = Field(default_factory=list)
+    base_url_env: str = ""
+
+    @model_validator(mode="after")
+    def _upstream_is_an_env_credential(self) -> "ContainerCredential":
+        if self.upstream and (self.kind != "env" or self.from_api_key):
+            raise ValueError(
+                "`upstream` is for an `env` credential that is not `from_api_key`: the "
+                "provider key already goes through the gateway to its route's endpoint.")
+        if self.upstream and not urlparse(self.upstream).scheme.startswith("http"):
+            raise ValueError(f"`upstream` {self.upstream!r} is not an http:// or https:// URL.")
+        return self
 
 
 class RouteEffort(BaseModel):
@@ -570,6 +590,18 @@ class RouteConfig(BaseModel):
     # until a session starts, nothing is written anywhere but a private file
     # the run deletes, and no value is ever logged or put in argv.
     container_credentials: list[ContainerCredential] = Field(default_factory=list)
+
+    @field_validator("container_credentials")
+    @classmethod
+    def _one_credential_through_the_gateway(cls, specs: list[ContainerCredential]
+                                            ) -> list[ContainerCredential]:
+        # A session holds one lease, and a lease swaps in one credential.
+        leased = [s.name for s in specs if s.kind == "env" and (s.from_api_key or s.upstream)]
+        if len(leased) > 1:
+            raise ValueError(f"only one credential of a route can go through the model "
+                             f"gateway; {', '.join(leased)} all would.")
+        return specs
+
     # Files baked into the harness layer when it is built: the pinned
     # requirements an install reads from, or the script that *is* the harness.
     # Host path (absolute, or relative to this repository) to the absolute path
